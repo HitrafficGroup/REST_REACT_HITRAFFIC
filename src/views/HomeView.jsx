@@ -97,13 +97,14 @@ export default function HomeView() {
     //     });
     // }
 
-    const listarIps = () =>{
-         getIpsFromRestApi();
-        
+    const listarIps = async() =>{
+         const doc =  await getIpsFromRestApi();
+         const ips =  doc.data.Ips_disponibles;
+        setControladores(ips);
+        console.log(ips);
+         
     }
-    useEffect(() => {
-        getData();
-    }, [])
+
     return (
         <div>
             <Container maxWidth="md">
@@ -120,11 +121,11 @@ export default function HomeView() {
                                     <Th className='home-t-th'>Acciones</Th>
                                     <Th className='home-t-th'>Ip</Th>
                                     <Th className='home-t-th'>Mac</Th>
-                                    <Th className='home-t-th'>Nombre</Th>
+                                    <Th className='home-t-th'>status</Th>
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {controladres.filter(item=> item.status === true).map((dato, index) => (
+                                {controladres.map((dato, index) => (
                                     <Tr key={index} >
                                         <Td>
                                             {index + 1}
@@ -139,7 +140,7 @@ export default function HomeView() {
                                             {dato.mac}
                                         </Td>
                                         <Td >
-                                            {dato.nombre}
+                                            {dato.status}
                                         </Td>
 
                                     </Tr>
