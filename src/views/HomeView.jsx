@@ -2,7 +2,7 @@ import { React, useEffect, useState } from "react"
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import { collection, query, onSnapshot,updateDoc,doc } from "firebase/firestore";
+import { collection, query, onSnapshot,doc } from "firebase/firestore";
 import Grid from '@mui/material/Grid';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import TextField from '@mui/material/TextField';
@@ -13,6 +13,7 @@ import CustomMap from "../components/CustomMap";
 import "../css/HomeView.css"
 import CustomProgress from "../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import {getIpsFromRestApi} from '../js/apiFunctions'
 const semaforos = [
     {
         nombre: "semaforo de las americas",
@@ -72,7 +73,7 @@ export default function HomeView() {
             );
 
         });
-        const unsub = onSnapshot(doc(db, "actions", "qaBT2QgWep5LFroiBXcW"), (doc) => {
+        onSnapshot(doc(db, "actions", "qaBT2QgWep5LFroiBXcW"), (doc) => {
             console.log("Current data: ", doc.data());
             setAccionesUi( doc.data())
         });
@@ -88,12 +89,17 @@ export default function HomeView() {
        
         setModalSemaforo(false);
     }
-    const leerApiPython = async()=>{
-        const washingtonRef = doc(db, "actions", "qaBT2QgWep5LFroiBXcW");
-        // Set the "capital" field of the city 'DC'
-        await updateDoc(washingtonRef, {
-        lectura: true
-        });
+    // const leerApiPython = async()=>{
+    //     const washingtonRef = doc(db, "actions", "qaBT2QgWep5LFroiBXcW");
+    //     // Set the "capital" field of the city 'DC'
+    //     await updateDoc(washingtonRef, {
+    //     lectura: true
+    //     });
+    // }
+
+    const listarIps = () =>{
+         getIpsFromRestApi();
+        
     }
     useEffect(() => {
         getData();
@@ -102,7 +108,7 @@ export default function HomeView() {
         <div>
             <Container maxWidth="md">
                 <h2>Lista De Controladores</h2>
-                <Button variant="contained" disabled={accionesUi.lectura} endIcon={<CloudDownloadIcon />}  onClick={leerApiPython}  sx={{ marginBottom: 2 }}>
+                <Button variant="contained" disabled={accionesUi.lectura} endIcon={<CloudDownloadIcon />}  onClick={listarIps}  sx={{ marginBottom: 2 }}>
                     Listar Controladores
                 </Button>
                 <Grid container spacing={1}>

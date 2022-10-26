@@ -1,10 +1,10 @@
-import React,{useState}  from 'react';
+import React,{}  from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 
 import 'leaflet/dist/leaflet.css';
 import '../css/HomeView.css'
-import semaforo from '../assets/semaforo.png'
-import { Icon } from "leaflet";
+// import semaforo from '../assets/semaforo.png'
+// import { Icon } from "leaflet";
 export default function CustomMap(){
     const position = [-2.889889285482916, -78.96312349450281]
     // var greenIcon = Icon({

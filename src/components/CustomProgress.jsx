@@ -19,6 +19,7 @@ export default function CustomProgress({red,yellow,green}) {
     }
     useEffect(() => {
         calculatePorcentajes();
+        // eslint-disable-next-line
     },[])
     return (
         <div>
