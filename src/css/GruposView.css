@@ -1,0 +1,397 @@
+#tabla_buscar tr td:first-of-type:before {
+    content: 'Seleccionar ';
+    background: var(--bs-primary);
+    color: #fff;
+    padding: .5rem;
+    border-radius: 5px;
+    margin-right: .5rem;
+}
+
+#tabla_buscar tr.selected td:first-of-type:before {
+    content: 'Seleccionado ';
+    background: var(--bs-success)
+}
+
+#tabla_fases select[val-aux='0'] {
+    background: #eb1e1eb3;
+    color: black;
+}
+
+#tabla_fases select[val-aux='1'] {
+    background: green;
+    color: white
+}
+
+#tabla_fases select[val-aux='2'] {
+    background: yellow;
+    color: black
+}
+
+#tabla_fases select[val-aux='3'] {
+    background: gray;
+    color: white
+}
+
+#tabla_fases select option {
+    background: #fff;
+    color: black;
+}
+
+
+#tabla_horarios td,
+#tabla_fases td,
+#plan_select td {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.accordion-button {
+    background: #e7f1ff !important;
+    color: #0c63e4 !important;
+}
+
+.nav-item.active {
+    text-decoration: none !important;
+    font-weight: bold;
+}
+
+#info-conection {
+    background: var(--bs-gray) !important;
+    color: #fff;
+}
+
+#mapa-container {
+    width: 100%;
+    height: 280px
+}
+
+.botones-opciones {
+    text-align: center;
+}
+
+.leer_datos:before {
+    content: "\f0ed";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: .3em;
+}
+
+
+.escribir_datos:before {
+    content: "\f0ee";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: .3em;
+}
+
+#tabla_buscar tbody tr {
+
+    cursor: pointer;
+}
+
+.semaforo {
+    border: solid 1px;
+    padding: 7px;
+    border-radius: 10px;
+    text-align: center;
+    background: #000000c9;
+    color: white;
+}
+
+.semaforo * {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.semaforo .luz-roja,
+.semaforo .luz-amarilla,
+.semaforo .luz-verde {
+
+    background: gray;
+    width: 50px !important;
+    height: 50px !important;
+    display: block;
+    border-radius: 100%;
+    border: solid 2px gray;
+}
+
+.semaforo[status="rojo"][modoOperacion='Tiempo Fijo'] .luz-roja {
+    background: red;
+    border-color: red;
+}
+
+
+.semaforo[status="verde"][modoOperacion='Tiempo Fijo'] .luz-verde {
+    background: green;
+    border-color: green;
+}
+
+
+.semaforo[status="amarillo"][modoOperacion='Tiempo Fijo'] .luz-amarilla {
+    background: yellow;
+    border-color: yellow;
+}
+
+
+
+
+.semaforo[status="rojo"][modoOperacion='Pulsante'] .luz-roja {
+    background: red;
+    border-color: red;
+}
+
+
+.semaforo[status="verde"][modoOperacion='Pulsante'] .luz-verde {
+    background: green;
+    border-color: green;
+}
+
+
+.semaforo[status="amarillo"][modoOperacion='Pulsante'] .luz-amarilla {
+    background: yellow;
+    border-color: yellow;
+}
+
+
+
+/* Para el color destello */
+.semaforo[status="destello"][modoOperacion='Tiempo Fijo'][destellostatus='on'] .luz-amarilla {
+    background: yellow;
+    border-color: yellow;
+}
+
+
+.semaforo[tipodestello="Amarillo"][modoOperacion='Destello'][destellostatus='on'] .luz-amarilla {
+    background: yellow;
+    border-color: yellow;
+}
+
+.semaforo[tipodestello="Rojo"][modoOperacion='Destello'][destellostatus='on'] .luz-roja {
+    background: red;
+    border-color: red;
+}
+
+.semaforo[tipodestello="Amarillo"][modoOperacion='Destello por Falla'][destellostatus='on'] .luz-amarilla {
+    background: yellow;
+    border-color: yellow;
+}
+
+.semaforo[tipodestello="Rojo"][modoOperacion='Destello por Falla'][destellostatus='on'] .luz-roja {
+    background: red;
+    border-color: red;
+}
+
+.semaforo[modoOperacion='Todo en Rojo'][destellostatus='on'] .luz-roja {
+    background: red;
+    border-color: red;
+}
+
+.semaforo[modoOperacion='Todo en Rojo'][destellostatus='of'] .luz-roja {
+    background: red;
+    border-color: red;
+}
+
+
+/* para el cambio de color a amarillo */
+.semaforo[cambioAmarillo='amarillo'][modoOperacion='Tiempo Fijo'][status='verde'] .luz-amarilla {
+    background: yellow;
+    border-color: yellow;
+}
+
+.semaforo[cambioAmarillo='amarillo'][modoOperacion='Tiempo Fijo'][status='verde'] .luz-verde {
+    background: gray;
+    border-color: gray;
+}
+
+.semaforo[cambioAmarillo='amarillo'][modoOperacion='Pulsante'][status='verde'] .luz-amarilla {
+    background: yellow;
+    border-color: yellow;
+}
+
+.semaforo[cambioAmarillo='amarillo'][modoOperacion='Pulsante'][status='verde'] .luz-verde {
+    background: gray;
+    border-color: gray;
+}
+
+/* ******************************************** */
+
+
+#simulation-container {
+    min-height: 500px;
+    margin-bottom: 40px;
+}
+
+#simulation-container>#grupo1 {
+    left: 50px !important;
+    top: 50% !important
+}
+
+#simulation-container>#grupo2 {
+
+    left: 50% !important;
+    top: 150px !important
+}
+
+#simulation-container>#grupo3 {
+    left: calc(100% - 50px) !important;
+    top: 50% !important
+}
+
+#simulation-container>#grupo4 {
+    left: 50% !important;
+    top: calc(100% - 100px) !important
+}
+
+
+#simulation-detail-container {
+
+    border-bottom: solid 1px;
+}
+
+#simulation-detail-container>div {
+    border: solid 1px;
+    border-bottom: none;
+    padding-left: 5px;
+
+}
+
+#tabla_conflictos tr td:not(:first-of-type):not([id]) {
+    background: var(--bs-secondary);
+    border: none;
+
+}
+
+#tabla_conflictos tr td[id] {
+    cursor: pointer;
+}
+
+/* #tabla_conflictos tr td[id]:hover{
+
+} */
+
+/* clonacion.html */
+.v-center {
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    flex-flow: column wrap;
+}
+
+
+/* CONFIGURACIONES DEL CONTROLADOR */
+
+/* HORARIOS */
+
+
+
+tr td.tiempo_fijo {
+    background-color: #0dcaf0;
+}
+
+.color_coded.tiempo_fijo {
+    background-color: #0dcaf0;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+tr td.pulsante {
+    background-color: #6610f2;
+}
+
+.color_coded.pulsante {
+    background-color: #6610f2;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+tr td.destello {
+    background-color: yellow;
+}
+
+.color_coded.destello {
+    background-color: yellow;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+tr td.todo_rojo {
+    background-color: red;
+}
+
+.color_coded.todo_rojo {
+    background-color: red;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+tr td.apagado {
+    background-color: #6c757d;
+}
+
+.color_coded.apagado {
+    background-color: #6c757d;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+/* ENMARCAR EL DIA ACTUAL */
+
+tr td[dia_actual=si] {
+    border-left: 3px solid green;
+    border-right: 3px solid green;
+}
+
+tr th[dia_actual=si] {
+    border-left: 3px solid green;
+    border-right: 3px solid green;
+    border-top: 3px solid green;
+}
+
+tr td[dia_actual=si][ultima_fila=si] {
+    border-bottom: 3px solid green;
+}
+
+/* ********************* */
+
+
+/* FASES *** */
+
+tr td.fase_rojo {
+    background: #eb1e1eb3;
+    color: black;
+}
+
+
+tr td.fase_verde {
+    background: green;
+    color: white;
+}
+
+
+tr td.fase_destello {
+    background: yellow;
+    color: black;
+}
+
+tr td.fase_apagado {
+    background: #6c757d;
+    color: white;
+}
+
+
+:root {
+    --display-boton-escribir-datos: inline;
+    --display-boton-leer-datos: inline;
+}
+
+.escribir_datos {
+    display: var(--display-boton-escribir-datos) !important;
+
+}
+.leer_datos {
+    display: var(--display-boton-leer-datos) !important;
+
+}
+
+
+/* ******************************************* */

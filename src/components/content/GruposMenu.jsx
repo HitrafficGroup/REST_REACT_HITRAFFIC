@@ -3,6 +3,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import LanIcon from '@mui/icons-material/Lan';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -16,7 +17,7 @@ export default function GruposMenu(){
         <>
             <ListItemButton onClick={() =>Changeview('/david-diaz/grupos')}>
                         <ListItemIcon>
-                            <ExitToAppIcon fontSize='large'  />
+                            <LanIcon fontSize='large'  />
                         </ListItemIcon>
                         <ListItemText primary="Grupos" />
             </ListItemButton>

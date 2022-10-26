@@ -20,6 +20,10 @@ const theme = createTheme({
     crema:{
       main: '#F0B27A',
       contrastText: '#fff',
+    },
+    advertencia:{
+      main: '#F5B041',
+      contrastText: '#fff',
     }
   },
 });

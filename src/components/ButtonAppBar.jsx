@@ -20,6 +20,7 @@ import ResumenMenu from '../components/content/ResumenMenu';
 import SalirMenu from '../components/content/SalirMenu';
 import HomeMenu from './content/HomeMenu';
 import SyncMenu from './content/SyncMenu.jsx'
+import GruposMenu from './content/GruposMenu.jsx'
 
 export default function ButtonAppBar() {
 
@@ -39,6 +40,11 @@ const menuData = [
     child: <SyncMenu/>,
     visibility: true,
     key: 10
+},
+{
+  child: <GruposMenu/>,
+  visibility: true,
+  key: 11
 },
   {
       child: <ClonacionMenu/>,
