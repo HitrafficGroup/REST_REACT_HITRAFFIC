@@ -1,0 +1,53 @@
+.home-t{
+    width: 100%;
+}
+.home-t-th{
+    text-align: left;
+}
+.h-controler-select{
+    display: flex;
+    flex-direction: row;
+    align-items:center;
+}
+.leaflet-container{
+    width: 100%;
+    height: 60vh;
+}
+.b-red{
+    color: white;
+    height: 24px;
+    background-color: #E74C3C;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    justify-content: center;
+    text-align: center;
+}
+.b-green{
+    color: white;
+    height: 24px;
+    background-color: #28B463;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    justify-content: center;
+    text-align: center;
+}
+.b-yellow{
+    color: white;
+    height: 24px;
+    background-color: #F1C40F;
+    justify-content: center;
+    text-align: center;
+
+}
+.bar-container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    padding-left: 4px;
+    padding-right: 4px;
+    
+}
+.home-view-footer{
+    height: 50px;
+}
