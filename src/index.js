@@ -24,6 +24,23 @@ const theme = createTheme({
     advertencia:{
       main: '#F5B041',
       contrastText: '#fff',
+    },
+    rojo:{
+      main: '#E74C3C ', 
+      contrastText: '#fff',
+
+    },
+    verde:{
+      main: '#27AE60',
+      contrastText: '#fff',
+    },
+    destello:{
+      main: '#85C1E9',
+      contrastText: '#fff',
+    },
+    apagado:{
+      main: '#212F3D',
+      contrastText: '#fff',
     }
   },
 });

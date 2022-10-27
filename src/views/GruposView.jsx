@@ -108,6 +108,10 @@ export default function GruposView() {
                     <Button variant="contained">Cargar Cambios</Button>
                 </Grid>
                 <Grid item xs={12}>
+                    <h5>Configuracion conflicto de Verdes</h5>
+                </Grid>
+            
+                <Grid item xs={12}>
                     <table id="tabla_conflictos" className="table table-bordered">
                         <tbody>
                             <tr>
@@ -158,6 +162,18 @@ export default function GruposView() {
                     <FormControlLabel control={<Switch />} label="Activar Modo destello cuando una salida de luz Roja falle" />
                     </FormGroup>
                 </Grid>  
+           
+                    <Grid item xs={6}>
+                        <Button variant="contained">Leer Datos</Button>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Button variant="contained">Cargar Cambios</Button>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <div className='blank-space'>
+
+                        </div>
+                    </Grid>
             </Grid>
             {/* SE CREA MODAL PARA LA EDICION DE LOS PARAMETROS */}
             <Modal isOpen={modalGrupo} >

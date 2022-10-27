@@ -46,6 +46,16 @@ const menuData = [
   visibility: true,
   key: 11
 },
+{
+  child: <FasesMenu/>,
+  visibility: true,
+  key: 12
+},
+{
+  child: <PlanesMenu/>,
+  visibility: true,
+  key: 13
+},
   {
       child: <ClonacionMenu/>,
       visibility: true,
@@ -57,19 +67,9 @@ const menuData = [
     key: 30
 },
   {
-    child: <FasesMenu/>,
-    visibility: true,
-    key: 40
-  },
-  {
     child: <HorariosMenu/>,
     visibility: true,
     key: 50
-  },
-  {
-    child: <PlanesMenu/>,
-    visibility: true,
-    key: 60
   },
   {
     child: <RegistroErrores/>,
