@@ -8,7 +8,7 @@ import EntradasView from "./EntradasView"
 import FasesView from "./FasesView";
 import HorariosView from "./HorariosView";
 import PlanesView from "./PlanesView";
-import ErroresView from "./Errores.View";
+import ErroresView from "./ErroresView";
 import SyncTimeView from "./SyncTimeView";
 export default function MultiView(){
 
