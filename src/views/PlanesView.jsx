@@ -191,8 +191,3 @@ export default function PlanesView() {
     );
 
 }
-// pues los 12.50 , unas cosas que dejaste en mi casa y una cosa mas jajaja
-// salgo a las 5 del trabajo te entrego eso y listo no te quito ni 2 minutos de tu tiempo
-// esque la siguiente semana talvez no tenga tiempo
-// y te diria manana pero manana estare por canar acompanandole al ingeniero a unas reuniones 
-// jajaj haces muchas preguntas , si dijeras que si todo seria mas rapido para los dos

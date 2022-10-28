@@ -1,0 +1,7 @@
+.alinear{
+    display:flex;
+    flex-direction: row !important;
+}
+.blank-box{
+    height: 80px;
+}
