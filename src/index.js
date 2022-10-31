@@ -11,7 +11,7 @@ import Button from '@mui/material/Button';
 
 const theme = createTheme({
   palette: {
-    verde: {
+    verde2: {
       // This is green.A700 as hex.
       main: '#52BE80',
       contrastText: '#fff',
@@ -41,7 +41,12 @@ const theme = createTheme({
     apagado:{
       main: '#212F3D',
       contrastText: '#fff',
+    },
+    azulm:{
+      main: '#2471A3',
+      contrastText: '#fff',
     }
+    
   },
 });
 

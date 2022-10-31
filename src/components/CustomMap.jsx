@@ -4,8 +4,7 @@ import L from 'leaflet';
 
 import 'leaflet/dist/leaflet.css';
 import '../css/HomeView.css'
-// import semaforo from '../assets/semaforo.png'
-// import { Icon } from "leaflet";
+
 export default function CustomMap(){
     const center = [-2.889889285482916, -78.96312349450281]
     const [draggable, setDraggable] = useState(false)
@@ -68,7 +67,7 @@ export default function CustomMap(){
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
          <DraggableMarker />
-      </MapContainer>,
+      </MapContainer>
         </>
     );
   
