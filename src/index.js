@@ -6,8 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { purple } from '@mui/material/colors';
-import Button from '@mui/material/Button';
+import {store} from './app/store'
+import { Provider } from 'react-redux'
 
 const theme = createTheme({
   palette: {
@@ -17,46 +17,48 @@ const theme = createTheme({
       contrastText: '#fff',
       darker: '#053e85',
     },
-    crema:{
+    crema: {
       main: '#F0B27A',
       contrastText: '#fff',
     },
-    advertencia:{
+    advertencia: {
       main: '#F5B041',
       contrastText: '#fff',
     },
-    rojo:{
-      main: '#E74C3C ', 
+    rojo: {
+      main: '#E74C3C ',
       contrastText: '#fff',
 
     },
-    verde:{
+    verde: {
       main: '#27AE60',
       contrastText: '#fff',
     },
-    destello:{
+    destello: {
       main: '#85C1E9',
       contrastText: '#fff',
     },
-    apagado:{
+    apagado: {
       main: '#212F3D',
       contrastText: '#fff',
     },
-    azulm:{
+    azulm: {
       main: '#2471A3',
       contrastText: '#fff',
     }
-    
+
   },
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <ThemeProvider theme={theme}>
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
-  </ThemeProvider>
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </ThemeProvider>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function
