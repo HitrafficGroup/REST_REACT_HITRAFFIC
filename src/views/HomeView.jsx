@@ -12,7 +12,7 @@ import UpdateIcon from '@mui/icons-material/Update';
 import "../css/HomeView.css"
 import CustomProgress from "../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { getIpsFromRestApi,getFasesControlador } from '../js/apiFunctions'
+import { getIpsFromRestApi,getFasesFromRestApi } from '../js/apiFunctions'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -160,7 +160,7 @@ export default function HomeView() {
     }
     const leerDatosFases = ()=>{
         console.log(currentControler.ip);
-        getFasesControlador(currentControler.ip);
+        getFasesFromRestApi(currentControler.mac,currentControler.ip);
     }
     const seleccionarControlador = (data) => {
         console.log(data);
@@ -450,5 +450,3 @@ export default function HomeView() {
     );
 
 }
-// feliz cumplea;os adelantado salome jiji , espero que logres todas tus metas y sigas cumpliendo muchos a;os mas.
-// psdt por que la foca mira para arriba ? ... por que arriba esta el foco jajajaja *c rie
