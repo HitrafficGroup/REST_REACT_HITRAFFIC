@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useRef,useEffect } from 'react';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
@@ -12,11 +12,13 @@ import UpdateIcon from '@mui/icons-material/Update';
 import "../css/HomeView.css"
 import CustomProgress from "../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { getIpsFromRestApi,getFasesFromRestApi } from '../js/apiFunctions'
+import { getIpsFromRestApi,getFasesFromRestApi,getPlanesFromRestApi } from '../js/apiFunctions'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { useSelector,useDispatch } from 'react-redux';
+import {addFases,addPlanes} from "../features/controlers/controlerSlice"
 // dependencias del custom Map
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from 'leaflet';
@@ -75,6 +77,8 @@ export default function HomeView() {
     const [semaforos, setSemaforos] = useState([]);
     const [currentControler, setCurrentControler] = useState({})
     const [btnAgregar, setBtnAgregar] = useState(true);
+    const dispatch = useDispatch();
+    const controlerState = useSelector(state => state.controlers)
     const [newSemaforo, setNewSemaforo] = useState({
         nombre: "",
         lat: 0,
@@ -158,9 +162,17 @@ export default function HomeView() {
         setModalSemaforo(true);
 
     }
-    const leerDatosFases = ()=>{
-        console.log(currentControler.ip);
-        getFasesFromRestApi(currentControler.mac,currentControler.ip);
+    const leerDatosFases = async ()=>{
+        //dispatch(addFases(getFasesFromRestApi(currentControler.mac,currentControler.ip)));
+        try{
+        const result = await getFasesFromRestApi(currentControler.mac,currentControler.ip)
+        console.log(result);
+        dispatch(addFases(result));
+    }
+        catch(e){
+            console.log(e);
+        }
+         
     }
     const seleccionarControlador = (data) => {
         console.log(data);
@@ -169,6 +181,14 @@ export default function HomeView() {
             setSemaforos(doc.data().grupos)
         });
     }
+
+    useEffect(() => {
+        console.log(controlerState);
+    }, [])
+
+
+
+
     const DraggableMarker = () => {
 
 

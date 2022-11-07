@@ -44,7 +44,7 @@ export default function FasesView(){
         <Container maxWidth="md">
            
             <h1>Fases View</h1>    
-            <Grid container spacing={1}>
+            <Grid container spacing={2}>
             <Grid item xs={12}>
                     <Table className='home-t'>
                         <Thead>

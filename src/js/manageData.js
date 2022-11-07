@@ -1,4 +1,13 @@
-function convertToFases(respuesta,mac, num_grupos = 4) { //Concatenacion de colores de 2 Bits por grupo a una variable de 8 bits para los 4 grupos 
+function parseToArray(value) {
+    if (typeof (value) === "string") {
+        value = value.replace("(", "").replace(",)", "");
+        value = JSON.parse("[" + value + "]")
+    }
+    return value;
+}
+
+
+function convertToFases(respuesta, mac, num_grupos = 4) { //Concatenacion de colores de 2 Bits por grupo a una variable de 8 bits para los 4 grupos 
 
     let fasesConverted = []
 
@@ -9,7 +18,7 @@ function convertToFases(respuesta,mac, num_grupos = 4) { //Concatenacion de colo
         dato = parseInt(dato)
         dato = dato.toString(2);
         let bits_faltantes = 16 - dato.length;
-        for (let bit=0; bit<bits_faltantes; bit++){
+        for (let bit = 0; bit < bits_faltantes; bit++) {
             dato = "0" + dato;
         }
 
@@ -61,5 +70,23 @@ function convertToFases(respuesta,mac, num_grupos = 4) { //Concatenacion de colo
 
 
 }
+function convertToPlanes(respuesta, mac) {
 
-export {convertToFases}
+
+    //planes_datos = {}
+    let lista_datos = []
+    for (let index_plan = 0; index_plan < 16; index_plan++) {
+        var numPlan = "plan" + (index_plan + 1).toString()
+        let plan_lst = respuesta[mac][numPlan] //esq tu utilizas plan_list aqui
+        plan_lst = parseToArray(plan_lst)
+
+        let plan = {[`${numPlan}`]:plan_lst}
+
+        lista_datos.push(plan)
+
+    }
+    return ({[`${mac}`]:lista_datos})
+
+}
+
+export { convertToFases, convertToPlanes }
