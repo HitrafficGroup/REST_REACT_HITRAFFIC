@@ -104,7 +104,7 @@ export default function PlanesView() {
                         <Button variant="contained" fullWidth color='verde2' onClick={leerPlanesFromRestApis} sx={{ height: '100%' }} >Leer Datos</Button>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button variant="contained" fullWidth sx={{ height: '100%' }} color="advertencia">Cargar Cambios</Button>
+                        <Button variant="contained" fullWidth sx={{ height: '100%' }} color="primary">Cargar Cambios</Button>
                     </Grid>
                     <Grid item xs={6}>
 

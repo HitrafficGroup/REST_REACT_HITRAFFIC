@@ -36,5 +36,22 @@ async function getPlanesFromRestApi(mac, ip) {
 		});
 	return planes;
 }
+async function getHorariosFromRestApi(mac, ip) {
 
-export { getIpsFromRestApi, getFasesFromRestApi, getPlanesFromRestApi }
+	var horarios;
+	await axios.post(`http://127.0.0.1:8000/rest/restGetHorariosControlador?mac=${mac}`, {
+		ip: ip
+	})
+		.then(response => {
+			horarios = response.data;
+
+
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+	return horarios;
+}
+
+
+export { getIpsFromRestApi, getFasesFromRestApi, getPlanesFromRestApi,getHorariosFromRestApi }

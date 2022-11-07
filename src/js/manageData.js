@@ -92,4 +92,8 @@ function convertToPlanes(respuesta, mac) {
 
 }
 
+
+
+
+
 export { convertToFases, convertToPlanes }

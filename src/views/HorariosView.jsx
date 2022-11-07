@@ -14,8 +14,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import FormGroup from '@mui/material/FormGroup';
+import { getHorariosFromRestApi } from '../js/apiFunctions'
 import Checkbox from '@mui/material/Checkbox';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { useSelector, useDispatch } from 'react-redux';
 import '../css/HorariosView.css';
 export default function HorariosView(){
     const [horarios,setHorarios] = useState([
@@ -36,6 +38,8 @@ export default function HorariosView(){
             {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
             {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
     ]);
+    const dispatch = useDispatch();
+    const controlerState = useSelector(state => state.controlers)
     const [operativos,setOperativos] =  useState([{fecha:'',tiempoeje:''}]);
     const [modalHorarios,setModalHorarios] =useState(false);
 
@@ -45,13 +49,49 @@ export default function HorariosView(){
     const aplicarLosCambios = () => {
         setModalHorarios(false);
     }
+    const [age, setAge] = useState('');
 
+    const handleChange = (event) => {
+        setAge(event.target.value);
+    };
+    const leerHorariosFromRestApi= async()=>{
+        try{
+            const result = await getHorariosFromRestApi(controlerState.mac, controlerState.ip)
+            console.log(result)
+        }catch(e){
+            console.log(e);
+        }
+    }
     return(
         <>
       <Container maxWidth="md">
                 <h1>Horarios View</h1>
-                <Grid container spacing={1}>
+                <Grid container spacing={2}>
+                <Grid item xs={6} >
+                <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={age}
+                    label="Tipo"
+                    onChange={handleChange}
+                    >
+                <MenuItem value={10}>Dia Ordinario</MenuItem>
+                <MenuItem value={20}>Fin De Semana</MenuItem>
+                <MenuItem value={30}>Dia Festivo</MenuItem>
+                </Select>
+                </FormControl>
+                </Grid>
+                <Grid item xs={3}>
+                        <Button variant="contained" color='verde2' onClick={leerHorariosFromRestApi} sx={{height:'100%'}} fullWidth>Leer Datos</Button>
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Button variant="contained" sx={{height:'100%'}} fullWidth >Cargar Datos</Button>
+                    </Grid>
                 <Grid item xs={12} >
+                <div className='h-scroller'>
+
                 <Table className='home-t'>
                             <Thead>
                                 <Tr>
@@ -88,13 +128,9 @@ export default function HorariosView(){
                                 ))}
                             </Tbody>
                         </Table>
+                </div>
                 </Grid>
-                    <Grid item xs={6}>
-                        <Button variant="contained">Text</Button>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Button variant="contained">Text</Button>
-                    </Grid>
+                 
                     <Grid item xs={12}>
                         <h3>Parametros Operativos del Controlador</h3>
                     </Grid>

@@ -5,3 +5,10 @@
 .blank-box{
     height: 80px;
 }
+
+.h-scroller {
+    height: 400px;
+    overflow-y: scroll;
+    scrollbar-color: rebeccapurple green;
+    scrollbar-width: thin;
+  }
