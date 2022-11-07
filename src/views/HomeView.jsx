@@ -127,14 +127,7 @@ export default function HomeView() {
     }
     const leerDatosFases = async ()=>{
         //dispatch(addFases(getFasesFromRestApi(currentControler.mac,currentControler.ip)));
-        try{
-        const result = await getFasesFromRestApi(currentControler.mac,currentControler.ip)
-        console.log(result);
-        dispatch(addFases(result));
-    }
-        catch(e){
-            console.log(e);
-        }
+
          
     }
     const seleccionarControlador = (data) => {

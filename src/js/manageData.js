@@ -80,7 +80,10 @@ function convertToPlanes(respuesta, mac) {
         let plan_lst = respuesta[mac][numPlan] //esq tu utilizas plan_list aqui
         plan_lst = parseToArray(plan_lst)
 
-        let plan = {[`${numPlan}`]:plan_lst}
+        let plan = {
+            numPlan:`${numPlan}`,
+            pasos:plan_lst
+    }
 
         lista_datos.push(plan)
 

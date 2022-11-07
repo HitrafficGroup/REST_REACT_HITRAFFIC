@@ -1,3 +1,12 @@
 .blank-box{
     height: 80px;
 }
+.tr-planes{
+height: 80px;
+}
+.scroller {
+    height: 300px;
+    overflow-y: scroll;
+    scrollbar-color: rebeccapurple green;
+    scrollbar-width: thin;
+  }
