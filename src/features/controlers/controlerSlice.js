@@ -5,6 +5,7 @@ export const controlerSlice = createSlice({
     initialState: {
         ip: '',
         mac: '',
+        status: '',
         fases: {},
         planes:{},
     },
@@ -14,8 +15,13 @@ export const controlerSlice = createSlice({
         },
         addPlanes: (state,action)=>{
             state.planes = action.payload;
+        },
+        setInitialStateController:(state,action)=>{
+            state.ip = action.payload.ip;
+            state.mac = action.payload.mac;
+            state.status = action.payload.status;
         }
     }
 })
-export const {addFases, addPlanes} = controlerSlice.actions
+export const {addFases, addPlanes,setInitialStateController} = controlerSlice.actions
 export default controlerSlice.reducer

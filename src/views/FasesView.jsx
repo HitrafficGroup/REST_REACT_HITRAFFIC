@@ -10,34 +10,43 @@ import MenuItem from '@mui/material/MenuItem';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
+import { getIpsFromRestApi,getFasesFromRestApi,getPlanesFromRestApi } from '../js/apiFunctions'
+import { useSelector,useDispatch } from 'react-redux';
+import {addFases,addPlanes,setInitialStateController} from "../features/controlers/controlerSlice"
 import '../css/FasesView.css';
+
+
 export default function FasesView(){
-    const [fases,setFases] = useState([
-    {name:'FASE1',g1:'rojo',g2:'verde',g3:'rojo',g4:'destello'},
-    {name:'FASE2',g1:'rojo',g2:'verde',g3:'rojo',g4:'apagado'},
-    {name:'FASE3',g1:'rojo',g2:'rojo',g3:'rojo',g4:'rojo'},
-    {name:'FASE4',g1:'destello',g2:'rojo',g3:'verde',g4:'rojo'},
-    {name:'FASE5',g1:'rojo',g2:'rojo',g3:'rojo',g4:'rojo'},
-    {name:'FASE6',g1:'rojo',g2:'apagado',g3:'rojo',g4:'rojo'},
-    {name:'FASE7',g1:'verde',g2:'rojo',g3:'verde',g4:'rojo'},
-    {name:'FASE8',g1:'rojo',g2:'rojo',g3:'rojo',g4:'rojo'},
-    {name:'FASE9',g1:'rojo',g2:'rojo',g3:'rojo',g4:'rojo'},
-    {name:'FASE10',g1:'rojo',g2:'rojo',g3:'rojo',g4:'rojo'},
-    {name:'FASE11',g1:'rojo',g2:'rojo',g3:'rojo',g4:'rojo'},
-    {name:'FASE12',g1:'rojo',g2:'rojo',g3:'rojo',g4:'rojo'},
-    {name:'FASE13',g1:'rojo',g2:'rojo',g3:'rojo',g4:'rojo'},
-    {name:'FASE14',g1:'rojo',g2:'rojo',g3:'rojo',g4:'rojo'},
-    {name:'FASE15',g1:'rojo',g2:'rojo',g3:'rojo',g4:'rojo'},
-    {name:'FASE16',g1:'rojo',g2:'rojo',g3:'rojo',g4:'rojo'},
-])
+
+const [fases,setFases] = useState(fasesIniciales)
     const [modalFase,setModalFase] = useState(false)
+    const dispatch = useDispatch();
     const [currentFase,setCurrentFase] = useState(false)
+    const controlerState = useSelector(state => state.controlers)
     const abrirModalFase = (data) => {
         setModalFase(true);
         setCurrentFase(data);
     }
     const actualizarFase = () =>{
         setModalFase(false);
+    }
+    const leerDatosFases = async() =>{
+             //dispatch(addFases(getFasesFromRestApi(currentControler.mac,currentControler.ip)));
+             try{
+                const result = await getFasesFromRestApi(controlerState.mac,controlerState.ip)
+                var arregloFases = []
+                for (let index_plan = 1; index_plan < 17; index_plan++) {
+                        var faseT = result["fase"+index_plan]
+                        arregloFases.push(faseT)
+                   
+                }
+                console.log(arregloFases[0].grupos[0].colorDescripcion)
+                setFases(arregloFases);
+                dispatch(addFases(arregloFases));
+            }
+                catch(e){
+                    console.log(e);
+                }
     }
     return(
         <>
@@ -61,19 +70,19 @@ export default function FasesView(){
                             {fases.map((dato, index) => (
                                 <Tr key={index} >
                                     <Td>
-                                        <b>{dato.name}</b>
+                                        <b>fase</b>
                                     </Td>
                                     <Td >
-                                    <Chip label={dato.g1} color={dato.g1} icon={<LightModeIcon/>} sx={{width:'90%'}}  />
+                                    <Chip label={dato.grupos[0].colorDescripcion} color={dato.grupos[0].colorDescripcion} icon={<LightModeIcon/>} sx={{width:'90%'}}  />
                                     </Td>
                                     <Td >
-                                    <Chip label={dato.g2} color={dato.g2} icon={<LightModeIcon/>} sx={{width:'90%'}} />
+                                    <Chip label={dato.grupos[1].colorDescripcion} color={dato.grupos[1].colorDescripcion} icon={<LightModeIcon/>} sx={{width:'90%'}} />
                                     </Td>
                                     <Td >
-                                    <Chip label={dato.g3} color={dato.g3} icon={<LightModeIcon/>} sx={{width:'90%'}} />
+                                    <Chip label={dato.grupos[2].colorDescripcion} color={dato.grupos[2].colorDescripcion} icon={<LightModeIcon/>} sx={{width:'90%'}} />
                                     </Td>
                                     <Td >
-                                    <Chip label={dato.g4} color={dato.g4} icon={<LightModeIcon/>} sx={{width:'90%'}} />
+                                    <Chip label={dato.grupos[3].colorDescripcion} color={dato.grupos[3].colorDescripcion} icon={<LightModeIcon/>} sx={{width:'90%'}} />
                                     </Td>
                                     <Td >
                                         <Button variant="contained" color='advertencia' onClick={()=>{abrirModalFase(dato)}} >Modificar</Button>
@@ -85,7 +94,7 @@ export default function FasesView(){
                     </Table>
                 </Grid>
                 <Grid item xs={4}>
-                <Button variant="contained" color='primary' >Leer Datos</Button>
+                <Button variant="contained" color='primary' onClick={leerDatosFases}>Leer Datos</Button>
                 </Grid>
                 <Grid item xs={4}>
                 <Button variant="contained" color='primary'  >Cargar Datos</Button>
@@ -188,3 +197,158 @@ export default function FasesView(){
     );
     
     }
+    const fasesIniciales = [
+        {
+            faseNum:1,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:2,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:1,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:3,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:4,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:5,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:6,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:7,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:8,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:9,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:10,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:11,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:12,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:13,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:14,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:15,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+        {
+            faseNum:16,
+            grupos:[
+                {grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo'},             
+                {grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+                {grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo'},
+            ]
+        },
+    ]

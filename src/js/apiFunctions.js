@@ -13,7 +13,6 @@ async function getFasesFromRestApi(mac, ip) {
 	})
 		.then(response => {
 			fases = convertToFases(response.data, mac);
-			console.log(fases);
 
 		})
 		.catch(function (error) {
@@ -29,7 +28,7 @@ async function getPlanesFromRestApi(mac, ip) {
 	})
 		.then(response => {
 			planes = convertToPlanes(response.data, mac);
-			console.log(planes)
+
 
 		})
 		.catch(function (error) {

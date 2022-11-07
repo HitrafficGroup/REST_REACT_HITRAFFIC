@@ -18,50 +18,13 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector,useDispatch } from 'react-redux';
-import {addFases,addPlanes} from "../features/controlers/controlerSlice"
+import {addFases,addPlanes,setInitialStateController} from "../features/controlers/controlerSlice"
 // dependencias del custom Map
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../css/HomeView.css';
-// const semaforos = [
-//     {
-//         nombre: "semaforo de las americas",
-//         lat: "-23.12312",
-//         lng: "-34.2321421",
-//         rojo: 15,
-//         amarillo:2,
-//         verde:50,
-//         fase: 1,
-//     },
-//     {
-//         nombre: "semaforo de las shiris",
-//         lat: "-23.12312",
-//         lng: "-8.2321421",
-//         rojo: 15,
-//         amarillo:2,
-//         verde:10,
-//         fase: 1,
-//     },
-//     {
-//         nombre: "semaforo de pumapugo",
-//         lat: "-23.12312",
-//         lng: "-21.2321421",
-//         rojo: 40,
-//         amarillo:2,
-//         verde:30,
-//         fase: 5,
-//     },
-//     {
-//         nombre: "semaforo mariscal lamar",
-//         lat: "-2.12312",
-//         lng: "-1.2321421",
-//         rojo: 10,
-//         amarillo:2,
-//         verde:30,
-//         fase: 3,
-//     }
-// ]
+
 
 export default function HomeView() {
     const [controladres, setControladores] = useState([]);
@@ -177,6 +140,8 @@ export default function HomeView() {
     const seleccionarControlador = (data) => {
         console.log(data);
         setCurrentControler(data);
+        dispatch(setInitialStateController(data));
+        console.log(controlerState)
         const unsub = onSnapshot(doc(db, "controladores", `${data.mac}`), (doc) => {
             setSemaforos(doc.data().grupos)
         });
