@@ -1,3 +1,9 @@
 .blank-box{
     height: 40px;
 }
+.f-scroller {
+    height: 500px;
+    overflow-y: scroll;
+    scrollbar-color: rebeccapurple green;
+    scrollbar-width: thin;
+  }

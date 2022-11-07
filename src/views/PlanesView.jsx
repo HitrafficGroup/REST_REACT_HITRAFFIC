@@ -9,11 +9,10 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import Autocomplete from '@mui/material/Autocomplete';
-import { Input, Label } from 'reactstrap';
 import '../css/PlanesView.css'
 import { useSelector, useDispatch } from 'react-redux';
-import { addFases, addPlanes, setInitialStateController } from "../features/controlers/controlerSlice"
-import { getIpsFromRestApi, getFasesFromRestApi, getPlanesFromRestApi } from '../js/apiFunctions'
+import { addPlanes } from "../features/controlers/controlerSlice"
+import { getPlanesFromRestApi } from '../js/apiFunctions'
 
 export default function PlanesView() {
     const dispatch = useDispatch();

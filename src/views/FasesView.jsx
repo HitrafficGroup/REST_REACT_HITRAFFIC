@@ -55,6 +55,7 @@ const [fases,setFases] = useState(fasesIniciales)
             <h1>Fases View</h1>    
             <Grid container spacing={2}>
             <Grid item xs={12}>
+                <div className='f-scroller'>
                     <Table className='home-t'>
                         <Thead>
                             <Tr>
@@ -66,6 +67,7 @@ const [fases,setFases] = useState(fasesIniciales)
                                 <Th className='home-t-th'>G4</Th>
                             </Tr>
                         </Thead>
+                        
                         <Tbody>
                             {fases.map((dato, index) => (
                                 <Tr key={index} >
@@ -92,6 +94,7 @@ const [fases,setFases] = useState(fasesIniciales)
                             ))}
                         </Tbody>
                     </Table>
+                </div>
                 </Grid>
                 <Grid item xs={4}>
                 <Button variant="contained" color='primary' onClick={leerDatosFases}>Leer Datos</Button>
