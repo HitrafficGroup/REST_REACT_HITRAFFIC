@@ -19,47 +19,66 @@ import Checkbox from '@mui/material/Checkbox';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import '../css/HorariosView.css';
+
 export default function HorariosView(){
-    const [horarios,setHorarios] = useState([
-        	{hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-            {hora: '2022-01-01T00:00:00',modoOperativo: 'Tiempo Operativo',plan: 1,desfase:1},
-    ]);
+    const [horarios,setHorarios] = useState(horariosPorDefecto);
     const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers)
     const [operativos,setOperativos] =  useState([{fecha:'',tiempoeje:''}]);
     const [modalHorarios,setModalHorarios] =useState(false);
-
+    const [tipoDia,setTipoDia] = useState('');
+    const [objHorarios,setObjHorarios] = useState(null);
     const editarHorarios = () =>{
         setModalHorarios(true);
     }
     const aplicarLosCambios = () => {
         setModalHorarios(false);
     }
-    const [age, setAge] = useState('');
 
-    const handleChange = (event) => {
-        setAge(event.target.value);
+    const handleTipoDia = (event) => {
+        if(objHorarios !== null){
+        setTipoDia(event.target.value);
+        if(event.target.value === 'dia_ordinario'){
+            console.log('selecciono dia ordinario');
+            setHorarios(objHorarios[event.target.value])
+        }else if(event.target.value === 'fin_semana'){
+            console.log('selecciono fin de semana') ;
+            setHorarios(objHorarios[event.target.value])
+        }else if(event.target.value === 'dia_festivo'){
+            console.log('selecciono dia festivo');
+            setHorarios(objHorarios[event.target.value])
+        }else{
+            console.log('no selecciono nada');
+            setHorarios(horariosPorDefecto)
+        }
+    }else{
+        console.log("no data")
+    }
+
     };
     const leerHorariosFromRestApi= async()=>{
         try{
             const result = await getHorariosFromRestApi(controlerState.mac, controlerState.ip)
-            console.log(result)
+            setObjHorarios(result)
+            setHorarios(horariosPorDefecto)
+            setTipoDia('');
         }catch(e){
             console.log(e);
+        }
+    }
+    const modoFormat = (tipo) =>{
+        if (tipo === 1){
+            return 'tiempo Fijo'
+        }else if (tipo === 2){
+            return 'Pulsante'
+        }
+        else if (tipo === 3){
+            return 'Destello'
+        }
+        else if (tipo === 4){
+            return 'Todo en Rojo'
+        }else{
+            return 'Apagado'
         }
     }
     return(
@@ -73,13 +92,14 @@ export default function HorariosView(){
                 <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    value={age}
+                    value={tipoDia}
                     label="Tipo"
-                    onChange={handleChange}
+                    onChange={handleTipoDia}
                     >
-                <MenuItem value={10}>Dia Ordinario</MenuItem>
-                <MenuItem value={20}>Fin De Semana</MenuItem>
-                <MenuItem value={30}>Dia Festivo</MenuItem>
+                <MenuItem value={''}>Escoga Una Opcion</MenuItem>
+                <MenuItem value={'dia_ordinario'}>Dia Ordinario</MenuItem>
+                <MenuItem value={'fin_semana'}>Fin De Semana</MenuItem>
+                <MenuItem value={'dia_festivo'}>Dia Festivo</MenuItem>
                 </Select>
                 </FormControl>
                 </Grid>
@@ -96,7 +116,7 @@ export default function HorariosView(){
                             <Thead>
                                 <Tr>
                                     <Th className='home-t-th'>Nro</Th>
-                                    <Th className='home-t-th'>Hora de Inicio</Th>
+                                    <Th className='home-t-th'>Hora de Inicio 24h</Th>
                                     <Th className='home-t-th'>Modo Operativo</Th>
                                     <Th className='home-t-th'>Plan No.</Th>
                                     <Th className='home-t-th'>Desfase</Th>
@@ -110,10 +130,10 @@ export default function HorariosView(){
                                             {index+1}
                                         </Td>
                                         <Td >
-                                            {dato.hora}
+                                            {dato.horas+':'+dato.minutos}
                                         </Td>
                                         <Td >
-                                            {dato.modoOperativo}
+                                            {dato.mod ?modoFormat(dato.mod):'No especificado'}
                                         </Td>
                                         <Td >
                                             {dato.plan}
@@ -296,3 +316,22 @@ export default function HorariosView(){
     );
     
     }
+    const horariosPorDefecto = [
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+        {horas: '00',minutos:'00' ,mod: 0,plan: 0,desfase:'0'},
+    
+    ]
