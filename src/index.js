@@ -17,6 +17,10 @@ const theme = createTheme({
       contrastText: '#fff',
       darker: '#053e85',
     },
+    seleccion:{
+      main:'#34495E ',
+      contrastText: '#fff',
+    },
     crema: {
       main: '#F0B27A',
       contrastText: '#fff',

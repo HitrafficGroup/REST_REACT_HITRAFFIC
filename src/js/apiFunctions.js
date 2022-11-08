@@ -55,5 +55,15 @@ async function getHorariosFromRestApi(mac, ip) {
 	return horarios;
 }
 
+async function postHorariosFromRestApi(jsonData) {
 
-export { getIpsFromRestApi, getFasesFromRestApi, getPlanesFromRestApi,getHorariosFromRestApi }
+	await axios.post(`http://127.0.0.1:8000/rest/restSetHorariosControlador?mac=${jsonData['mac']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+}
+
+export { getIpsFromRestApi, getFasesFromRestApi, getPlanesFromRestApi,getHorariosFromRestApi,postHorariosFromRestApi }

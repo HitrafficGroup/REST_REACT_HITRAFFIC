@@ -24,15 +24,15 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../css/HomeView.css';
-
+import swal from 'sweetalert';
 
 export default function HomeView() {
-    const [controladres, setControladores] = useState([]);
+    const [controladores, setControladores] = useState([]);
     const [modalSemaforo, setModalSemaforo] = useState(false);
     const [nombreSemaforo, setNombreSemaforo] = useState('');
     const [currentSemaforo, setCurrentSemaforo] = useState({});
     const [modal, setModal] = useState(false);
-    const [accionesUi, setAccionesUi] = useState({});
+    const [accionesUi, setAccionesUi] = useState(false);
     const center = [-2.889889285482916, -78.96312349450281]
     const [draggable, setDraggable] = useState(false)
     const [position, setPosition] = useState(center)
@@ -101,45 +101,45 @@ export default function HomeView() {
 
     });
     const toggle = () => setModal(!modal);
-    // const getData = () => {
-    //     const reference = query(collection(db, "controladores"));
-    //     onSnapshot(reference, (querySnapshot) => {
-    //         var devices = [];
-    //         querySnapshot.forEach((doc) => {
-    //             devices.push(doc.data());
-    //         });
-    //         setControladores(
-    //             devices
-    //         );
-
-    //     });
-    //     onSnapshot(doc(db, "actions", "qaBT2QgWep5LFroiBXcW"), (doc) => {
-    //         console.log("Current data: ", doc.data());
-    //         setAccionesUi(doc.data())
-    //     });
-
-    // }
+    
     const abrirSemaforoModal = (data) => {
         console.log(data);
         setCurrentSemaforo(data);
         setModalSemaforo(true);
 
     }
-    const leerDatosFases = async ()=>{
-        //dispatch(addFases(getFasesFromRestApi(currentControler.mac,currentControler.ip)));
 
-         
-    }
     const seleccionarControlador = (data) => {
-        console.log(data);
         setCurrentControler(data);
         dispatch(setInitialStateController(data));
-        console.log(controlerState)
-        const unsub = onSnapshot(doc(db, "controladores", `${data.mac}`), (doc) => {
-            setSemaforos(doc.data().grupos)
+        onSnapshot(doc(db, "controladores", `${data.mac}`), (doc) => {
+            if(doc.exists()){
+                setSemaforos(doc.data().grupos)
+            }else{
+                console.log('no existe')
+            }
+            //setSemaforos(doc.data().grupos)
         });
-    }
+        swal({
+            title: "Felicidades!",
+            text: "Controlador Seleccionado Con Exito",
+            icon: "success",
+    
+          });
+        const controls =  controladores.map(item =>{
+            if(item.mac === data.mac){
+                item['seleccionado'] = true
+            }else{
+                item['seleccionado'] = false
+            }
+            return(item);
+        })
+        
 
+      
+        
+    }
+   
     useEffect(() => {
         console.log(controlerState);
     }, [])
@@ -171,10 +171,17 @@ export default function HomeView() {
     }
 
     const listarIps = async () => {
+        setAccionesUi(true);
+        setControladores([]);
         const doc = await getIpsFromRestApi();
         const ips = doc.data.Ips_disponibles;
-        setControladores(ips);
-        console.log(ips);
+        var controladores = ips.map(item =>{
+            item['seleccionado'] = false
+            return(item);
+        })
+     
+        setControladores(controladores);
+        setAccionesUi(false)
     }
     const agregarSemaforo = async() => {
         var data = newSemaforo
@@ -204,7 +211,7 @@ export default function HomeView() {
         <div>
             <Container maxWidth="md">
                 <h2>Lista De Controladores</h2>
-                <Button variant="contained" disabled={accionesUi.lectura} endIcon={<CloudDownloadIcon />} onClick={listarIps} sx={{ marginBottom: 2 }}>
+                <Button variant="contained" disabled={accionesUi} endIcon={<CloudDownloadIcon />}  onClick={listarIps} sx={{ marginBottom: 2 }}>
                     Listar Controladores
                 </Button>
                 <Grid container spacing={1}>
@@ -220,13 +227,13 @@ export default function HomeView() {
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {controladres.map((dato, index) => (
+                                {controladores.map((dato, index) => (
                                     <Tr key={index} >
                                         <Td>
                                             {index + 1}
                                         </Td>
                                         <Td >
-                                            <Button variant="contained" onClick={() => { seleccionarControlador(dato) }} >SELECCIONAR</Button>
+                                            <Button variant="contained" disabled={accionesUi}  color={dato.seleccionado ? 'verde2':'seleccion'} onClick={() => { seleccionarControlador(dato) }} >SELECCIONAR</Button>
                                         </Td>
                                         <Td >
                                             {dato.ip}
@@ -248,12 +255,12 @@ export default function HomeView() {
                             <h5>Controlador Seleccionado: </h5>
                         </div>
                     </Grid>
-                    <Grid item xs={12} md={8}>
+                    {/* <Grid item xs={12} md={8}>
                         <TextField id="outlined-basic" label="Tiempo Umbral de Cache" variant="outlined" fullWidth />
                     </Grid>
                     <Grid item xs={12} md={4}  >
                         <Button variant="contained" startIcon={<UpdateIcon />} onClick={leerDatosFases} color="verde2" fullWidth sx={{ height: "100%" }}>ACTUALIZAR</Button>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} md={12}>
                         <div className="map">
                             <MapContainer center={position} zoom={19} scrollWheelZoom={false} className='map-container'>
