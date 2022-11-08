@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { convertToFases, convertToPlanes } from './manageData'
+import { convertToFases, convertToPlanes,createHorariosObject } from './manageData'
 const BASE_PATH_WS = 'http://127.0.0.1:8000';
 async function getIpsFromRestApi() {
 	console.log('se ejecuta peticion');
@@ -43,7 +43,9 @@ async function getHorariosFromRestApi(mac, ip) {
 		ip: ip
 	})
 		.then(response => {
-			horarios = response.data;
+	
+	
+			horarios = createHorariosObject(response.data,mac)
 
 
 		})

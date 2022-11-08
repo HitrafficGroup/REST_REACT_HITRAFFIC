@@ -81,19 +81,120 @@ function convertToPlanes(respuesta, mac) {
         plan_lst = parseToArray(plan_lst)
 
         let plan = {
-            numPlan:`${numPlan}`,
-            pasos:plan_lst
-    }
+            numPlan: `${numPlan}`,
+            pasos: plan_lst
+        }
 
         lista_datos.push(plan)
 
     }
-    return ({[`${mac}`]:lista_datos})
+    return ({ [`${mac}`]: lista_datos })
 
 }
 
 
 
+function getListHorarios(respuesta, mac) {
+
+    let dia_festivo_lst = respuesta[mac]["dia_festivo"]
+    let dia_ordinario_lst = respuesta[mac]["dia_ordinario"]
+    let fin_semana_lst = respuesta[mac]["fin_semana"]
 
 
-export { convertToFases, convertToPlanes }
+    dia_festivo_lst = parseToArray(dia_festivo_lst)
+    dia_ordinario_lst = parseToArray(dia_ordinario_lst)
+    fin_semana_lst = parseToArray(fin_semana_lst)
+
+    let lista_datos = [dia_ordinario_lst, fin_semana_lst, dia_festivo_lst]
+
+
+
+
+
+    return lista_datos
+}
+
+
+function convertToHorarios(horario_list = []) {
+    let objetos = {}
+    let nombres = ["", "Tiempo Fijo", "Pulsante", "Destello", "Todo en Rojo", "Apagado"]
+    for (let valor = 0; valor < 4; valor++) {
+        switch (valor) {
+            case 0:
+                let hora = horario_list[valor]
+                hora = hora.toString(16)
+                if (hora.length < 2) {
+                    hora = "0" + hora
+                }
+                objetos["hora"] = hora
+                break;
+            case 1:
+                let minutos = horario_list[valor]
+                minutos = minutos.toString(16)
+                if (minutos.length < 2) {
+                    minutos = "0" + minutos
+                }
+                objetos["minutos"] = minutos
+                break;
+            case 2:
+                let mod_plan = horario_list[valor]
+                mod_plan = mod_plan.toString(2)
+                let bits_faltantes = 8 - mod_plan.length
+                for (let bit = 0; bit < bits_faltantes; bit++) {
+                    mod_plan = "0" + mod_plan
+                }
+                let mod = mod_plan.substring(0, 3)
+                let plan = mod_plan.substring(3, 8)
+                let mod_int = parseInt(mod, 2)
+                let plan_int = parseInt(plan, 2)
+                objetos["mod"] = mod_int
+                objetos["mod_descriptor"] = nombres[mod_int]
+                objetos["plan"] = plan_int
+                break;
+            case 3:
+                let desfase = horario_list[valor]
+                desfase = desfase.toString(16)
+                objetos["desfase"] = desfase
+                break;
+        }
+    }
+    return objetos
+}
+
+function createHorariosObject(respuesta,mac) {
+    
+    let horario_list = getListHorarios(respuesta,mac)
+    let ordinario = generateObjectForTipoHorario(horario_list[0])
+    let semana = generateObjectForTipoHorario(horario_list[1])
+    let festivo = generateObjectForTipoHorario(horario_list[2])
+    let horarioObject = {
+        dia_ordinario: ordinario,
+        fin_semana:semana,
+        dia_festivo:festivo
+
+
+    }
+    return horarioObject
+    
+}
+function generateObjectForTipoHorario(horario_list){
+    let contador = 0
+    let arrayObjects = []
+    for (let num = 0; num < 16; num++) {
+        let lista_by4 = [horario_list[contador], horario_list[contador + 1], horario_list[contador + 2], horario_list[contador + 3]]
+        let objetos = convertToHorarios(lista_by4)
+        let newObjecto = {
+            horas:objetos["hora"],
+            minutos:objetos["minutos"],
+            mod:objetos["mod"],
+            plan:objetos["plan"],
+            desfase:objetos["desfase"],
+        }
+        arrayObjects.push(newObjecto)
+        contador = contador + 4
+    }
+    return arrayObjects
+}
+
+
+export { convertToFases, convertToPlanes, createHorariosObject }
