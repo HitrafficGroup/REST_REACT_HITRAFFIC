@@ -20,6 +20,15 @@ async function getFasesFromRestApi(mac, ip) {
 		});
 	return fases;
 }
+async function postFasesFromRestApi(jsonData) {
+	await axios.post(`http://127.0.0.1:8000/rest/restSetFasesControlador?mac=${jsonData['mac']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+}
 async function getPlanesFromRestApi(mac, ip) {
 
 	var planes;
@@ -66,4 +75,4 @@ async function postHorariosFromRestApi(jsonData) {
 		});
 }
 
-export { getIpsFromRestApi, getFasesFromRestApi, getPlanesFromRestApi,getHorariosFromRestApi,postHorariosFromRestApi }
+export { getIpsFromRestApi, getFasesFromRestApi, getPlanesFromRestApi,getHorariosFromRestApi,postHorariosFromRestApi,postFasesFromRestApi }

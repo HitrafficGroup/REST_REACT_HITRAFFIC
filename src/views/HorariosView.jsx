@@ -437,40 +437,5 @@ const horariosPorDefecto = [
 
 ]
 
-const rojo = {
-    desfase1: "0", desfase2: "0", desfase3: "0", desfase4: "0", desfase5: "0", desfase6: "0", desfase7: "0", desfase8: "0",
-    desfase9: "0", desfase10: "0", desfase11: "0", desfase12: "0", desfase13: "0", desfase14: "0", desfase15: "0", desfase16: "0",
-    hora1: "1",
-    hora2: "9", hora3: "20", hora4: "24", hora5: "0", hora6: "0", hora7: "0", hora8: "0", hora9: "0", hora10: "0", hora11: "0", hora12: "0", hora13: "0",
-    hora14: "0", hora15: "0", hora16: "0", ip: "192.168.0.178", mac: '00:14:97:F2:D1:39',
-    minuto1: "32", minuto2: "0", minuto3: "0", minuto4: "5", minuto5: "0", minuto6: "0",
-    minuto7: "0", minuto8: "0", minuto9: "0", minuto10: "0", minuto11: "0", minuto12: "0", minuto13: "0", minuto14: "0", minuto15: "0", minuto16: "0",
-    mod_plan1: 130, mod_plan2: 130, mod_plan3: 130, mod_plan4: 130, mod_plan5: 0, mod_plan6: 0, mod_plan7: 0, mod_plan8: 0, mod_plan9: 0, mod_plan10: 0, mod_plan11: 0,
-    mod_plan12: 0, mod_plan13: 0, mod_plan14: 0, mod_plan15: 0, mod_plan16: 0, num_horario: "0"
-}
 
-const destello = {
-    desfase1: "0", desfase2: "0", desfase3: "0", desfase4: "0", desfase5: "0", desfase6: "0", desfase7: "0", desfase8: "0",
-    desfase9: "0", desfase10: "0", desfase11: "0", desfase12: "0", desfase13: "0", desfase14: "0", desfase15: "0", desfase16: "0",
-    hora1: "1",
-    hora2: "9", hora3: "20", hora4: "24", hora5: "0", hora6: "0", hora7: "0", hora8: "0", hora9: "0", hora10: "0", hora11: "0", hora12: "0", hora13: "0",
-    hora14: "0", hora15: "0", hora16: "0", ip: "192.168.0.178", mac: '00:14:97:F2:D1:39',
-    minuto1: "32", minuto2: "0", minuto3: "0", minuto4: "5", minuto5: "0", minuto6: "0",
-    minuto7: "0", minuto8: "0", minuto9: "0", minuto10: "0", minuto11: "0", minuto12: "0", minuto13: "0", minuto14: "0", minuto15: "0", minuto16: "0",
-    mod_plan1: 99, mod_plan2: 99, mod_plan3: 99, mod_plan4: 99, mod_plan5: 0, mod_plan6: 0, mod_plan7: 0, mod_plan8: 0, mod_plan9: 0, mod_plan10: 0, mod_plan11: 0,
-    mod_plan12: 0, mod_plan13: 0, mod_plan14: 0, mod_plan15: 0, mod_plan16: 0, num_horario: "0"
-}
-
-const fijo = {
-    desfase1: "0", desfase2: "0", desfase3: "0", desfase4: "0", desfase5: "0", desfase6: "0", desfase7: "0", desfase8: "0",
-    desfase9: "0", desfase10: "0", desfase11: "0", desfase12: "0", desfase13: "0", desfase14: "0", desfase15: "0", desfase16: "0",
-    hora1: "1",
-    hora2: "9", hora3: "20", hora4: "24", hora5: "0", hora6: "0", hora7: "0", hora8: "0", hora9: "0", hora10: "0", hora11: "0", hora12: "0", hora13: "0",
-    hora14: "0", hora15: "0", hora16: "0", ip: "192.168.0.178", mac: '00:14:97:F2:D1:39',
-    minuto1: "32", minuto2: "0", minuto3: "0", minuto4: "5", minuto5: "0", minuto6: "0",
-    minuto7: "0", minuto8: "0", minuto9: "0", minuto10: "0", minuto11: "0", minuto12: "0", minuto13: "0", minuto14: "0", minuto15: "0", minuto16: "0",
-    mod_plan1: 34, mod_plan2: 35, mod_plan3: 34, mod_plan4: 35, mod_plan5: 0, mod_plan6: 0, mod_plan7: 0, mod_plan8: 0, mod_plan9: 0, mod_plan10: 0, mod_plan11: 0,
-    mod_plan12: 0, mod_plan13: 0, mod_plan14: 0, mod_plan15: 0, mod_plan16: 0, num_horario: "0"
-}
-const planes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 const planes2 = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']
