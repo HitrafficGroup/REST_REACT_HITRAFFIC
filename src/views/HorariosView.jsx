@@ -28,20 +28,21 @@ export default function HorariosView() {
     const controlerState = useSelector(state => state.controlers)
     const [operativos, setOperativos] = useState([{ fecha: '', tiempoeje: '' }]);
     const [modalHorarios, setModalHorarios] = useState(false);
-    const [tipoDia, setTipoDia] = useState('');
-    const [planSemaforo,setPlanSemaforo] = useState('1');
-    const [modoSemaforo, setModoSemaforo] = useState('');
-    const [modoSemaforo2, setModoSemaforo2] = useState('');
-    const [time1,setTime1] = useState(new Date());
+    const [tipoDia, setTipoDia] = useState(' ');
+    const [planSemaforo, setPlanSemaforo] = useState('1');
+    const [modoSemaforo, setModoSemaforo] = useState(1);
+    const [desfaseSemaforo,setDesfaseSemaforo] = useState('0');
+    const [time1, setTime1] = useState(new Date());
     const [objHorarios, setObjHorarios] = useState(null);
-    const [currentHorario,setCurrentHorario] = useState(
+    const [currentHorario, setCurrentHorario] = useState(
         { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
     );
     const editarHorarios = (data) => {
         console.log(data)
         setCurrentHorario(data);
         setPlanSemaforo(data.plan.toString())
-
+        setModoSemaforo(data.mod)
+        setDesfaseSemaforo(data.desfase)
         let horas = data.horas
         let minutos = data.minutos
         let tiempo = new Date(`Nov 02 1999 ${horas}:${minutos} GMT-0500 (Ecuador Time)`)
@@ -49,29 +50,35 @@ export default function HorariosView() {
         setModalHorarios(true);
 
     }
-    const handleTime1 = (newValue) =>{
-        console.log(newValue)
-    }
-    const modifyCurrentHorario = (event) =>{
-        setCurrentHorario({
-            ...currentHorario,[event.target.name]:event.target.value
-        })
-        console.log(currentHorario)
+    const handleTime1 = (newValue) => {
+        setTime1(newValue)
+        currentHorario['horas'] = newValue.$H.toString()
+        currentHorario['minutos'] = newValue.$m.toString()
     }
     const aplicarLosCambios = () => {
+        var temp = currentHorario
+        temp['plan'] = parseInt(planSemaforo)
+        temp['mod'] = modoSemaforo
+        temp['desfase'] = desfaseSemaforo
+        setCurrentHorario(temp)
+        console.log(temp);
         setModalHorarios(false);
     }
-  
+
     const handleModoSemaforo = (event) => {
         console.log(event.target.value);
+        setModoSemaforo(event.target.value);
+        
     }
-    const handleModoSemaforo2 = (event) => {
+    const handleFaseSemaforo = (event) => {
+        setDesfaseSemaforo(event.target.value);
         console.log(event.target.value);
     }
 
     const handleTipoDia = (event) => {
         if (objHorarios !== null) {
             setTipoDia(event.target.value);
+            console.log(event.target.value);
             if (event.target.value === 'dia_ordinario') {
                 console.log('selecciono dia ordinario');
                 setHorarios(objHorarios[event.target.value])
@@ -94,6 +101,7 @@ export default function HorariosView() {
         try {
             const result = await getHorariosFromRestApi(controlerState.mac, controlerState.ip)
             setObjHorarios(result)
+            console.log(result);
             setHorarios(horariosPorDefecto)
             setTipoDia('');
         } catch (e) {
@@ -111,15 +119,56 @@ export default function HorariosView() {
         }
         else if (tipo === 4) {
             return 'Todo en Rojo'
-        } else if(tipo === 5) {
+        } else if (tipo === 5) {
             return 'Apagado'
         }
     }
+    const formatearTipoDia = (data)=>{
+        if(data === 'dia_ordinario'){
+            return "0"
+        }else if (data === 'fin_semana'){
+            return "1"
+        }else{
+            return "2"
+        }
+    }
     const cargarDatos = async () => {
+       
+        const data = horarios
+        console.log(data)
+        var newObject = {}
+        for (let num = 0; num < 16; num++) {
+           
 
+            let mod = data[num].mod
+            let plan = data[num].plan
+     
+            mod = parseInt(mod).toString(2)
+            plan = parseInt(plan).toString(2)
+            let bits_faltantes_mod = 3 - mod.length
+            let bits_faltantes_plan = 5 - plan.length
+            for (let bit = 0; bit < bits_faltantes_mod; bit++) {
+                mod = "0" + mod
+            }
+            for (let bit = 0; bit < bits_faltantes_plan; bit++) {
+                plan = "0" + plan
+            }
+            let mod_plan = mod + plan
+            mod_plan = parseInt(mod_plan, 2)
+            let horas = data[num].horas
+            let minutos = data[num].minutos
+            newObject['hora'+(num+1)] = parseInt(horas, 16).toString()
+            newObject['minuto'+(num+1)] = parseInt(minutos, 16).toString()
+            newObject['desfase'+(num+1)] = data[num].desfase
+            newObject['mod_plan'+(num+1)] = mod_plan
+          
 
+        }
+        newObject['ip'] = controlerState.ip
+        newObject['num_horario'] = formatearTipoDia(tipoDia)
+       
         try {
-            postHorariosFromRestApi(rojo);
+            postHorariosFromRestApi(newObject);
         } catch (e) {
             console.log(e);
         }
@@ -185,7 +234,7 @@ export default function HorariosView() {
                                                 {dato.desfase}
                                             </Td>
                                             <Td >
-                                                <Button variant="contained" onClick={()=>{editarHorarios(dato)}} color='crema'>Editar</Button>
+                                                <Button variant="contained" onClick={() => { editarHorarios(dato) }} color='crema'>Editar</Button>
                                             </Td>
                                         </Tr>
                                     ))}
@@ -227,23 +276,22 @@ export default function HorariosView() {
                         </LocalizationProvider>
                     </Grid>
                     <Grid item xs={4}>
-                    <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Modo Operativo</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={modoSemaforo2}
-                                    label="Modo Operativo"
-                                    onChange={handleModoSemaforo2}
-                                >
-                                    <MenuItem value={' '}></MenuItem>
-                                    <MenuItem value={'0'}>Tiempo Fijo</MenuItem>
-                                    <MenuItem value={'1'}>Pulsante</MenuItem>
-                                    <MenuItem value={'2'}>Destello</MenuItem>
-                                    <MenuItem value={'3'}>Todo en Rojo</MenuItem>
-                                    <MenuItem value={'4'}>Apagado</MenuItem>
-                                </Select>
-                            </FormControl>
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Modo Operativo</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={modoSemaforo}
+                                label="Modo Operativo"
+                                onChange={handleModoSemaforo}
+                            >
+                                <MenuItem value={1}>Tiempo Fijo</MenuItem>
+                                <MenuItem value={2}>Pulsante</MenuItem>
+                                <MenuItem value={3}>Destello</MenuItem>
+                                <MenuItem value={4}>Todo en Rojo</MenuItem>
+                                <MenuItem value={5}>Apagado</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Grid>
                     <Grid item xs={4}>
                         <Button variant="contained" color='crema'>Crear</Button>
@@ -310,57 +358,55 @@ export default function HorariosView() {
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    value={currentHorario.mod}
+                                    value={modoSemaforo}
                                     label="Modo Operativo"
                                     name='mod'
-                                    onChange={modifyCurrentHorario}
+                                    onChange={handleModoSemaforo}
                                 >
-                                    <MenuItem value={' '}></MenuItem>
-                                    <MenuItem value={'1'}>Tiempo Fijo</MenuItem>
-                                    <MenuItem value={'2'}>Pulsante</MenuItem>
-                                    <MenuItem value={'3'}>Destello</MenuItem>
-                                    <MenuItem value={'4'}>Todo en Rojo</MenuItem>
-                                    <MenuItem value={'5'}>Apagado</MenuItem>
+                                    <MenuItem value={1}>Tiempo Fijo</MenuItem>
+                                    <MenuItem value={2}>Pulsante</MenuItem>
+                                    <MenuItem value={3}>Destello</MenuItem>
+                                    <MenuItem value={4}>Todo en Rojo</MenuItem>
+                                    <MenuItem value={5}>Apagado</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
                         <Grid item xs={12}>
                             <Autocomplete
-                                
                                 name='plan'
                                 value={planSemaforo}
                                 options={planes2}
-                                onChange= {(event,newValue)=>{setPlanSemaforo(newValue)}}
+                                onChange={(event, newValue) => { setPlanSemaforo(newValue) }}
                                 id="controllable-states-demo"
                                 renderInput={(params) => <TextField {...params} label="Escoga Un Plan" fullWidth />}
                             />
                         </Grid>
                         <Grid item xs={12}>
-                        <TextField
-                        id="outlined-number"
-                        label="Desfase"
-                        name='desfase'
-                        onChange={modifyCurrentHorario}
-                        fullWidth
-                        value={currentHorario.desfase}
-                        type="number"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-        />
+                            <TextField
+                                id="outlined-number"
+                                label="Desfase"
+                                name='desfase'
+                                onChange={handleFaseSemaforo}
+                                fullWidth
+                                value={desfaseSemaforo}
+                                type="number"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
                         </Grid>
                     </Grid>
                 </ModalBody>
                 <ModalFooter >
                     <div className='botones-modal-h'>
 
-                    <Button variant="contained" sx={{marginRight:5}} onClick={aplicarLosCambios} color='verde2' >
-                        Aplicar
-                    </Button>
-                    <Button variant="contained" onClick={()=>{setModalHorarios(false)}} color='rojo' >
-                        Cancelar
-                    </Button>
-                    
+                        <Button variant="contained" sx={{ marginRight: 5 }} onClick={aplicarLosCambios} color='verde2' >
+                            Aplicar
+                        </Button>
+                        <Button variant="contained" onClick={() => { setModalHorarios(false) }} color='rojo' >
+                            Cancelar
+                        </Button>
+
                     </div>
                 </ModalFooter>
             </Modal>
@@ -399,7 +445,7 @@ const rojo = {
     hora14: "0", hora15: "0", hora16: "0", ip: "192.168.0.178", mac: '00:14:97:F2:D1:39',
     minuto1: "32", minuto2: "0", minuto3: "0", minuto4: "5", minuto5: "0", minuto6: "0",
     minuto7: "0", minuto8: "0", minuto9: "0", minuto10: "0", minuto11: "0", minuto12: "0", minuto13: "0", minuto14: "0", minuto15: "0", minuto16: "0",
-    mod_plan1: 130, mod_plan2: 99, mod_plan3: 130, mod_plan4: 67, mod_plan5: 0, mod_plan6: 0, mod_plan7: 0, mod_plan8: 0, mod_plan9: 0, mod_plan10: 0, mod_plan11: 0,
+    mod_plan1: 130, mod_plan2: 130, mod_plan3: 130, mod_plan4: 130, mod_plan5: 0, mod_plan6: 0, mod_plan7: 0, mod_plan8: 0, mod_plan9: 0, mod_plan10: 0, mod_plan11: 0,
     mod_plan12: 0, mod_plan13: 0, mod_plan14: 0, mod_plan15: 0, mod_plan16: 0, num_horario: "0"
 }
 
@@ -411,7 +457,7 @@ const destello = {
     hora14: "0", hora15: "0", hora16: "0", ip: "192.168.0.178", mac: '00:14:97:F2:D1:39',
     minuto1: "32", minuto2: "0", minuto3: "0", minuto4: "5", minuto5: "0", minuto6: "0",
     minuto7: "0", minuto8: "0", minuto9: "0", minuto10: "0", minuto11: "0", minuto12: "0", minuto13: "0", minuto14: "0", minuto15: "0", minuto16: "0",
-    mod_plan1: 130, mod_plan2: 99, mod_plan3: 99, mod_plan4: 67, mod_plan5: 0, mod_plan6: 0, mod_plan7: 0, mod_plan8: 0, mod_plan9: 0, mod_plan10: 0, mod_plan11: 0,
+    mod_plan1: 99, mod_plan2: 99, mod_plan3: 99, mod_plan4: 99, mod_plan5: 0, mod_plan6: 0, mod_plan7: 0, mod_plan8: 0, mod_plan9: 0, mod_plan10: 0, mod_plan11: 0,
     mod_plan12: 0, mod_plan13: 0, mod_plan14: 0, mod_plan15: 0, mod_plan16: 0, num_horario: "0"
 }
 
@@ -426,5 +472,5 @@ const fijo = {
     mod_plan1: 34, mod_plan2: 35, mod_plan3: 34, mod_plan4: 35, mod_plan5: 0, mod_plan6: 0, mod_plan7: 0, mod_plan8: 0, mod_plan9: 0, mod_plan10: 0, mod_plan11: 0,
     mod_plan12: 0, mod_plan13: 0, mod_plan14: 0, mod_plan15: 0, mod_plan16: 0, num_horario: "0"
 }
-const planes = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
-const planes2 = ['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16']
+const planes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+const planes2 = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']

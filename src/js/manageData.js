@@ -184,6 +184,7 @@ function generateObjectForTipoHorario(horario_list){
         let lista_by4 = [horario_list[contador], horario_list[contador + 1], horario_list[contador + 2], horario_list[contador + 3]]
         let objetos = convertToHorarios(lista_by4)
         let newObjecto = {
+            nro:num,
             horas:objetos["hora"],
             minutos:objetos["minutos"],
             mod:objetos["mod"],
