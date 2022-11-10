@@ -10,7 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
-import { getFasesFromRestApi,postFasesFromRestApi } from '../js/apiFunctions'
+import { getFasesFromRestApi, postFasesFromRestApi } from '../js/apiFunctions'
 import { useSelector, useDispatch } from 'react-redux';
 import { addFases } from "../features/controlers/controlerSlice"
 import '../css/FasesView.css';
@@ -22,31 +22,46 @@ export default function FasesView() {
     const [modalFase, setModalFase] = useState(false)
     const dispatch = useDispatch();
     const [currentFase, setCurrentFase] = useState(faseInicial)
-    const [faseg1, setFaseg1] = useState('rojo')
-    const [faseg2, setFaseg2] = useState('rojo')
-    const [faseg3, setFaseg3] = useState('rojo')
-    const [faseg4, setFaseg4] = useState('rojo')
+    const [faseg1, setFaseg1] = useState({ color: 0, colorDescripcion: 'rojo' })
+    const [faseg2, setFaseg2] = useState({ color: 0, colorDescripcion: 'rojo' })
+    const [faseg3, setFaseg3] = useState({ color: 0, colorDescripcion: 'rojo' })
+    const [faseg4, setFaseg4] = useState({ color: 0, colorDescripcion: 'rojo' })
     const controlerState = useSelector(state => state.controlers)
     const abrirModalFase = (data) => {
-        const fasesAnteriores = fases
-        setFaseg1(data.grupos[0].colorDescripcion)
-        setFaseg2(data.grupos[1].colorDescripcion)
-        setFaseg3(data.grupos[2].colorDescripcion)
-        setFaseg4(data.grupos[3].colorDescripcion)
+
+        setFaseg1(data.grupos[0])
+        setFaseg2(data.grupos[1])
+        setFaseg3(data.grupos[2])
+        setFaseg4(data.grupos[3])
         setCurrentFase(data);
-        
-        console.log(data);
         setModalFase(true);
     }
-    const cargarDatosController = async() => {
-     
+    /*
+        abrirModalFase() es una funcion para abrir una ventana emergente de la fase a editar una vez que se
+        preciona el boton 'editar' toma el valor de esa fase a partir del metodo map
+        que nos devuelve la informacion del objeto seleccionado
+
+        parametros que recibe ... ejemplo : object {
+            {
+            faseNum: 16,
+            grupos: [
+                { grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo' },
+                { grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo' },
+                { grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo' },
+                { grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo' },
+            ]
+        }
+
+        }
+    
+    */
+    const cargarDatosController = () => {
+
         let lista_datos = []
         let datos_fases = {
             "ip": controlerState.ip
         }
-        const temp =  fases
-     
-        var newFase = []
+        const temp = fases
         for (let index_f = 0; index_f < 16; index_f++) {
             let fase = ''
             for (let index_g = 0; index_g < 4; index_g++) {
@@ -57,76 +72,123 @@ export default function FasesView() {
                     binary = "0" + binary
                 }
                 fase = binary + fase
-                //console.log(binary) //lista_colores.push(valor)
             }
             let bits_faltantes = 16 - fase.length
             for (let falta = 0; falta < bits_faltantes; falta++) {
                 fase = "0" + fase
             }
             datos_fases["fase" + (index_f + 1).toString()] = parseInt(fase, 2).toString()
-            //lista_datos.push(fase)
             lista_datos.push(parseInt(fase, 2))
         }
-        console.log('datos cargados',datos_fases)
-        try{
-            await postFasesFromRestApi(datos_fases);
-        }catch(e){
+        enviarFasesRestApi(datos_fases)
+        //dispatch(addFases(temp));
+    }
+    const enviarFasesRestApi = async (data) => {
+        try {
+            await postFasesFromRestApi(data);
+        } catch (e) {
             console.log(e)
         }
-        
     }
+    /*
+    funcion para escribir en la api rest , envia un objeto con todos los parametros de cada fase
+    editada , el parametro que recibe proviene de  la funcion CargarDatosController
+    
+    */
+
 
     const actualizarFase = () => {
         let data2 = currentFase
-        data2.grupos[0]['colorDescripcion'] = faseg1
-        data2.grupos[1]['colorDescripcion'] = faseg2
-        data2.grupos[2]['colorDescripcion'] = faseg3
-        data2.grupos[3]['colorDescripcion'] = faseg4
+        let temp = fases
+        data2.grupos[0]['colorDescripcion'] = faseg1.colorDescripcion
+        data2.grupos[0]['color'] = faseg1.color
+        data2.grupos[1]['colorDescripcion'] = faseg2.colorDescripcion
+        data2.grupos[1]['color'] = faseg2.color
+        data2.grupos[2]['colorDescripcion'] = faseg3.colorDescripcion
+        data2.grupos[2]['color'] = faseg3.color
+        data2.grupos[3]['colorDescripcion'] = faseg4.colorDescripcion
+        data2.grupos[3]['color'] = faseg4.color
         setCurrentFase(data2)
+        let fasesUpdated = temp.filter(filterbyIdfaseNum)
+        setFases(fasesUpdated)
         setModalFase(false);
 
     }
-    const ModificarGrupos = (e) => {
-        //var data = currentFase
-        //  data.grupos.forEach(item=>{
-        //     if(item.grupoNum.toString() === e.target.name){
-        //         item['colorDescripcion'] = e.target.value
-        //     }
-
-        // })
-        if (e.target.name == "1") {
-            setFaseg1(e.target.value)
-        } else if (e.target.name == "2") {
-            setFaseg2(e.target.value)
-        } else if (e.target.name == "3") {
-            setFaseg3(e.target.value)
+    const filterbyIdfaseNum = (_fase) => {
+        if (_fase.faseNum === currentFase.faseNum) {
+            return currentFase
         } else {
-            setFaseg4(e.target.value)
+            return _fase
         }
-        // setCurrentFase(data)
-        // console.log(data)
+    }
+    const ModificarGrupos = (e) => {
+
+        let newDataFase = {
+            color: 0,
+            colorDescripcion: 'rojo'
+        }
+        let aux = definirAtributoColor(e.target.value)
+        if (e.target.name == "1") {
+            newDataFase['colorDescripcion'] = e.target.value
+            newDataFase['color'] = aux
+            setFaseg1(newDataFase)
+        } else if (e.target.name == "2") {
+            newDataFase['colorDescripcion'] = e.target.value
+            newDataFase['color'] = aux
+            setFaseg2(newDataFase)
+        } else if (e.target.name == "3") {
+            newDataFase['colorDescripcion'] = e.target.value
+            newDataFase['color'] = aux
+            setFaseg3(newDataFase)
+        } else {
+            newDataFase['colorDescripcion'] = e.target.value
+            newDataFase['color'] = aux
+            setFaseg4(newDataFase)
+        }
+
 
     }
+    /* la funcion modificar grupos nos permite editar cada uno de los grupos de la
+        fase para actualizar el valor de esa fase en la api , los atributos que modifica
+        son el color y colorDescripcion
+    */
+    const definirAtributoColor = (_data) => {
+        if (_data === 'verde') {
+            return 1
+        } else if (_data === 'destello') {
+            return 2
+        } else if (_data === 'apagado') {
+            return 3
+        } else {
+            return 0
+        }
+    }
+    /*  
+    la funcion definirAtributoColor evaluara el valor seleccionado por el select para establecer 
+    el atributo color que tiene el objeto de la fase
+    */
     const leerDatosFases = async () => {
-        //dispatch(addFases(getFasesFromRestApi(currentControler.mac,currentControler.ip)));
         try {
             const result = await getFasesFromRestApi(controlerState.mac, controlerState.ip)
-            console.log("resultado obtnido", result)
             var arregloFases = []
             for (let index_plan = 1; index_plan < 17; index_plan++) {
                 var faseT = result["fase" + index_plan]
                 arregloFases.push(faseT)
 
             }
-            console.log(arregloFases)
             const ndatos = arregloFases
             setFases(ndatos);
-            //dispatch(addFases(arregloFases));
+            //dispatch(addFases(ndatos));
         }
         catch (e) {
             console.log(e);
         }
     }
+    /*
+        la funcion leer datos fases nos trae la informacion de la api para posteriormente
+        tratar la informacion y formatearla adecuadamente con la finalidad de poder mapear
+        en la tabla.
+    */
     return (
         <>
             <Container maxWidth="md">
@@ -139,11 +201,11 @@ export default function FasesView() {
                                 <Thead>
                                     <Tr>
 
-                                        <Th className='home-t-th'>Fase</Th>
-                                        <Th className='home-t-th'>G1</Th>
-                                        <Th className='home-t-th'>G2</Th>
-                                        <Th className='home-t-th'>G3</Th>
-                                        <Th className='home-t-th'>G4</Th>
+                                        <Th className='home-t-th'>Fases</Th>
+                                        <Th className='home-t-th'>Grupo 1</Th>
+                                        <Th className='home-t-th'>Grupo 2</Th>
+                                        <Th className='home-t-th'>Grupo 3</Th>
+                                        <Th className='home-t-th'>Grupo 4</Th>
                                     </Tr>
                                 </Thead>
 
@@ -206,7 +268,7 @@ export default function FasesView() {
                                         label="G1"
                                         name='1'
                                         onChange={ModificarGrupos}
-                                        value={faseg1}
+                                        value={faseg1.colorDescripcion}
                                     >
                                         <MenuItem value={'rojo'}>Rojo</MenuItem>
                                         <MenuItem value={'verde'}>Verde</MenuItem>
@@ -224,7 +286,7 @@ export default function FasesView() {
                                         label="G2"
                                         name="2"
                                         onChange={ModificarGrupos}
-                                        value={faseg2}
+                                        value={faseg2.colorDescripcion}
                                     >
                                         <MenuItem value={'rojo'}>Rojo</MenuItem>
                                         <MenuItem value={'verde'}>Verde</MenuItem>
@@ -242,7 +304,7 @@ export default function FasesView() {
                                         label="G3"
                                         name='3'
                                         onChange={ModificarGrupos}
-                                        value={faseg3}
+                                        value={faseg3.colorDescripcion}
                                     >
                                         <MenuItem value={'rojo'}>Rojo</MenuItem>
                                         <MenuItem value={'verde'}>Verde</MenuItem>
@@ -261,7 +323,7 @@ export default function FasesView() {
                                         label="G4"
                                         name='4'
                                         onChange={ModificarGrupos}
-                                        value={faseg4}
+                                        value={faseg4.colorDescripcion}
                                     >
                                         <MenuItem value={'rojo'}>Rojo</MenuItem>
                                         <MenuItem value={'verde'}>Verde</MenuItem>
@@ -289,11 +351,16 @@ export default function FasesView() {
     );
 
 }
+
+/* 
+    variables iniciales y de prueba al momento de cargar la vista o verificar la funcionalidad de 
+    alguna funcion.
+*/
 var fasesIniciales = [
     {
         faseNum: 1,
         grupos: [
-            { grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo' },
+            { grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo' },
             { grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo' },
             { grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo' },
             { grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo' },
@@ -302,20 +369,20 @@ var fasesIniciales = [
     {
         faseNum: 2,
         grupos: [
-            { grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo' },
-            { grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo' },
-            { grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo' },
-            { grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo' },
+            { grupoNum: 1, id: 'g1_fase_1', faseNum: 2, color: 0, colorDescripcion: 'rojo' },
+            { grupoNum: 2, id: 'g2_fase_1', faseNum: 2, color: 0, colorDescripcion: 'rojo' },
+            { grupoNum: 3, id: 'g3_fase_1', faseNum: 2, color: 0, colorDescripcion: 'rojo' },
+            { grupoNum: 4, id: 'g4_fase_1', faseNum: 2, color: 0, colorDescripcion: 'rojo' },
         ]
     },
 
     {
         faseNum: 3,
         grupos: [
-            { grupoNum: 1, id: 'g1_fase_1', faseNum: 1, color: 1, colorDescripcion: 'rojo' },
-            { grupoNum: 2, id: 'g2_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo' },
-            { grupoNum: 3, id: 'g3_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo' },
-            { grupoNum: 4, id: 'g4_fase_1', faseNum: 1, color: 0, colorDescripcion: 'rojo' },
+            { grupoNum: 1, id: 'g1_fase_1', faseNum: 3, color: 0, colorDescripcion: 'rojo' },
+            { grupoNum: 2, id: 'g2_fase_1', faseNum: 3, color: 0, colorDescripcion: 'rojo' },
+            { grupoNum: 3, id: 'g3_fase_1', faseNum: 3, color: 0, colorDescripcion: 'rojo' },
+            { grupoNum: 4, id: 'g4_fase_1', faseNum: 3, color: 0, colorDescripcion: 'rojo' },
         ]
     },
     {
@@ -463,7 +530,10 @@ const ejemploFase = {
     fase14: "0",
     fase15: "0",
     fase16: "0",
-    ip:"192.168.0.178",
-    mac:"00:14:97:F2:D1:39"
+    ip: "192.168.0.178",
+    mac: "00:14:97:F2:D1:39"
 
 }
+
+
+/*codigo escrito  y testeado por David Diaz*/
