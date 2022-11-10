@@ -271,7 +271,7 @@ export default function HomeView() {
                                 <DraggableMarker />
                                 {semaforos.map((item,index) =>(
                                     
-                                    <Marker position={item.pos}  icon={semaforo}>
+                                    <Marker position={item.pos} key={index} icon={semaforo}>
                                         <Popup>
                                             A pretty CSS3 popup. <br /> Easily customizable.
                                         </Popup>

@@ -8,7 +8,7 @@ async function getIpsFromRestApi() {
 }
 async function getFasesFromRestApi(mac, ip) {
 	var fases;
-	await axios.post(`http://127.0.0.1:8000/rest/restGetFasesControlador?mac=${mac}`, {
+	await axios.post(`${BASE_PATH_WS}/rest/restGetFasesControlador?mac=${mac}`, {
 		ip: ip
 	})
 		.then(response => {
@@ -21,7 +21,7 @@ async function getFasesFromRestApi(mac, ip) {
 	return fases;
 }
 async function postFasesFromRestApi(jsonData) {
-	await axios.post(`http://127.0.0.1:8000/rest/restSetFasesControlador?mac=${jsonData['mac']}`,jsonData)
+	await axios.post(`${BASE_PATH_WS}/rest/restSetFasesControlador?mac=${jsonData['mac']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
 		})
@@ -32,7 +32,7 @@ async function postFasesFromRestApi(jsonData) {
 async function getPlanesFromRestApi(mac, ip) {
 
 	var planes;
-	await axios.post(`http://127.0.0.1:8000/rest/restGetPlanesControlador?mac=${mac}`, {
+	await axios.post(`${BASE_PATH_WS}/rest/restGetPlanesControlador?mac=${mac}`, {
 		ip: ip
 	})
 		.then(response => {
@@ -45,10 +45,20 @@ async function getPlanesFromRestApi(mac, ip) {
 		});
 	return planes;
 }
+async function setPlanesFromRestApi(jsonData) {
+	await axios.post(`${BASE_PATH_WS}/rest/restSetPlanesControlador?mac=${jsonData['mac']}`, jsonData)
+		.then(response => {
+			console.log(response.data)
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+}
+
 async function getHorariosFromRestApi(mac, ip) {
 
 	var horarios;
-	await axios.post(`http://127.0.0.1:8000/rest/restGetHorariosControlador?mac=${mac}`, {
+	await axios.post(`${BASE_PATH_WS}/rest/restGetHorariosControlador?mac=${mac}`, {
 		ip: ip
 	})
 		.then(response => {
@@ -66,7 +76,7 @@ async function getHorariosFromRestApi(mac, ip) {
 
 async function postHorariosFromRestApi(jsonData) {
 
-	await axios.post(`http://127.0.0.1:8000/rest/restSetHorariosControlador?mac=${jsonData['mac']}`,jsonData)
+	await axios.post(`${BASE_PATH_WS}/rest/restSetHorariosControlador?mac=${jsonData['mac']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
 		})
@@ -75,4 +85,4 @@ async function postHorariosFromRestApi(jsonData) {
 		});
 }
 
-export { getIpsFromRestApi, getFasesFromRestApi, getPlanesFromRestApi,getHorariosFromRestApi,postHorariosFromRestApi,postFasesFromRestApi }
+export { getIpsFromRestApi, getFasesFromRestApi, getPlanesFromRestApi,getHorariosFromRestApi,postHorariosFromRestApi,postFasesFromRestApi,setPlanesFromRestApi }

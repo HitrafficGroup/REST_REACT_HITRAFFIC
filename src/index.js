@@ -17,6 +17,14 @@ const theme = createTheme({
       contrastText: '#fff',
       darker: '#053e85',
     },
+    anaranjado1:{
+      main: '#EB984E',
+      contrastText: '#fff',
+    },
+    morado1:{
+      main: '#A569BD',
+      contrastText: '#fff',
+    },
     seleccion:{
       main:'#34495E ',
       contrastText: '#fff',
