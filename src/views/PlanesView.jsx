@@ -16,14 +16,18 @@ import '../css/PlanesView.css'
 import { useSelector, useDispatch } from 'react-redux';
 import { addPlanes } from "../features/controlers/controlerSlice"
 import { getPlanesFromRestApi } from '../js/apiFunctions'
-import MuiAlert from '@mui/material/Alert';
+
 import Chip from '@mui/material/Chip';
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import Collapse from '@mui/material/Collapse';
+import CloseIcon from '@mui/icons-material/Close';
 export default function PlanesView() {
     const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers)
     const [currentPlan, setCurrentPlan] = useState(planInicial)
-    const [selectPlan, setSelectPlan] = useState();
-    const [planes, setPlanes] = useState(planInicial)
+    const [selectPlan, setSelectPlan] = useState("plan1");
+    const [planes, setPlanes] = useState([])
     const [modalEditar, setModalEditar] = useState(false);
     const [faseSemaforo, setFaseSemaforo] = useState('1');
     const [tiempoSemaforo, setTiempoSemaforo] = useState(0);
@@ -40,42 +44,48 @@ export default function PlanesView() {
     //variables funcionales de animacion
     const [deshabilitar, setDeshabilitar] = useState(true);
     const [deshabilitar2, setDeshabilitar2] = useState(false);
+    const [cambio,setCambio] = useState(false)
     const [dis,setDis] = useState('disabled')
     const leerPlanesFromRestApis = async () => {
-
+        let planesControlador
         try {
             setDis('disabled')
             setDeshabilitar(true)
             setDeshabilitar2(true)
-            const result = await getPlanesFromRestApi(controlerState.mac, controlerState.ip)
-            console.log(result[controlerState.mac]);
-            setPlanes(result[controlerState.mac]);
-            dispatch(addPlanes(result));
-            setSelectPlan(result[controlerState.mac][0])
-            planSelectManager(result[controlerState.mac][0])
+            let result = await getPlanesFromRestApi(controlerState.mac, controlerState.ip)
+            planesControlador = result[controlerState.mac]
+            console.log(planesControlador)
             setDis('habilited')
             setDeshabilitar2(false)
             setDeshabilitar(false)
         }
         catch (e) {
             console.log(e);
-            setDeshabilitar(false)
+            setDeshabilitar(true)
+            setDeshabilitar2(false)
         }
+        setPlanes(planesControlador)
+        console.log(planes)
+        dispatch(addPlanes(planesControlador))
+        planSelectManager(planesControlador[0].numPlan)
     }
 
     const abrirModalEditar = (data) => {
-        console.log(data)
-        setFaseSemaforo(data.fase)
-        setTiempoSemaforo(data.duracion)
+        setFaseSemaforo(data.fase.toString());
+        setTiempoSemaforo(data.duracion);
+        setCurrentPaso(data);
         setModalEditar(true);
     }
-    const Alert = forwardRef(function Alert(props, ref) {
-        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-      });
-    const planSelectManager = (data) => {
-        setSelectPlan(data);
-        console.log(data);
+
+    const planSelectManager = (name) => {
+        
+        const aux = planes
+        console.log(aux)
+        const filtro = aux.filter(item => item.numPlan === name )
+        const data = filtro[0]
+        console.log(filtro)
         var nplan = currentPlan;
+        
         nplan[0].fase = data.pasos[0]
         nplan[0].duracion = data.pasos[1]
 
@@ -111,25 +121,36 @@ export default function PlanesView() {
         nplan[11].duracion = data.pasos[23]
         console.log(nplan)
         setCurrentPlan(nplan);
+        setSelectPlan(name)
     }
     const actualizarPaso = () => {
-        console.log(faseSemaforo)
-        console.log(tiempoSemaforo)
+        const temp = currentPlan.map((item)=>{
+            if(item.name ===  currentPaso.name){
+                item['fase'] = parseInt(faseSemaforo);
+                item['duracion'] = tiempoSemaforo;
+            }
+            return item
+
+        })
+        console.log(temp)
+        setCurrentPlan(temp);
+        setCambio(true)
         setModalEditar(false);
     }
+   const cargarCambios = () =>{
+    setCambio(false);
+   }
 
     return (
         <>
             <Container maxWidth="md">
-                <h1>Planes</h1>
+                <h1>Planes view</h1>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
                         <Autocomplete
                             onChange={(event, newValue) => { planSelectManager(newValue) }}
-                            options={planes}
-                            getOptionLabel={(option) => option.numPlan}
-                            value={selectPlan}
-                            defaultValue={selectPlan}
+                            options={planes4}
+                            value = {selectPlan}
                             id="controllable-states-demo"
                             renderInput={(params) => <TextField {...params} label="Escoga Un Plan" fullWidth />}
                             disabled={deshabilitar}
@@ -139,7 +160,7 @@ export default function PlanesView() {
                         <Button variant="contained" fullWidth color='verde2' disabled={deshabilitar2} onClick={leerPlanesFromRestApis} sx={{ height: '100%' }} >Leer Datos</Button>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button variant="contained" fullWidth sx={{ height: '100%' }} disabled={deshabilitar} color="primary">Cargar Cambios</Button>
+                        <Button variant="contained" fullWidth sx={{ height: '100%' }} disabled={deshabilitar} onClick={cargarCambios} color="primary">Cargar Cambios</Button>
                     </Grid>
                     <Grid item xs={6}>
 
@@ -178,7 +199,16 @@ export default function PlanesView() {
                             </Table>
                         </div>
                     </Grid>
-
+                    <Grid item xs={12}>
+                        <Collapse in={cambio}>
+                                <Alert
+                                severity="warning"
+                                sx={{ mb: 2 }}
+                                >
+                                Se han Generado Cambios en los planes sin cargar al controlador
+                                </Alert>
+                            </Collapse>
+                            </Grid>
                     <Grid item xs={12}>
                         <h4>Parametros Operativos del Controlador</h4>
                     </Grid>
@@ -279,6 +309,7 @@ export default function PlanesView() {
                                 id="demo-simple-select"
                                 label="Direccion"
                                 value={sincronizacionSemaforo}
+                                onChange={(event) => { setSincronizacionSemaforo(event.target.value) }}
                             >
                                 <MenuItem value={'1'}>Hitraffic</MenuItem>
                                 <MenuItem value={'2'}>Goia</MenuItem>
@@ -286,7 +317,7 @@ export default function PlanesView() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={6}>
-                        <TextField id="outlined-basic" label="Retardo requerido para otros (s)" variant="outlined" fullWidth focused aria-readonly value={0} />
+                        <TextField id="outlined-basic" label="Retardo requerido para otros (s)" variant="outlined" fullWidth  aria-readonly value={0} />
                     </Grid>
                     <Grid item xs={12}>
                         <div className='blank-box'>
@@ -312,12 +343,56 @@ export default function PlanesView() {
                 </ModalBody>
         
             </Modal> */}
-                <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={deshabilitar2}
-      >
-         <CircularProgress color="inherit" />
-      </Backdrop>
+            <Modal isOpen={modalEditar} >
+                <ModalHeader>
+                    <div>
+                        <h1>
+                            Ajustes del Plan
+                        </h1>
+                    </div>
+                </ModalHeader>
+                <ModalBody>
+                    <Grid container spacing={4}>
+                        <Grid item xs={12}>
+                            <Autocomplete
+                                name='plan'
+                                options={planes2}
+                                value={faseSemaforo}
+                                onChange={(event, newValue) => { setFaseSemaforo(newValue) }}
+                                id="controllable-states-demo"
+                                renderInput={(params) => <TextField {...params} label="Escoga una Fase" fullWidth />}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                id="outlined-number"
+                                label="Duracion en Segundos"
+                                type="number"
+                                value={tiempoSemaforo}
+                                onChange={(event) => { setTiempoSemaforo(event.target.value) }}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                        </Grid>
+
+                    </Grid>
+                </ModalBody>
+                <ModalFooter >
+                    <div className='botones-modal-p'>
+                        <Button variant="contained" color='verde' sx={{ marginRight: 5 }} onClick={actualizarPaso}>
+                            Aplicar
+                        </Button>
+                        <Button variant="contained" color='rojo' onClick={() => { setModalEditar(false) }}>
+                            Cancelar
+                        </Button>
+                    </div>
+                </ModalFooter>
+            </Modal>
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
+            <CircularProgress color="inherit" />
+        </Backdrop>
         </>
     );
 
@@ -345,3 +420,13 @@ const planInicial = [
 ]
 const selectorPlan =  { name: 'Paso 6', fase: 0, duracion: 0 }
 const planes2 = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']
+const planes3 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+const planes4 = ["plan1","plan2","plan3","plan4","plan5","plan6","plan7","plan8","plan9","plan10","plan11","plan12"]
+const selectPlanInicial ={
+        numPlan: "plan1",
+        pasos:  [5, 23, 6, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+}
+
+
+
+
