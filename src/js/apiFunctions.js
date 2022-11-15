@@ -81,11 +81,6 @@ async function setOtrosParametrosFromRestApi(jsonData) {
 }
 
 
-
-
-
-
-
 async function getHorariosFromRestApi(mac, ip) {
 
 	var horarios;
@@ -116,8 +111,23 @@ async function postHorariosFromRestApi(jsonData) {
 		});
 }
 
+
+async function getTimeControlador(mac,ip) {
+	var tiempo;
+	await axios.post(`${BASE_PATH_WS}/rest/restGetTimeControlador?mac=${mac}`, {
+		ip: ip
+	})
+		.then(response => {
+			tiempo = response.data
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+	return tiempo;
+}
+
 export { getIpsFromRestApi, getFasesFromRestApi,
 	 getPlanesFromRestApi,getHorariosFromRestApi,
 	 postHorariosFromRestApi,postFasesFromRestApi,
 	 setPlanesFromRestApi,getOtrosParametrosFromRestApi,
-	 setOtrosParametrosFromRestApi }
+	 setOtrosParametrosFromRestApi,getTimeControlador }
