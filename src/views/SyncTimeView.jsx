@@ -3,7 +3,8 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Button from '@mui/material/Button';
 import RelogActual from "../components/RelogActual";
-import {getTimeControlador} from '../js/apiFunctions'
+import Swal from 'sweetalert2';
+import {getTimeControlador,setTimeControlador} from '../js/apiFunctions'
 import { useSelector, useDispatch } from 'react-redux';
 export default function SyncTimeView() {
     const [tiempoController,setTiempoController] = useState(InitialTime)
@@ -17,16 +18,46 @@ export default function SyncTimeView() {
             setTiempoController(response[controlerState.mac])
             const temp = response[controlerState.mac]
             const fechac = `${temp.mes}-${temp.dia}-${temp.year}`
-            console.log(fechac)
             const dateObj = new Date(fechac)
             const formatDate = dateObj.toLocaleString("es-EC", { dateStyle: 'full' });
             setFechaController(formatDate)
-            console.log(formatDate)
-            console.log(response)
         }catch(e){
             console.log(e)
         }
 
+    }
+    const sincronizarTiempoFromRest = async() =>{
+        const newData = {
+            ip:controlerState.ip,
+            mac:controlerState.mac,
+            time_zone:"-5"
+        }
+        try{
+            
+            Swal.fire({
+                title: 'Deseas Continuar ?',
+                text:  'Estos Cambios se guardaran en el Controlador',
+                icon:  'warning',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Si, actualizar!',
+                showDenyButton: true,
+                denyButtonText: 'Cancelar',
+            }).then((result)=>{
+                if(result.isConfirmed){
+                    setTimeControlador(newData);
+                    Swal.fire({
+                        title: "Completado!",
+                        text: "Cambios Cargados Con Exito",
+                        icon: "success",
+                      });
+                 
+                }
+            })        
+    
+
+        }catch(e){
+
+        }
     }
     return (<>
         <Container maxWidth="md">
@@ -63,7 +94,7 @@ export default function SyncTimeView() {
                     </Button>
                 </Grid>
                 <Grid xs={3}>
-                    <Button variant="contained" sx={{height:'100%'}}>
+                    <Button variant="contained" onClick={sincronizarTiempoFromRest} sx={{height:'100%'}}>
                         Actualizar Tiempo
                     </Button>
                 </Grid>

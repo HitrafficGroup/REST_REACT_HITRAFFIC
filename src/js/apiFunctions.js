@@ -125,9 +125,19 @@ async function getTimeControlador(mac,ip) {
 		});
 	return tiempo;
 }
-
+async function setTimeControlador(jsonData) {
+	
+	await axios.post(`${BASE_PATH_WS}/rest/restSetTimeControlador?mac=${jsonData.mac}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+}
 export { getIpsFromRestApi, getFasesFromRestApi,
 	 getPlanesFromRestApi,getHorariosFromRestApi,
 	 postHorariosFromRestApi,postFasesFromRestApi,
 	 setPlanesFromRestApi,getOtrosParametrosFromRestApi,
-	 setOtrosParametrosFromRestApi,getTimeControlador }
+	 setOtrosParametrosFromRestApi,getTimeControlador,
+	 setTimeControlador}
