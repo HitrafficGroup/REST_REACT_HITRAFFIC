@@ -394,6 +394,11 @@ tr td.fase_apagado {
     display: var(--display-boton-leer-datos) !important;
 
 }
-
+.activated-conflict{
+    background-color: #2ECC71 !important;
+}
+.desactivated-conflict{
+    background-color: white;
+}
 
 /* ******************************************* */

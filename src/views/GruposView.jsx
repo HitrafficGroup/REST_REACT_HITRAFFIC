@@ -45,6 +45,12 @@ export default function GruposView() {
     const [sentido, setSentido] = useState('Derecha');
     const [destello, setDestello] = useState('Amarillo');
     const [modalGrupo, setModalGrupo] = useState(false);
+    const [conflictg1g2,setConflictg1g2] = useState(false);
+    const [conflictg1g3,setConflictg1g3] = useState(false);
+    const [conflictg1g4,setConflictg1g4] = useState(false);
+    const [conflictg2g3,setConflictg2g3] = useState(false);
+    const [conflictg2g4,setConflictg2g4] = useState(false);
+    const [conflictg3g4,setConflictg3g4] = useState(false);
     const abrirModalGrupo = () => {
         setModalGrupo(true);
     }
@@ -61,6 +67,27 @@ export default function GruposView() {
     const handleChangeDestello = (event) => {
         setDestello(event.target.value);
     }
+    const detectg1g2 = () =>{
+        console.log('se clickeo la g1 y g2')
+        setConflictg1g2(!conflictg1g2)
+    }
+    const detectg1g3 = () =>{
+        console.log('se clickeo la g1 y g3')
+        setConflictg1g3(!conflictg1g3)
+    }
+    const detectg1g4 = () =>{
+        console.log('se clickeo la g1 y g4')
+        setConflictg1g4(!conflictg1g4)
+    }
+    // const detectg2g3 = () =>{
+    //     console.log('se clickeo la g1 y g4')
+    //     setConflictg1g4(!conflictg1g4)
+    // }
+    // const detectg2g4 = () =>{
+    //     console.log('se clickeo la g1 y g4')
+    //     setConflictg1g4(!conflictg1g4)
+    // }
+  
     return (<>
         <Container maxWidth="md">
             <h1>Grupos View</h1>
@@ -124,9 +151,9 @@ export default function GruposView() {
                             <tr id="con_fila1" style={{ height: "5rem" }}>
                                 <td>G1</td>
                                 <td ></td>
-                                <td id="con_g1g2"></td>
-                                <td id="con_g1g3"></td>
-                                <td id="con_g1g4"></td>
+                                <td id="con_g1g2" onClick={detectg1g2} className={conflictg1g2 ? 'activated-conflict':'desactivated-conflict'} ></td>
+                                <td id="con_g1g3" onClick={detectg1g3} className={conflictg1g3 ? 'activated-conflict':'desactivated-conflict'}></td>
+                                <td id="con_g1g4" onClick={detectg1g4} className={conflictg1g4 ? 'activated-conflict':'desactivated-conflict'}></td>
                             </tr>
                             <tr id="con_fila2" style={{ height: "5rem" }}>
                                 <td>G2</td>
