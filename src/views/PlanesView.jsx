@@ -1,4 +1,4 @@
-import React, { useState,forwardRef } from 'react'
+import React, { useState,forwardRef } from 'react';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
@@ -14,9 +14,9 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import '../css/PlanesView.css'
 import { useSelector, useDispatch } from 'react-redux';
-import { addPlanes } from "../features/controlers/controlerSlice"
-import { getPlanesFromRestApi } from '../js/apiFunctions'
-
+import { addPlanes } from "../features/controlers/controlerSlice";
+import { getPlanesFromRestApi,setPlanesFromRestApi,getOtrosParametrosFromRestApi,setOtrosParametrosFromRestApi } from '../js/apiFunctions';
+import Swal from 'sweetalert2';
 import Chip from '@mui/material/Chip';
 import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
@@ -31,16 +31,19 @@ export default function PlanesView() {
     const [modalEditar, setModalEditar] = useState(false);
     const [faseSemaforo, setFaseSemaforo] = useState('1');
     const [tiempoSemaforo, setTiempoSemaforo] = useState(0);
-    const [sincronizacionSemaforo, setSincronizacionSemaforo] = useState("1")
+    const [sincronizacionSemaforo, setSincronizacionSemaforo] = useState(0)
     const [currentPaso, setCurrentPaso] = useState(0);
     //Variables de parametros Operativos del controlador
-    const [tdestello, setTdestello] = useState(0);
-    const [trojoprender, setTrojoprender] = useState(0);
-    const [tdestelloVpeatonal, setTdestelloVpeatonal] = useState(0);
-    const [tdestelloVvehicular, setTdestelloVvehicular] = useState(0);
-    const [taVehicular, setTaVehicular] = useState(0);
-    const [ttodorojo, setTtodorojo] = useState(0);
-    const [tminimoVerde, setTminimoVerde] = useState(0);
+    const [otrosParam,setOtrosParam] = useState(otrosParametros)
+    const [destellarVerdePeatonal,setDestellarVerdePeatonal]= useState(0);
+    const [destellarVerdeVehicular,setDestellarVerdeVehicular] = useState(0);
+    const [tiempoAmarilloVehicular,setTiempoAmarilloVehicular] = useState(0);
+    const [tiempoDestelloPrender,setTiempoDestelloPrender] = useState(0);
+    const [tiempoMinimoVerde1,setTiempoMinimoVerde1] = useState(0);
+    const [tiempoMinimoVerde2,setTiempoMinimoVerde2] = useState(0);
+    const [tiempoRojoPrender,setTiempoRojoPrender] = useState(0);
+    const [tiempoTodoRojo,setTiempoTodoRojo] = useState(0);
+    const [valorSincronizacion,setValorSincronizacion]= useState(1);
     //variables funcionales de animacion
     const [deshabilitar, setDeshabilitar] = useState(true);
     const [deshabilitar2, setDeshabilitar2] = useState(false);
@@ -54,7 +57,9 @@ export default function PlanesView() {
             setDeshabilitar2(true)
             let result = await getPlanesFromRestApi(controlerState.mac, controlerState.ip)
             planesControlador = result[controlerState.mac]
-            console.log(planesControlador)
+            setPlanes(planesControlador)
+            dispatch(addPlanes(planesControlador))
+            uploadData(planesControlador[0].numPlan,planesControlador)
             setDis('habilited')
             setDeshabilitar2(false)
             setDeshabilitar(false)
@@ -64,10 +69,6 @@ export default function PlanesView() {
             setDeshabilitar(true)
             setDeshabilitar2(false)
         }
-        setPlanes(planesControlador)
-        console.log(planes)
-        dispatch(addPlanes(planesControlador))
-        planSelectManager(planesControlador[0].numPlan)
     }
 
     const abrirModalEditar = (data) => {
@@ -80,10 +81,8 @@ export default function PlanesView() {
     const planSelectManager = (name) => {
         
         const aux = planes
-        console.log(aux)
         const filtro = aux.filter(item => item.numPlan === name )
         const data = filtro[0]
-        console.log(filtro)
         var nplan = currentPlan;
         
         nplan[0].fase = data.pasos[0]
@@ -119,9 +118,117 @@ export default function PlanesView() {
 
         nplan[11].fase = data.pasos[22]
         nplan[11].duracion = data.pasos[23]
-        console.log(nplan)
         setCurrentPlan(nplan);
         setSelectPlan(name)
+    }
+    const leerOtrosParametrosApi = async () =>{
+        try{
+            setDeshabilitar2(true)
+            var datosObtenidos = await getOtrosParametrosFromRestApi(controlerState.mac,controlerState.ip);
+            var datosformateados = datosObtenidos[`${controlerState.mac}`];
+            console.log(datosformateados)
+            setDestellarVerdePeatonal(parseInt(datosformateados.destellar_verde_peatonal));
+            setDestellarVerdeVehicular(parseInt(datosformateados.destellar_verde_vehicular));
+            setTiempoAmarilloVehicular(parseInt(datosformateados.tiempo_amarillo_vehicular));
+            setTiempoDestelloPrender(parseInt(datosformateados.tiempo_destello_prender));
+            setTiempoMinimoVerde1(parseInt(datosformateados.tiempo_minimo_verde_1));
+            setTiempoMinimoVerde2(parseInt(datosformateados.tiempo_minimo_verde_2));
+            setTiempoRojoPrender(parseInt(datosformateados.tiempo_rojo_prender));
+            setTiempoTodoRojo(parseInt(datosformateados.tiempo_todo_rojo));
+            setValorSincronizacion(parseInt(datosformateados.valor_sincronizacion));
+            setDeshabilitar2(false)
+            // Swal.fire({
+            //     title: "Completado",
+            //     text: "Datos Leidos Con Exito",
+            //     icon: "success",
+            //   });
+        }catch(e){
+            console.log(e);
+        }
+    }
+    /* Funcion flecha encargada de cargar los datos cada vez que se presiona el boton de cargar datos */
+    const uploadData = (name,values) => {
+        
+        const aux = values
+        const filtro = aux.filter(item => item.numPlan === name )
+        const data = filtro[0]
+        var nplan = currentPlan;
+        
+        nplan[0].fase = data.pasos[0]
+        nplan[0].duracion = data.pasos[1]
+
+        nplan[1].fase = data.pasos[2]
+        nplan[1].duracion = data.pasos[3]
+        nplan[2].fase = data.pasos[4]
+        nplan[2].duracion = data.pasos[5]
+        nplan[3].fase = data.pasos[6]
+        nplan[3].duracion = data.pasos[7]
+
+        nplan[4].fase = data.pasos[8]
+        nplan[4].duracion = data.pasos[9]
+
+        nplan[5].fase = data.pasos[10]
+        nplan[5].duracion = data.pasos[11]
+
+        nplan[6].fase = data.pasos[12]
+        nplan[6].duracion = data.pasos[13]
+
+        nplan[7].fase = data.pasos[14]
+        nplan[7].duracion = data.pasos[15]
+
+        nplan[8].fase = data.pasos[16]
+        nplan[8].duracion = data.pasos[17]
+
+        nplan[9].fase = data.pasos[18]
+        nplan[9].duracion = data.pasos[19]
+
+        nplan[10].fase = data.pasos[20]
+        nplan[10].duracion = data.pasos[21]
+
+        nplan[11].fase = data.pasos[22]
+        nplan[11].duracion = data.pasos[23]
+        setCurrentPlan(nplan);
+        setSelectPlan(name)
+    }
+    const cargarOtrosParametrosAPI= ()=>{
+        let newParams = {
+            destellar_verde_peatonal: destellarVerdePeatonal.toString(),
+            destellar_verde_vehicular:destellarVerdeVehicular.toString(),
+            ip: controlerState.ip,
+            mac: controlerState.mac,
+            tiempo_amarillo_vehicular:tiempoAmarilloVehicular.toString(),
+            tiempo_destello_prender:tiempoDestelloPrender.toString(),
+            tiempo_rojo_prender:tiempoRojoPrender.toString(),
+            tiempo_todo_rojo:tiempoTodoRojo.toString(),
+            time_min_green:tiempoMinimoVerde1.toString(),
+            valor_sincronizacion:valorSincronizacion.toString()
+        }
+
+        Swal.fire({
+            title: 'Deseas Continuar ?',
+            text:  'Estos Cambios se guardaran en el Controlador',
+            icon:  'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, actualizar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result)=>{
+            if(result.isConfirmed){
+               
+                setCambio(false);
+                setOtrosParametrosFromRestApi(newParams);
+                Swal.fire({
+                    title: "Completado!",
+                    text: "Cambios Cargados Con Exito",
+                    icon: "success",
+                  });
+             
+            }
+        })        
+
+
+        
+       
     }
     const actualizarPaso = () => {
         const temp = currentPlan.map((item)=>{
@@ -132,15 +239,57 @@ export default function PlanesView() {
             return item
 
         })
-        console.log(temp)
         setCurrentPlan(temp);
         setCambio(true)
         setModalEditar(false);
     }
    const cargarCambios = () =>{
-    setCambio(false);
+    try{
+
+        Swal.fire({
+            title: 'Deseas Continuar ?',
+            text:  'Estos Cambios se guardaran en el Controlador',
+            icon:  'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, actualizar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result)=>{
+            if(result.isConfirmed){
+                var newData = {}
+                var j = 0
+                for(let i = 0 ;i<12;i++){
+                    newData['data'+j] = currentPlan[i].fase.toString()
+                    newData['data'+(1+j)] = currentPlan[i].duracion.toString()
+                    j += 2;
+                }
+                newData['ip'] = controlerState.ip
+                newData['mac'] = controlerState.mac
+                newData['num_plan'] = returnNumPlan(selectPlan)
+                setCambio(false);
+                Swal.fire({
+                    title: "Completado!",
+                    text: "Cambios Cargados Con Exito",
+                    icon: "success",
+                  });
+                setPlanesFromRestApi(newData);
+            }
+        })        
+    }catch(e){
+        console.log(e)
+    }
+   }
+   const returnNumPlan = (data) =>{
+    for(let i = 1 ; i<16;i++){
+        var condition = 'plan'+i
+        if(data === condition){
+            return i
+        }
+    }
+
    }
 
+   
     return (
         <>
             <Container maxWidth="md">
@@ -212,14 +361,15 @@ export default function PlanesView() {
                     <Grid item xs={12}>
                         <h4>Parametros Operativos del Controlador</h4>
                     </Grid>
+                    
                     <Grid item xs={4}>
 
                         <TextField
                             id="outlined-number"
                             label="Tiempo de destello al prender (s)"
                             type="number"
-                            onChange={(event) => { setTdestello(event.target.value) }}
-                            value={tdestello}
+                            onChange={(event) => {setTiempoDestelloPrender(event.target.value) }}
+                            value={tiempoDestelloPrender}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -230,8 +380,8 @@ export default function PlanesView() {
                             id="outlined-number"
                             label="Tiempo en rojo al prender (s)"
                             type="number"
-                            onChange={(event) => { setTrojoprender(event.target.value) }}
-                            value={trojoprender}
+                            onChange={(event) => { setTiempoRojoPrender(event.target.value) }}
+                            value={tiempoRojoPrender}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -243,8 +393,8 @@ export default function PlanesView() {
                             id="outlined-number"
                             label="Destellar luz verde peatonal (s)"
                             type="number"
-                            onChange={(event) => { setTdestelloVpeatonal(event.target.value) }}
-                            value={tdestelloVpeatonal}
+                            onChange={(event) => {setDestellarVerdePeatonal(event.target.value) }}
+                            value={destellarVerdePeatonal}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -255,8 +405,8 @@ export default function PlanesView() {
                             id="outlined-number"
                             label="Destellar luz verde vehicular (s)"
                             type="number"
-                            onChange={(event) => { setTdestelloVvehicular(event.target.value) }}
-                            value={tdestelloVvehicular}
+                            onChange={(event) => {setDestellarVerdeVehicular(event.target.value) }}
+                            value={destellarVerdeVehicular}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -267,8 +417,8 @@ export default function PlanesView() {
                             id="outlined-number"
                             label="Tiempo en amarillo vehicular (s)"
                             type="number"
-                            onChange={(event) => { setTaVehicular(event.target.value) }}
-                            value={taVehicular}
+                            onChange={(event) => { setTiempoAmarilloVehicular(event.target.value) }}
+                            value={tiempoAmarilloVehicular}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -279,8 +429,8 @@ export default function PlanesView() {
                             id="outlined-number"
                             label=" Tiempo de todo en rojo (s)"
                             type="number"
-                            onChange={(event) => { setTtodorojo(event.target.value) }}
-                            value={ttodorojo}
+                            onChange={(event) => { setTiempoTodoRojo(event.target.value) }}
+                            value={tiempoTodoRojo}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -291,8 +441,8 @@ export default function PlanesView() {
                             id="outlined-number"
                             label="Tiempo minimo en verde (s)"
                             type="number"
-                            onChange={(event) => { setTminimoVerde(event.target.value) }}
-                            value={tminimoVerde}
+                            onChange={(event) => { setTiempoMinimoVerde1(event.target.value) }}
+                            value={tiempoMinimoVerde1}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -301,7 +451,7 @@ export default function PlanesView() {
                     <Grid item xs={12}>
                         <h4>Sincronizacion</h4>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={3}>
                         <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
                             <Select
@@ -309,16 +459,28 @@ export default function PlanesView() {
                                 id="demo-simple-select"
                                 label="Direccion"
                                 value={sincronizacionSemaforo}
-                                onChange={(event) => { setSincronizacionSemaforo(event.target.value) }}
+                                onChange={(event) => {setSincronizacionSemaforo(event.target.value) }}
                             >
-                                <MenuItem value={'1'}>Hitraffic</MenuItem>
-                                <MenuItem value={'2'}>Goia</MenuItem>
+                                <MenuItem value={0}>Hitraffic</MenuItem>
+                                <MenuItem value={1}>Goia</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={6}>
-                        <TextField id="outlined-basic" label="Retardo requerido para otros (s)" variant="outlined" fullWidth  aria-readonly value={0} />
+                    <Grid item xs={3}>
+                        <TextField id="outlined-basic" label="Retardo requerido para otros (s)" 
+                        variant="outlined" 
+                        fullWidth  
+                        aria-readonly 
+                        onChange={(event) => {setValorSincronizacion(event.target.value) }}
+                        value={valorSincronizacion} />
                     </Grid>
+                    <Grid item xs={3}>
+                    <Button variant="contained"  color='verde2' fullWidth sx={{height:'100%'}}   onClick={leerOtrosParametrosApi} >Leer Datos</Button>
+                    </Grid>
+                    <Grid item xs={3}>
+                    <Button variant="contained" fullWidth sx={{height:'100%'}} onClick={cargarOtrosParametrosAPI} >Cargar Cambios</Button>
+                    </Grid>
+                  
                     <Grid item xs={12}>
                         <div className='blank-box'>
 
@@ -328,21 +490,6 @@ export default function PlanesView() {
                 </Grid>
             </Container>
            
-            {/* <Modal isOpen={deshabilitar2} >
-                <ModalHeader>
-                    <div>
-                        <h1>
-                            Cargando ...
-                        </h1>
-                    </div>
-                </ModalHeader>
-                <ModalBody>
-                    <div>
-
-                    </div>
-                </ModalBody>
-        
-            </Modal> */}
             <Modal isOpen={modalEditar} >
                 <ModalHeader>
                     <div>
@@ -427,6 +574,16 @@ const selectPlanInicial ={
         pasos:  [5, 23, 6, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 }
 
-
+const otrosParametros = {
+    destellar_verde_peatonal:"0",
+    destellar_verde_vehicular:"0",
+    tiempo_amarillo_vehicular: "0",
+    tiempo_destello_prender: "0",
+    tiempo_minimo_verde_1: "0",
+    tiempo_minimo_verde_2: "0",
+    tiempo_rojo_prender: "0",
+    tiempo_todo_rojo: "0",
+    valor_sincronizacion: "0"
+}
 
 

@@ -45,6 +45,7 @@ async function getPlanesFromRestApi(mac, ip) {
 		});
 	return planes;
 }
+
 async function setPlanesFromRestApi(jsonData) {
 	await axios.post(`${BASE_PATH_WS}/rest/restSetPlanesControlador?mac=${jsonData['mac']}`, jsonData)
 		.then(response => {
@@ -54,6 +55,36 @@ async function setPlanesFromRestApi(jsonData) {
 			console.error(error);
 		});
 }
+
+async function getOtrosParametrosFromRestApi(mac,ip) {
+	var parametros;
+	await axios.post(`${BASE_PATH_WS}/rest/restGetOtrosParamControlador?mac=${mac}`, {
+		ip: ip
+	})
+		.then(response => {
+			parametros = response.data
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+	return parametros;
+}
+
+async function setOtrosParametrosFromRestApi(jsonData) {
+	await axios.post(`${BASE_PATH_WS}/rest/restSetOtrosParamControlador?mac=${jsonData['mac']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+}
+
+
+
+
+
+
 
 async function getHorariosFromRestApi(mac, ip) {
 
@@ -85,4 +116,8 @@ async function postHorariosFromRestApi(jsonData) {
 		});
 }
 
-export { getIpsFromRestApi, getFasesFromRestApi, getPlanesFromRestApi,getHorariosFromRestApi,postHorariosFromRestApi,postFasesFromRestApi,setPlanesFromRestApi }
+export { getIpsFromRestApi, getFasesFromRestApi,
+	 getPlanesFromRestApi,getHorariosFromRestApi,
+	 postHorariosFromRestApi,postFasesFromRestApi,
+	 setPlanesFromRestApi,getOtrosParametrosFromRestApi,
+	 setOtrosParametrosFromRestApi }

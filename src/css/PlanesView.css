@@ -26,3 +26,13 @@ height: 80px;
     opacity: 1;
 
   }
+  .habilited-otrosparam{
+    width: 100%;
+    opacity: 1;
+  }
+  .disabled-otrosparam{
+    opacity: 0.6;
+    width: 100%;
+    pointer-events: none;
+  
+  }
