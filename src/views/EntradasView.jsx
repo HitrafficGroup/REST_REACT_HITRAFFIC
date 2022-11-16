@@ -16,7 +16,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
-
+import CardController from '../components/CardController';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 
@@ -142,6 +142,9 @@ export default function EntradasView() {
     
             </Grid>
         </Container>
+        <div className='horarios-card'>
+                <CardController />
+            </div>
 
     </>);
 }

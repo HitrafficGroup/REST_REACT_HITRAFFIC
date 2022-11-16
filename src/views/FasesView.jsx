@@ -15,6 +15,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addFases } from "../features/controlers/controlerSlice"
 import '../css/FasesView.css';
 
+import CardController from '../components/CardController';
 
 export default function FasesView() {
 
@@ -347,6 +348,9 @@ export default function FasesView() {
                     </ModalFooter>
                 </Modal>
             </Container>
+            <div className='horarios-card'>
+                <CardController />
+            </div>
         </>
     );
 

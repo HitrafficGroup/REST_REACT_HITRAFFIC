@@ -196,6 +196,91 @@ function generateObjectForTipoHorario(horario_list){
     }
     return arrayObjects
 }
+function CheckAndSplitBits(listag, num_bits = 8){
+    let datos = []
+    for (let j=0; j < listag.length; j++){
+        let temp = listag[j]
+        let bits_faltantes = num_bits - listag[j].length
+        for (let i=0; i<bits_faltantes; i++){
+            temp = "0" + temp
+        }
+        listag[j] = temp
+        let direccion = listag[j].substring(0,4)
+        let destello = listag[j][4]
+        let sentido = listag[j].substring(5,8)
+        direccion = parseInt(direccion,2)
+        destello = parseInt(destello,2)
+        sentido = parseInt(sentido,2)
+        datos.push(direccion,sentido,destello)  
+    }
+    return datos
+}
+function convertToGrupos(respuesta,mac) {
+    let g1 = respuesta[mac]["G1"]
+    let g2 = respuesta[mac]["G2"]
+    let g3 = respuesta[mac]["G3"]
+    let g4 = respuesta[mac]["G4"]
+    let lista_nombres = ["direccion", "sentido", "destello"]
+    let listag = [parseInt(g1).toString(2), parseInt(g2).toString(2), parseInt(g3).toString(2), parseInt(g4).toString(2)]
+    let datos = CheckAndSplitBits(listag)
+    console.log(datos)
+    let contador = 0;
+    let gruposConverted = []
+    for (let j = 1; j <= 4; j++) {
+        let direccion = datos[contador]
+        contador++;
+        let sentido = datos[contador]
+        contador++;
+        let destello = datos[contador]
+        contador++;
+
+        let direccionDescripcion
+        switch ("" + direccion) {
+            case "1": direccionDescripcion = "Norte"; break;
+            case "2": direccionDescripcion = "Este"; break;
+            case "3": direccionDescripcion = "Sur"; break;
+            case "4": direccionDescripcion = "Oeste"; break;
+            case "5": direccionDescripcion = "Noroeste"; break;
+            case "6": direccionDescripcion = "Sureste"; break;
+            case "7": direccionDescripcion = "Suroeste"; break;
+            case "8": direccionDescripcion = "Noroeste"; break;
+            default: direccionDescripcion = ""; break;
+        }
+
+        let sentidoDescripcion
+        switch ("" + sentido) {
+            case "1": sentidoDescripcion = "Izquierda"; break;
+            case "2": sentidoDescripcion = "Derecha"; break;
+            case "3": sentidoDescripcion = "Giro Izquierda"; break;
+            case "4": sentidoDescripcion = "Giro Derecha"; break;
+            case "5": sentidoDescripcion = "Peatonal 1"; break;
+            case "6": sentidoDescripcion = "Peatonal 2"; break;
+            default: sentidoDescripcion = ""; break;
+        }
 
 
-export { convertToFases, convertToPlanes, createHorariosObject }
+
+        let destelloDescripcion
+        switch ("" + destello) {
+            case "0": destelloDescripcion = "Rojo"; break;
+            case "1": destelloDescripcion = "Amarillo"; break;
+            default: destelloDescripcion = ""; break;
+        }
+
+
+        let grupo = {
+            "grupoNum": j,
+            "direccion": direccion,
+            "direccionDescripcion": direccionDescripcion,
+            "sentido": sentido,
+            "sentidoDescripcion": sentidoDescripcion,
+            "destello": destello,
+            "destelloDescripcion": destelloDescripcion
+        }
+        gruposConverted["grupo" + j] = grupo
+    }
+    return gruposConverted;
+
+}
+
+export { convertToFases, convertToPlanes, createHorariosObject,convertToGrupos }

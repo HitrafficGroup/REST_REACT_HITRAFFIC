@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { convertToFases, convertToPlanes,createHorariosObject } from './manageData'
+import { convertToFases, convertToPlanes,createHorariosObject,convertToGrupos } from './manageData'
+import Swal from 'sweetalert2';
 const BASE_PATH_WS = 'http://127.0.0.1:8000';
 async function getIpsFromRestApi() {
 	console.log('se ejecuta peticion');
@@ -105,9 +106,21 @@ async function postHorariosFromRestApi(jsonData) {
 	await axios.post(`${BASE_PATH_WS}/rest/restSetHorariosControlador?mac=${jsonData['mac']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Exito",
+				icon: "success",
+			});
+
 		})
 		.catch(function (error) {
 			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexion',
+				text: 'Datos no Cargados!',
+				footer: '<a href="">Click Aqui Para Notificar el error</a>'
+			  })
 		});
 }
 
@@ -135,9 +148,42 @@ async function setTimeControlador(jsonData) {
 			console.error(error);
 		});
 }
+async function  getGruposControlador(mac,ip) {
+	var grupos;
+	await axios.post(`${BASE_PATH_WS}/rest/restGetGruposControlador?mac=${mac}`, {
+		ip: ip
+	})
+		.then(response => {
+			grupos = convertToGrupos(response.data,mac)
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+		return grupos;
+	
+}
+async function getConflictoVerdesControlador(mac,ip){
+	
+	var conflictos;
+	await axios.post(`${BASE_PATH_WS}/rest/restGetConflictoVerdesControlador?mac=${mac}`, {
+		ip: ip
+	})
+		.then(response => {
+			conflictos = response.data
+
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+		return conflictos;
+
+}
+
+
 export { getIpsFromRestApi, getFasesFromRestApi,
 	 getPlanesFromRestApi,getHorariosFromRestApi,
 	 postHorariosFromRestApi,postFasesFromRestApi,
 	 setPlanesFromRestApi,getOtrosParametrosFromRestApi,
 	 setOtrosParametrosFromRestApi,getTimeControlador,
-	 setTimeControlador}
+	 setTimeControlador,getGruposControlador,
+	 getConflictoVerdesControlador}

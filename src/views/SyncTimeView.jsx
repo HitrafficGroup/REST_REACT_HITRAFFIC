@@ -6,6 +6,7 @@ import RelogActual from "../components/RelogActual";
 import Swal from 'sweetalert2';
 import {getTimeControlador,setTimeControlador} from '../js/apiFunctions'
 import { useSelector, useDispatch } from 'react-redux';
+import CardController from '../components/CardController';
 export default function SyncTimeView() {
     const [tiempoController,setTiempoController] = useState(InitialTime)
     const [fechaController,setFechaController] = useState('Datos de fecha aun no Cargados')
@@ -100,6 +101,9 @@ export default function SyncTimeView() {
                 </Grid>
             </Grid>
         </Container>
+        <div className='horarios-card'>
+                <CardController />
+            </div>
     </>);
 }
 const InitialTime = {

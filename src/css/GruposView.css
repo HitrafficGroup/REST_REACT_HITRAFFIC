@@ -401,4 +401,17 @@ tr td.fase_apagado {
     background-color: white;
 }
 
+
+.habilited-grupos{
+    width: 100%;
+    opacity: 1;
+  }
+  .disabled-grupos{
+    opacity: 0.6;
+    width: 100%;
+    pointer-events: none;
+  
+  }
+
+
 /* ******************************************* */

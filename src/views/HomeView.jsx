@@ -12,7 +12,7 @@ import UpdateIcon from '@mui/icons-material/Update';
 import "../css/HomeView.css"
 import CustomProgress from "../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { getIpsFromRestApi,getFasesFromRestApi,getPlanesFromRestApi } from '../js/apiFunctions'
+import { getIpsFromRestApi} from '../js/apiFunctions'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';

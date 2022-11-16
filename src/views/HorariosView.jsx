@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
+import Swal from 'sweetalert2';
 import FormGroup from '@mui/material/FormGroup';
 import { getHorariosFromRestApi, postHorariosFromRestApi } from '../js/apiFunctions'
 import Checkbox from '@mui/material/Checkbox';
@@ -25,13 +26,13 @@ import CardController from '../components/CardController';
 export default function HorariosView() {
     const [horarios, setHorarios] = useState(horariosPorDefecto);
     const dispatch = useDispatch();
-    const controlerState = useSelector(state => state.controlers)
+    const controlerState = useSelector(state => state.controlers);
     const [operativos, setOperativos] = useState([{ fecha: '', tiempoeje: '' }]);
     const [modalHorarios, setModalHorarios] = useState(false);
     const [tipoDia, setTipoDia] = useState(' ');
     const [planSemaforo, setPlanSemaforo] = useState('1');
     const [modoSemaforo, setModoSemaforo] = useState(1);
-    const [desfaseSemaforo,setDesfaseSemaforo] = useState('0');
+    const [desfaseSemaforo, setDesfaseSemaforo] = useState('0');
     const [time1, setTime1] = useState(new Date());
     const [objHorarios, setObjHorarios] = useState(null);
     const [currentHorario, setCurrentHorario] = useState(
@@ -68,7 +69,7 @@ export default function HorariosView() {
     const handleModoSemaforo = (event) => {
         console.log(event.target.value);
         setModoSemaforo(event.target.value);
-        
+
     }
     const handleFaseSemaforo = (event) => {
         setDesfaseSemaforo(event.target.value);
@@ -123,26 +124,26 @@ export default function HorariosView() {
             return 'Apagado'
         }
     }
-    const formatearTipoDia = (data)=>{
-        if(data === 'dia_ordinario'){
+    const formatearTipoDia = (data) => {
+        if (data === 'dia_ordinario') {
             return "0"
-        }else if (data === 'fin_semana'){
+        } else if (data === 'fin_semana') {
             return "1"
-        }else{
+        } else {
             return "2"
         }
     }
     const cargarDatos = async () => {
-       
+
         const data = horarios
         console.log(data)
         var newObject = {}
         for (let num = 0; num < 16; num++) {
-           
+
 
             let mod = data[num].mod
             let plan = data[num].plan
-     
+
             mod = parseInt(mod).toString(2)
             plan = parseInt(plan).toString(2)
             let bits_faltantes_mod = 3 - mod.length
@@ -157,21 +158,40 @@ export default function HorariosView() {
             mod_plan = parseInt(mod_plan, 2)
             let horas = data[num].horas
             let minutos = data[num].minutos
-            newObject['hora'+(num+1)] = parseInt(horas, 16).toString()
-            newObject['minuto'+(num+1)] = parseInt(minutos, 16).toString()
-            newObject['desfase'+(num+1)] = data[num].desfase
-            newObject['mod_plan'+(num+1)] = mod_plan
-          
+            newObject['hora' + (num + 1)] = parseInt(horas, 16).toString()
+            newObject['minuto' + (num + 1)] = parseInt(minutos, 16).toString()
+            newObject['desfase' + (num + 1)] = data[num].desfase
+            newObject['mod_plan' + (num + 1)] = mod_plan
+
 
         }
         newObject['ip'] = controlerState.ip
         newObject['num_horario'] = formatearTipoDia(tipoDia)
-       
-        try {
-            postHorariosFromRestApi(newObject);
-        } catch (e) {
-            console.log(e);
-        }
+
+
+
+        Swal.fire({
+            title: 'Deseas Continuar ?',
+            text: 'Estos Cambios se guardaran en el Controlador',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, actualizar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                try {
+                    postHorariosFromRestApi(newObject);
+                
+                } catch (e) {
+                    console.log(e);
+            
+                }
+
+            }
+        })
+
+
     }
     return (
         <>

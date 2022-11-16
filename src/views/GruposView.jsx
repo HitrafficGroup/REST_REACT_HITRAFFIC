@@ -12,34 +12,15 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import '../css/GruposView.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-const gruposDefault = [
-    {
-        grupo: 1,
-        Direccion: 'Norte',
-        Sentido: 'Izquierda',
-        Destello: 'Amarillo'
-    },
-    {
-        grupo: 2,
-        Direccion: 'Norte',
-        Sentido: 'Izquierda',
-        Destello: 'Amarillo'
-    },
-    {
-        grupo: 3,
-        Direccion: 'Norte',
-        Sentido: 'Izquierda',
-        Destello: 'Amarillo'
-    },
-    {
-        grupo: 4,
-        Direccion: 'Norte',
-        Sentido: 'Izquierda',
-        Destello: 'Amarillo'
-    }
+import { useSelector,useDispatch } from 'react-redux';
+import { getGruposControlador,getConflictoVerdesControlador} from '../js/apiFunctions'
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import CardController from '../components/CardController';
 
-]
+
 export default function GruposView() {
+    const controlerState = useSelector(state => state.controlers);
     const [grupos, setGrupos] = useState(gruposDefault);
     const [direccion, setDireccion] = useState('norte');
     const [sentido, setSentido] = useState('Derecha');
@@ -51,6 +32,10 @@ export default function GruposView() {
     const [conflictg2g3,setConflictg2g3] = useState(false);
     const [conflictg2g4,setConflictg2g4] = useState(false);
     const [conflictg3g4,setConflictg3g4] = useState(false);
+    const [deshabilitar,setDeshabilitar] = useState(true);
+    const [deshabilitar2,setDeshabilitar2] = useState(false);
+    const [deshabilitar3,setDeshabilitar3] = useState(true);
+    const [deshabilitar4,setDeshabilitar4] = useState(false);
     const abrirModalGrupo = () => {
         setModalGrupo(true);
     }
@@ -68,31 +53,62 @@ export default function GruposView() {
         setDestello(event.target.value);
     }
     const detectg1g2 = () =>{
-        console.log('se clickeo la g1 y g2')
+      
         setConflictg1g2(!conflictg1g2)
     }
     const detectg1g3 = () =>{
-        console.log('se clickeo la g1 y g3')
+      
         setConflictg1g3(!conflictg1g3)
     }
     const detectg1g4 = () =>{
-        console.log('se clickeo la g1 y g4')
+        
         setConflictg1g4(!conflictg1g4)
     }
-    // const detectg2g3 = () =>{
-    //     console.log('se clickeo la g1 y g4')
-    //     setConflictg1g4(!conflictg1g4)
-    // }
-    // const detectg2g4 = () =>{
-    //     console.log('se clickeo la g1 y g4')
-    //     setConflictg1g4(!conflictg1g4)
-    // }
+    const detectg2g3 = () =>{
+        
+        setConflictg2g3(!conflictg2g3)
+    }
+    const detectg2g4 = () =>{
+      
+        setConflictg2g4(!conflictg2g4)
+    }
+    const detectg3g4 = () =>{
+    
+        setConflictg3g4(!conflictg3g4)
+    }
+    const leerGruposFromRestApi = async() =>{
+        setDeshabilitar2(true);
+        
+        const response = await getGruposControlador(controlerState.mac,controlerState.ip)
+        const responseFormat = []
+        for(let i = 1;i<5;i++){
+            let temp = response['grupo'+i]
+            let newObject = {
+                grupo:temp.grupoNum,
+                direccion: temp.direccionDescripcion,
+                sentido:temp.sentidoDescripcion,
+                destello:temp.destelloDescripcion,
+            }
+            responseFormat.push(newObject);
+        }
+        setGrupos(responseFormat)
+        setDeshabilitar(false)
+        setDeshabilitar2(false);
+    }
+    const leerConflictosApi =async()=>{
+        setDeshabilitar4(true)
+        const response =  await getConflictoVerdesControlador(controlerState.mac,controlerState.ip)
+        console.log(response)
+        setDeshabilitar3(false)
+        setDeshabilitar4(false)
+    }
   
     return (<>
         <Container maxWidth="md">
             <h1>Grupos View</h1>
             <Grid container spacing={1}>
                 <Grid item xs={12}>
+                    <div className={deshabilitar ? 'disabled-grupos':'habilited-grupos'}>
                     <Table className='home-t'>
                         <Thead>
                             <Tr>
@@ -111,13 +127,13 @@ export default function GruposView() {
                                         {dato.grupo}
                                     </Td>
                                     <Td >
-                                        {dato.Direccion}
+                                        {dato.direccion}
                                     </Td>
                                     <Td >
-                                        {dato.Sentido}
+                                        {dato.sentido}
                                     </Td>
                                     <Td >
-                                        {dato.Destello}
+                                        {dato.destello}
                                     </Td>
                                     <Td >
                                         <Button variant="contained" color='advertencia' onClick={abrirModalGrupo} >Modificar</Button>
@@ -127,18 +143,20 @@ export default function GruposView() {
                             ))}
                         </Tbody>
                     </Table>
+                    </div>
                 </Grid>
-                <Grid item xs={6}>
-                    <Button variant="contained">Leer Datos</Button>
+                <Grid item xs={3}>
+                    <Button variant="contained" color='verde2' sx={{height:'100%'}} onClick={leerGruposFromRestApi}>Leer Datos</Button>
                 </Grid>
-                <Grid item xs={6}>
-                    <Button variant="contained">Cargar Cambios</Button>
+                <Grid item xs={3}>
+                    <Button variant="contained" sx={{height:'100%'}}  disabled={deshabilitar} >Cargar Cambios</Button>
                 </Grid>
                 <Grid item xs={12}>
                     <h5>Configuracion conflicto de Verdes</h5>
                 </Grid>
             
                 <Grid item xs={12}>
+                <div className={deshabilitar3 ? 'disabled-grupos':'habilited-grupos'}>
                     <table id="tabla_conflictos" className="table table-bordered">
                         <tbody>
                             <tr>
@@ -159,15 +177,15 @@ export default function GruposView() {
                                 <td>G2</td>
                                 <td></td>
                                 <td></td>
-                                <td id="con_g2g3"></td>
-                                <td id="con_g2g4"></td>
+                                <td id="con_g2g3" onClick={detectg2g3} className={conflictg2g3 ? 'activated-conflict':'desactivated-conflict'}  ></td>
+                                <td id="con_g2g4" onClick={detectg2g4} className={conflictg2g4 ? 'activated-conflict':'desactivated-conflict'}  ></td>
                             </tr>
                             <tr id="con_fila3" style={{ height: "5rem" }}>
                                 <td>G3</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td id="con_g3g4"></td>
+                                <td id="con_g3g4" onClick={detectg3g4} className={conflictg3g4 ? 'activated-conflict':'desactivated-conflict'}   ></td>
                             </tr>
                             <tr style={{ height: "5rem" }}>
                                 <td>G4</td>
@@ -178,23 +196,24 @@ export default function GruposView() {
                             </tr>
                         </tbody>
                     </table>
+                    </div>
                 </Grid>
                 <Grid item xs={12}>
                     <h5>Opciones de uso para salidas de controlador</h5>
                 </Grid>
                 <Grid item xs={12}>
                 <FormGroup>
-                    <FormControlLabel control={<Switch defaultChecked />} label="Activar Modo destello cuando haya conflicto de verdes" />
+                    <FormControlLabel control={<Switch  />} label="Activar Modo destello cuando haya conflicto de verdes" />
                     <FormControlLabel control={<Switch />} defaultChecked label="Activar Modo destello cuando luz Roja y Verde se activen del mismo grupo" />
                     <FormControlLabel control={<Switch />} label="Activar Modo destello cuando una salida de luz Roja falle" />
                     </FormGroup>
                 </Grid>  
            
                     <Grid item xs={6}>
-                        <Button variant="contained">Leer Datos</Button>
+                        <Button variant="contained" onClick={leerConflictosApi} disabled={deshabilitar4} color={'verde2'}>Leer Datos</Button>
                     </Grid>
                     <Grid item xs={6}>
-                        <Button variant="contained">Cargar Cambios</Button>
+                        <Button variant="contained" disabled={deshabilitar3} >Cargar Cambios</Button>
                     </Grid>
                     <Grid item xs={6}>
                         <div className='blank-space'>
@@ -275,7 +294,43 @@ export default function GruposView() {
                 </ModalFooter>
             </Modal>
         </Container>
-
-
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
+            <CircularProgress color="inherit" />
+        </Backdrop>
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar4}>
+            <CircularProgress color="inherit" />
+        </Backdrop>
+        <div className='horarios-card'>
+                <CardController />
+            </div>
     </>);
 }
+
+
+const gruposDefault = [
+    {
+        grupo: 1,
+        direccion: 'Norte',
+        sentido: 'Izquierda',
+        destello: 'Amarillo'
+    },
+    {
+        grupo: 2,
+        direccion: 'Norte',
+        sentido: 'Izquierda',
+        destello: 'Amarillo'
+    },
+    {
+        grupo: 3,
+        direccion: 'Norte',
+        sentido: 'Izquierda',
+        destello: 'Amarillo'
+    },
+    {
+        grupo: 4,
+        direccion: 'Norte',
+        sentido: 'Izquierda',
+        destello: 'Amarillo'
+    }
+
+]
