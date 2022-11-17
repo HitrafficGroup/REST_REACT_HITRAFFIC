@@ -162,6 +162,28 @@ async function  getGruposControlador(mac,ip) {
 		return grupos;
 	
 }
+async function setGruposControlador(jsonData){
+	await axios.post(`${BASE_PATH_WS}/rest/restSetGruposControlador?mac=${jsonData.mac}`,jsonData)
+	.then(response => {
+		console.log(response.data)
+		Swal.fire({
+			title: "Completado!",
+			text: "Cambios Cargados Con Exito",
+			icon: "success",
+		});
+	})
+	.catch(function (error) {
+		console.error(error);
+		Swal.fire({
+			icon: 'error',
+			title: 'Error de Conexion',
+			text: 'Datos no Cargados!',
+			footer: '<a href="">Click Aqui Para Notificar el error</a>'
+		  })
+	});
+
+}
+
 async function getConflictoVerdesControlador(mac,ip){
 	
 	var conflictos;
@@ -179,6 +201,29 @@ async function getConflictoVerdesControlador(mac,ip){
 
 }
 
+async function setConflictoVerdesControlador(jsonData){	
+	await axios.post(`${BASE_PATH_WS}/rest/restSetConflictoVerdesControlador?mac=${jsonData.mac}`,jsonData).then(response => {
+		console.log(response.data)
+		Swal.fire({
+			title: "Completado!",
+			text: "Cambios Cargados Con Exito",
+			icon: "success",
+		});
+	})
+	.catch(function (error) {
+		console.error(error);
+		Swal.fire({
+			icon: 'Datos No Cargados',
+			title: 'Error de Conexion',
+			text: `${error}`,
+			footer: '<a href="">Click Aqui Para Notificar el error</a>'
+		  })
+	});
+	
+
+}
+
+
 
 export { getIpsFromRestApi, getFasesFromRestApi,
 	 getPlanesFromRestApi,getHorariosFromRestApi,
@@ -186,4 +231,5 @@ export { getIpsFromRestApi, getFasesFromRestApi,
 	 setPlanesFromRestApi,getOtrosParametrosFromRestApi,
 	 setOtrosParametrosFromRestApi,getTimeControlador,
 	 setTimeControlador,getGruposControlador,
-	 getConflictoVerdesControlador}
+	 getConflictoVerdesControlador,setGruposControlador,
+	 setConflictoVerdesControlador}

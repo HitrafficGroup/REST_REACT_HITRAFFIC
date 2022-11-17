@@ -13,14 +13,14 @@ import Button from '@mui/material/Button';
 import '../css/GruposView.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useSelector } from 'react-redux';
-import { getGruposControlador, getConflictoVerdesControlador } from '../js/apiFunctions'
+import { getGruposControlador, getConflictoVerdesControlador,setGruposControlador,setConflictoVerdesControlador } from '../js/apiFunctions'
 import Collapse from '@mui/material/Collapse';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import CardController from '../components/CardController';
 import Swal from 'sweetalert2';
 import Alert from '@mui/material/Alert';
-
+import { CheckAndLinkBits } from '../js/manageData';
 export default function GruposView() {
     const controlerState = useSelector(state => state.controlers);
     const [grupos, setGrupos] = useState(gruposDefault);
@@ -39,9 +39,9 @@ export default function GruposView() {
     const [deshabilitar3, setDeshabilitar3] = useState(true);
     const [deshabilitar4, setDeshabilitar4] = useState(false);
     const [cambioGrupos, setCambioGrupos] = useState(false);
-    const [check1, setCheck1] = useState(false);
-    const [check2, setCheck2] = useState(false);
-    const [check3, setCheck3] = useState(false);
+    const [checked1, setChecked1] = useState(false);
+    const [checked2, setChecked2] = useState(false);
+    const [checked3, setChecked3] = useState(false);
     const [cambioConflictos, setCambioConflictos] = useState(false);
     const [currentGrupo, setCurrentGrupo] = useState(gruposDefault[0]);
     const abrirModalGrupo = (data) => {
@@ -88,13 +88,16 @@ export default function GruposView() {
         setConflictg3g4(!conflictg3g4)
     }
     const handleChange1 = (event) => {
-        setCheck1(event.target.checked);
+        setCambioConflictos(true);
+        setChecked1(event.target.checked);
     };
     const handleChange2 = (event) => {
-        setCheck2(event.target.checked);
+        setCambioConflictos(true);
+        setChecked2(event.target.checked);
     };
     const handleChange3 = (event) => {
-        setCheck3(event.target.checked);
+        setCambioConflictos(true);
+        setChecked3(event.target.checked);
     };
     const leerGruposFromRestApi = async () => {
         setDeshabilitar2(true);
@@ -120,21 +123,21 @@ export default function GruposView() {
         const ch2 = respuesta[controlerState.mac]['check2']
         const ch3 = respuesta[controlerState.mac]['check3']
         if (ch1 === "1") {
-            setCheck1(true)
+            setChecked1(true)
         } else {
-            setCheck1(false)
+            setChecked1(false)
         }
 
         if (ch2 === "1") {
-            setCheck2(true)
+            setChecked2(true)
         } else {
-            setCheck2(false)
+            setChecked2(false)
         }
 
         if (ch3 === "1") {
-            setCheck3(true)
+            setChecked3(true)
         } else {
-            setCheck3(false)
+            setChecked3(false)
         }
 
         for (let fila = 0; fila < 3; fila++) {
@@ -193,6 +196,71 @@ export default function GruposView() {
         setModalGrupo(false)
         setCambioGrupos(true)
     }
+
+    const getValueDireccion = (data)=>{
+        var valor = ''
+        switch (data) {
+            case "Norte": valor = "1"; break;
+            case "Este": valor = "2"; break;
+            case "Sur": valor = "3"; break;
+            case "Oeste": valor = "4"; break;
+            case "Noroeste": valor = "5"; break;
+            case "Sureste": valor = "6"; break;
+            case "Suroeste": valor = "7"; break;
+            case "Noroeste": valor = "8"; break;
+            default: valor = ""; break;
+        }
+        return valor
+    }
+    const getValueSentido = (sentido)=>{
+
+        let sentidoDescripcion
+        switch (sentido) {
+            case "Izquierda": sentidoDescripcion = "1"; break;
+            case "Derecha": sentidoDescripcion = "2"; break;
+            case "Giro Izquierda": sentidoDescripcion = "3"; break;
+            case "Giro Derecha": sentidoDescripcion = "4"; break;
+            case "Peatonal 1": sentidoDescripcion = "5"; break;
+            case "Peatonal 2": sentidoDescripcion = "6"; break;
+            default: sentidoDescripcion = ""; break;
+        }
+        return sentidoDescripcion
+    }
+    const getValueDestello = (destello) =>{
+        let destelloDescripcion
+        switch (destello) {
+            case "Rojo": destelloDescripcion = "0"; break;
+            case "Amarillo": destelloDescripcion = "1"; break;
+            default: destelloDescripcion = ""; break;
+        }
+        return destelloDescripcion
+    }
+    const convertirDatos=(data)=>{
+       
+        let lista_elementos = []
+        for (let sami = 0; sami < 4; sami++) {
+            let dir = data[sami]['direccion']
+            let sen = data[sami]['sentido']
+            let des = data[sami]['destello']
+            console.log(dir)
+           let direccion = getValueDireccion(dir)
+           lista_elementos.push(direccion)
+           let destello = getValueDestello(des)
+           lista_elementos.push(destello)
+           let sentido = getValueSentido(sen)
+           lista_elementos.push(sentido)
+        }
+
+        let datos = CheckAndLinkBits(lista_elementos)
+        let data_grupos = {
+            "ip": controlerState.ip,
+            "g1": datos[0],
+            "g2": datos[1],
+            "g3": datos[2],
+            "g4": datos[3],
+        }
+        return(data_grupos)
+    }
     const cargarDatosGrupos = () => {
         Swal.fire({
             title: 'Deseas Continuar ?',
@@ -206,6 +274,8 @@ export default function GruposView() {
             if (result.isConfirmed) {
                 try {
                     console.log(grupos)
+                    const newGruposconf = convertirDatos(grupos)
+                    setGruposControlador(newGruposconf)
                     setCambioGrupos(false)
 
                 } catch (e) {
@@ -219,6 +289,10 @@ export default function GruposView() {
 
 
     const cargarDatosConflictos = () => {
+     
+        let fila1 = []
+        let fila2 = []
+        let fila3 = []
         Swal.fire({
             title: 'Deseas Continuar ?',
             text: 'Estos Cambios se guardaran en el Controlador',
@@ -231,6 +305,48 @@ export default function GruposView() {
             if (result.isConfirmed) {
                 try {
                     console.log('');
+                    fila1=[conflictg1g4,conflictg1g3,conflictg1g2,false]
+                    fila2=[conflictg2g4,conflictg2g3,false,false]
+                    fila3=[conflictg3g4,false,false,false]
+                    let binario1 = ""
+                    let binario2 = ""
+                    let binario3 = ""
+                    for(let i = 0;i<4;i++){
+                        if(fila1[i]){
+                            binario1 += "1"
+                        }else{
+                            binario1 += "0"
+                        }
+                    }
+                    for(let i = 0;i<4;i++){
+                        if(fila2[i]){
+                            binario2 += "1"
+                        }else{
+                            binario2 += "0"
+                        }
+                    }
+                    for(let i = 0;i<4;i++){
+                        if(fila3[i]){
+                            binario3 += "1"
+                        }else{
+                            binario3 += "0"
+                        }
+                    }
+
+       
+                    const newConflicto = {
+                        check1: checked1 ? "1":"0",
+                        check2: checked2 ? "1":"0",
+                        check3: checked3 ? "1":"0",
+                        fila1: parseInt(binario1, 2).toString(),
+                        fila2: parseInt(binario2, 2).toString(),
+                        fila3: parseInt(binario3, 2).toString(),
+                        ip: controlerState.ip,
+                        mac:controlerState.mac
+                    }
+               
+                    setConflictoVerdesControlador(newConflicto)
+                    setCambioConflictos(false)
 
                 } catch (e) {
                     console.log(e);
@@ -358,9 +474,9 @@ export default function GruposView() {
                 </Grid>
                 <Grid item xs={12}>
                     <FormGroup>
-                        <FormControlLabel control={<Switch disabled={deshabilitar3} value={check1} checked={check1} inputProps={{ 'aria-label': 'controlled' }} onChange={handleChange1} />} label="Activar Modo destello cuando haya conflicto de verdes" />
-                        <FormControlLabel control={<Switch disabled={deshabilitar3} value={check2} checked={check2} inputProps={{ 'aria-label': 'controlled' }} onChange={handleChange2} />} label="Activar Modo destello cuando luz Roja y Verde se activen del mismo grupo" />
-                        <FormControlLabel control={<Switch disabled={deshabilitar3} value={check3} checked={check3} inputProps={{ 'aria-label': 'controlled' }} onChange={handleChange3} />} label="Activar Modo destello cuando una salida de luz Roja falle" />
+                        <FormControlLabel control={<Switch disabled={deshabilitar3} value={checked1} checked={checked1} inputProps={{ 'aria-label': 'controlled' }} onChange={handleChange1} />} label="Activar Modo destello cuando haya conflicto de verdes" />
+                        <FormControlLabel control={<Switch disabled={deshabilitar3} value={checked2} checked={checked2} inputProps={{ 'aria-label': 'controlled' }} onChange={handleChange2} />} label="Activar Modo destello cuando luz Roja y Verde se activen del mismo grupo" />
+                        <FormControlLabel control={<Switch disabled={deshabilitar3} value={checked3} checked={checked3} inputProps={{ 'aria-label': 'controlled' }} onChange={handleChange3} />} label="Activar Modo destello cuando una salida de luz Roja falle" />
                     </FormGroup>
                 </Grid>
                 <Grid item xs={12}>

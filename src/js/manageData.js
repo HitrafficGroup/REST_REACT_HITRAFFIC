@@ -283,4 +283,51 @@ function convertToGrupos(respuesta,mac) {
 
 }
 
-export { convertToFases, convertToPlanes, createHorariosObject,convertToGrupos }
+function CheckAndLinkBits(listag){
+    let datos = []
+    let num_grupos = 3;
+    var dato_binario = ""
+    var contador = 0;
+    for (let j=0; j <= listag.length; j++){
+        //console.log(contador)
+        if ((contador % num_grupos)==0 && contador != 0) {
+            datos.push(parseInt(dato_binario,2).toString())
+            //console.log("reset")
+            dato_binario = ""
+            contador = 0;
+        }
+        switch (contador){
+            case 0:
+                let direccion = parseInt(listag[j]).toString(2)
+                let bits_faltantes = 4 - direccion.length
+                for (let i=0; i<bits_faltantes; i++){
+                    direccion = "0" + direccion
+                }
+                dato_binario = dato_binario + direccion
+                //console.log(dato_binario)
+                contador+=1
+                break;
+            
+            case 1:
+                let destello = parseInt(listag[j]).toString(2)
+                dato_binario = dato_binario + destello
+                //console.log(dato_binario)
+                contador+=1
+                break;
+            
+            case 2:
+                let sentido = parseInt(listag[j]).toString(2)
+                let bits_faltantes_sentido = 3 - sentido.length
+                for (let i=0; i<bits_faltantes_sentido; i++){
+                    sentido = "0" + sentido
+                }
+                dato_binario = dato_binario + sentido
+                //console.log(dato_binario)
+                contador+=1
+                break;
+        }
+    }
+
+    return datos
+}
+export { convertToFases, convertToPlanes, createHorariosObject,convertToGrupos ,CheckAndLinkBits}
