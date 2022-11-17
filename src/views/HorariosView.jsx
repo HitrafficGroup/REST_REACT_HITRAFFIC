@@ -35,6 +35,8 @@ export default function HorariosView() {
     const [desfaseSemaforo, setDesfaseSemaforo] = useState('0');
     const [time1, setTime1] = useState(new Date());
     const [objHorarios, setObjHorarios] = useState(null);
+    const [habilitar1,setHabilitar1] = useState(true);
+    const [habilitar2,setHabilitar2] = useState(false);
     const [currentHorario, setCurrentHorario] = useState(
         { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
     );
@@ -100,11 +102,15 @@ export default function HorariosView() {
     };
     const leerHorariosFromRestApi = async () => {
         try {
+            setHabilitar2(false);
+            
             const result = await getHorariosFromRestApi(controlerState.mac, controlerState.ip)
             setObjHorarios(result)
             console.log(result);
             setHorarios(horariosPorDefecto)
             setTipoDia('');
+            setHabilitar1(true)
+            setHabilitar2(true);
         } catch (e) {
             console.log(e);
         }
@@ -216,14 +222,14 @@ export default function HorariosView() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button variant="contained" color='verde2' onClick={leerHorariosFromRestApi} sx={{ height: '100%' }} fullWidth>Leer Datos</Button>
+                        <Button variant="contained" color='verde2' onClick={leerHorariosFromRestApi} sx={{ height: '100%' }} disabled={habilitar2} fullWidth>Leer Datos</Button>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button variant="contained" sx={{ height: '100%' }} fullWidth onClick={cargarDatos} >Cargar Datos</Button>
+                        <Button variant="contained" sx={{ height: '100%' }} fullWidth onClick={cargarDatos} disabled={habilitar1} >Cargar Datos</Button>
                     </Grid>
                     <Grid item xs={12} >
-                        <div className='h-scroller'>
-
+                    <div className={habilitar1 ? 'disabled-tabla-horarios' : 'habilited-tabla-horarios'}>
+                        <div className='h-scroller '>
                             <Table className='home-t'>
                                 <Thead>
                                     <Tr>
@@ -260,6 +266,7 @@ export default function HorariosView() {
                                     ))}
                                 </Tbody>
                             </Table>
+                        </div>
                         </div>
                     </Grid>
 
