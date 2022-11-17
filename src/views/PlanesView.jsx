@@ -1,4 +1,4 @@
-import React, { useState,forwardRef } from 'react';
+import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
@@ -19,9 +19,7 @@ import { getPlanesFromRestApi,setPlanesFromRestApi,getOtrosParametrosFromRestApi
 import Swal from 'sweetalert2';
 import Chip from '@mui/material/Chip';
 import Alert from '@mui/material/Alert';
-import IconButton from '@mui/material/IconButton';
 import Collapse from '@mui/material/Collapse';
-import CloseIcon from '@mui/icons-material/Close';
 import CardController from '../components/CardController';
 export default function PlanesView() {
     const dispatch = useDispatch();

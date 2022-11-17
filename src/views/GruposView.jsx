@@ -12,12 +12,14 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import '../css/GruposView.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { getGruposControlador, getConflictoVerdesControlador } from '../js/apiFunctions'
+import Collapse from '@mui/material/Collapse';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import CardController from '../components/CardController';
-
+import Swal from 'sweetalert2';
+import Alert from '@mui/material/Alert';
 
 export default function GruposView() {
     const controlerState = useSelector(state => state.controlers);
@@ -36,12 +38,21 @@ export default function GruposView() {
     const [deshabilitar2, setDeshabilitar2] = useState(false);
     const [deshabilitar3, setDeshabilitar3] = useState(true);
     const [deshabilitar4, setDeshabilitar4] = useState(false);
-    const abrirModalGrupo = () => {
+    const [cambioGrupos, setCambioGrupos] = useState(false);
+    const [check1, setCheck1] = useState(false);
+    const [check2, setCheck2] = useState(false);
+    const [check3, setCheck3] = useState(false);
+    const [cambioConflictos, setCambioConflictos] = useState(false);
+    const [currentGrupo, setCurrentGrupo] = useState(gruposDefault[0]);
+    const abrirModalGrupo = (data) => {
+        setCurrentGrupo(data);
+        setDireccion(data.direccion)
+        setSentido(data.sentido)
+        setDestello(data.destello)
+        console.log(data)
         setModalGrupo(true);
     }
-    const guardarCambiosGrupo = () => {
-        setModalGrupo(false);
-    }
+
 
     const handleChangeDireccion = (event) => {
         setDireccion(event.target.value);
@@ -53,32 +64,41 @@ export default function GruposView() {
         setDestello(event.target.value);
     }
     const detectg1g2 = () => {
-
+        setCambioConflictos(true);
         setConflictg1g2(!conflictg1g2)
     }
     const detectg1g3 = () => {
-
+        setCambioConflictos(true);
         setConflictg1g3(!conflictg1g3)
     }
     const detectg1g4 = () => {
-
+        setCambioConflictos(true);
         setConflictg1g4(!conflictg1g4)
     }
     const detectg2g3 = () => {
-
+        setCambioConflictos(true);
         setConflictg2g3(!conflictg2g3)
     }
     const detectg2g4 = () => {
-
+        setCambioConflictos(true);
         setConflictg2g4(!conflictg2g4)
     }
     const detectg3g4 = () => {
-
+        setCambioConflictos(true);
         setConflictg3g4(!conflictg3g4)
     }
+    const handleChange1 = (event) => {
+        setCheck1(event.target.checked);
+    };
+    const handleChange2 = (event) => {
+        setCheck2(event.target.checked);
+    };
+    const handleChange3 = (event) => {
+        setCheck3(event.target.checked);
+    };
     const leerGruposFromRestApi = async () => {
         setDeshabilitar2(true);
-
+        setCambioGrupos(false);
         const response = await getGruposControlador(controlerState.mac, controlerState.ip)
         const responseFormat = []
         for (let i = 1; i < 5; i++) {
@@ -96,6 +116,27 @@ export default function GruposView() {
         setDeshabilitar2(false);
     }
     const mapConflicts = (respuesta) => {
+        const ch1 = respuesta[controlerState.mac]['check1']
+        const ch2 = respuesta[controlerState.mac]['check2']
+        const ch3 = respuesta[controlerState.mac]['check3']
+        if (ch1 === "1") {
+            setCheck1(true)
+        } else {
+            setCheck1(false)
+        }
+
+        if (ch2 === "1") {
+            setCheck2(true)
+        } else {
+            setCheck2(false)
+        }
+
+        if (ch3 === "1") {
+            setCheck3(true)
+        } else {
+            setCheck3(false)
+        }
+
         for (let fila = 0; fila < 3; fila++) {
             let binario = respuesta[controlerState.mac][`fila${fila + 1}`]
             let grupo_fila = fila + 1
@@ -131,25 +172,85 @@ export default function GruposView() {
         } else if (filas === 3) {
             if (columnas === 0) {
                 setConflictg3g4(val)
-            } 
-           
+            }
+
         }
     }
     const leerConflictosApi = async () => {
         setDeshabilitar4(true)
+        setCambioConflictos(false)
         const response = await getConflictoVerdesControlador(controlerState.mac, controlerState.ip)
-        console.log(response)
         mapConflicts(response)
         setDeshabilitar3(false)
         setDeshabilitar4(false)
     }
+    const aplicarCambiosGrupos = () => {
+        const newGrupo = currentGrupo
+        newGrupo['destello'] = destello
+        newGrupo['direccion'] = direccion
+        newGrupo['sentido'] = sentido
+        console.log(newGrupo)
+        setModalGrupo(false)
+        setCambioGrupos(true)
+    }
+    const cargarDatosGrupos = () => {
+        Swal.fire({
+            title: 'Deseas Continuar ?',
+            text: 'Estos Cambios se guardaran en el Controlador',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, actualizar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                try {
+                    console.log(grupos)
+                    setCambioGrupos(false)
+
+                } catch (e) {
+                    console.log(e);
+
+                }
+
+            }
+        })
+    }
+
+
+    const cargarDatosConflictos = () => {
+        Swal.fire({
+            title: 'Deseas Continuar ?',
+            text: 'Estos Cambios se guardaran en el Controlador',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, actualizar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                try {
+                    console.log('');
+
+                } catch (e) {
+                    console.log(e);
+
+                }
+
+            }
+        })
+    }
+
 
     return (<>
         <Container maxWidth="md">
-        <div className='blank-space'>
+            <div className='blank-space'>
 
-</div>
+            </div>
             <Grid container spacing={1}>
+                <Grid item xs={12}>
+                    <h5>Configuracion de Grupos</h5>
+                </Grid>
                 <Grid item xs={12}>
                     <div className={deshabilitar ? 'disabled-grupos' : 'habilited-grupos'}>
                         <Table className='home-t'>
@@ -179,7 +280,7 @@ export default function GruposView() {
                                             {dato.destello}
                                         </Td>
                                         <Td >
-                                            <Button variant="contained" color='advertencia' onClick={abrirModalGrupo} >Modificar</Button>
+                                            <Button variant="contained" color='advertencia' onClick={() => { abrirModalGrupo(dato) }} >Modificar</Button>
                                         </Td>
 
                                     </Tr>
@@ -188,11 +289,22 @@ export default function GruposView() {
                         </Table>
                     </div>
                 </Grid>
+                <Grid item xs={12}>
+                    <Collapse in={cambioGrupos}>
+                        <Alert
+                            severity="warning"
+                            sx={{ mb: 2, mt: 2 }}
+                        >
+                            Se han Generado Cambios en los grupos sin cargar al controlador
+                        </Alert>
+                    </Collapse>
+                </Grid>
+
                 <Grid item xs={3}>
                     <Button variant="contained" color='verde2' sx={{ height: '100%' }} onClick={leerGruposFromRestApi}>Leer Datos</Button>
                 </Grid>
                 <Grid item xs={3}>
-                    <Button variant="contained" sx={{ height: '100%' }} disabled={deshabilitar} >Cargar Cambios</Button>
+                    <Button variant="contained" sx={{ height: '100%' }} onClick={cargarDatosGrupos} disabled={deshabilitar} >Cargar Cambios</Button>
                 </Grid>
                 <Grid item xs={12}>
                     <h5>Configuracion conflicto de Verdes</h5>
@@ -246,17 +358,26 @@ export default function GruposView() {
                 </Grid>
                 <Grid item xs={12}>
                     <FormGroup>
-                        <FormControlLabel control={<Switch disabled={deshabilitar3} /> } label="Activar Modo destello cuando haya conflicto de verdes" />
-                        <FormControlLabel control={<Switch disabled={deshabilitar3} />} defaultChecked label="Activar Modo destello cuando luz Roja y Verde se activen del mismo grupo" />
-                        <FormControlLabel control={<Switch disabled={deshabilitar3} />} label="Activar Modo destello cuando una salida de luz Roja falle" />
+                        <FormControlLabel control={<Switch disabled={deshabilitar3} value={check1} checked={check1} inputProps={{ 'aria-label': 'controlled' }} onChange={handleChange1} />} label="Activar Modo destello cuando haya conflicto de verdes" />
+                        <FormControlLabel control={<Switch disabled={deshabilitar3} value={check2} checked={check2} inputProps={{ 'aria-label': 'controlled' }} onChange={handleChange2} />} label="Activar Modo destello cuando luz Roja y Verde se activen del mismo grupo" />
+                        <FormControlLabel control={<Switch disabled={deshabilitar3} value={check3} checked={check3} inputProps={{ 'aria-label': 'controlled' }} onChange={handleChange3} />} label="Activar Modo destello cuando una salida de luz Roja falle" />
                     </FormGroup>
                 </Grid>
-
+                <Grid item xs={12}>
+                    <Collapse in={cambioConflictos}>
+                        <Alert
+                            severity="warning"
+                            sx={{ mb: 2 }}
+                        >
+                            Se han Generado Cambios en los conflictos sin cargar al controlador
+                        </Alert>
+                    </Collapse>
+                </Grid>
                 <Grid item xs={3}>
                     <Button variant="contained" onClick={leerConflictosApi} disabled={deshabilitar4} color={'verde2'}>Leer Datos</Button>
                 </Grid>
                 <Grid item xs={3}>
-                    <Button variant="contained" disabled={deshabilitar3} >Cargar Cambios</Button>
+                    <Button variant="contained" onClick={cargarDatosConflictos} disabled={deshabilitar3} >Cargar Cambios</Button>
                 </Grid>
                 <Grid item xs={12}>
                     <div className='blank-space'>
@@ -269,7 +390,7 @@ export default function GruposView() {
                 <ModalHeader>
                     <div>
                         <h1>
-                            Ajustes del Semaforo
+                            Configuracion Grupo-{currentGrupo.grupo}
                         </h1>
                     </div>
                 </ModalHeader>
@@ -285,10 +406,10 @@ export default function GruposView() {
                                     label="Direccion"
                                     onChange={handleChangeDireccion}
                                 >
-                                    <MenuItem value={'norte'}>Norte</MenuItem>
-                                    <MenuItem value={'sur'}>Sur</MenuItem>
-                                    <MenuItem value={'este'}>Este</MenuItem>
-                                    <MenuItem value={'oeste'}>Oeste</MenuItem>
+                                    <MenuItem value={'Norte'}>Norte</MenuItem>
+                                    <MenuItem value={'Sur'}>Sur</MenuItem>
+                                    <MenuItem value={'Este'}>Este</MenuItem>
+                                    <MenuItem value={'Oeste'}>Oeste</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -331,9 +452,16 @@ export default function GruposView() {
                     </Grid>
                 </ModalBody>
                 <ModalFooter >
-                    <Button variant="contained" color='crema' onClick={guardarCambiosGrupo}>
-                        Aplicar
-                    </Button>
+                    <div className='botones-modal-h'>
+
+                        <Button variant="contained" sx={{ marginRight: 5 }} onClick={aplicarCambiosGrupos} color='verde2' >
+                            Aplicar
+                        </Button>
+                        <Button variant="contained" onClick={() => { setModalGrupo(false) }} color='rojo' >
+                            Cancelar
+                        </Button>
+
+                    </div>
                 </ModalFooter>
             </Modal>
         </Container>
