@@ -21,14 +21,14 @@ import SalirMenu from '../components/content/SalirMenu';
 import HomeMenu from './content/HomeMenu';
 import SyncMenu from './content/SyncMenu.jsx'
 import GruposMenu from './content/GruposMenu.jsx'
-
+import { useSelector } from 'react-redux';
 export default function ButtonAppBar() {
 
   const [state, setState] = React.useState({
     left: false,
   });
 
-
+  const menuState = useSelector(state => state.menu);
 
   const menuData = [
     {
@@ -128,7 +128,7 @@ export default function ButtonAppBar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Panel De Control De Semaforizacion
+            {menuState.menu}
           </Typography>
           <Button color="inherit">Login</Button>
         </Toolbar>
@@ -145,7 +145,7 @@ export default function ButtonAppBar() {
           aria-labelledby="nested-list-subheader"
           subheader={
             <ListSubheader component="div" id="nested-list-subheader">
-              <h3>PANEL DE OPCIONES</h3>
+              <h3>HiTraffic Menu</h3>
             </ListSubheader>
           }
         >
