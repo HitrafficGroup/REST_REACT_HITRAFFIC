@@ -12,6 +12,9 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import { getFasesFromRestApi, postFasesFromRestApi } from '../js/apiFunctions'
 import { useSelector, useDispatch } from 'react-redux';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Swal from 'sweetalert2';
 import { addFases } from "../features/controlers/controlerSlice"
 import '../css/FasesView.css';
 
@@ -27,6 +30,9 @@ export default function FasesView() {
     const [faseg2, setFaseg2] = useState({ color: 0, colorDescripcion: 'rojo' })
     const [faseg3, setFaseg3] = useState({ color: 0, colorDescripcion: 'rojo' })
     const [faseg4, setFaseg4] = useState({ color: 0, colorDescripcion: 'rojo' })
+    const [deshabilitar,setDeshabilitar] = useState(true);
+    const [deshabilitar2,setDeshabilitar2] = useState(false);
+    
     const controlerState = useSelector(state => state.controlers)
     const abrirModalFase = (data) => {
 
@@ -56,32 +62,59 @@ export default function FasesView() {
         }
     
     */
-    const cargarDatosController = () => {
-
-        let lista_datos = []
-        let datos_fases = {
-            "ip": controlerState.ip
-        }
-        const temp = fases
-        for (let index_f = 0; index_f < 16; index_f++) {
-            let fase = ''
-            for (let index_g = 0; index_g < 4; index_g++) {
-                let valor = temp[index_f].grupos[index_g].color
-                let binary = parseInt(valor).toString(2)
-                let bits_faltantes = 2 - binary.length
-                for (let i = 0; i < bits_faltantes; i++) {
-                    binary = "0" + binary
+    const cargarDatosController = async () => {
+      
+            Swal.fire({
+                title: 'Deseas Continuar ?',
+                text: 'Estos Cambios se guardaran en el Controlador',
+                icon: 'warning',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Si, actualizar!',
+                showDenyButton: true,
+                denyButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    try {
+                        setDeshabilitar2(true);
+                        let lista_datos = []
+                        let datos_fases = {
+                            "ip": controlerState.ip
+                        }
+                        const temp = fases
+                        for (let index_f = 0; index_f < 16; index_f++) {
+                            let fase = ''
+                            for (let index_g = 0; index_g < 4; index_g++) {
+                                let valor = temp[index_f].grupos[index_g].color
+                                let binary = parseInt(valor).toString(2)
+                                let bits_faltantes = 2 - binary.length
+                                for (let i = 0; i < bits_faltantes; i++) {
+                                    binary = "0" + binary
+                                }
+                                fase = binary + fase
+                            }
+                            let bits_faltantes = 16 - fase.length
+                            for (let falta = 0; falta < bits_faltantes; falta++) {
+                                fase = "0" + fase
+                            }
+                            datos_fases["fase" + (index_f + 1).toString()] = parseInt(fase, 2).toString()
+                            lista_datos.push(parseInt(fase, 2))
+                        }
+                        
+                        enviarFasesRestApi(datos_fases)
+                        setDeshabilitar2(false);
+    
+                    } catch (e) {
+                        console.log(e);
+    
+                    }
+    
                 }
-                fase = binary + fase
-            }
-            let bits_faltantes = 16 - fase.length
-            for (let falta = 0; falta < bits_faltantes; falta++) {
-                fase = "0" + fase
-            }
-            datos_fases["fase" + (index_f + 1).toString()] = parseInt(fase, 2).toString()
-            lista_datos.push(parseInt(fase, 2))
-        }
-        enviarFasesRestApi(datos_fases)
+            })
+           
+           
+    
+       
+        
         //dispatch(addFases(temp));
     }
     const enviarFasesRestApi = async (data) => {
@@ -170,6 +203,7 @@ export default function FasesView() {
     */
     const leerDatosFases = async () => {
         try {
+            setDeshabilitar2(true);
             const result = await getFasesFromRestApi(controlerState.mac, controlerState.ip)
             var arregloFases = []
             for (let index_plan = 1; index_plan < 17; index_plan++) {
@@ -179,10 +213,13 @@ export default function FasesView() {
             }
             const ndatos = arregloFases
             setFases(ndatos);
+            setDeshabilitar(false);
+            setDeshabilitar2(false);
             //dispatch(addFases(ndatos));
         }
         catch (e) {
             console.log(e);
+            setDeshabilitar2(false);
         }
     }
     /*
@@ -197,6 +234,7 @@ export default function FasesView() {
                 <h1>Fases View</h1>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
+                    <div className={deshabilitar ? 'disabled-fases' : 'habilited-fases'}>
                         <div className='f-scroller'>
                             <Table className='home-t'>
                                 <Thead>
@@ -237,12 +275,13 @@ export default function FasesView() {
                                 </Tbody>
                             </Table>
                         </div>
+                        </div>
                     </Grid>
                     <Grid item xs={4}>
-                        <Button variant="contained" color='primary' onClick={leerDatosFases}>Leer Datos</Button>
+                        <Button variant="contained" color='verde2'   sx={{height:40}} fullWidth onClick={leerDatosFases}>Leer Datos</Button>
                     </Grid>
                     <Grid item xs={4}>
-                        <Button variant="contained" color='primary' onClick={cargarDatosController}  >Cargar Datos</Button>
+                        <Button variant="contained" sx={{height:40}} fullWidth onClick={cargarDatosController} disabled={deshabilitar} >Cargar Datos</Button>
                     </Grid>
                     <Grid item xs={12}>
                         <div className='blank-box'>
@@ -351,6 +390,9 @@ export default function FasesView() {
             <div className='horarios-card'>
                 <CardController />
             </div>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
+            <CircularProgress color="inherit" />
+        </Backdrop>
         </>
     );
 

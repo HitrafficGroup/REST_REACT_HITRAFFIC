@@ -372,7 +372,6 @@ export default function GruposView() {
                         <Table className='home-t'>
                             <Thead>
                                 <Tr>
-
                                     <Th className='home-t-th'>Grupo</Th>
                                     <Th className='home-t-th'>Direccion</Th>
                                     <Th className='home-t-th'>Sentido</Th>

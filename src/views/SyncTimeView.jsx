@@ -6,6 +6,8 @@ import RelogActual from "../components/RelogActual";
 import Swal from 'sweetalert2';
 import {getTimeControlador,setTimeControlador} from '../js/apiFunctions'
 import { useSelector, useDispatch } from 'react-redux';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 import CardController from '../components/CardController';
 export default function SyncTimeView() {
     const [tiempoController,setTiempoController] = useState(InitialTime)
@@ -13,15 +15,20 @@ export default function SyncTimeView() {
     const [fechaActual,setFechaActual] = useState(new Date().toLocaleString("es-EC", { dateStyle: 'full' }))
     
     const controlerState = useSelector(state => state.controlers)
+    const [deshabilitar,setDeshabilitar]= useState(true);
+    const [deshabilitar2,setDeshabilitar2] = useState(false);
     const obtenerTiempoFromRestApi = async() =>{
         try{
+            setDeshabilitar2(true);
             const response = await getTimeControlador(controlerState.mac,controlerState.ip)
             setTiempoController(response[controlerState.mac])
             const temp = response[controlerState.mac]
             const fechac = `${temp.mes}-${temp.dia}-${temp.year}`
             const dateObj = new Date(fechac)
             const formatDate = dateObj.toLocaleString("es-EC", { dateStyle: 'full' });
-            setFechaController(formatDate)
+            setFechaController(formatDate);
+            setDeshabilitar(false);
+            setDeshabilitar2(false);
         }catch(e){
             console.log(e)
         }
@@ -90,13 +97,13 @@ export default function SyncTimeView() {
                     <h4>Funciones del Controlador</h4>
                 </Grid>
                 <Grid xs={3}>
-                    <Button variant="contained" onClick={obtenerTiempoFromRestApi} color="verde" sx={{height:'100%'}}>
-                        Obtener Tiempo
+                    <Button variant="contained" onClick={obtenerTiempoFromRestApi}  disabled={deshabilitar2} color="verde" sx={{height:'100%'}}>
+                     LEER DATOS
                     </Button>
                 </Grid>
                 <Grid xs={3}>
-                    <Button variant="contained" onClick={sincronizarTiempoFromRest} sx={{height:'100%'}}>
-                        Actualizar Tiempo
+                    <Button variant="contained" onClick={sincronizarTiempoFromRest} disabled={deshabilitar} sx={{height:'100%'}}>
+                        Actualizar DATOS
                     </Button>
                 </Grid>
             </Grid>
@@ -104,6 +111,9 @@ export default function SyncTimeView() {
         <div className='horarios-card'>
                 <CardController />
             </div>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
+            <CircularProgress color="inherit" />
+        </Backdrop>
     </>);
 }
 const InitialTime = {

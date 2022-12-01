@@ -15,7 +15,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import Swal from 'sweetalert2';
 import FormGroup from '@mui/material/FormGroup';
-import { getHorariosFromRestApi, postHorariosFromRestApi } from '../js/apiFunctions'
+import { getHorariosFromRestApi, postHorariosFromRestApi,getDiasEspecialesControlador } from '../js/apiFunctions'
 import Checkbox from '@mui/material/Checkbox';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
@@ -37,6 +37,8 @@ export default function HorariosView() {
     const [objHorarios, setObjHorarios] = useState(null);
     const [habilitar1,setHabilitar1] = useState(true);
     const [habilitar2,setHabilitar2] = useState(false);
+    const [deshabilitar3,setDeshabilitar3] = useState(true);
+    const [deshabilitar4,setDeshabilitar4] = useState(false);
     const [currentHorario, setCurrentHorario] = useState(
         { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
     );
@@ -139,6 +141,10 @@ export default function HorariosView() {
             return "2"
         }
     }
+    const LeerParamOperativos = async() =>{
+        const data = await getDiasEspecialesControlador(controlerState.mac,controlerState.ip);
+        console.log(data);
+    }
     const cargarDatos = async () => {
 
         const data = horarios
@@ -202,7 +208,9 @@ export default function HorariosView() {
     return (
         <>
             <Container maxWidth="md">
-                <h1>Horarios View</h1>
+                <div className='titulos-horarios'>
+                    <h5>Configuracion de Grupos</h5>
+                </div>
                 <Grid container spacing={2}>
                     <Grid item xs={6} >
                         <FormControl fullWidth>
@@ -271,32 +279,30 @@ export default function HorariosView() {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <h3>Parametros Operativos del Controlador</h3>
+                        <h5>Parametros Operativos del Controlador</h5>
                     </Grid>
                     <Grid item xs={12}>
-                        <h3>Definicion de Fin de Semana</h3>
+                        <p>Definicion de Fin de Semana</p>
                     </Grid>
                     <Grid item xs={12}>
                         <FormGroup className='alinear'>
-                            <FormControlLabel control={<Checkbox />} label="Lunes" />
-                            <FormControlLabel control={<Checkbox />} label="Martes" />
-                            <FormControlLabel control={<Checkbox />} label="Miercoles" />
-                            <FormControlLabel control={<Checkbox />} label="Jueves" />
-                            <FormControlLabel control={<Checkbox />} label="Viernes" />
-                            <FormControlLabel control={<Checkbox />} label="Sabado" />
-                            <FormControlLabel control={<Checkbox />} label="Domingo" />
+                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Lunes" />
+                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Martes" />
+                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Miercoles" />
+                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Jueves" />
+                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Viernes" />
+                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Sabado" />
+                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Domingo" />
                         </FormGroup>
                     </Grid>
                     <Grid item xs={12}>
-                        <h3>Definicion de dia Festivo</h3>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <h4>Definir dia especial: </h4>
+                        <p>Definicion de dia Festivo</p>
                     </Grid>
                     <Grid item xs={4}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DesktopDatePicker
                                 label="Date desktop"
+                                disabled={deshabilitar3}
                                 inputFormat="MM/DD/YYYY"
                                 renderInput={(params) => <TextField {...params} />}
                             />
@@ -306,6 +312,7 @@ export default function HorariosView() {
                         <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">Modo Operativo</InputLabel>
                             <Select
+                                disabled={deshabilitar3}
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 value={modoSemaforo}
@@ -320,11 +327,11 @@ export default function HorariosView() {
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={4}>
-                        <Button variant="contained" color='crema'>Crear</Button>
+                    <Grid item xs={2}>
+                        <Button variant="contained" fullWidth sx={{height:'100%'}} disabled={deshabilitar3} color='advertencia'>Crear</Button>
                     </Grid>
-                    <Grid item xs={4}>
-                        <Button variant="contained" color='crema'>Borrar</Button>
+                    <Grid item xs={2}>
+                        <Button variant="contained" fullWidth   sx={{height:'100%'}} disabled={deshabilitar3}  color='rojo'>Borrar</Button>
                     </Grid>
                     <Grid item xs={12} >
                         <Table className='home-t'>
@@ -347,6 +354,12 @@ export default function HorariosView() {
                                 ))}
                             </Tbody>
                         </Table>
+                    </Grid>
+                    <Grid item xs={4} >
+                    <Button variant="contained" fullWidth sx={{height:'100%'}} onClick={LeerParamOperativos} color='verde2'>LEER DATOS</Button>
+                    </Grid>
+                    <Grid item xs={4} >
+                    <Button variant="contained" fullWidth sx={{height:'100%'}} disabled={deshabilitar3} >CARGAR DATOS</Button>
                     </Grid>
                     <Grid item xs={12} >
                         <div className='blank-box'>

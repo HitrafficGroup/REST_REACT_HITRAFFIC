@@ -25,9 +25,20 @@ async function postFasesFromRestApi(jsonData) {
 	await axios.post(`${BASE_PATH_WS}/rest/restSetFasesControlador?mac=${jsonData['mac']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Exito",
+				icon: "success",
+			});
 		})
 		.catch(function (error) {
 			console.error(error);
+			Swal.fire({
+				icon: 'Datos No Cargados',
+				title: 'Error de Conexion',
+				text: `${error}`,
+				footer: '<a href="">Click Aqui Para Notificar el error</a>'
+			  })
 		});
 }
 async function getPlanesFromRestApi(mac, ip) {
@@ -223,6 +234,24 @@ async function setConflictoVerdesControlador(jsonData){
 
 }
 
+async function getDiasEspecialesControlador(mac,ip){
+	
+	var datos;
+	await axios.post(`${BASE_PATH_WS}/rest/restGetDiasEspecialesControlador?mac=${mac}`, {
+		ip: ip
+	})
+		.then(response => {
+			datos = response.data
+
+		})
+		.catch(function (error) {
+			console.error(error);
+		});
+		return datos;
+
+}
+
+
 
 
 export { getIpsFromRestApi, getFasesFromRestApi,
@@ -232,4 +261,4 @@ export { getIpsFromRestApi, getFasesFromRestApi,
 	 setOtrosParametrosFromRestApi,getTimeControlador,
 	 setTimeControlador,getGruposControlador,
 	 getConflictoVerdesControlador,setGruposControlador,
-	 setConflictoVerdesControlador}
+	 setConflictoVerdesControlador,getDiasEspecialesControlador}

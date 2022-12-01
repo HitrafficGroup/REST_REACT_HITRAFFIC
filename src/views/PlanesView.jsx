@@ -46,6 +46,8 @@ export default function PlanesView() {
     //variables funcionales de animacion
     const [deshabilitar, setDeshabilitar] = useState(true);
     const [deshabilitar2, setDeshabilitar2] = useState(false);
+    const [deshabilitar3,setDeshabilitar3] = useState(true);
+    const [deshabilitar4,setDeshabilitar4] = useState(false);
     const [cambio,setCambio] = useState(false)
     const [dis,setDis] = useState('disabled')
     const leerPlanesFromRestApis = async () => {
@@ -122,7 +124,8 @@ export default function PlanesView() {
     }
     const leerOtrosParametrosApi = async () =>{
         try{
-            setDeshabilitar2(true)
+            setDeshabilitar4(true)
+            setDeshabilitar3(false)
             var datosObtenidos = await getOtrosParametrosFromRestApi(controlerState.mac,controlerState.ip);
             var datosformateados = datosObtenidos[`${controlerState.mac}`];
             console.log(datosformateados)
@@ -135,7 +138,7 @@ export default function PlanesView() {
             setTiempoRojoPrender(parseInt(datosformateados.tiempo_rojo_prender));
             setTiempoTodoRojo(parseInt(datosformateados.tiempo_todo_rojo));
             setValorSincronizacion(parseInt(datosformateados.valor_sincronizacion));
-            setDeshabilitar2(false)
+            setDeshabilitar4(false)
             // Swal.fire({
             //     title: "Completado",
             //     text: "Datos Leidos Con Exito",
@@ -367,6 +370,7 @@ export default function PlanesView() {
                             id="outlined-number"
                             label="Tiempo de destello al prender (s)"
                             type="number"
+                            disabled={deshabilitar3}
                             onChange={(event) => {setTiempoDestelloPrender(event.target.value) }}
                             value={tiempoDestelloPrender}
                             InputLabelProps={{
@@ -379,6 +383,7 @@ export default function PlanesView() {
                             id="outlined-number"
                             label="Tiempo en rojo al prender (s)"
                             type="number"
+                            disabled={deshabilitar3}
                             onChange={(event) => { setTiempoRojoPrender(event.target.value) }}
                             value={tiempoRojoPrender}
                             InputLabelProps={{
@@ -392,6 +397,7 @@ export default function PlanesView() {
                             id="outlined-number"
                             label="Destellar luz verde peatonal (s)"
                             type="number"
+                            disabled={deshabilitar3}
                             onChange={(event) => {setDestellarVerdePeatonal(event.target.value) }}
                             value={destellarVerdePeatonal}
                             InputLabelProps={{
@@ -404,6 +410,7 @@ export default function PlanesView() {
                             id="outlined-number"
                             label="Destellar luz verde vehicular (s)"
                             type="number"
+                            disabled={deshabilitar3}
                             onChange={(event) => {setDestellarVerdeVehicular(event.target.value) }}
                             value={destellarVerdeVehicular}
                             InputLabelProps={{
@@ -416,6 +423,7 @@ export default function PlanesView() {
                             id="outlined-number"
                             label="Tiempo en amarillo vehicular (s)"
                             type="number"
+                            disabled={deshabilitar3}
                             onChange={(event) => { setTiempoAmarilloVehicular(event.target.value) }}
                             value={tiempoAmarilloVehicular}
                             InputLabelProps={{
@@ -428,6 +436,7 @@ export default function PlanesView() {
                             id="outlined-number"
                             label=" Tiempo de todo en rojo (s)"
                             type="number"
+                            disabled={deshabilitar3}
                             onChange={(event) => { setTiempoTodoRojo(event.target.value) }}
                             value={tiempoTodoRojo}
                             InputLabelProps={{
@@ -439,6 +448,7 @@ export default function PlanesView() {
                         <TextField
                             id="outlined-number"
                             label="Tiempo minimo en verde (s)"
+                            disabled={deshabilitar3}
                             type="number"
                             onChange={(event) => { setTiempoMinimoVerde1(event.target.value) }}
                             value={tiempoMinimoVerde1}
@@ -458,6 +468,7 @@ export default function PlanesView() {
                                 id="demo-simple-select"
                                 label="Direccion"
                                 value={sincronizacionSemaforo}
+                                disabled={deshabilitar3}
                                 onChange={(event) => {setSincronizacionSemaforo(event.target.value) }}
                             >
                                 <MenuItem value={0}>Hitraffic</MenuItem>
@@ -470,6 +481,7 @@ export default function PlanesView() {
                         variant="outlined" 
                         fullWidth  
                         aria-readonly 
+                        disabled={deshabilitar3}
                         onChange={(event) => {setValorSincronizacion(event.target.value) }}
                         value={valorSincronizacion} />
                     </Grid>
@@ -477,7 +489,7 @@ export default function PlanesView() {
                     <Button variant="contained"  color='verde2' fullWidth sx={{height:'100%'}}   onClick={leerOtrosParametrosApi} >Leer Datos</Button>
                     </Grid>
                     <Grid item xs={3}>
-                    <Button variant="contained" fullWidth sx={{height:'100%'}} onClick={cargarOtrosParametrosAPI} >Cargar Cambios</Button>
+                    <Button variant="contained" fullWidth sx={{height:'100%'}} onClick={cargarOtrosParametrosAPI} disabled={deshabilitar3} >Cargar Cambios</Button>
                     </Grid>
                   
                     <Grid item xs={12}>
@@ -537,6 +549,9 @@ export default function PlanesView() {
                 </ModalFooter>
             </Modal>
         <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
+            <CircularProgress color="inherit" />
+        </Backdrop>
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar4}>
             <CircularProgress color="inherit" />
         </Backdrop>
         <div className='horarios-card'>
