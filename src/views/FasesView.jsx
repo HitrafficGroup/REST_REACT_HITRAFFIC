@@ -390,7 +390,7 @@ export default function FasesView() {
             <div className='horarios-card'>
                 <CardController />
             </div>
-            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
             <CircularProgress color="inherit" />
         </Backdrop>
         </>

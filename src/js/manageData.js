@@ -330,4 +330,81 @@ function CheckAndLinkBits(listag){
 
     return datos
 }
-export { convertToFases, convertToPlanes, createHorariosObject,convertToGrupos ,CheckAndLinkBits}
+function convertToDiasEspeciales(especiales_list = []) {
+
+    let EspecialesConverted = []
+    let nombresdiasespeciales = ["", "Dia Ordinario", "Fin de Semana", "Dia Festivo"]
+
+    let dato_binario = parseInt(especiales_list[0]).toString(2)
+    let bits_faltantes = 7 - dato_binario.length
+    for (let falta = 0; falta < bits_faltantes; falta++) {
+        dato_binario = "0" + dato_binario
+    }
+    EspecialesConverted["fines_semana"] = dato_binario
+
+    let especiales_lst = parseToArray(especiales_list[1])
+
+    let contador = 0
+    let dias_especiales = []
+
+    for (let dato = 0; dato < especiales_lst.length; dato += 3) {
+        let dias_especial = { "mes": especiales_lst[dato], "dia": especiales_lst[dato + 1], "valor_modo": especiales_lst[dato + 2], "descriptor_modo": nombresdiasespeciales[especiales_lst[dato + 2]] }
+        dias_especiales.push(dias_especial);
+    }
+
+    EspecialesConverted["dias_especiales"] = dias_especiales
+
+    //console.log(EspecialesConverted)
+    return EspecialesConverted
+
+}
+
+function verificarCeroFecha(atributo) {
+    atributo = atributo.toString(16)
+    if (atributo.length < 2) {
+        atributo = "0" + atributo
+    }
+    return atributo
+}
+
+function convertirDiasEspeciales(respuesta,mac) {
+    //ESTABLECER CHECKBOX CON O SIN CHECKED
+    
+    let fines_semana = respuesta[mac]["fines_semana"]
+    let especiales_lst = parseToArray(respuesta[mac]["dias_festivos"]); 
+
+    let EspecialesConverted = convertToDiasEspeciales([fines_semana, especiales_lst])
+    let days = [
+                {dia:'domingo',estado:false},
+                {dia:'lunes',estado:false},
+                {dia:'martes',estado:false},
+                {dia:'miercoles',estado:false},
+                {dia:'jueves',estado:false},
+                {dia:'viernes',estado:false},
+                {dia:'sabado',estado:false},
+            ]
+    for (let checkbox = 0; checkbox < 7; checkbox++) {
+        if (EspecialesConverted["fines_semana"][EspecialesConverted["fines_semana"].length - (checkbox + 1)] == "1") {
+           days[checkbox].estado = true
+        } else {
+            days[checkbox].estado = false
+        }
+    }
+    let listofDays = []
+    for(let dataTable = 0; dataTable< EspecialesConverted['dias_especiales'].length ; dataTable++){
+        let objecTable = EspecialesConverted['dias_especiales'][dataTable];
+        let mes = verificarCeroFecha(objecTable['mes'])
+        let dia = verificarCeroFecha(objecTable['dia'])
+        objecTable['mes'] = mes;
+        objecTable['dia'] = dia;
+        if(mes !== '00' && dia !==''){
+            listofDays.push(objecTable)
+        }
+       
+    }
+   
+    return {fines_semana:days,dia_festivo:listofDays}
+
+}
+
+export { convertToFases, convertToPlanes, createHorariosObject,convertToGrupos ,CheckAndLinkBits,convertirDiasEspeciales}

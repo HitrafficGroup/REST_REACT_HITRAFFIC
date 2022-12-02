@@ -295,7 +295,7 @@ export default function PlanesView() {
     return (
         <>
             <Container maxWidth="md">
-                <h1>Planes view</h1>
+                <h3>Configuracion de Planes</h3>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
                         <Autocomplete
@@ -361,7 +361,7 @@ export default function PlanesView() {
                             </Collapse>
                             </Grid>
                     <Grid item xs={12}>
-                        <h4>Parametros Operativos del Controlador</h4>
+                        <h3>Parametros Operativos del Controlador</h3>
                     </Grid>
                     
                     <Grid item xs={4}>

@@ -15,13 +15,15 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import Swal from 'sweetalert2';
 import FormGroup from '@mui/material/FormGroup';
-import { getHorariosFromRestApi, postHorariosFromRestApi,getDiasEspecialesControlador } from '../js/apiFunctions'
+import { getHorariosFromRestApi, postHorariosFromRestApi, getDiasEspecialesControlador } from '../js/apiFunctions'
 import Checkbox from '@mui/material/Checkbox';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import '../css/HorariosView.css';
 import CardController from '../components/CardController';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function HorariosView() {
     const [horarios, setHorarios] = useState(horariosPorDefecto);
@@ -35,10 +37,19 @@ export default function HorariosView() {
     const [desfaseSemaforo, setDesfaseSemaforo] = useState('0');
     const [time1, setTime1] = useState(new Date());
     const [objHorarios, setObjHorarios] = useState(null);
-    const [habilitar1,setHabilitar1] = useState(true);
-    const [habilitar2,setHabilitar2] = useState(false);
-    const [deshabilitar3,setDeshabilitar3] = useState(true);
-    const [deshabilitar4,setDeshabilitar4] = useState(false);
+    const [habilitar1, setHabilitar1] = useState(true);
+    const [habilitar2, setHabilitar2] = useState(false);
+    const [deshabilitar3, setDeshabilitar3] = useState(true);
+    const [deshabilitar4, setDeshabilitar4] = useState(false);
+    const [clunes, setClunes] = useState(false);
+    const [cmartes, setCmartes] = useState(false);
+    const [cmiercoles, setCmiercoles] = useState(false);
+    const [cjueves, setCjueves] = useState(false);
+    const [cviernes, setCviernes] = useState(false);
+    const [csabado, setCsabado] = useState(false);
+    const [cdomingo, setCDomingo] = useState(false);
+    const [claseDia,setClaseDia] = useState(1);
+    const [tablaDias,setTablaDias] = useState([]);
     const [currentHorario, setCurrentHorario] = useState(
         { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
     );
@@ -55,6 +66,29 @@ export default function HorariosView() {
         setModalHorarios(true);
 
     }
+    const ChangeLunes = (event) => {
+        setClunes(event.target.checked);
+    };
+    const ChangeMartes = (event) => {
+        setCmartes(event.target.checked);
+    };
+    const ChangeMiercoles = (event) => {
+        setCmiercoles(event.target.checked);
+    };
+    const ChangeJueves = (event) => {
+        setCjueves(event.target.checked);
+    };
+    const ChangeViernes = (event) => {
+        setCviernes(event.target.checked);
+    };
+    const ChangeSabado = (event) => {
+        setCsabado(event.target.checked);
+    };
+    const ChangeDomingo = (event) => {
+        setCDomingo(event.target.checked);
+    };
+
+
     const handleTime1 = (newValue) => {
         setTime1(newValue)
         currentHorario['horas'] = newValue.$H.toString()
@@ -77,7 +111,10 @@ export default function HorariosView() {
     }
     const handleFaseSemaforo = (event) => {
         setDesfaseSemaforo(event.target.value);
-        console.log(event.target.value);
+    }
+    const handleClaseDia = (event) =>{
+        
+        setClaseDia(event.target.value);
     }
 
     const handleTipoDia = (event) => {
@@ -104,15 +141,15 @@ export default function HorariosView() {
     };
     const leerHorariosFromRestApi = async () => {
         try {
-            setHabilitar2(false);
-            
+            setHabilitar2(true);
+
             const result = await getHorariosFromRestApi(controlerState.mac, controlerState.ip)
             setObjHorarios(result)
             console.log(result);
             setHorarios(horariosPorDefecto)
             setTipoDia('');
-            setHabilitar1(true)
-            setHabilitar2(true);
+            setHabilitar1(false)
+            setHabilitar2(false);
         } catch (e) {
             console.log(e);
         }
@@ -141,9 +178,26 @@ export default function HorariosView() {
             return "2"
         }
     }
-    const LeerParamOperativos = async() =>{
-        const data = await getDiasEspecialesControlador(controlerState.mac,controlerState.ip);
-        console.log(data);
+    const LeerParamOperativos = async () => {
+        try {
+            setDeshabilitar4(true);
+            const data = await getDiasEspecialesControlador(controlerState.mac, controlerState.ip);
+            console.log(data);
+            setClunes(data['fines_semana'][1].estado)
+            setCmartes(data['fines_semana'][2].estado)
+            setCmiercoles(data['fines_semana'][3].estado)
+            setCjueves(data['fines_semana'][4].estado)
+            setCviernes(data['fines_semana'][5].estado)
+            setCsabado(data['fines_semana'][6].estado)
+            setCDomingo(data['fines_semana'][0].estado)
+            setTablaDias(data['dia_festivo'])
+            setDeshabilitar3(false)
+            setDeshabilitar4(false);
+        } catch (error) {
+            setDeshabilitar4(false);
+            setDeshabilitar3(true);
+        }
+      
     }
     const cargarDatos = async () => {
 
@@ -194,10 +248,10 @@ export default function HorariosView() {
             if (result.isConfirmed) {
                 try {
                     postHorariosFromRestApi(newObject);
-                
+
                 } catch (e) {
                     console.log(e);
-            
+
                 }
 
             }
@@ -236,45 +290,45 @@ export default function HorariosView() {
                         <Button variant="contained" sx={{ height: '100%' }} fullWidth onClick={cargarDatos} disabled={habilitar1} >Cargar Datos</Button>
                     </Grid>
                     <Grid item xs={12} >
-                    <div className={habilitar1 ? 'disabled-tabla-horarios' : 'habilited-tabla-horarios'}>
-                        <div className='h-scroller '>
-                            <Table className='home-t'>
-                                <Thead>
-                                    <Tr>
-                                        <Th className='home-t-th'>Nro</Th>
-                                        <Th className='home-t-th'>Hora de Inicio 24h</Th>
-                                        <Th className='home-t-th'>Modo Operativo</Th>
-                                        <Th className='home-t-th'>Plan No.</Th>
-                                        <Th className='home-t-th'>Desfase</Th>
-                                        <Th className='home-t-th'>Acciones</Th>
-                                    </Tr>
-                                </Thead>
-                                <Tbody>
-                                    {horarios.map((dato, index) => (
-                                        <Tr key={index} >
-                                            <Td>
-                                                {index + 1}
-                                            </Td>
-                                            <Td >
-                                                {dato.horas + ':' + dato.minutos}
-                                            </Td>
-                                            <Td >
-                                                {dato.mod ? modoFormat(dato.mod) : 'No especificado'}
-                                            </Td>
-                                            <Td >
-                                                {dato.plan}
-                                            </Td>
-                                            <Td >
-                                                {dato.desfase}
-                                            </Td>
-                                            <Td >
-                                                <Button variant="contained" onClick={() => { editarHorarios(dato) }} color='crema'>Editar</Button>
-                                            </Td>
+                        <div className={habilitar1 ? 'disabled-tabla-horarios' : 'habilited-tabla-horarios'}>
+                            <div className='h-scroller '>
+                                <Table className='home-t'>
+                                    <Thead>
+                                        <Tr>
+                                            <Th className='home-t-th'>Nro</Th>
+                                            <Th className='home-t-th'>Hora de Inicio 24h</Th>
+                                            <Th className='home-t-th'>Modo Operativo</Th>
+                                            <Th className='home-t-th'>Plan No.</Th>
+                                            <Th className='home-t-th'>Desfase</Th>
+                                            <Th className='home-t-th'>Acciones</Th>
                                         </Tr>
-                                    ))}
-                                </Tbody>
-                            </Table>
-                        </div>
+                                    </Thead>
+                                    <Tbody>
+                                        {horarios.map((dato, index) => (
+                                            <Tr key={index} >
+                                                <Td>
+                                                    {index + 1}
+                                                </Td>
+                                                <Td >
+                                                    {dato.horas + ':' + dato.minutos}
+                                                </Td>
+                                                <Td >
+                                                    {dato.mod ? modoFormat(dato.mod) : 'No especificado'}
+                                                </Td>
+                                                <Td >
+                                                    {dato.plan}
+                                                </Td>
+                                                <Td >
+                                                    {dato.desfase}
+                                                </Td>
+                                                <Td >
+                                                    <Button variant="contained" onClick={() => { editarHorarios(dato) }} color='crema'>Editar</Button>
+                                                </Td>
+                                            </Tr>
+                                        ))}
+                                    </Tbody>
+                                </Table>
+                            </div>
                         </div>
                     </Grid>
 
@@ -286,13 +340,13 @@ export default function HorariosView() {
                     </Grid>
                     <Grid item xs={12}>
                         <FormGroup className='alinear'>
-                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Lunes" />
-                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Martes" />
-                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Miercoles" />
-                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Jueves" />
-                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Viernes" />
-                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Sabado" />
-                            <FormControlLabel control={<Checkbox />} disabled={deshabilitar3} label="Domingo" />
+                            <FormControlLabel control={<Checkbox checked={clunes} onChange={ChangeLunes} />} disabled={deshabilitar3} label="Lunes" />
+                            <FormControlLabel control={<Checkbox checked={cmartes} onChange={ChangeMartes} />} disabled={deshabilitar3} label="Martes" />
+                            <FormControlLabel control={<Checkbox checked={cmiercoles} onChange={ChangeMiercoles} />} disabled={deshabilitar3} label="Miercoles" />
+                            <FormControlLabel control={<Checkbox checked={cjueves} onChange={ChangeJueves} />} disabled={deshabilitar3} label="Jueves" />
+                            <FormControlLabel control={<Checkbox checked={cviernes} onChange={ChangeViernes} />} disabled={deshabilitar3} label="Viernes" />
+                            <FormControlLabel control={<Checkbox checked={csabado} onChange={ChangeSabado} />} disabled={deshabilitar3} label="Sabado" />
+                            <FormControlLabel control={<Checkbox checked={cdomingo} onChange={ChangeDomingo} />} disabled={deshabilitar3} label="Domingo" />
                         </FormGroup>
                     </Grid>
                     <Grid item xs={12}>
@@ -310,28 +364,26 @@ export default function HorariosView() {
                     </Grid>
                     <Grid item xs={4}>
                         <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">Modo Operativo</InputLabel>
+                            <InputLabel id="demo-simple-select-label">Tipo de Dia</InputLabel>
                             <Select
                                 disabled={deshabilitar3}
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                value={modoSemaforo}
-                                label="Modo Operativo"
-                                onChange={handleModoSemaforo}
+                                value={claseDia}
+                                label="Tipo de Dia"
+                                onChange={handleClaseDia}
                             >
-                                <MenuItem value={1}>Tiempo Fijo</MenuItem>
-                                <MenuItem value={2}>Pulsante</MenuItem>
-                                <MenuItem value={3}>Destello</MenuItem>
-                                <MenuItem value={4}>Todo en Rojo</MenuItem>
-                                <MenuItem value={5}>Apagado</MenuItem>
+                                <MenuItem value={1}>Dia Ordinario</MenuItem>
+                                <MenuItem value={2}>Fin de Semana</MenuItem>
+                                <MenuItem value={3}>Dia Festivo</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
                     <Grid item xs={2}>
-                        <Button variant="contained" fullWidth sx={{height:'100%'}} disabled={deshabilitar3} color='advertencia'>Crear</Button>
+                        <Button variant="contained" fullWidth sx={{ height: '100%' }} disabled={deshabilitar3} color='advertencia'>Crear</Button>
                     </Grid>
                     <Grid item xs={2}>
-                        <Button variant="contained" fullWidth   sx={{height:'100%'}} disabled={deshabilitar3}  color='rojo'>Borrar</Button>
+                        <Button variant="contained" fullWidth sx={{ height: '100%' }} disabled={deshabilitar3} color='rojo'>Borrar</Button>
                     </Grid>
                     <Grid item xs={12} >
                         <Table className='home-t'>
@@ -342,13 +394,13 @@ export default function HorariosView() {
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {operativos.map((dato, index) => (
+                                {tablaDias.map((dato, index) => (
                                     <Tr key={index} >
                                         <Td >
-                                            {dato.fecha}
+                                            {dato.mes}
                                         </Td>
                                         <Td >
-                                            {dato.tiempoeje}
+                                            {dato.descriptor_modo}
                                         </Td>
                                     </Tr>
                                 ))}
@@ -356,10 +408,10 @@ export default function HorariosView() {
                         </Table>
                     </Grid>
                     <Grid item xs={4} >
-                    <Button variant="contained" fullWidth sx={{height:'100%'}} onClick={LeerParamOperativos} color='verde2'>LEER DATOS</Button>
+                        <Button variant="contained" fullWidth sx={{ height: '100%' }} onClick={LeerParamOperativos} color='verde2'>LEER DATOS</Button>
                     </Grid>
                     <Grid item xs={4} >
-                    <Button variant="contained" fullWidth sx={{height:'100%'}} disabled={deshabilitar3} >CARGAR DATOS</Button>
+                        <Button variant="contained" fullWidth sx={{ height: '100%' }} disabled={deshabilitar3} >CARGAR DATOS</Button>
                     </Grid>
                     <Grid item xs={12} >
                         <div className='blank-box'>
@@ -453,6 +505,12 @@ export default function HorariosView() {
             <div className='horarios-card'>
                 <CardController />
             </div>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar4}>
+            <CircularProgress color="inherit" />
+        </Backdrop>
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={habilitar2}>
+            <CircularProgress color="inherit" />
+        </Backdrop>
         </>
     );
 

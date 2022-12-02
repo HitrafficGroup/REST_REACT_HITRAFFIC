@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { convertToFases, convertToPlanes,createHorariosObject,convertToGrupos } from './manageData'
+import { convertToFases, convertToPlanes,createHorariosObject,convertToGrupos,convertirDiasEspeciales } from './manageData'
 import Swal from 'sweetalert2';
 const BASE_PATH_WS = 'http://127.0.0.1:8000';
 async function getIpsFromRestApi() {
@@ -241,8 +241,7 @@ async function getDiasEspecialesControlador(mac,ip){
 		ip: ip
 	})
 		.then(response => {
-			datos = response.data
-
+			datos = convertirDiasEspeciales(response.data,mac);
 		})
 		.catch(function (error) {
 			console.error(error);
