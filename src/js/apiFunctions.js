@@ -250,7 +250,25 @@ async function getDiasEspecialesControlador(mac,ip){
 
 }
 
-
+async function setDiasEspecialesControlador(jsonData){
+	await axios.post(`${BASE_PATH_WS}/rest/restSetDiasEspecialesControlador?mac=${jsonData.mac}`,jsonData).then(response => {
+		console.log(response.data)
+		Swal.fire({
+			title: "Completado!",
+			text: "Cambios Cargados Con Exito",
+			icon: "success",
+		});
+	})
+	.catch(function (error) {
+		console.error(error);
+		Swal.fire({
+			icon: 'Datos No Cargados',
+			title: 'Error de Conexion',
+			text: `${error}`,
+			footer: '<a href="">Click Aqui Para Notificar el error</a>'
+		  })
+	});
+}
 
 
 export { getIpsFromRestApi, getFasesFromRestApi,
@@ -260,4 +278,5 @@ export { getIpsFromRestApi, getFasesFromRestApi,
 	 setOtrosParametrosFromRestApi,getTimeControlador,
 	 setTimeControlador,getGruposControlador,
 	 getConflictoVerdesControlador,setGruposControlador,
-	 setConflictoVerdesControlador,getDiasEspecialesControlador}
+	 setConflictoVerdesControlador,getDiasEspecialesControlador,
+	 setDiasEspecialesControlador}
