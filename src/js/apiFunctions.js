@@ -335,6 +335,27 @@ async function getRegistrosControlador(mac,ip){
 
 }
 
+async function getResumenControlador(mac,ip){
+	
+	var datos;
+	await axios.post(`${BASE_PATH_WS}/rest/restGetResumenControlador?mac=${mac}`, {
+		ip: ip,
+	})
+		.then(response => {
+			datos = response.data;
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexion',
+				text: `${error}`,
+				footer: '<a href="">Click Aqui Para Notificar el error</a>'
+			  })
+		});
+		return datos;
+
+}
 
 
 
@@ -347,4 +368,4 @@ export { getIpsFromRestApi, getFasesFromRestApi,
 	 getConflictoVerdesControlador,setGruposControlador,
 	 setConflictoVerdesControlador,getDiasEspecialesControlador,
 	 setDiasEspecialesControlador,getEntradasControlador,setEntradasControlador,
-	getRegistrosControlador}
+	getRegistrosControlador,getResumenControlador}
