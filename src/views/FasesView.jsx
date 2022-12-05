@@ -230,8 +230,9 @@ export default function FasesView() {
     return (
         <>
             <Container maxWidth="md">
-
-                <h1>Fases View</h1>
+                <div className='titulo-fases'>
+                    <h4>Configuracion de las Fases del Controlador</h4>
+                </div>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                     <div className={deshabilitar ? 'disabled-fases' : 'habilited-fases'}>

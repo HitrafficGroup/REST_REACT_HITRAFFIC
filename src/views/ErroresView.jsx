@@ -56,7 +56,9 @@ export default function ErroresView() {
     return (
         <>
             <Container maxWidth="md" >
-                <h3>Tabla de Registro de Errores</h3>
+                <div className='titulos-errores'>
+                    <h4>Tabla de Registro de Errores</h4>
+                </div>
                 <Grid container spacing={2}>
                 <Grid item xs={4}>
                     <Button color="verde2" sx={{height:'100%'}} fullWidth variant="contained" onClick={getDatosFromRestApi}>Leer Datos</Button>

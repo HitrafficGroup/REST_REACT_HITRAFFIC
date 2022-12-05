@@ -295,7 +295,9 @@ export default function PlanesView() {
     return (
         <>
             <Container maxWidth="md">
-                <h3>Configuracion de Planes</h3>
+                <div className='titulos-planes'>
+                   <h4>Configuracion de Planes</h4>
+                </div>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
                         <Autocomplete

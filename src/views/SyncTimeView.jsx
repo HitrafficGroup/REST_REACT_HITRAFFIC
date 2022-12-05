@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import CardController from '../components/CardController';
+import "../css/SyncTimeView.css"
 export default function SyncTimeView() {
     const [tiempoController,setTiempoController] = useState(InitialTime)
     const [fechaController,setFechaController] = useState('Datos de fecha aun no Cargados')
@@ -69,10 +70,12 @@ export default function SyncTimeView() {
     }
     return (<>
         <Container maxWidth="md">
-            <h3>Sincronizar Hora y Fecha  Del Controlador </h3>
+            <div className="titulos-sync">
+                <h4>Sincronizar Hora y Fecha  Del Controlador </h4>
+            </div>
             <Grid container spacing={2}>
                 <Grid xs={12}>
-                    <h4>Datos del Computador</h4>
+                    <h5>Datos del Computador</h5>
                 </Grid>
                 <Grid xs={6}>
                     <h5>Hora Actual</h5> 
@@ -83,7 +86,7 @@ export default function SyncTimeView() {
                     {fechaActual.toUpperCase()}
                 </Grid>
                 <Grid xs={12}>
-                    <h4>Datos del Controlador</h4>
+                    <h5>Datos del Controlador</h5>
                 </Grid>
                 <Grid xs={6}>
                     <h5>Hora del Controlador</h5> 
@@ -94,7 +97,7 @@ export default function SyncTimeView() {
                     {fechaController.toUpperCase()}
                 </Grid>
                 <Grid xs={12}>
-                    <h4>Funciones del Controlador</h4>
+                    <h5>Funciones del Controlador</h5>
                 </Grid>
                 <Grid xs={3}>
                     <Button variant="contained" onClick={obtenerTiempoFromRestApi}  disabled={deshabilitar2} color="verde" sx={{height:'100%'}}>

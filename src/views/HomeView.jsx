@@ -210,7 +210,9 @@ export default function HomeView() {
     return (
         <div>
             <Container maxWidth="md">
-                <h2>Lista De Controladores</h2>
+                <div className='titulos-home'>
+                    <h4>Lista De Controladores</h4>
+                </div>
                 <Button variant="contained" disabled={accionesUi} endIcon={<CloudDownloadIcon />}  onClick={listarIps} sx={{ marginBottom: 2 }}>
                     Listar Controladores
                 </Button>

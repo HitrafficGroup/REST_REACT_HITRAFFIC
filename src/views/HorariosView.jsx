@@ -380,7 +380,7 @@ export default function HorariosView() {
         <>
             <Container maxWidth="md">
                 <div className='titulos-horarios'>
-                    <h5>Configuracion de Grupos</h5>
+                    <h4>Configuracion de Grupos</h4>
                 </div>
                 <Grid container spacing={2}>
                     <Grid item xs={6} >

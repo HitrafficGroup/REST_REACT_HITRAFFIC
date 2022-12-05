@@ -1,10 +1,16 @@
-.habilited-errores{
-    width: 100%;
-    opacity: 1;
-  }
-  .disabled-errores{
-    opacity: 0.6;
-    width: 100%;
-    pointer-events: none;
-  
-  }
+.habilited-errores {
+  width: 100%;
+  opacity: 1;
+}
+
+.disabled-errores {
+  opacity: 0.6;
+  width: 100%;
+  pointer-events: none;
+
+}
+
+.titulos-errores{
+  margin-top: 20px;
+  margin-bottom: 30px;
+}

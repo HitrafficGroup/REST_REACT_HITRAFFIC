@@ -401,6 +401,10 @@ tr td.fase_apagado {
     background-color: white;
 }
 
+.titulos-grupos{
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
 
 .habilited-grupos{
     width: 100%;

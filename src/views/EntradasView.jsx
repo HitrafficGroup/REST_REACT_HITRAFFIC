@@ -9,6 +9,7 @@ import CardController from '../components/CardController';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import {getEntradasControlador,setEntradasControlador} from "../js/apiFunctions";
+import "../css/EntradasView.css";
 import { useSelector} from 'react-redux';
 import Swal from 'sweetalert2';
 export default function EntradasView() {
@@ -129,7 +130,9 @@ export default function EntradasView() {
     return (
     <>
         <Container maxWidth="md">
-            <h3>Configuracion de las Entradas Digitales</h3>
+            <div className='titulos-entradas'>
+                <h4>Configuracion de las Entradas Digitales</h4>
+            </div>
             <Grid container spacing={3}>
                 <Grid item xs={3}>
                     <FormControlLabel control={<Switch  value={ent1} checked={ent1} onChange={handleEnt1} disabled={deshabilitar} />} label="Entrada 1" />

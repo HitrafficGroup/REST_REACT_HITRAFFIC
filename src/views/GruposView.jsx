@@ -360,13 +360,10 @@ export default function GruposView() {
 
     return (<>
         <Container maxWidth="md">
-            <div className='blank-space'>
-
+            <div className='titulos-grupos'>
+                <h4>Configuracion de Grupos</h4>
             </div>
             <Grid container spacing={1}>
-                <Grid item xs={12}>
-                    <h5>Configuracion de Grupos</h5>
-                </Grid>
                 <Grid item xs={12}>
                     <div className={deshabilitar ? 'disabled-grupos' : 'habilited-grupos'}>
                         <Table className='home-t'>
