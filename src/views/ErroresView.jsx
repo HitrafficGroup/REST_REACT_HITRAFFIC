@@ -1,64 +1,77 @@
 import React, { useState } from 'react';
-import Select from '@mui/material/Select';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Switch from '@mui/material/Switch';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
-import FormGroup from '@mui/material/FormGroup';
-import Checkbox from '@mui/material/Checkbox';
-import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
-import { useDemoData } from '@mui/x-data-grid-generator';
-
+import { DataGrid} from '@mui/x-data-grid';
+import { useSelector} from 'react-redux';
+import {getRegistrosControlador} from "../js/apiFunctions";
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import GridOnIcon from '@mui/icons-material/GridOn';
+import "../css/ErroresView.css";
 const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
+
+    //{field:'id',headerName:'ID',width:90},
     {
-        field: 'time',
+        field: 'fecha',
         headerName: 'Tiempo Registrado',
         width: 400,
         editable: false,
     },
     {
-        field: 'tipo',
+        field: 'evento',
         headerName: 'Tipo de Eventos',
         width: 400,
         editable: false,
     },
 ];
 
-const rows = [
-    { id: 1, time: '2022/10/28 10:55:12 Viernes', tipo: 'Encendido de Controlador' },
-    { id: 2, time: '2022/10/27 08:01:57 Jueves', tipo: 'Encendido de Controlador' },
-    { id: 3, time: '2022/10/26 08:00:34 Miercoles', tipo: 'Encendido de Controlador' },
-    { id: 4, time: '2022/10/25 08:05:06 Martes', tipo: 'Encendido de Controlador' },
-    { id: 5, time: '2022/10/25 08:05:05 Martes', tipo: 'Encendido de Controlador' },
-    { id: 6, time: '2022/10/24 16:23:01 Lunes', tipo: 'Encendido de Controlador' },
-    { id: 7, time: '2022/10/24 16:23:01 Lunes', tipo: 'Encendido de Controlador' },
-];
-export default function ErroresView() {
 
+
+
+export default function ErroresView() {
+    const controlerState = useSelector(state => state.controlers);
+    const [errores,setErrores] = useState(rows)
+    const [deshabilitar,setDeshabilitar] = useState(true);
+    const [deshabilitar2,setDeshabilitar2] = useState(false);
+
+    const getDatosFromRestApi = async () =>{
+        setDeshabilitar2(true);
+        let data = await getRegistrosControlador(controlerState.mac,controlerState.ip)
+        let tablaData = data[controlerState.mac].registro;
+        let dataFormat = tablaData.map((data,index)=>{
+            return {
+                id:index+1,
+                fecha:data.fecha,
+                evento: data.evento
+            }
+        })
+        setErrores(dataFormat.reverse());
+        setDeshabilitar(false)
+        setDeshabilitar2(false)
+
+    }
+    
     return (
         <>
             <Container maxWidth="md" >
-                <h1>Definicion de las Entradas Digitales</h1>
+                <h3>Tabla de Registro de Errores</h3>
                 <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <Button variant="contained">Leer Datos</Button>
+                <Grid item xs={4}>
+                    <Button color="verde2" sx={{height:'100%'}} fullWidth variant="contained" onClick={getDatosFromRestApi}>Leer Datos</Button>
+                </Grid>
+                <Grid item xs={4}>
+                    <Button variant="contained" color='anaranjado1' disabled={deshabilitar} sx={{height:'100%'}} fullWidth  >Borrar Datos</Button>
+                </Grid>
+                <Grid item xs={4}>
+                    <Button variant="contained"  sx={{height:'100%'}} disabled={deshabilitar} fullWidth >Cargar Datos</Button>
                 </Grid>
                 <Grid item xs={12}>
                     <Grid item xs={12}>
-                        <div style={{ height: 400, width: '100%' }}>
+                        <div style={{ height: 400, width: '100%' }} className={deshabilitar? 'disabled-errores':'habilited-errores'}>
                             <DataGrid
-                                rows={rows}
+                                rows={errores}
                                 columns={columns}
                                 pageSize={5}
                                 rowsPerPageOptions={[5]}
@@ -69,12 +82,23 @@ export default function ErroresView() {
                         </div>
                     </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                    <Button variant="contained">Borrar Datos</Button>
+                <Grid item xs={3}>
+                    <Button variant="contained"  sx={{height:'100%',bgcolor:'#CB4335'}} disabled={deshabilitar} fullWidth onClick={getDatosFromRestApi}  endIcon={<PictureAsPdfIcon />}>Generar PDF</Button>
+                </Grid>
+                <Grid item xs={3}>
+                    <Button variant="contained"  sx={{height:'100%',bgcolor:'#117A65'}} disabled={deshabilitar} fullWidth onClick={getDatosFromRestApi}  endIcon={<GridOnIcon />} >Generar Excel</Button>
                 </Grid>
                 </Grid>
             </Container>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
+            <CircularProgress color="inherit" />
+        </Backdrop>
         </>
     );
 
 }
+
+
+const rows = [
+
+];

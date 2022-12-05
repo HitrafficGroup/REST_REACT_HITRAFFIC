@@ -312,6 +312,32 @@ async function setEntradasControlador(jsonData){
 	});
 }
 
+async function getRegistrosControlador(mac,ip){
+	
+	var datos;
+	await axios.post(`${BASE_PATH_WS}/rest/restGetRegistrosControlador?mac=${mac}`, {
+		ip: ip,
+		pagina:"0"
+	})
+		.then(response => {
+			datos = response.data;
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexion',
+				text: `${error}`,
+				footer: '<a href="">Click Aqui Para Notificar el error</a>'
+			  })
+		});
+		return datos;
+
+}
+
+
+
+
 export { getIpsFromRestApi, getFasesFromRestApi,
 	 getPlanesFromRestApi,getHorariosFromRestApi,
 	 postHorariosFromRestApi,postFasesFromRestApi,
@@ -320,4 +346,5 @@ export { getIpsFromRestApi, getFasesFromRestApi,
 	 setTimeControlador,getGruposControlador,
 	 getConflictoVerdesControlador,setGruposControlador,
 	 setConflictoVerdesControlador,getDiasEspecialesControlador,
-	 setDiasEspecialesControlador,getEntradasControlador,setEntradasControlador}
+	 setDiasEspecialesControlador,getEntradasControlador,setEntradasControlador,
+	getRegistrosControlador}
