@@ -8,9 +8,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import CardController from '../components/CardController';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import {getEntradasControlador} from "../js/apiFunctions";
+import {getEntradasControlador,setEntradasControlador} from "../js/apiFunctions";
 import { useSelector} from 'react-redux';
-
+import Swal from 'sweetalert2';
 export default function EntradasView() {
     const controlerState = useSelector(state => state.controlers);
     const [entradas,setEntradas] = useState(initialData);
@@ -83,6 +83,48 @@ export default function EntradasView() {
     }
     const handleEnt4 = (event) =>{
         setEnt4(event.target.checked);
+    }
+    const cargarDatosRest =() =>{
+        Swal.fire({
+            title: 'Deseas Continuar ?',
+            text: 'Estos Cambios se guardaran en el Controlador',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, actualizar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setDeshabilitar2(true)
+                setDeshabilitar(true)
+                let newObject = {
+                    tiempo1:t1.toString(),
+                    tiempo2:t2.toString(),
+                    tiempo3:t3.toString(),
+                    tiempo4:t4.toString(),
+                    fase1:fase1.toString(),
+                    fase2:fase2.toString(),
+                    fase3:fase3.toString(),
+                    fase4:fase4.toString(),
+                    box1:ent1 ? '1':'0',
+                    box2:ent2 ? '1':'0',
+                    box3:ent3 ? '1':'0',
+                    box4:ent4 ? '1':'0',
+                    ip:controlerState.ip,
+                    mac:controlerState.mac
+                }
+                cargarDatosEnetradasRest(newObject);
+                console.log(newObject)
+               
+            }
+        })
+      
+    }
+
+    const cargarDatosEnetradasRest = async(data) =>{
+        await setEntradasControlador(data);
+        setDeshabilitar(false);
+        setDeshabilitar2(false);
     }
     return (
     <>
@@ -226,7 +268,7 @@ export default function EntradasView() {
                 <Button variant="contained" color="verde2" disabled={deshabilitar2} onClick={traerEntradasFromRestApi} >Leer Datos</Button>
                 </Grid>
                 <Grid item xs={6}>
-                <Button variant="contained"  disabled={deshabilitar} >Cargar Datos</Button>
+                <Button variant="contained"  disabled={deshabilitar} onClick={cargarDatosRest} >Cargar Datos</Button>
                 </Grid>
     
             </Grid>
