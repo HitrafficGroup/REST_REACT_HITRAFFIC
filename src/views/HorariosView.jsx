@@ -7,6 +7,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { db } from "../firebase/firebase-config";
+import { collection, updateDoc, onSnapshot, doc } from "firebase/firestore";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
@@ -261,6 +263,12 @@ export default function HorariosView() {
         })
 
     }
+    const cargarDiaFestivosFirebase = async(data) =>{
+        const ref = doc(db, "controladores", `${controlerState.mac}`);
+        await updateDoc(ref,{
+            dias_especiales:data
+        });
+    }
     const setDiafestivoFromrestApi = async () => {
         setDeshabilitar4(true);
         let dias = tablaDias
@@ -292,7 +300,21 @@ export default function HorariosView() {
         newDiasFest['fines_semana'] = dato_entero.toString();
         newDiasFest['ip'] = controlerState.ip;
         newDiasFest['mac'] = controlerState.mac;
+ 
+        let newDiasFirebase = {
+            dia_festivo:tablaDias,
+            fines_semana:[    
+                {dia: 'domingo', estado: cdomingo},
+                {dia: 'lunes', estado: clunes},
+                {dia: 'martes', estado: cmartes},
+                {dia: 'miercoles', estado: cmiercoles},
+                {dia: 'jueves', estado: cjueves},
+                {dia: 'viernes', estado: cviernes},
+                {dia: 'sabado', estado: csabado}
+            ]
+        } 
         await setDiasEspecialesControlador(newDiasFest);
+        cargarDiaFestivosFirebase(newDiasFirebase)
         setDeshabilitar4(false);
     }
     const borrarDiaFestivo = (data) => {
@@ -311,6 +333,12 @@ export default function HorariosView() {
         setCambioDias(true);
     }
 
+    const cargarHorariosFirebase = async(data)=>{
+        const ref = doc(db, "controladores", `${controlerState.mac}`);
+        await updateDoc(ref,{
+            horarios:data
+        });
+    }
 
     const cargarDatos = async () => {
 
@@ -372,7 +400,7 @@ export default function HorariosView() {
         }
         newObject['ip'] = controlerState.ip
         newObject['num_horario'] = formatearTipoDia(tipoDia)
-       
+        cargarHorariosFirebase(data)
         await postHorariosFromRestApi(newObject);
         setHabilitar2(false);
     }
