@@ -334,7 +334,9 @@ async function getRegistrosControlador(mac,ip){
 		return datos;
 
 }
-
+/*
+Revisar despues esta peticion api , debido a que la peticion requiere otros parametros.
+*/
 async function getResumenControlador(mac,ip){
 	
 	var datos;
@@ -357,6 +359,29 @@ async function getResumenControlador(mac,ip){
 
 }
 
+async function getAllDataIp(mac,ip){
+	
+	var datos;
+	await axios.post(`${BASE_PATH_WS}/rest/conectarIp?mac=${mac}`, {
+		ip: ip,
+	})
+		.then(response => {
+			datos = response.data;
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexion',
+				text: `${error}`,
+				footer: '<a href="">Click Aqui Para Notificar el error</a>'
+			  })
+		});
+		return datos;
+
+}
+
+
 
 
 export { getIpsFromRestApi, getFasesFromRestApi,
@@ -368,4 +393,6 @@ export { getIpsFromRestApi, getFasesFromRestApi,
 	 getConflictoVerdesControlador,setGruposControlador,
 	 setConflictoVerdesControlador,getDiasEspecialesControlador,
 	 setDiasEspecialesControlador,getEntradasControlador,setEntradasControlador,
-	getRegistrosControlador,getResumenControlador}
+	getRegistrosControlador,getResumenControlador,
+	getAllDataIp
+}

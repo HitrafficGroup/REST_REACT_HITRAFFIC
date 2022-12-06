@@ -4,11 +4,14 @@ import "../css/ResumenView.css";
 import CalendarSemaforo from '../components/CalendarSemaforo';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
-import {getResumenControlador} from "../js/apiFunctions";
+import {getAllDataIp} from "../js/apiFunctions";
 import { useSelector } from 'react-redux';
 export default function ResumenView() {
+    const controlerState = useSelector(state => state.controlers);
     const getDataFromRestApi = async() =>{
-        let data = await getResumenControlador();
+        const mac  =  controlerState.mac;
+        const ip = controlerState.ip;
+        let data = await getAllDataIp(mac,ip);
         console.log(data);
     } 
     return (
@@ -23,7 +26,7 @@ export default function ResumenView() {
                     </Grid>
                     <Grid item xs={12}>
                         <Button variant="outlined" onClick={getDataFromRestApi} startIcon={<DeleteIcon />}>
-                            Delete
+                            LEER DATOS
                         </Button>
                     </Grid>
                 </Grid>

@@ -1,5 +1,7 @@
 import { React, useEffect, useState } from "react"
 import Container from '@mui/material/Container';
+import { db } from "../firebase/firebase-config";
+import { collection, updateDoc, onSnapshot, doc } from "firebase/firestore";
 import Grid from '@mui/material/Unstable_Grid2';
 import Button from '@mui/material/Button';
 import RelogActual from "../components/RelogActual";
@@ -11,6 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import CardController from '../components/CardController';
 import "../css/SyncTimeView.css"
 export default function SyncTimeView() {
+    
     const [tiempoController,setTiempoController] = useState(InitialTime)
     const [fechaController,setFechaController] = useState('Datos de fecha aun no Cargados')
     const [fechaActual,setFechaActual] = useState(new Date().toLocaleString("es-EC", { dateStyle: 'full' }))
@@ -27,6 +30,7 @@ export default function SyncTimeView() {
             const fechac = `${temp.mes}-${temp.dia}-${temp.year}`
             const dateObj = new Date(fechac)
             const formatDate = dateObj.toLocaleString("es-EC", { dateStyle: 'full' });
+            console.log(temp);
             setFechaController(formatDate);
             setDeshabilitar(false);
             setDeshabilitar2(false);
@@ -35,12 +39,33 @@ export default function SyncTimeView() {
         }
 
     }
+    const updateHoraControllerFirebase = async(data) =>{
+        const ref = doc(db, "controladores", `${controlerState.mac}`);
+        await updateDoc(ref,{
+            hora_controlador:data
+        });
+
+    }
     const sincronizarTiempoFromRest = async() =>{
         const newData = {
             ip:controlerState.ip,
             mac:controlerState.mac,
             time_zone:"-5"
         }
+        const tiempohoy = new Date();
+        const dataForFirebase = {
+            time_zone:"-5",
+            horas: tiempohoy.getHours().toString(),
+            minutos: tiempohoy.getMinutes().toString(),
+            segundos: tiempohoy.getSeconds().toString(),
+            dia: tiempohoy.getDate().toString(),
+            indice_dia: "2",
+            mes: (tiempohoy.getMonth()+1).toString(),
+            time_zone: "-5",
+            year: tiempohoy.getFullYear().toString(),
+        }
+
+        console.log(dataForFirebase)
         try{
             
             Swal.fire({
@@ -54,6 +79,7 @@ export default function SyncTimeView() {
             }).then((result)=>{
                 if(result.isConfirmed){
                     setTimeControlador(newData);
+                    updateHoraControllerFirebase(dataForFirebase);
                     Swal.fire({
                         title: "Completado!",
                         text: "Cambios Cargados Con Exito",
@@ -62,7 +88,7 @@ export default function SyncTimeView() {
                  
                 }
             })        
-    
+        
 
         }catch(e){
 
