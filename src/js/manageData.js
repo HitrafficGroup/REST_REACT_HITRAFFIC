@@ -75,20 +75,39 @@ function convertToPlanes(respuesta, mac) {
 
     //planes_datos = {}
     let lista_datos = []
+    let lista_datos_2 = []
     for (let index_plan = 0; index_plan < 16; index_plan++) {
         var numPlan = "plan" + (index_plan + 1).toString()
         let plan_lst = respuesta[mac][numPlan] //esq tu utilizas plan_list aqui
         plan_lst = parseToArray(plan_lst)
-
+        let par = 0;
+        let impar= 1;
+        let plan_paso = []
+        for(let i = 0;i<12 ;i++){
+            let paso={
+                name: `Paso ${(i+1)}`,
+                fase: plan_lst[(par)],
+                duracion: plan_lst[(impar)],
+            }
+            plan_paso.push(paso)
+            par = par +2;
+            impar = impar+2;
+        }
         let plan = {
             numPlan: `${numPlan}`,
             pasos: plan_lst
         }
-
+        let plan2 = {
+            numPlan: `${numPlan}`,
+            pasos:plan_paso
+        }
         lista_datos.push(plan)
+        lista_datos_2.push(plan2)
+        
 
     }
-    return ({ [`${mac}`]: lista_datos })
+    
+    return ({ [`${mac}`]: lista_datos_2 })
 
 }
 

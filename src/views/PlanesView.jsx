@@ -12,6 +12,8 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Autocomplete from '@mui/material/Autocomplete';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import { db } from "../firebase/firebase-config";
+import { collection, updateDoc, onSnapshot, doc } from "firebase/firestore";
 import '../css/PlanesView.css'
 import { useSelector, useDispatch } from 'react-redux';
 import { addPlanes } from "../features/controlers/controlerSlice";
@@ -50,6 +52,8 @@ export default function PlanesView() {
     const [deshabilitar4,setDeshabilitar4] = useState(false);
     const [cambio,setCambio] = useState(false)
     const [dis,setDis] = useState('disabled')
+    //esta variable de planes2 debe actualizarse con este formato que es mas adecuado
+    
     const leerPlanesFromRestApis = async () => {
         let planesControlador
         try {
@@ -59,8 +63,10 @@ export default function PlanesView() {
             let result = await getPlanesFromRestApi(controlerState.mac, controlerState.ip)
             planesControlador = result[controlerState.mac]
             setPlanes(planesControlador)
-            dispatch(addPlanes(planesControlador))
-            uploadData(planesControlador[0].numPlan,planesControlador)
+            setCurrentPlan(planesControlador[0].pasos)
+            console.log('planes formateados: ',planesControlador[0].pasos)
+            console.log(planesControlador)
+            //dispatch(addPlanes(planesControlador))
             setDis('habilited')
             setDeshabilitar2(false)
             setDeshabilitar(false)
@@ -81,46 +87,16 @@ export default function PlanesView() {
 
     const planSelectManager = (name) => {
         
-        const aux = planes
-        const filtro = aux.filter(item => item.numPlan === name )
-        const data = filtro[0]
-        var nplan = currentPlan;
-        
-        nplan[0].fase = data.pasos[0]
-        nplan[0].duracion = data.pasos[1]
-
-        nplan[1].fase = data.pasos[2]
-        nplan[1].duracion = data.pasos[3]
-        nplan[2].fase = data.pasos[4]
-        nplan[2].duracion = data.pasos[5]
-        nplan[3].fase = data.pasos[6]
-        nplan[3].duracion = data.pasos[7]
-
-        nplan[4].fase = data.pasos[8]
-        nplan[4].duracion = data.pasos[9]
-
-        nplan[5].fase = data.pasos[10]
-        nplan[5].duracion = data.pasos[11]
-
-        nplan[6].fase = data.pasos[12]
-        nplan[6].duracion = data.pasos[13]
-
-        nplan[7].fase = data.pasos[14]
-        nplan[7].duracion = data.pasos[15]
-
-        nplan[8].fase = data.pasos[16]
-        nplan[8].duracion = data.pasos[17]
-
-        nplan[9].fase = data.pasos[18]
-        nplan[9].duracion = data.pasos[19]
-
-        nplan[10].fase = data.pasos[20]
-        nplan[10].duracion = data.pasos[21]
-
-        nplan[11].fase = data.pasos[22]
-        nplan[11].duracion = data.pasos[23]
-        setCurrentPlan(nplan);
-        setSelectPlan(name)
+       let planselect = planes.filter(data => data.numPlan === name)
+       setSelectPlan(name);
+       setCurrentPlan(planselect[0].pasos);
+       console.log(planselect);
+    }
+    const cargarPlanesFirebase = async() =>{
+        const ref = doc(db, "controladores", `${controlerState.mac}`);
+        await updateDoc(ref,{
+            planes:planes
+        });
     }
     const leerOtrosParametrosApi = async () =>{
         try{
@@ -148,49 +124,11 @@ export default function PlanesView() {
             console.log(e);
         }
     }
-    /* Funcion flecha encargada de cargar los datos cada vez que se presiona el boton de cargar datos */
-    const uploadData = (name,values) => {
-        
-        const aux = values
-        const filtro = aux.filter(item => item.numPlan === name )
-        const data = filtro[0]
-        var nplan = currentPlan;
-        
-        nplan[0].fase = data.pasos[0]
-        nplan[0].duracion = data.pasos[1]
-
-        nplan[1].fase = data.pasos[2]
-        nplan[1].duracion = data.pasos[3]
-        nplan[2].fase = data.pasos[4]
-        nplan[2].duracion = data.pasos[5]
-        nplan[3].fase = data.pasos[6]
-        nplan[3].duracion = data.pasos[7]
-
-        nplan[4].fase = data.pasos[8]
-        nplan[4].duracion = data.pasos[9]
-
-        nplan[5].fase = data.pasos[10]
-        nplan[5].duracion = data.pasos[11]
-
-        nplan[6].fase = data.pasos[12]
-        nplan[6].duracion = data.pasos[13]
-
-        nplan[7].fase = data.pasos[14]
-        nplan[7].duracion = data.pasos[15]
-
-        nplan[8].fase = data.pasos[16]
-        nplan[8].duracion = data.pasos[17]
-
-        nplan[9].fase = data.pasos[18]
-        nplan[9].duracion = data.pasos[19]
-
-        nplan[10].fase = data.pasos[20]
-        nplan[10].duracion = data.pasos[21]
-
-        nplan[11].fase = data.pasos[22]
-        nplan[11].duracion = data.pasos[23]
-        setCurrentPlan(nplan);
-        setSelectPlan(name)
+    const cargarOtrosParamFirebase = async(data) =>{
+        const ref = doc(db, "controladores", `${controlerState.mac}`);
+        await updateDoc(ref,{
+            otros_parametros:data
+        });
     }
     const cargarOtrosParametrosAPI= ()=>{
         let newParams = {
@@ -206,6 +144,7 @@ export default function PlanesView() {
             valor_sincronizacion:valorSincronizacion.toString()
         }
 
+
         Swal.fire({
             title: 'Deseas Continuar ?',
             text:  'Estos Cambios se guardaran en el Controlador',
@@ -219,6 +158,7 @@ export default function PlanesView() {
                
                 setCambio(false);
                 setOtrosParametrosFromRestApi(newParams);
+                cargarOtrosParamFirebase(newParams);
                 Swal.fire({
                     title: "Completado!",
                     text: "Cambios Cargados Con Exito",
@@ -241,6 +181,13 @@ export default function PlanesView() {
             return item
 
         })
+        const temp2 = planes.map((item)=>{
+            if(item.numPlan === selectPlan){
+                item.pasos = temp
+            }
+            return item
+        })
+        console.log(temp2)
         setCurrentPlan(temp);
         setCambio(true)
         setModalEditar(false);
@@ -274,7 +221,10 @@ export default function PlanesView() {
                     text: "Cambios Cargados Con Exito",
                     icon: "success",
                   });
-                setPlanesFromRestApi(newData);
+                //setPlanesFromRestApi(newData);
+                cargarPlanesFirebase();
+                console.log(planes);
+                console.log(currentPlan);
             }
         })        
     }catch(e){
