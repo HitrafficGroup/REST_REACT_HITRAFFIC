@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { db } from "../firebase/firebase-config";
+import { collection, updateDoc, onSnapshot, doc } from "firebase/firestore";
 import Container from '@mui/material/Container';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import Select from '@mui/material/Select';
@@ -114,6 +116,7 @@ export default function GruposView() {
             }
             responseFormat.push(newObject);
         }
+      
         setGrupos(responseFormat)
         setDeshabilitar(false)
         setDeshabilitar2(false);
@@ -235,6 +238,12 @@ export default function GruposView() {
         }
         return destelloDescripcion
     }
+    const cargarGruposFirebase = async(data) =>{
+        const ref = doc(db, "controladores", `${controlerState.mac}`);
+        await updateDoc(ref,{
+            grupos:data
+        });
+    }
     const convertirDatos=(data)=>{
        
         let lista_elementos = []
@@ -242,7 +251,6 @@ export default function GruposView() {
             let dir = data[sami]['direccion']
             let sen = data[sami]['sentido']
             let des = data[sami]['destello']
-            console.log(dir)
            let direccion = getValueDireccion(dir)
            lista_elementos.push(direccion)
            let destello = getValueDestello(des)
@@ -275,7 +283,8 @@ export default function GruposView() {
                 try {
                     console.log(grupos)
                     const newGruposconf = convertirDatos(grupos)
-                    setGruposControlador(newGruposconf)
+                    setGruposControlador(newGruposconf);
+                    cargarGruposFirebase(grupos);
                     setCambioGrupos(false)
 
                 } catch (e) {
@@ -287,7 +296,12 @@ export default function GruposView() {
         })
     }
 
-
+    const cargarConflictosFirebase = async(data) =>{
+        const ref = doc(db, "controladores", `${controlerState.mac}`);
+        await updateDoc(ref,{
+            conflictos_verdes:data
+        });
+    }
     const cargarDatosConflictos = () => {
      
         let fila1 = []
@@ -344,8 +358,17 @@ export default function GruposView() {
                         ip: controlerState.ip,
                         mac:controlerState.mac
                     }
-               
-                    setConflictoVerdesControlador(newConflicto)
+                    let  conflictoFirebase = {
+                        check1: checked1,
+                        check2: checked2,
+                        check3: checked3,
+                        fila1:[false,false,true,true],
+                        fila2: [false,false,false,false],
+                        fila3: [false,false,false,false],
+                    }
+                    
+                    setConflictoVerdesControlador(newConflicto);
+                    cargarConflictosFirebase(conflictoFirebase);
                     setCambioConflictos(false)
 
                 } catch (e) {

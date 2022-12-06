@@ -112,14 +112,14 @@ export default function HomeView() {
     const seleccionarControlador = (data) => {
         setCurrentControler(data);
         dispatch(setInitialStateController(data));
-        onSnapshot(doc(db, "controladores", `${data.mac}`), (doc) => {
-            if(doc.exists()){
-                setSemaforos(doc.data().grupos)
-            }else{
-                console.log('no existe')
-            }
-            //setSemaforos(doc.data().grupos)
-        });
+        // onSnapshot(doc(db, "controladores", `${data.mac}`), (doc) => {
+        //     if(doc.exists()){
+        //         setSemaforos(doc.data().grupos)
+        //     }else{
+        //         console.log('no existe')
+        //     }
+        //     //setSemaforos(doc.data().grupos)
+        // });
         swal({
             title: "Felicidades!",
             text: "Controlador Seleccionado Con Exito",
