@@ -8,6 +8,8 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import LightModeIcon from '@mui/icons-material/LightMode';
+import { collection, updateDoc, onSnapshot, doc } from "firebase/firestore";
+import { db } from "../firebase/firebase-config";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import { getFasesFromRestApi, postFasesFromRestApi } from '../js/apiFunctions'
@@ -101,6 +103,7 @@ export default function FasesView() {
                         }
                         
                         enviarFasesRestApi(datos_fases)
+                        enviarFasesFirebase(fases);
                         setDeshabilitar2(false);
     
                     } catch (e) {
@@ -116,6 +119,14 @@ export default function FasesView() {
        
         
         //dispatch(addFases(temp));
+    }
+    const enviarFasesFirebase = async(data) =>{
+
+    const ref = doc(db, "controladores", `${controlerState.mac}`);
+        await updateDoc(ref,{
+            fases:data
+        });
+
     }
     const enviarFasesRestApi = async (data) => {
         try {
@@ -212,6 +223,7 @@ export default function FasesView() {
 
             }
             const ndatos = arregloFases
+            
             setFases(ndatos);
             setDeshabilitar(false);
             setDeshabilitar2(false);

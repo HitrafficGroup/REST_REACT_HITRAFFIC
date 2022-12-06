@@ -292,3 +292,6 @@ entrada2: {checkbox: '0', fase: '0', tiempo: '0'},
 entrada3: {checkbox: '0', fase: '0', tiempo: '0'},
 entrada4: {checkbox: '0', fase: '0', tiempo: '0'}
 }
+//me asusta tu manera tan maquiavelica de pensar jajaja 
+//hasta planificas posibles escenarios y como deberia sacarme la vuelta jajaja
+// parece que te e ense;ado bien jajajaj chndo 
