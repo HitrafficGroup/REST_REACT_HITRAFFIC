@@ -5,6 +5,8 @@ import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { db } from "../firebase/firebase-config";
+import { collection, updateDoc, onSnapshot, doc } from "firebase/firestore";
 import CardController from '../components/CardController';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -34,6 +36,7 @@ export default function EntradasView() {
         setDeshabilitar2(true);
         let data = await getEntradasControlador(controlerState.mac,controlerState.ip);
         let informacion = data[`${mac}`];
+        console.log(informacion);
         setEntradas(informacion);
         if(informacion.entrada1.checkbox ==='1'){
             setEnt1(true);
@@ -114,12 +117,26 @@ export default function EntradasView() {
                     ip:controlerState.ip,
                     mac:controlerState.mac
                 }
+                let newEntradasFirebase = {
+                    entrada1:{checkbox: ent1, fase: fase1.toString(), tiempo: t1.toString()},
+                    entrada2:{checkbox: ent2, fase: fase2.toString(), tiempo: t2.toString()},
+                    entrada3:{checkbox: ent3, fase: fase3.toString(), tiempo: t3.toString()},
+                    entrada4:{checkbox: ent4, fase: fase4.toString(), tiempo: t4.toString()},
+
+                }
+                cargarEntradasFirebase(newEntradasFirebase);
                 cargarDatosEnetradasRest(newObject);
                 console.log(newObject)
                
             }
         })
       
+    }
+    const cargarEntradasFirebase = async(data)=>{
+        const ref = doc(db, "controladores", `${controlerState.mac}`);
+        await updateDoc(ref,{
+            entradas:data
+        });
     }
 
     const cargarDatosEnetradasRest = async(data) =>{
