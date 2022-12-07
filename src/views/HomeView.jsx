@@ -12,7 +12,7 @@ import UpdateIcon from '@mui/icons-material/Update';
 import "../css/HomeView.css"
 import CustomProgress from "../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { getIpsFromRestApi} from '../js/apiFunctions'
+import { getIpsFromRestApi,getFirmwareVersion} from '../js/apiFunctions'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -109,9 +109,12 @@ export default function HomeView() {
 
     }
 
-    const seleccionarControlador = (data) => {
+    const seleccionarControlador = async(data) => {
         setCurrentControler(data);
         dispatch(setInitialStateController(data));
+        let aux = await getFirmwareVersion(data.mac,data.ip);
+        let firmware = aux[data.mac]
+        enviarVersionFirebase(data.mac,data.ip,firmware);
         // onSnapshot(doc(db, "controladores", `${data.mac}`), (doc) => {
         //     if(doc.exists()){
         //         setSemaforos(doc.data().grupos)
@@ -121,7 +124,7 @@ export default function HomeView() {
         //     //setSemaforos(doc.data().grupos)
         // });
         swal({
-            title: "Felicidades!",
+            title: "Conectado!",
             text: "Controlador Seleccionado Con Exito",
             icon: "success",
     
@@ -138,6 +141,14 @@ export default function HomeView() {
 
       
         
+    }
+    const enviarVersionFirebase = async(mac,ip,firmware) =>{
+        const ref = doc(db, "controladores", `${mac}`);
+        await updateDoc(ref,{
+            mac:mac,
+            ip:ip,
+            version:firmware
+        });
     }
    
     useEffect(() => {

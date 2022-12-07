@@ -378,6 +378,27 @@ async function getAllDataIp(mac,ip){
 			  })
 		});
 		return datos;
+}
+
+async function getFirmwareVersion(mac,ip){
+	
+	var datos;
+	await axios.post(`${BASE_PATH_WS}/rest/restGetVersionFirmware?mac=${mac}`, {
+		ip: ip,
+	})
+		.then(response => {
+			datos = response.data;
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexion',
+				text: `${error}`,
+				footer: '<a href="">Click Aqui Para Notificar el error</a>'
+			  })
+		});
+		return datos;
 
 }
 
@@ -394,5 +415,5 @@ export { getIpsFromRestApi, getFasesFromRestApi,
 	 setConflictoVerdesControlador,getDiasEspecialesControlador,
 	 setDiasEspecialesControlador,getEntradasControlador,setEntradasControlador,
 	getRegistrosControlador,getResumenControlador,
-	getAllDataIp
+	getAllDataIp,getFirmwareVersion
 }
