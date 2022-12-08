@@ -105,9 +105,16 @@ export default function HorariosView() {
 
 
     const handleTime1 = (newValue) => {
+        let h =  new Date(newValue.$d)
+        let horas =  h.getHours()
+        horas =  ("0" + horas).slice(-2);
+        let minutos = h.getMinutes()
+        minutos  =  ("0" + minutos).slice(-2);
+        console.log(horas)
+        console.log(minutos)
         setTime1(newValue)
-        currentHorario['horas'] = newValue.$H.toString()
-        currentHorario['minutos'] = newValue.$m.toString()
+        currentHorario['horas'] = horas
+        currentHorario['minutos'] = minutos
     }
     const aplicarLosCambios = () => {
 
@@ -133,7 +140,10 @@ export default function HorariosView() {
 
         setClaseDia(event.target.value);
     }
-
+    const chargeHorario =(data)=> {
+        setTipoDia('dia_ordinario')
+        setHorarios(data['dia_ordinario'])
+    }
     const handleTipoDia = (event) => {
         if (objHorarios !== null) {
             setTipoDia(event.target.value);
@@ -186,8 +196,8 @@ export default function HorariosView() {
             const result = await getHorariosFromRestApi(controlerState.mac, controlerState.ip)
             setObjHorarios(result)
             console.log(result);
-            setHorarios(horariosPorDefecto)
-            setTipoDia('');
+            chargeHorario(result);
+            
             setHabilitar1(false)
             setHabilitar2(false);
         } catch (e) {
@@ -400,7 +410,8 @@ export default function HorariosView() {
         }
         newObject['ip'] = controlerState.ip
         newObject['num_horario'] = formatearTipoDia(tipoDia)
-        cargarHorariosFirebase(data)
+  
+        cargarHorariosFirebase(objHorarios)
         await postHorariosFromRestApi(newObject);
         setHabilitar2(false);
     }
