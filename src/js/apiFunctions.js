@@ -362,7 +362,7 @@ async function getResumenControlador(mac,ip){
 async function getAllDataIp(mac,ip){
 	
 	var datos;
-	await axios.post(`${BASE_PATH_WS}/rest/conectarIp?mac=${mac}`, {
+	await axios.post(`${BASE_PATH_WS}/rest/conectarIp?mac=${mac}&umbralCache=0`, {
 		ip: ip,
 	})
 		.then(response => {

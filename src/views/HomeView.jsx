@@ -12,7 +12,7 @@ import UpdateIcon from '@mui/icons-material/Update';
 import "../css/HomeView.css"
 import CustomProgress from "../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { getIpsFromRestApi, getFirmwareVersion } from '../js/apiFunctions'
+import { getIpsFromRestApi, getFirmwareVersion , getAllDataIp} from '../js/apiFunctions'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -32,7 +32,11 @@ export default function HomeView() {
     const [controladores, setControladores] = useState([]);
     const [modalSemaforo, setModalSemaforo] = useState(false);
     const [flagsimu,setFlagsimu] = useState(false);
-    const  simulacion = useRef(false);
+    const simulacion = useRef(false);
+    const tsimu = useRef(false);
+    const timer1 = useRef(0);
+    const timer2 = useRef(0);
+    const faseActual = useRef(0);
     const [counter, setCounter] = useState(1);
     const [nombreSemaforo, setNombreSemaforo] = useState('');
     const [currentSemaforo, setCurrentSemaforo] = useState({});
@@ -292,22 +296,152 @@ export default function HomeView() {
     }
     const iniciarSimulacion = () =>{
         simulacion.current = !simulacion.current;
+        timer1.current = 0;
         setFlagsimu(!flagsimu);
         setBtnAgregar(simulacion.current)
 
     }
-       
+    
+    const devolverColor = (_data) => {
+        if(_data === "verde" ){
+            return verde
+        }else if(_data === "rojo" ){
+            return rojo
+        }else{
+            return amarillo
+        }
+
+    }
    
+    const pruebasimu = async()=>{
+       
+        let dia_ordinario = allData.horarios.dia_ordinario;
+        let planes =  allData.planes
+        let hora_actual = new Date();
+        let horas =  hora_actual.getHours();
+        let limsup ;
+        let liminf ;
+        let indice;
+        let indice_requerido;
+        dia_ordinario.map((item,index)=>{
+            let aux =  parseInt(item.horas)
+           
+            if(aux >= horas){
+                indice= index
+            }
+        })
+        limsup = indice;
+        liminf = indice-1;
+        if(limsup === undefined){
+            indice_requerido = liminf;
+        }else{
+            indice_requerido = limsup;
+        }
+        
+        let plan_activo =  dia_ordinario[indice_requerido].plan
+        let planname = `plan${plan_activo}`
+        let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
+        let pasos = plan_filter[0].pasos
+        let pasos_habilitados = pasos.filter((item) =>{
+            if(item.duracion >0){
+                return item;
+            }
+        })
+        
+
+        
+        let fases = allData.fases
+        let fases_pasos = pasos_habilitados.map(item =>{
+            let aux2 = fases.filter(_item => _item.faseNum === item.fase);
+            item['grupos'] = aux2[0].grupos
+            return item
+        })
     
+        faseActual.current = fases_pasos
+     
+        //setSemaforo()
+        
+        let datosal = await getAllDataIp(controlerState.mac , controlerState.ip);
+        let cutiempo = datosal[controlerState.mac].runtime[controlerState.mac].Tiempo_restante;
+        let cufase = datosal[controlerState.mac].runtime[controlerState.mac].Fase_ejecucion;
+
+
+        tsimu.current = cutiempo
+        console.log(cutiempo)
+        
+    }
+    const cambiarSemaforo2 = () =>{
+        let g1 ;
+        let g2 ;
+        let g3 ;
+        let g4 ;
+        let dataUpdated ;
+        let aux;
+        let total_tiempo = faseActual.current[0].duracion + faseActual.current[1].duracion
+        if(timer1.current >= faseActual.current[0].duracion && timer1.current <= total_tiempo){
+            g1 = devolverColor(faseActual.current[1].grupos[0].colorDescripcion) ;
+            g2 = devolverColor(faseActual.current[1].grupos[1].colorDescripcion) ;
+            g3 = devolverColor(faseActual.current[1].grupos[2].colorDescripcion) ;
+            g4 = devolverColor(faseActual.current[1].grupos[3].colorDescripcion) ;
+            aux = semaforos2.current
+       
+            dataUpdated = aux.map((item)=>{
+                if(item.grupo === "g1"){
+                    item['icon'] = g1;
+                }else if(item.grupo === "g2"){
+                    item['icon'] = g2;
+                }else if(item.grupo === "g3"){
+                    item['icon'] = g3;
+                }else if(item.grupo === "g4"){
+                    item['icon'] = g4;
+                }
+                return item
+            })
     
+            setSemaforos(dataUpdated);
+           
+
+        }
+        else if(timer1.current <= 2){
+            
+            g1 = devolverColor(faseActual.current[0].grupos[0].colorDescripcion) ;
+            g2 = devolverColor(faseActual.current[0].grupos[1].colorDescripcion) ;
+            g3 = devolverColor(faseActual.current[0].grupos[2].colorDescripcion) ;
+            g4 = devolverColor(faseActual.current[0].grupos[3].colorDescripcion) ;
+            aux = semaforos2.current
+       
+            dataUpdated = aux.map((item)=>{
+                if(item.grupo === "g1"){
+                    item['icon'] = g1;
+                }else if(item.grupo === "g2"){
+                    item['icon'] = g2;
+                }else if(item.grupo === "g3"){
+                    item['icon'] = g3;
+                }else if(item.grupo === "g4"){
+                    item['icon'] = g4;
+                }
+                return item
+            })
+    
+            setSemaforos(dataUpdated);
+            
+        }else if(timer1.current >=41){
+            timer1.current = 0;
+            console.log("se reinicia el periodo")
+        }
+       
+    }
     useEffect(() => {
         const interval = setInterval(() => {
-            console.log(simulacion)
+           
             if(simulacion.current){
-                cambiarSemaforo()
+                //cambiarSemaforo();
+                cambiarSemaforo2();
+                timer1.current = timer1.current +1;
+
             }
           
-        }, 2000);
+        }, 1000);
         
         return () => clearInterval(interval);
       }, []);
@@ -369,8 +503,11 @@ export default function HomeView() {
                     <Grid item xs={12} md={4}  >
                         <Button variant="contained" startIcon={<UpdateIcon />} onClick={leerDatosFases} color="verde2" fullWidth sx={{ height: "100%" }}>ACTUALIZAR</Button>
                     </Grid> */}
-                     <Grid item xs={12}>
+                     <Grid item xs={6}>
                         <Button  variant="contained" startIcon={flagsimu ? <PauseCircleOutlineIcon/>:<PlayCircleOutlineIcon/>} color={flagsimu ? 'verde':'morado1'} onClick={iniciarSimulacion}>Visualizar Funcionamiento</Button>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Button  variant="contained"  onClick={pruebasimu}>prueba</Button>
                     </Grid>
                  
                     <Grid item xs={12} md={12}>
