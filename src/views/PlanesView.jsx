@@ -94,6 +94,7 @@ export default function PlanesView() {
     }
     const cargarPlanesFirebase = async() =>{
         const ref = doc(db, "controladores", `${controlerState.mac}`);
+        console.log(planes)
         await updateDoc(ref,{
             planes:planes
         });
@@ -176,7 +177,7 @@ export default function PlanesView() {
         const temp = currentPlan.map((item)=>{
             if(item.name ===  currentPaso.name){
                 item['fase'] = parseInt(faseSemaforo);
-                item['duracion'] = tiempoSemaforo;
+                item['duracion'] = parseInt(tiempoSemaforo);
             }
             return item
 
@@ -221,7 +222,7 @@ export default function PlanesView() {
                     text: "Cambios Cargados Con Exito",
                     icon: "success",
                   });
-                //setPlanesFromRestApi(newData);
+                setPlanesFromRestApi(newData);
                 cargarPlanesFirebase();
                 console.log(planes);
                 console.log(currentPlan);

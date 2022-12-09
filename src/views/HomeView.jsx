@@ -327,21 +327,25 @@ export default function HomeView() {
         let liminf;
         let indice;
         let indice_requerido;
+        
         dia_ordinario.map((item, index) => {
             let aux = parseInt(item.horas)
 
             if (aux >= horas) {
                 indice = index
+            }else if(aux !== 0){
+                indice = index
             }
-        })
+        })  
         limsup = indice;
         liminf = indice - 1;
-        if (limsup === undefined) {
-            indice_requerido = liminf;
+        let horas_indice = dia_ordinario[indice].horas
+        if (horas >= parseInt(horas_indice)) {
+            indice_requerido = indice;
+    
         } else {
-            indice_requerido = limsup;
+            indice_requerido = liminf;
         }
-
         let plan_activo = dia_ordinario[indice_requerido].plan
         let planname = `plan${plan_activo}`
         let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
@@ -358,6 +362,7 @@ export default function HomeView() {
             item['grupos'] = aux2[0].grupos
             return item
         })
+        console.log(fases_pasos)
         setPasosActivos(fases_pasos)
         faseActual.current = fases_pasos
 
@@ -381,14 +386,18 @@ export default function HomeView() {
 
             if (aux >= horas) {
                 indice = index
+            }else if(aux !== 0){
+                indice = index
             }
-        })
+        })  
         limsup = indice;
         liminf = indice - 1;
-        if (limsup === undefined) {
-            indice_requerido = liminf;
+        let horas_indice = dia_ordinario[indice].horas
+        if (horas >= parseInt(horas_indice)) {
+            indice_requerido = indice;
+    
         } else {
-            indice_requerido = limsup;
+            indice_requerido = liminf;
         }
 
         let plan_activo = dia_ordinario[indice_requerido].plan
@@ -409,6 +418,7 @@ export default function HomeView() {
             item['grupos'] = aux2[0].grupos
             return item
         })
+        console.log(fases_pasos)
         setPasosActivos(fases_pasos)
         faseActual.current = fases_pasos
 
@@ -427,8 +437,7 @@ export default function HomeView() {
             console.log(timer1.current)
         }
         // tsimu.current = cutiempo
-        console.log(cutiempo)
-        console.log(cufase)
+
         console.log(pasos_habilitados)
 
     }
