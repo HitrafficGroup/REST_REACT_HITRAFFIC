@@ -2,17 +2,18 @@ import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import { collection, updateDoc, onSnapshot, doc,getDoc,setDoc } from "firebase/firestore";
+import { collection, updateDoc, onSnapshot, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import TextField from '@mui/material/TextField';
+import Chip from '@mui/material/Chip';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import UpdateIcon from '@mui/icons-material/Update';
 import "../css/HomeView.css"
 import CustomProgress from "../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { getIpsFromRestApi, getFirmwareVersion , getAllDataIp} from '../js/apiFunctions'
+import { getIpsFromRestApi, getFirmwareVersion, getAllDataIp } from '../js/apiFunctions'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -21,6 +22,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addFases, addPlanes, setInitialStateController } from "../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 // dependencias del custom Map
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from 'leaflet';
@@ -31,7 +34,8 @@ import swal from 'sweetalert';
 export default function HomeView() {
     const [controladores, setControladores] = useState([]);
     const [modalSemaforo, setModalSemaforo] = useState(false);
-    const [flagsimu,setFlagsimu] = useState(false);
+    const [flagsimu, setFlagsimu] = useState(false);
+
     const simulacion = useRef(false);
     const tsimu = useRef(false);
     const timer1 = useRef(0);
@@ -48,18 +52,16 @@ export default function HomeView() {
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
     const [semaforos, setSemaforos] = useState([]);
     const [currentControler, setCurrentControler] = useState({})
-    const [grupo1,setGrupo1] = useState(rojo);
-    const [grupo2,setGrupo2] = useState(verde);
-    const [grupo3,setGrupo3] = useState(amarillo);
-    const [grupo4,setGrupo4] = useState(rojo);
+    const [pasosActivos, setPasosActivos] = useState([]);
+    const [faseexec,setFaseexec] = useState("");
     const [btnAgregar, setBtnAgregar] = useState(true);
     const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers)
-    const [allData,setAllData] = useState({});
-    const [temporizador,setTemporizador] = useState(0);
+    const [allData, setAllData] = useState({});
+    const [temporizador, setTemporizador] = useState(0);
     //prueba semaforo
-    const semaforos2 =  useRef();
-   
+    const semaforos2 = useRef();
+
     const [newSemaforo, setNewSemaforo] = useState({
         nombre: "",
         lat: 0,
@@ -97,10 +99,10 @@ export default function HomeView() {
         setDraggable((d) => !d)
     }, [])
     const markerRef = useRef(null)
-  
+
     const toggle = () => setModal(!modal);
     const getAllDataController = async (mac) => {
-        const docRef = doc(db, "controladores",`${mac}`);
+        const docRef = doc(db, "controladores", `${mac}`);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
@@ -117,9 +119,9 @@ export default function HomeView() {
         setModalSemaforo(true);
 
     }
-    const declararControlador = async(mac,ip) =>{
+    const declararControlador = async (mac, ip) => {
         const ref = collection(db, "controladores");
-        await setDoc(doc(ref,mac),initialData);
+        await setDoc(doc(ref, mac), initialData);
     }
     const seleccionarControlador = async (data) => {
         simulacion.current = false;
@@ -130,18 +132,18 @@ export default function HomeView() {
         let firmware = aux[data.mac]
         enviarVersionFirebase(data.mac, data.ip, firmware);
         onSnapshot(doc(db, "controladores", `${data.mac}`), (doc) => {
-            if(doc.exists()){
+            if (doc.exists()) {
                 let gruposController = doc.data().resumen
-                let aux = gruposController.map((item) =>{
-                    if(item.grupo === "g1"){
+                let aux = gruposController.map((item) => {
+                    if (item.grupo === "g1") {
                         item['icon'] = semaforo;
                     }
-                    else if(item.grupo === "g2"){
+                    else if (item.grupo === "g2") {
                         item['icon'] = semaforo;
                     }
-                    else if(item.grupo === "g3"){
+                    else if (item.grupo === "g3") {
                         item['icon'] = semaforo;
-                    }else{
+                    } else {
                         item['icon'] = semaforo;
                     }
                     return item
@@ -149,9 +151,10 @@ export default function HomeView() {
                 console.log(aux);
                 semaforos2.current = aux;
                 setSemaforos(aux);
-                setAllData(doc.data())
-            }else{
-                declararControlador(data.mac,data.ip);
+                setAllData(doc.data());
+                parametrosCorriendo();
+            } else {
+                declararControlador(data.mac, data.ip);
                 console.log('no existe')
             }
             //setSemaforos(doc.data().grupos)
@@ -247,44 +250,44 @@ export default function HomeView() {
     const cerrarEditarSemaforo = () => {
         setModalSemaforo(false);
     }
-    const cambiarSemaforo = () =>{
-        
+    const cambiarSemaforo = () => {
+
         let interval = Math.floor(Math.random() * 3);
-        let g1 = rojo ;
-        let g2 = verde ;
-        let g3 =rojo ;
-        let g4 =verde ;
-        if(interval === 1){
+        let g1 = rojo;
+        let g2 = verde;
+        let g3 = rojo;
+        let g4 = verde;
+        if (interval === 1) {
             g1 = rojo;
             g2 = rojo;
             g3 = rojo;
             g4 = rojo;
-        }else if(interval === 2){
+        } else if (interval === 2) {
             g1 = verde;
             g2 = verde;
             g3 = verde;
             g4 = verde;
-        }else if(interval === 3){
+        } else if (interval === 3) {
             g1 = amarillo;
             g2 = amarillo;
             g3 = amarillo;
             g4 = amarillo;
-        }else{
-             g1 = verde;
-             g2 = amarillo;
-             g3 = verde;
-             g4 = rojo;
+        } else {
+            g1 = verde;
+            g2 = amarillo;
+            g3 = verde;
+            g4 = rojo;
         }
         let aux = semaforos2.current
-       
-        let dataUpdated = aux.map((item)=>{
-            if(item.grupo === "g1"){
+
+        let dataUpdated = aux.map((item) => {
+            if (item.grupo === "g1") {
                 item['icon'] = g1;
-            }else if(item.grupo === "g2"){
+            } else if (item.grupo === "g2") {
                 item['icon'] = g2;
-            }else if(item.grupo === "g3"){
+            } else if (item.grupo === "g3") {
                 item['icon'] = g3;
-            }else if(item.grupo === "g4"){
+            } else if (item.grupo === "g4") {
                 item['icon'] = g4;
             }
             return item
@@ -292,159 +295,218 @@ export default function HomeView() {
 
         setSemaforos(dataUpdated);
         //setSemaforos(dataUpdated);
-        
+
     }
-    const iniciarSimulacion = () =>{
+    const iniciarSimulacion = () => {
         simulacion.current = !simulacion.current;
-        timer1.current = 0;
+        if (simulacion.current) {
+
+            pruebasimu()
+        }
         setFlagsimu(!flagsimu);
         setBtnAgregar(simulacion.current)
 
     }
-    
+
     const devolverColor = (_data) => {
-        if(_data === "verde" ){
+        if (_data === "verde") {
             return verde
-        }else if(_data === "rojo" ){
+        } else if (_data === "rojo") {
             return rojo
-        }else{
+        } else {
             return amarillo
         }
 
     }
-   
-    const pruebasimu = async()=>{
-       
+    const parametrosCorriendo = () => {
         let dia_ordinario = allData.horarios.dia_ordinario;
-        let planes =  allData.planes
+        let planes = allData.planes
         let hora_actual = new Date();
-        let horas =  hora_actual.getHours();
-        let limsup ;
-        let liminf ;
+        let horas = hora_actual.getHours();
+        let limsup;
+        let liminf;
         let indice;
         let indice_requerido;
-        dia_ordinario.map((item,index)=>{
-            let aux =  parseInt(item.horas)
-           
-            if(aux >= horas){
-                indice= index
+        dia_ordinario.map((item, index) => {
+            let aux = parseInt(item.horas)
+
+            if (aux >= horas) {
+                indice = index
             }
         })
         limsup = indice;
-        liminf = indice-1;
-        if(limsup === undefined){
+        liminf = indice - 1;
+        if (limsup === undefined) {
             indice_requerido = liminf;
-        }else{
+        } else {
             indice_requerido = limsup;
         }
-        
-        let plan_activo =  dia_ordinario[indice_requerido].plan
+
+        let plan_activo = dia_ordinario[indice_requerido].plan
         let planname = `plan${plan_activo}`
         let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
         let pasos = plan_filter[0].pasos
-        let pasos_habilitados = pasos.filter((item) =>{
-            if(item.duracion >0){
+        let pasos_habilitados = pasos.filter((item) => {
+            if (item.duracion > 0) {
                 return item;
             }
         })
-        
 
-        
         let fases = allData.fases
-        let fases_pasos = pasos_habilitados.map(item =>{
+        let fases_pasos = pasos_habilitados.map(item => {
             let aux2 = fases.filter(_item => _item.faseNum === item.fase);
             item['grupos'] = aux2[0].grupos
             return item
         })
-    
+        setPasosActivos(fases_pasos)
         faseActual.current = fases_pasos
-     
+
         //setSemaforo()
-        
-        let datosal = await getAllDataIp(controlerState.mac , controlerState.ip);
+        let tf1 = fases_pasos[0].duracion
+        let tf2 = fases_pasos[1].duracion
+
+    }
+    const pruebasimu = async () => {
+        console.log("inicia simulacion")
+        let dia_ordinario = allData.horarios.dia_ordinario;
+        let planes = allData.planes
+        let hora_actual = new Date();
+        let horas = hora_actual.getHours();
+        let limsup;
+        let liminf;
+        let indice;
+        let indice_requerido;
+        dia_ordinario.map((item, index) => {
+            let aux = parseInt(item.horas)
+
+            if (aux >= horas) {
+                indice = index
+            }
+        })
+        limsup = indice;
+        liminf = indice - 1;
+        if (limsup === undefined) {
+            indice_requerido = liminf;
+        } else {
+            indice_requerido = limsup;
+        }
+
+        let plan_activo = dia_ordinario[indice_requerido].plan
+        let planname = `plan${plan_activo}`
+        let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
+        let pasos = plan_filter[0].pasos
+        let pasos_habilitados = pasos.filter((item) => {
+            if (item.duracion > 0) {
+                return item;
+            }
+        })
+
+
+
+        let fases = allData.fases
+        let fases_pasos = pasos_habilitados.map(item => {
+            let aux2 = fases.filter(_item => _item.faseNum === item.fase);
+            item['grupos'] = aux2[0].grupos
+            return item
+        })
+        setPasosActivos(fases_pasos)
+        faseActual.current = fases_pasos
+
+        //setSemaforo()
+        let tf1 = fases_pasos[0].duracion
+        let tf2 = fases_pasos[1].duracion
+        let datosal = await getAllDataIp(controlerState.mac, controlerState.ip);
         let cutiempo = datosal[controlerState.mac].runtime[controlerState.mac].Tiempo_restante;
         let cufase = datosal[controlerState.mac].runtime[controlerState.mac].Fase_ejecucion;
 
-
-        tsimu.current = cutiempo
+        if (cufase === fases_pasos[0].fase) {
+            timer1.current = (tf1 - cutiempo) + 14;
+            console.log(timer1.current)
+        } else {
+            timer1.current = (tf1 + (tf2 - cutiempo)) + 14;
+            console.log(timer1.current)
+        }
+        // tsimu.current = cutiempo
         console.log(cutiempo)
-        
+        console.log(cufase)
+        console.log(pasos_habilitados)
+
     }
-    const cambiarSemaforo2 = () =>{
-        let g1 ;
-        let g2 ;
-        let g3 ;
-        let g4 ;
-        let dataUpdated ;
+    const cambiarSemaforo2 = () => {
+        let g1;
+        let g2;
+        let g3;
+        let g4;
+        let dataUpdated;
         let aux;
         let total_tiempo = faseActual.current[0].duracion + faseActual.current[1].duracion
-        if(timer1.current >= faseActual.current[0].duracion && timer1.current <= total_tiempo){
-            g1 = devolverColor(faseActual.current[1].grupos[0].colorDescripcion) ;
-            g2 = devolverColor(faseActual.current[1].grupos[1].colorDescripcion) ;
-            g3 = devolverColor(faseActual.current[1].grupos[2].colorDescripcion) ;
-            g4 = devolverColor(faseActual.current[1].grupos[3].colorDescripcion) ;
+        if (timer1.current >= faseActual.current[0].duracion && timer1.current <= total_tiempo) {
+            g1 = devolverColor(faseActual.current[1].grupos[0].colorDescripcion);
+            g2 = devolverColor(faseActual.current[1].grupos[1].colorDescripcion);
+            g3 = devolverColor(faseActual.current[1].grupos[2].colorDescripcion);
+            g4 = devolverColor(faseActual.current[1].grupos[3].colorDescripcion);
             aux = semaforos2.current
-       
-            dataUpdated = aux.map((item)=>{
-                if(item.grupo === "g1"){
+            setFaseexec( faseActual.current[1].fase)
+            dataUpdated = aux.map((item) => {
+                if (item.grupo === "g1") {
                     item['icon'] = g1;
-                }else if(item.grupo === "g2"){
+                } else if (item.grupo === "g2") {
                     item['icon'] = g2;
-                }else if(item.grupo === "g3"){
+                } else if (item.grupo === "g3") {
                     item['icon'] = g3;
-                }else if(item.grupo === "g4"){
+                } else if (item.grupo === "g4") {
                     item['icon'] = g4;
                 }
                 return item
             })
-    
+
             setSemaforos(dataUpdated);
-           
+
 
         }
-        else if(timer1.current <= 2){
-            
-            g1 = devolverColor(faseActual.current[0].grupos[0].colorDescripcion) ;
-            g2 = devolverColor(faseActual.current[0].grupos[1].colorDescripcion) ;
-            g3 = devolverColor(faseActual.current[0].grupos[2].colorDescripcion) ;
-            g4 = devolverColor(faseActual.current[0].grupos[3].colorDescripcion) ;
+        else if (timer1.current <= 2) {
+
+            g1 = devolverColor(faseActual.current[0].grupos[0].colorDescripcion);
+            g2 = devolverColor(faseActual.current[0].grupos[1].colorDescripcion);
+            g3 = devolverColor(faseActual.current[0].grupos[2].colorDescripcion);
+            g4 = devolverColor(faseActual.current[0].grupos[3].colorDescripcion);
             aux = semaforos2.current
-       
-            dataUpdated = aux.map((item)=>{
-                if(item.grupo === "g1"){
+            setFaseexec( faseActual.current[0].fase)
+            dataUpdated = aux.map((item) => {
+                if (item.grupo === "g1") {
                     item['icon'] = g1;
-                }else if(item.grupo === "g2"){
+                } else if (item.grupo === "g2") {
                     item['icon'] = g2;
-                }else if(item.grupo === "g3"){
+                } else if (item.grupo === "g3") {
                     item['icon'] = g3;
-                }else if(item.grupo === "g4"){
+                } else if (item.grupo === "g4") {
                     item['icon'] = g4;
                 }
                 return item
             })
-    
+
             setSemaforos(dataUpdated);
-            
-        }else if(timer1.current >=41){
+
+        } else if (timer1.current >= 41) {
             timer1.current = 0;
             console.log("se reinicia el periodo")
         }
-       
+
     }
     useEffect(() => {
         const interval = setInterval(() => {
-           
-            if(simulacion.current){
+
+            if (simulacion.current) {
                 //cambiarSemaforo();
                 cambiarSemaforo2();
-                timer1.current = timer1.current +1;
+                timer1.current = timer1.current + 1;
 
             }
-          
+
         }, 1000);
-        
+
         return () => clearInterval(interval);
-      }, []);
+    }, []);
 
     return (
         <div>
@@ -456,7 +518,7 @@ export default function HomeView() {
                     Listar Controladores
                 </Button>
                 <Grid container spacing={1}>
-                   
+
                     <Grid item xs={12}>
                         <Table className='home-t'>
                             <Thead>
@@ -503,13 +565,15 @@ export default function HomeView() {
                     <Grid item xs={12} md={4}  >
                         <Button variant="contained" startIcon={<UpdateIcon />} onClick={leerDatosFases} color="verde2" fullWidth sx={{ height: "100%" }}>ACTUALIZAR</Button>
                     </Grid> */}
-                     <Grid item xs={6}>
-                        <Button  variant="contained" startIcon={flagsimu ? <PauseCircleOutlineIcon/>:<PlayCircleOutlineIcon/>} color={flagsimu ? 'verde':'morado1'} onClick={iniciarSimulacion}>Visualizar Funcionamiento</Button>
+                    <Grid item xs={5}>
+                        <Button variant="contained" fullWidth sx={{height:"100%"}}  startIcon={flagsimu ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />} color={flagsimu ? 'verde' : 'morado1'} onClick={iniciarSimulacion}>Visualizar Funcionamiento</Button>
                     </Grid>
-                    <Grid item xs={6}>
-                        <Button  variant="contained"  onClick={pruebasimu}>prueba</Button>
+                    <Grid item xs={7}>
+                        <Alert severity="info">
+                            Se esta Ejecutando La Fase — <strong>Fase{faseexec}</strong>
+                        </Alert>
                     </Grid>
-                 
+
                     <Grid item xs={12} md={12}>
                         <div className="map">
                             <MapContainer center={position} zoom={19} scrollWheelZoom={false} className='map-container'>
@@ -522,7 +586,7 @@ export default function HomeView() {
 
                                     <Marker position={item.position} key={index} icon={item.icon}>
                                         <Popup>
-                                           Semaforo {item.nombre} - Grupo: {item.grupo}
+                                            Semaforo {item.nombre} - Grupo: {item.grupo}
                                         </Popup>
                                     </Marker>
                                 ))}
@@ -541,6 +605,55 @@ export default function HomeView() {
                     </Grid>
                     <Grid item xs={12} md={4}>
                         <Button variant="contained" startIcon={<UpdateIcon />} disabled={btnAgregar} onClick={() => { setModalCrearSemaforo(true) }} color="azulm" fullWidth sx={{ height: "100%" }}>Agregar</Button>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                        <Table className='home-t'>
+                            <Thead>
+                                <Tr>
+                                    <Th className='home-t-th'>#</Th>
+                                    <Th className='home-t-th'>Paso</Th>
+                                    <Th className='home-t-th'>Duracion</Th>
+                                    <Th className='home-t-th'>Fase</Th>
+                                    <Th className='home-t-th'>Grupos</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                {pasosActivos.map((dato, index) => (
+                                    <Tr key={index} >
+                                        <Td>
+                                            {index + 1}
+                                        </Td>
+                                        <Td >
+                                            {dato.name}
+                                        </Td>
+                                        <Td >
+                                            {dato.duracion}
+                                        </Td>
+                                        <Td >
+                                            {dato.fase}
+                                        </Td>
+                                        <Td >
+                                            <table>
+
+                                                <tr>
+                                                    <th>G1</th>
+                                                    <th>G2</th>
+                                                    <th>G3</th>
+                                                    <th>G4</th>
+                                                </tr>
+                                                <tr>
+                                                    <td> <Chip label={dato.grupos[0].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[0].colorDescripcion} /></td>
+                                                    <td> <Chip label={dato.grupos[1].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[1].colorDescripcion} /></td>
+                                                    <td> <Chip label={dato.grupos[2].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[2].colorDescripcion} /></td>
+                                                    <td> <Chip label={dato.grupos[3].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[3].colorDescripcion} /></td>
+                                                </tr>
+                                            </table>
+                                        </Td>
+                                    
+                                    </Tr>
+                                ))}
+                            </Tbody>
+                        </Table>
                     </Grid>
                     <Grid item xs={12}>
                         <Table className='home-t'>
@@ -686,57 +799,57 @@ export default function HomeView() {
 }
 
 const initialData = {
-    conflictos_verdes:{},
-    dias_especiales:{},
-    entradas:{},
-    fases:{},
-    grupos:{},
-    hora_controlador:{},
-    horarios:{},
-    ip:"",
-    mac:"",
-    otros_parametros:{},
-    planes:{},
-    version:{},
-    resumen:[
+    conflictos_verdes: {},
+    dias_especiales: {},
+    entradas: {},
+    fases: {},
+    grupos: {},
+    hora_controlador: {},
+    horarios: {},
+    ip: "",
+    mac: "",
+    otros_parametros: {},
+    planes: {},
+    version: {},
+    resumen: [
         {
-            nombre:"sin nombre",
-            rojo:10,
-            amarillo:4,
-            verde:20,
-            grupo:"g1",
-            position:[-2.8771059724090122,-78.96612703800203],
-            icon:{}
+            nombre: "sin nombre",
+            rojo: 10,
+            amarillo: 4,
+            verde: 20,
+            grupo: "g1",
+            position: [-2.8771059724090122, -78.96612703800203],
+            icon: {}
         },
         {
-            nombre:"sin nombre",
-            rojo:10,
-            amarillo:4,
-            verde:20,
-            grupo:"g2",
-            position:[-2.8773367771587526,-78.96582663059236],
-            icon:{}
+            nombre: "sin nombre",
+            rojo: 10,
+            amarillo: 4,
+            verde: 20,
+            grupo: "g2",
+            position: [-2.8773367771587526, -78.96582663059236],
+            icon: {}
         },
         {
-            nombre:"sin nombre",
-            rojo:10,
-            amarillo:4,
-            verde:20,
-            grupo:"g3",
-            position:[-2.877974763491086,-78.96494686603546],
-            icon:{}
+            nombre: "sin nombre",
+            rojo: 10,
+            amarillo: 4,
+            verde: 20,
+            grupo: "g3",
+            position: [-2.877974763491086, -78.96494686603546],
+            icon: {}
         },
         {
-            nombre:"sin nombre",
-            rojo:10,
-            amarillo:4,
-            verde:20,
-            grupo:"g4",
-            position:[-2.876842450523782,-78.9654189348221],
-            icon:{}
+            nombre: "sin nombre",
+            rojo: 10,
+            amarillo: 4,
+            verde: 20,
+            grupo: "g4",
+            position: [-2.876842450523782, -78.9654189348221],
+            icon: {}
         }
     ]
-    }
+}
 
 const semaforo = new L.Icon({
     iconUrl: require('../assets/semaforo3.png'),
