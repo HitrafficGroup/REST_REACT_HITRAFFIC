@@ -250,58 +250,13 @@ export default function HomeView() {
     const cerrarEditarSemaforo = () => {
         setModalSemaforo(false);
     }
-    const cambiarSemaforo = () => {
-
-        let interval = Math.floor(Math.random() * 3);
-        let g1 = rojo;
-        let g2 = verde;
-        let g3 = rojo;
-        let g4 = verde;
-        if (interval === 1) {
-            g1 = rojo;
-            g2 = rojo;
-            g3 = rojo;
-            g4 = rojo;
-        } else if (interval === 2) {
-            g1 = verde;
-            g2 = verde;
-            g3 = verde;
-            g4 = verde;
-        } else if (interval === 3) {
-            g1 = amarillo;
-            g2 = amarillo;
-            g3 = amarillo;
-            g4 = amarillo;
-        } else {
-            g1 = verde;
-            g2 = amarillo;
-            g3 = verde;
-            g4 = rojo;
-        }
-        let aux = semaforos2.current
-
-        let dataUpdated = aux.map((item) => {
-            if (item.grupo === "g1") {
-                item['icon'] = g1;
-            } else if (item.grupo === "g2") {
-                item['icon'] = g2;
-            } else if (item.grupo === "g3") {
-                item['icon'] = g3;
-            } else if (item.grupo === "g4") {
-                item['icon'] = g4;
-            }
-            return item
-        })
-
-        setSemaforos(dataUpdated);
-        //setSemaforos(dataUpdated);
-
-    }
+    
+        
     const iniciarSimulacion = () => {
         simulacion.current = !simulacion.current;
         if (simulacion.current) {
 
-            pruebasimu()
+            parametrosCorriendo()
         }
         setFlagsimu(!flagsimu);
         setBtnAgregar(simulacion.current)
@@ -328,17 +283,19 @@ export default function HomeView() {
         let indice;
         let indice_requerido;
         
-        dia_ordinario.map((item, index) => {
-            let aux = parseInt(item.horas)
+        for(let i=0;i<16;i++) {
+            let aux = parseInt(dia_ordinario[i].horas)
 
             if (aux >= horas) {
-                indice = index
+                indice = i
+                break;
             }else if(aux !== 0){
-                indice = index
+                indice = i
             }
-        })  
+        }
         limsup = indice;
         liminf = indice - 1;
+        console.log(dia_ordinario[indice])
         let horas_indice = dia_ordinario[indice].horas
         if (horas >= parseInt(horas_indice)) {
             indice_requerido = indice;
@@ -362,152 +319,191 @@ export default function HomeView() {
             item['grupos'] = aux2[0].grupos
             return item
         })
-        console.log(fases_pasos)
+        timer1.current = 0
+        console.log('pasos activos',fases_pasos)
         setPasosActivos(fases_pasos)
         faseActual.current = fases_pasos
 
         //setSemaforo()
-        let tf1 = fases_pasos[0].duracion
-        let tf2 = fases_pasos[1].duracion
+       
 
     }
-    const pruebasimu = async () => {
-        console.log("inicia simulacion")
-        let dia_ordinario = allData.horarios.dia_ordinario;
-        let planes = allData.planes
-        let hora_actual = new Date();
-        let horas = hora_actual.getHours();
-        let limsup;
-        let liminf;
-        let indice;
-        let indice_requerido;
-        dia_ordinario.map((item, index) => {
-            let aux = parseInt(item.horas)
+    // const pruebasimu = async () => {
+    //     console.log("inicia simulacion")
+    //     let dia_ordinario = allData.horarios.dia_ordinario;
+    //     let planes = allData.planes
+    //     let hora_actual = new Date();
+    //     let horas = hora_actual.getHours();
+    //     let limsup;
+    //     let liminf;
+    //     let indice;
+    //     let indice_requerido;
+    //     dia_ordinario.map((item, index) => {
+    //         let aux = parseInt(item.horas)
 
-            if (aux >= horas) {
-                indice = index
-            }else if(aux !== 0){
-                indice = index
-            }
-        })  
-        limsup = indice;
-        liminf = indice - 1;
-        let horas_indice = dia_ordinario[indice].horas
-        if (horas >= parseInt(horas_indice)) {
-            indice_requerido = indice;
+    //         if (aux >= horas) {
+    //             indice = index
+    //         }else if(aux !== 0){
+    //             indice = index
+    //         }
+    //     })  
+    //     limsup = indice;
+    //     liminf = indice - 1;
+    //     let horas_indice = dia_ordinario[indice].horas
+    //     if (horas >= parseInt(horas_indice)) {
+    //         indice_requerido = indice;
     
-        } else {
-            indice_requerido = liminf;
-        }
+    //     } else {
+    //         indice_requerido = liminf;
+    //     }
 
-        let plan_activo = dia_ordinario[indice_requerido].plan
-        let planname = `plan${plan_activo}`
-        let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
-        let pasos = plan_filter[0].pasos
-        let pasos_habilitados = pasos.filter((item) => {
-            if (item.duracion > 0) {
-                return item;
-            }
-        })
+    //     let plan_activo = dia_ordinario[indice_requerido].plan
+    //     let planname = `plan${plan_activo}`
+    //     let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
+    //     let pasos = plan_filter[0].pasos
+    //     let pasos_habilitados = pasos.filter((item) => {
+    //         if (item.duracion > 0) {
+    //             return item;
+    //         }
+    //     })
 
 
 
-        let fases = allData.fases
-        let fases_pasos = pasos_habilitados.map(item => {
-            let aux2 = fases.filter(_item => _item.faseNum === item.fase);
-            item['grupos'] = aux2[0].grupos
-            return item
-        })
-        console.log(fases_pasos)
-        setPasosActivos(fases_pasos)
-        faseActual.current = fases_pasos
+    //     let fases = allData.fases
+    //     let fases_pasos = pasos_habilitados.map(item => {
+    //         let aux2 = fases.filter(_item => _item.faseNum === item.fase);
+    //         item['grupos'] = aux2[0].grupos
+    //         return item
+    //     })
+    //     console.log(fases_pasos)
+    //     setPasosActivos(fases_pasos)
+    //     faseActual.current = fases_pasos
 
-        //setSemaforo()
-        let tf1 = fases_pasos[0].duracion
-        let tf2 = fases_pasos[1].duracion
-        let datosal = await getAllDataIp(controlerState.mac, controlerState.ip);
-        let cutiempo = datosal[controlerState.mac].runtime[controlerState.mac].Tiempo_restante;
-        let cufase = datosal[controlerState.mac].runtime[controlerState.mac].Fase_ejecucion;
+    //     //setSemaforo()
+    //     let tf1 = fases_pasos[0].duracion
+    //     let tf2 = fases_pasos[1].duracion
+    //     let datosal = await getAllDataIp(controlerState.mac, controlerState.ip);
+    //     let cutiempo = datosal[controlerState.mac].runtime[controlerState.mac].Tiempo_restante;
+    //     let cufase = datosal[controlerState.mac].runtime[controlerState.mac].Fase_ejecucion;
 
-        if (cufase === fases_pasos[0].fase) {
-            timer1.current = (tf1 - cutiempo) + 14;
-            console.log(timer1.current)
-        } else {
-            timer1.current = (tf1 + (tf2 - cutiempo)) + 14;
-            console.log(timer1.current)
-        }
-        // tsimu.current = cutiempo
+    //     if (cufase === fases_pasos[0].fase) {
+    //         timer1.current = (tf1 - cutiempo);
+    //         console.log(timer1.current)
+    //     } else {
+    //         timer1.current = (tf1 + (tf2 - cutiempo));
+    //         console.log(timer1.current)
+    //     }
+    //     // tsimu.current = cutiempo
 
-        console.log(pasos_habilitados)
+    //     console.log(pasos_habilitados)
 
-    }
-    const cambiarSemaforo2 = () => {
+    // }
+
+    const iniciarAnimacion = () =>{
         let g1;
         let g2;
         let g3;
         let g4;
         let dataUpdated;
         let aux;
-        let total_tiempo = faseActual.current[0].duracion + faseActual.current[1].duracion
-        if (timer1.current >= faseActual.current[0].duracion && timer1.current <= total_tiempo) {
-            g1 = devolverColor(faseActual.current[1].grupos[0].colorDescripcion);
-            g2 = devolverColor(faseActual.current[1].grupos[1].colorDescripcion);
-            g3 = devolverColor(faseActual.current[1].grupos[2].colorDescripcion);
-            g4 = devolverColor(faseActual.current[1].grupos[3].colorDescripcion);
-            aux = semaforos2.current
-            setFaseexec( faseActual.current[1].fase)
-            dataUpdated = aux.map((item) => {
-                if (item.grupo === "g1") {
-                    item['icon'] = g1;
-                } else if (item.grupo === "g2") {
-                    item['icon'] = g2;
-                } else if (item.grupo === "g3") {
-                    item['icon'] = g3;
-                } else if (item.grupo === "g4") {
-                    item['icon'] = g4;
-                }
-                return item
-            })
-
-            setSemaforos(dataUpdated);
-
-
+        g1 = devolverColor(faseActual.current[timer2.current].grupos[0].colorDescripcion);
+        g2 = devolverColor(faseActual.current[timer2.current].grupos[1].colorDescripcion);
+        g3 = devolverColor(faseActual.current[timer2.current].grupos[2].colorDescripcion);
+        g4 = devolverColor(faseActual.current[timer2.current].grupos[3].colorDescripcion);
+        aux = semaforos2.current
+        setFaseexec(faseActual.current[timer2.current].fase)
+        dataUpdated = aux.map((item) => {
+                        if (item.grupo === "g1") {
+                            item['icon'] = g1;
+                        } else if (item.grupo === "g2") {
+                            item['icon'] = g2;
+                        } else if (item.grupo === "g3") {
+                            item['icon'] = g3;
+                        } else if (item.grupo === "g4") {
+                            item['icon'] = g4;
+                        }
+                        return item
+                    })
+        setSemaforos(dataUpdated);
+        console.log(timer1.current)
+        if(timer1.current >= faseActual.current[timer2.current].duracion){
+            timer2.current= timer2.current + 1
+            if(timer2.current === faseActual.current.length){
+                timer2.current = 0
+            }
+            timer1.current = 0
+            console.log('se pasa al siguiente paso');
+            
         }
-        else if (timer1.current <= 2) {
-
-            g1 = devolverColor(faseActual.current[0].grupos[0].colorDescripcion);
-            g2 = devolverColor(faseActual.current[0].grupos[1].colorDescripcion);
-            g3 = devolverColor(faseActual.current[0].grupos[2].colorDescripcion);
-            g4 = devolverColor(faseActual.current[0].grupos[3].colorDescripcion);
-            aux = semaforos2.current
-            setFaseexec( faseActual.current[0].fase)
-            dataUpdated = aux.map((item) => {
-                if (item.grupo === "g1") {
-                    item['icon'] = g1;
-                } else if (item.grupo === "g2") {
-                    item['icon'] = g2;
-                } else if (item.grupo === "g3") {
-                    item['icon'] = g3;
-                } else if (item.grupo === "g4") {
-                    item['icon'] = g4;
-                }
-                return item
-            })
-
-            setSemaforos(dataUpdated);
-
-        } else if (timer1.current >= 41) {
-            timer1.current = 0;
-            console.log("se reinicia el periodo")
-        }
-
     }
+
+    // const cambiarSemaforo2 = () => {
+    //     let g1;
+    //     let g2;
+    //     let g3;
+    //     let g4;
+    //     let dataUpdated;
+    //     let aux;
+    //     let total_tiempo = faseActual.current[0].duracion + faseActual.current[1].duracion
+    //     if (timer1.current >= faseActual.current[0].duracion && timer1.current <= total_tiempo) {
+    //         g1 = devolverColor(faseActual.current[1].grupos[0].colorDescripcion);
+    //         g2 = devolverColor(faseActual.current[1].grupos[1].colorDescripcion);
+    //         g3 = devolverColor(faseActual.current[1].grupos[2].colorDescripcion);
+    //         g4 = devolverColor(faseActual.current[1].grupos[3].colorDescripcion);
+    //         aux = semaforos2.current
+    //         setFaseexec( faseActual.current[1].fase)
+    //         dataUpdated = aux.map((item) => {
+    //             if (item.grupo === "g1") {
+    //                 item['icon'] = g1;
+    //             } else if (item.grupo === "g2") {
+    //                 item['icon'] = g2;
+    //             } else if (item.grupo === "g3") {
+    //                 item['icon'] = g3;
+    //             } else if (item.grupo === "g4") {
+    //                 item['icon'] = g4;
+    //             }
+    //             return item
+    //         })
+
+    //         setSemaforos(dataUpdated);
+
+
+    //     }
+    //     else if (timer1.current <= 2) {
+
+    //         g1 = devolverColor(faseActual.current[0].grupos[0].colorDescripcion);
+    //         g2 = devolverColor(faseActual.current[0].grupos[1].colorDescripcion);
+    //         g3 = devolverColor(faseActual.current[0].grupos[2].colorDescripcion);
+    //         g4 = devolverColor(faseActual.current[0].grupos[3].colorDescripcion);
+    //         aux = semaforos2.current
+    //         setFaseexec( faseActual.current[0].fase)
+    //         dataUpdated = aux.map((item) => {
+    //             if (item.grupo === "g1") {
+    //                 item['icon'] = g1;
+    //             } else if (item.grupo === "g2") {
+    //                 item['icon'] = g2;
+    //             } else if (item.grupo === "g3") {
+    //                 item['icon'] = g3;
+    //             } else if (item.grupo === "g4") {
+    //                 item['icon'] = g4;
+    //             }
+    //             return item
+    //         })
+
+    //         setSemaforos(dataUpdated);
+
+    //     } else if (timer1.current >= 41) {
+    //         timer1.current = 0;
+    //         console.log("se reinicia el periodo")
+    //     }
+
+    // }
     useEffect(() => {
         const interval = setInterval(() => {
 
             if (simulacion.current) {
                 //cambiarSemaforo();
-                cambiarSemaforo2();
+                iniciarAnimacion();
                 timer1.current = timer1.current + 1;
 
             }
@@ -574,14 +570,20 @@ export default function HomeView() {
                     <Grid item xs={12} md={4}  >
                         <Button variant="contained" startIcon={<UpdateIcon />} onClick={leerDatosFases} color="verde2" fullWidth sx={{ height: "100%" }}>ACTUALIZAR</Button>
                     </Grid> */}
-                    <Grid item xs={5}>
-                        <Button variant="contained" fullWidth sx={{height:"100%"}}  startIcon={flagsimu ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />} color={flagsimu ? 'verde' : 'morado1'} onClick={iniciarSimulacion}>Visualizar Funcionamiento</Button>
+                    
+                    <Grid item xs={12} md={3}>
+                        <TextField id="outlined" focused value={position.lat} label="Latitud" variant="outlined" fullWidth />
                     </Grid>
-                    <Grid item xs={7}>
-                        <Alert severity="info">
-                            Se esta Ejecutando La Fase — <strong>Fase{faseexec}</strong>
-                        </Alert>
+                    <Grid item xs={12} md={3}>
+                        <TextField id="outlined" focused value={position.lng} label="Longitud" variant="outlined" fullWidth />
                     </Grid>
+                    <Grid item xs={12} md={3}>
+                        <Button variant="contained" startIcon={<UpdateIcon />} disabled={btnAgregar} onClick={() => { setModalCrearSemaforo(true) }} color="azulm" fullWidth sx={{ height: "100%" }}>Agregar</Button>
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Button variant="contained" fullWidth sx={{height:"100%"}}  startIcon={flagsimu ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />} color={flagsimu ? 'verde' : 'morado1'} onClick={iniciarSimulacion}>Simular</Button>
+                    </Grid>
+                 
 
                     <Grid item xs={12} md={12}>
                         <div className="map">
@@ -602,18 +604,15 @@ export default function HomeView() {
                             </MapContainer>
                         </div>
                     </Grid>
-                    <Grid item xs={12} md={4}>
-
-                        <TextField id="outlined" focused value={position.lat} label="Latitud" variant="outlined" fullWidth />
-
+                    <Grid item xs={6}>
+                        <Alert severity="success">
+                        <strong>Plan Activo:</strong>  1 <strong>Horario:</strong> 9 am  <strong>Proximo plan:</strong> 2
+                        </Alert>
                     </Grid>
-                    <Grid item xs={12} md={4}>
-
-                        <TextField id="outlined" focused value={position.lng} label="Longitud" variant="outlined" fullWidth />
-
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <Button variant="contained" startIcon={<UpdateIcon />} disabled={btnAgregar} onClick={() => { setModalCrearSemaforo(true) }} color="azulm" fullWidth sx={{ height: "100%" }}>Agregar</Button>
+                    <Grid item xs={6}>
+                        <Alert severity="info">
+                            Se esta Ejecutando - <strong>Fase{faseexec} y Paso2</strong> 
+                        </Alert>
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <Table className='home-t'>
