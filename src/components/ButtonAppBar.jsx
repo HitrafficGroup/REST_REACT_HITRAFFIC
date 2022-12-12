@@ -16,7 +16,7 @@ import FasesMenu from '../components/content/FasesMenu';
 import HorariosMenu from '../components/content/HorariosMenu';
 import PlanesMenu from '../components/content/PlanesMenu';
 import RegistroErrores from '../components/content/RegistroErrores';
-import ResumenMenu from '../components/content/ResumenMenu';
+//import ResumenMenu from '../components/content/ResumenMenu';
 import SalirMenu from '../components/content/SalirMenu';
 import HomeMenu from './content/HomeMenu';
 import SyncMenu from './content/SyncMenu.jsx'
@@ -70,11 +70,6 @@ export default function ButtonAppBar() {
       child: <RegistroErrores />,
       visibility: true,
       key: 70
-    },
-    {
-      child: <ResumenMenu />,
-      visibility: true,
-      key: 80
     },
     {
       child: <ClonacionMenu />,

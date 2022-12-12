@@ -35,7 +35,8 @@ export default function HomeView() {
     const [controladores, setControladores] = useState([]);
     const [modalSemaforo, setModalSemaforo] = useState(false);
     const [flagsimu, setFlagsimu] = useState(false);
-
+    const todaInformacion = useRef({});
+    const modoControlador = useRef('Tiempo Fijo');
     const simulacion = useRef(false);
     const tsimu = useRef(false);
     const timer1 = useRef(0);
@@ -43,6 +44,7 @@ export default function HomeView() {
     const faseActual = useRef(0);
     const [counter, setCounter] = useState(1);
     const [nombreSemaforo, setNombreSemaforo] = useState('');
+    const [pasoexec,setPasoexec] = useState();
     const [currentSemaforo, setCurrentSemaforo] = useState({});
     const [modal, setModal] = useState(false);
     const [accionesUi, setAccionesUi] = useState(false);
@@ -51,10 +53,13 @@ export default function HomeView() {
     const [position, setPosition] = useState(center)
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
     const [semaforos, setSemaforos] = useState([]);
+
     const [currentControler, setCurrentControler] = useState({})
     const [pasosActivos, setPasosActivos] = useState([]);
     const [faseexec,setFaseexec] = useState("");
+    const [horarioexec,setHorarioexec] = useState("");
     const [btnAgregar, setBtnAgregar] = useState(true);
+    const [modoexec,setModoexec] = useState("");
     const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers)
     const [allData, setAllData] = useState({});
@@ -64,13 +69,11 @@ export default function HomeView() {
 
     const [newSemaforo, setNewSemaforo] = useState({
         nombre: "",
-        lat: 0,
-        lng: 0,
-        pos: [],
+        position: [],
         rojo: 15,
         amarillo: 5,
         verde: 30,
-        fase: 3,
+        icon:{},
         grupo: '',
     });
     const eventHandlers = useMemo(
@@ -108,6 +111,7 @@ export default function HomeView() {
         if (docSnap.exists()) {
             console.log("Document data:", docSnap.data());
             setAllData(docSnap.data());
+            todaInformacion.current = docSnap.data()
         } else {
             // doc.data() will be undefined in this case
             console.log("No such document!");
@@ -152,10 +156,11 @@ export default function HomeView() {
                 semaforos2.current = aux;
                 setSemaforos(aux);
                 setAllData(doc.data());
+                todaInformacion.current = doc.data()
                 parametrosCorriendo();
             } else {
                 declararControlador(data.mac, data.ip);
-                console.log('no existe')
+                console.log('no existe');
             }
             //setSemaforos(doc.data().grupos)
         });
@@ -185,6 +190,24 @@ export default function HomeView() {
             ip: ip,
             version: firmware
         });
+    }
+
+    const returnModo = (data) =>{
+        if(data === 1){
+            return 'Tiempo Fijo'
+        }
+        else if(data === 2){
+            return 'Pulsante'
+        }
+        else if(data === 3){
+            return 'Destello'
+        }
+        else if(data === 4){
+            return 'Todo en Rojo'
+        }
+        else{
+            return 'Apagado'
+        }
     }
 
 
@@ -228,23 +251,23 @@ export default function HomeView() {
         setAccionesUi(false)
     }
     const agregarSemaforo = async () => {
-        var data = newSemaforo
-        data['lat'] = position.lat;
-        data['lng'] = position.lng;
-        data['pos'] = [position.lat, position.lng]
+        var data = newSemaforo;
+        data['position'] = [position.lat,position.lng];
         var aux = semaforos.filter((item) => {
             return item.grupo !== data.grupo;
         })
         aux.push(data)
         console.log(aux);
-        const ref = doc(db, "controladores", `${currentControler.mac}`);
 
-        // Set the "capital" field of the city 'DC'
+        let semaforosFormateados = aux.map((item)=>{
+            item['icon'] = {}
+            return item
+        })
+        console.log(semaforosFormateados)
+        const ref = doc(db, "controladores", `${controlerState.mac}`);
         await updateDoc(ref, {
-            grupos: aux
-        });
-
-
+             resumen: semaforosFormateados
+         });
         setModalCrearSemaforo(false);
     }
     const cerrarEditarSemaforo = () => {
@@ -274,8 +297,9 @@ export default function HomeView() {
 
     }
     const parametrosCorriendo = () => {
-        let dia_ordinario = allData.horarios.dia_ordinario;
-        let planes = allData.planes
+        console.log('estos son todos los datos',allData)
+        let dia_ordinario = todaInformacion.current.horarios.dia_ordinario;
+        let planes = todaInformacion.current.planes
         let hora_actual = new Date();
         let horas = hora_actual.getHours();
         let limsup;
@@ -297,6 +321,10 @@ export default function HomeView() {
         liminf = indice - 1;
         console.log(dia_ordinario[indice])
         let horas_indice = dia_ordinario[indice].horas
+        setHorarioexec(dia_ordinario[indice]);
+        let modo = returnModo(dia_ordinario[indice].mod)
+        setModoexec(modo)
+        modoControlador.current = modo
         if (horas >= parseInt(horas_indice)) {
             indice_requerido = indice;
     
@@ -313,10 +341,17 @@ export default function HomeView() {
             }
         })
 
-        let fases = allData.fases
+        let fases = todaInformacion.current.fases
         let fases_pasos = pasos_habilitados.map(item => {
             let aux2 = fases.filter(_item => _item.faseNum === item.fase);
-            item['grupos'] = aux2[0].grupos
+            if(modo === 'Destello'){
+                item['grupos'] = aux2[0].grupos.map(item=>{
+                    item['colorDescripcion'] = 'amarillo'
+                    return item
+                })
+            }else{
+                item['grupos'] = aux2[0].grupos
+            }
             return item
         })
         timer1.current = 0
@@ -406,34 +441,72 @@ export default function HomeView() {
         let g4;
         let dataUpdated;
         let aux;
-        g1 = devolverColor(faseActual.current[timer2.current].grupos[0].colorDescripcion);
-        g2 = devolverColor(faseActual.current[timer2.current].grupos[1].colorDescripcion);
-        g3 = devolverColor(faseActual.current[timer2.current].grupos[2].colorDescripcion);
-        g4 = devolverColor(faseActual.current[timer2.current].grupos[3].colorDescripcion);
-        aux = semaforos2.current
-        setFaseexec(faseActual.current[timer2.current].fase)
-        dataUpdated = aux.map((item) => {
-                        if (item.grupo === "g1") {
-                            item['icon'] = g1;
-                        } else if (item.grupo === "g2") {
-                            item['icon'] = g2;
-                        } else if (item.grupo === "g3") {
-                            item['icon'] = g3;
-                        } else if (item.grupo === "g4") {
-                            item['icon'] = g4;
-                        }
-                        return item
-                    })
-        setSemaforos(dataUpdated);
         console.log(timer1.current)
-        if(timer1.current >= faseActual.current[timer2.current].duracion){
-            timer2.current= timer2.current + 1
-            if(timer2.current === faseActual.current.length){
-                timer2.current = 0
-            }
-            timer1.current = 0
-            console.log('se pasa al siguiente paso');
+        if(modoControlador.current ===  'Destello' ){
             
+            if(timer1.current > 1){
+                g1 = amarillo
+                g2 = amarillo
+                g3 = amarillo
+                g4 = amarillo
+                timer1.current = 0
+              
+            }else{
+                g1 = apagado
+                g2 = apagado
+                g3 = apagado
+                g4 = apagado
+          
+            }
+            setFaseexec(1)
+            setPasoexec('Paso 2')
+            aux = semaforos2.current
+            dataUpdated = aux.map((item) => {
+                            if (item.grupo === "g1") {
+                                item['icon'] = g1;
+                            } else if (item.grupo === "g2") {
+                                item['icon'] = g2;
+                            } else if (item.grupo === "g3") {
+                                item['icon'] = g3;
+                            } else if (item.grupo === "g4") {
+                                item['icon'] = g4;
+                            }
+                            return item
+                        })
+            setSemaforos(dataUpdated);
+        }
+        else{
+
+            g1 = devolverColor(faseActual.current[timer2.current].grupos[0].colorDescripcion);
+            g2 = devolverColor(faseActual.current[timer2.current].grupos[1].colorDescripcion);
+            g3 = devolverColor(faseActual.current[timer2.current].grupos[2].colorDescripcion);
+            g4 = devolverColor(faseActual.current[timer2.current].grupos[3].colorDescripcion);
+            aux = semaforos2.current
+            setFaseexec(faseActual.current[timer2.current].fase)
+            setPasoexec(faseActual.current[timer2.current].name)
+            dataUpdated = aux.map((item) => {
+                            if (item.grupo === "g1") {
+                                item['icon'] = g1;
+                            } else if (item.grupo === "g2") {
+                                item['icon'] = g2;
+                            } else if (item.grupo === "g3") {
+                                item['icon'] = g3;
+                            } else if (item.grupo === "g4") {
+                                item['icon'] = g4;
+                            }
+                            return item
+                        })
+            setSemaforos(dataUpdated);
+        
+            if(timer1.current >= faseActual.current[timer2.current].duracion){
+                timer2.current= timer2.current + 1
+                if(timer2.current === faseActual.current.length){
+                    timer2.current = 0
+                }
+                timer1.current = 0
+                console.log('se pasa al siguiente paso');
+                
+            }
         }
     }
 
@@ -606,12 +679,12 @@ export default function HomeView() {
                     </Grid>
                     <Grid item xs={6}>
                         <Alert severity="success">
-                        <strong>Plan Activo:</strong>  1 <strong>Horario:</strong> 9 am  <strong>Proximo plan:</strong> 2
+                            <strong>Plan Activo:</strong>    {horarioexec.plan}    <strong>Horario:</strong>    {horarioexec.horas+':'+horarioexec.minutos}    <strong>Modo:</strong> {modoexec}
                         </Alert>
                     </Grid>
                     <Grid item xs={6}>
                         <Alert severity="info">
-                            Se esta Ejecutando - <strong>Fase{faseexec} y Paso2</strong> 
+                            Se esta Ejecutando - <strong>Fase{faseexec} y {pasoexec}</strong> 
                         </Alert>
                     </Grid>
                     <Grid item xs={12} md={12}>
@@ -733,26 +806,7 @@ export default function HomeView() {
                     </ModalFooter>
                 </Modal>
             </Container>
-            <Modal isOpen={modal} toggle={toggle} >
-                <ModalHeader toggle={toggle}>Modal title</ModalHeader>
-                <ModalBody>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                    pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                    culpa qui officia deserunt mollit anim id est laborum.
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="primary" onClick={toggle}>
-                        Do Something
-                    </Button>{' '}
-                    <Button color="secondary" onClick={toggle}>
-                        Cancel
-                    </Button>
-                </ModalFooter>
-            </Modal>
+            
             <Modal isOpen={modalCrearSemaforo} >
                 <ModalHeader>
                     <div>
@@ -786,10 +840,10 @@ export default function HomeView() {
                                     onChange={handleNewSemaforo}
                                 >
                                     <MenuItem value={''}>None</MenuItem>
-                                    <MenuItem value={'G1'}>Grupo 1</MenuItem>
-                                    <MenuItem value={'G2'}>Grupo 2</MenuItem>
-                                    <MenuItem value={'G3'}>Grupo 3</MenuItem>
-                                    <MenuItem value={'G4'}>Grupo 4</MenuItem>
+                                    <MenuItem value={'g1'}>Grupo 1</MenuItem>
+                                    <MenuItem value={'g2'}>Grupo 2</MenuItem>
+                                    <MenuItem value={'g3'}>Grupo 3</MenuItem>
+                                    <MenuItem value={'g4'}>Grupo 4</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -798,6 +852,9 @@ export default function HomeView() {
                 <ModalFooter >
                     <Button variant="contained" onClick={agregarSemaforo} sx={{ backgroundColor: "#F0B27A", marginLeft: 1 }}>
                         Aplicar
+                    </Button>
+                    <Button variant="contained" onClick={()=>{setModalCrearSemaforo(false)}} sx={{ backgroundColor: "red", marginLeft: 1 }}>
+                        cancelar
                     </Button>
                 </ModalFooter>
             </Modal>
@@ -892,6 +949,15 @@ const verde = new L.Icon({
 const amarillo = new L.Icon({
     iconUrl: require('../assets/semaforo3.png'),
     iconRetinaUrl: require('../assets/amarillo.png'),
+    iconSize: [50, 50], // size of the icon
+    shadowSize: [50, 64], // size of the shadow
+    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor: [-3, -76]
+});
+const apagado = new L.Icon({
+    iconUrl: require('../assets/semaforo3.png'),
+    iconRetinaUrl: require('../assets/apagado.png'),
     iconSize: [50, 50], // size of the icon
     shadowSize: [50, 64], // size of the shadow
     iconAnchor: [22, 94], // point of the icon which will correspond to marker's location

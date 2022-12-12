@@ -62,7 +62,12 @@ const theme = createTheme({
     azulm: {
       main: '#2471A3',
       contrastText: '#fff',
+    },
+    amarillo: {
+      main: '#F5B041',
+      contrastText: '#fff',
     }
+
 
   },
 });
