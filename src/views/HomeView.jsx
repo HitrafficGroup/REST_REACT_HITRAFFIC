@@ -31,7 +31,11 @@ import 'leaflet/dist/leaflet.css';
 import '../css/HomeView.css';
 import swal from 'sweetalert';
 
+
 export default function HomeView() {
+    const [procentRed,setPorcentRed] = useState(20);
+    const [procentYellow,setPorcentYellow] = useState(50);
+    const [procentGreen,setPorcentGreen] = useState(30);
     const [controladores, setControladores] = useState([]);
     const [modalSemaforo, setModalSemaforo] = useState(false);
     const [flagsimu, setFlagsimu] = useState(false);
@@ -52,8 +56,12 @@ export default function HomeView() {
     const [draggable, setDraggable] = useState(false)
     const [position, setPosition] = useState(center)
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
-    const [semaforos, setSemaforos] = useState([]);
-
+    const [semaforos, setSemaforos] = useState(initialData.resumen);
+    const [semaforos3,setSemaforos3] = useState(initialData.resumen)
+    const [grupo1exec,setGrupo1exec] = useState(0);
+    const [grupo2exec,setGrupo2exec] = useState(0);
+    const [grupo3exec,setGrupo3exec] = useState(0);
+    const [grupo4exec,setGrupo4exec] = useState(0);
     const [currentControler, setCurrentControler] = useState({})
     const [pasosActivos, setPasosActivos] = useState([]);
     const [faseexec,setFaseexec] = useState("");
@@ -152,7 +160,7 @@ export default function HomeView() {
                     }
                     return item
                 })
-                console.log(aux);
+                
                 semaforos2.current = aux;
                 setSemaforos(aux);
                 setAllData(doc.data());
@@ -273,6 +281,12 @@ export default function HomeView() {
     const cerrarEditarSemaforo = () => {
         setModalSemaforo(false);
     }
+    const actualizarResumenSemaforo = async(data) =>{
+        const ref = doc(db, "controladores", `${controlerState.mac}`);
+        await updateDoc(ref, {
+             resumen: data
+         });
+    }
     
         
     const iniciarSimulacion = () => {
@@ -296,42 +310,65 @@ export default function HomeView() {
         }
 
     }
+    const calculatePorcentajes = (yellow,red,green) => {    
+        let yellowm = yellow + 5
+        let total = red+yellowm+green;
+        let pyellow = (yellowm*100)/total;
+        let pgreen = (green*100)/total;
+        let pred = (red*100)/total;
+        verde.current = pgreen
+        rojo.current = pred
+        setPorcentGreen(pgreen);
+        setPorcentYellow(pyellow);
+        setPorcentRed(pred);
+
+    }
     const parametrosCorriendo = () => {
-        console.log('estos son todos los datos',allData)
+        
         let dia_ordinario = todaInformacion.current.horarios.dia_ordinario;
         let planes = todaInformacion.current.planes
         let hora_actual = new Date();
         let horas = hora_actual.getHours();
-        let limsup;
-        let liminf;
+        let minutos = hora_actual.getMinutes();
+        let aux;
+        let aux2;
         let indice;
-        let indice_requerido;
+        let temp;
+        let ref;
         
         for(let i=0;i<16;i++) {
-            let aux = parseInt(dia_ordinario[i].horas)
-
-            if (aux >= horas) {
+             aux = parseInt(dia_ordinario[i].horas)
+             aux2 = parseInt(dia_ordinario[i].minutos)
+             temp = aux*100 + aux2
+             ref = horas*100 + minutos
+          console.log(ref)
+            if(horas === aux){
                 indice = i
-                break;
+                console.log('se cumple primera')
+                break
+            }
+            else if (temp >= ref) {
+                console.log('se cumple segunda')
+                indice = i-1
+                break
+            }else if(temp!== 0 && temp > ref){
+                console.log('se cumple tercera')
+                indice = i
+                break
+                
             }else if(aux !== 0){
                 indice = i
+                console.log('se cumple cuarta')
             }
         }
-        limsup = indice;
-        liminf = indice - 1;
-        console.log(dia_ordinario[indice])
-        let horas_indice = dia_ordinario[indice].horas
+
+
         setHorarioexec(dia_ordinario[indice]);
         let modo = returnModo(dia_ordinario[indice].mod)
         setModoexec(modo)
         modoControlador.current = modo
-        if (horas >= parseInt(horas_indice)) {
-            indice_requerido = indice;
-    
-        } else {
-            indice_requerido = liminf;
-        }
-        let plan_activo = dia_ordinario[indice_requerido].plan
+
+        let plan_activo = dia_ordinario[indice].plan
         let planname = `plan${plan_activo}`
         let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
         let pasos = plan_filter[0].pasos
@@ -340,7 +377,7 @@ export default function HomeView() {
                 return item;
             }
         })
-
+       
         let fases = todaInformacion.current.fases
         let fases_pasos = pasos_habilitados.map(item => {
             let aux2 = fases.filter(_item => _item.faseNum === item.fase);
@@ -361,8 +398,65 @@ export default function HomeView() {
             }
             return item
         })
+
+        let auxg1;
+        let auxg2;
+        let auxg3;
+        let auxg4;
+        let objg1 = {verde:0,rojo:0}
+        let objg2 = {verde:0,rojo:0}
+        let objg3 = {verde:0,rojo:0}
+        let objg4 = {verde:0,rojo:0}
+        
+        for(let i1 = 0 ;i1 < pasos_habilitados.length;i1++){
+            auxg1 = fases_pasos[i1].grupos[0].color
+            auxg2 = fases_pasos[i1].grupos[1].color
+            auxg3 = fases_pasos[i1].grupos[2].color
+            auxg4 = fases_pasos[i1].grupos[3].color
+            if(auxg1 === 1){
+                objg1.verde = objg1.verde + fases_pasos[i1].duracion
+            }else{
+                objg1.rojo = objg1.rojo + fases_pasos[i1].duracion 
+            }
+            if(auxg2 === 1){
+                objg2.verde = objg2.verde + fases_pasos[i1].duracion
+            }else{
+                objg2.rojo = objg2.rojo + fases_pasos[i1].duracion 
+            }
+            if(auxg3 === 1){
+                objg3.verde = objg3.verde + fases_pasos[i1].duracion
+            }else{
+                objg3.rojo = objg3.rojo + fases_pasos[i1].duracion 
+            }
+            if(auxg4 === 1){
+                objg4.verde = objg4.verde + fases_pasos[i1].duracion
+            }else{
+                objg4.rojo = objg4.rojo + fases_pasos[i1].duracion 
+            }
+        }
+        var ejemplo = semaforos3.filter(item => item)
+        var newDataUpdate = ejemplo.map((item) =>{
+            if(item.grupo === 'g1'){
+                item['rojo'] = objg1.rojo
+                item['verde'] = objg1.verde
+            }else if(item.grupo === 'g2'){
+                item['rojo'] = objg2.rojo
+                item['verde'] = objg2.verde
+            }else if(item.grupo === 'g3'){
+                item['rojo'] = objg3.rojo
+                item['verde'] = objg3.verde
+            }else{
+                item['rojo'] = objg4.rojo
+                item['verde'] = objg4.verde
+            }
+           //item['icon'] = {}
+            return item
+        })
+        setSemaforos3(newDataUpdate)
+
+      
         timer1.current = 0
-        console.log('pasos activos',fases_pasos)
+      
         setPasosActivos(fases_pasos)
         faseActual.current = fases_pasos
 
@@ -546,13 +640,7 @@ export default function HomeView() {
                             <h5>Controlador Seleccionado: </h5>
                         </div>
                     </Grid>
-                    {/* <Grid item xs={12} md={8}>
-                        <TextField id="outlined-basic" label="Tiempo Umbral de Cache" variant="outlined" fullWidth />
-                    </Grid>
-                    <Grid item xs={12} md={4}  >
-                        <Button variant="contained" startIcon={<UpdateIcon />} onClick={leerDatosFases} color="verde2" fullWidth sx={{ height: "100%" }}>ACTUALIZAR</Button>
-                    </Grid> */}
-                    
+           
                     <Grid item xs={12} md={3}>
                         <TextField id="outlined" focused value={position.lat} label="Latitud" variant="outlined" fullWidth />
                     </Grid>
@@ -622,7 +710,7 @@ export default function HomeView() {
                                         <Td >
                                             {dato.fase}
                                         </Td>
-                                        <Td >
+                                        <Td className='home-t-th' >
                                             <table>
 
                                                 <tr>
@@ -653,11 +741,12 @@ export default function HomeView() {
                                     <Th className='home-t-th'>Semaforo</Th>
                                     <Th className='home-t-th'>Grupo</Th>
                                     <Th className='home-t-th'>Indicador en Segundos</Th>
-                                    <Th className='home-t-th'>Editar</Th>
+                                   
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {semaforos.map((dato, index) => (
+                                
+                            {semaforos3.map((dato, index) => (
                                     <Tr key={index} >
                                         <Td>
                                             {index + 1}
@@ -680,6 +769,9 @@ export default function HomeView() {
                                 ))}
                             </Tbody>
                         </Table>
+                    </Grid>
+                    <Grid item xs={12}>
+
                     </Grid>
                     <Grid item xs={12}>
                         <div className="home-view-footer">
@@ -772,58 +864,6 @@ export default function HomeView() {
 
 }
 
-const initialData = {
-    conflictos_verdes: {},
-    dias_especiales: {},
-    entradas: {},
-    fases: {},
-    grupos: {},
-    hora_controlador: {},
-    horarios: {},
-    ip: "",
-    mac: "",
-    otros_parametros: {},
-    planes: {},
-    version: {},
-    resumen: [
-        {
-            nombre: "sin nombre",
-            rojo: 10,
-            amarillo: 4,
-            verde: 20,
-            grupo: "g1",
-            position: [-2.8771059724090122, -78.96612703800203],
-            icon: {}
-        },
-        {
-            nombre: "sin nombre",
-            rojo: 10,
-            amarillo: 4,
-            verde: 20,
-            grupo: "g2",
-            position: [-2.8773367771587526, -78.96582663059236],
-            icon: {}
-        },
-        {
-            nombre: "sin nombre",
-            rojo: 10,
-            amarillo: 4,
-            verde: 20,
-            grupo: "g3",
-            position: [-2.877974763491086, -78.96494686603546],
-            icon: {}
-        },
-        {
-            nombre: "sin nombre",
-            rojo: 10,
-            amarillo: 4,
-            verde: 20,
-            grupo: "g4",
-            position: [-2.876842450523782, -78.9654189348221],
-            icon: {}
-        }
-    ]
-}
 
 const semaforo = new L.Icon({
     iconUrl: require('../assets/semaforo3.png'),
@@ -883,3 +923,56 @@ const ubi = new L.Icon({
     popupAnchor: [-3, -76]
 
 });
+
+const initialData = {
+    conflictos_verdes: {},
+    dias_especiales: {},
+    entradas: {},
+    fases: {},
+    grupos: {},
+    hora_controlador: {},
+    horarios: {},
+    ip: "",
+    mac: "",
+    otros_parametros: {},
+    planes: {},
+    version: {},
+    resumen: [
+        {
+            nombre: "sin nombre",
+            rojo: 10,
+            amarillo: 4,
+            verde: 20,
+            grupo: "g1",
+            position: [-2.8771059724090122, -78.96612703800203],
+            icon: semaforo
+        },
+        {
+            nombre: "sin nombre",
+            rojo: 10,
+            amarillo: 4,
+            verde: 20,
+            grupo: "g2",
+            position: [-2.8773367771587526, -78.96582663059236],
+            icon: semaforo
+        },
+        {
+            nombre: "sin nombre",
+            rojo: 10,
+            amarillo: 4,
+            verde: 20,
+            grupo: "g3",
+            position: [-2.877974763491086, -78.96494686603546],
+            icon: semaforo
+        },
+        {
+            nombre: "sin nombre",
+            rojo: 10,
+            amarillo: 4,
+            verde: 20,
+            grupo: "g4",
+            position: [-2.876842450523782, -78.9654189348221],
+            icon: semaforo
+        }
+    ]
+}
