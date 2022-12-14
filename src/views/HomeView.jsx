@@ -33,9 +33,6 @@ import swal from 'sweetalert';
 
 
 export default function HomeView() {
-    const [procentRed,setPorcentRed] = useState(20);
-    const [procentYellow,setPorcentYellow] = useState(50);
-    const [procentGreen,setPorcentGreen] = useState(30);
     const [controladores, setControladores] = useState([]);
     const [modalSemaforo, setModalSemaforo] = useState(false);
     const [flagsimu, setFlagsimu] = useState(false);
@@ -46,8 +43,6 @@ export default function HomeView() {
     const timer1 = useRef(0);
     const timer2 = useRef(0);
     const faseActual = useRef(0);
-    const [counter, setCounter] = useState(1);
-    const [nombreSemaforo, setNombreSemaforo] = useState('');
     const [pasoexec,setPasoexec] = useState();
     const [currentSemaforo, setCurrentSemaforo] = useState({});
     const [modal, setModal] = useState(false);
@@ -58,10 +53,6 @@ export default function HomeView() {
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
     const [semaforos, setSemaforos] = useState(initialData.resumen);
     const [semaforos3,setSemaforos3] = useState(initialData.resumen)
-    const [grupo1exec,setGrupo1exec] = useState(0);
-    const [grupo2exec,setGrupo2exec] = useState(0);
-    const [grupo3exec,setGrupo3exec] = useState(0);
-    const [grupo4exec,setGrupo4exec] = useState(0);
     const [currentControler, setCurrentControler] = useState({})
     const [pasosActivos, setPasosActivos] = useState([]);
     const [faseexec,setFaseexec] = useState("");
@@ -71,9 +62,10 @@ export default function HomeView() {
     const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers)
     const [allData, setAllData] = useState({});
-    const [temporizador, setTemporizador] = useState(0);
+
     //prueba semaforo
     const semaforos2 = useRef();
+    const [prueba1 ,setPrueba1] = useState(10);
 
     const [newSemaforo, setNewSemaforo] = useState({
         nombre: "",
@@ -186,9 +178,6 @@ export default function HomeView() {
             }
             return (item);
         })
-
-
-
 
     }
     const enviarVersionFirebase = async (mac, ip, firmware) => {
@@ -310,19 +299,7 @@ export default function HomeView() {
         }
 
     }
-    const calculatePorcentajes = (yellow,red,green) => {    
-        let yellowm = yellow + 5
-        let total = red+yellowm+green;
-        let pyellow = (yellowm*100)/total;
-        let pgreen = (green*100)/total;
-        let pred = (red*100)/total;
-        verde.current = pgreen
-        rojo.current = pred
-        setPorcentGreen(pgreen);
-        setPorcentYellow(pyellow);
-        setPorcentRed(pred);
 
-    }
     const parametrosCorriendo = () => {
         
         let dia_ordinario = todaInformacion.current.horarios.dia_ordinario;
@@ -434,7 +411,7 @@ export default function HomeView() {
                 objg4.rojo = objg4.rojo + fases_pasos[i1].duracion 
             }
         }
-        var ejemplo = semaforos3.filter(item => item)
+        var ejemplo = semaforos2.current
         var newDataUpdate = ejemplo.map((item) =>{
             if(item.grupo === 'g1'){
                 item['rojo'] = objg1.rojo
@@ -573,7 +550,14 @@ export default function HomeView() {
         }
     }
 
-
+    const aumenta =()=>{
+        setPrueba1(prueba1+1)
+        console.log(prueba1)
+    }
+    const disminuye = ()=>{
+        setPrueba1(prueba1-1)
+        console.log(prueba1)
+    }
     useEffect(() => {
         const interval = setInterval(() => {
 
@@ -761,18 +745,22 @@ export default function HomeView() {
                                             <CustomProgress red={dato.rojo} yellow={dato.amarillo} green={dato.verde} />
                                         </Td>
 
-                                        <Td >
-                                            <Button variant="contained" sx={{ backgroundColor: "#F0B27A", marginLeft: 2 }} onClick={() => { abrirSemaforoModal(dato) }} >EDITAR</Button>
-                                        </Td>
+                                      
 
                                     </Tr>
                                 ))}
                             </Tbody>
                         </Table>
                     </Grid>
-                    <Grid item xs={12}>
-
+                    {/* <Grid item xs={6}>
+                        <button onClick={aumenta}>aumentar</button>
                     </Grid>
+                    <Grid item xs={6}>
+                        <button onClick={disminuye}>disminuir</button>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <CustomProgress red={10} yellow={5} green={prueba1} />
+                    </Grid> */}
                     <Grid item xs={12}>
                         <div className="home-view-footer">
 

@@ -20,9 +20,7 @@ export default function CustomProgress({red,yellow,green}) {
         setPorcentGreen(pgreen);
         setPorcentYellow(pyellow);
         setPorcentRed(pred);
-        setPorcentGreen(pgreen);
-        setPorcentYellow(pyellow);
-        setPorcentRed(pred);
+    
         console.log()
 
     }
@@ -33,14 +31,14 @@ export default function CustomProgress({red,yellow,green}) {
     return (
         <div>
             <div className='bar-container'>
-                <div className="b-red" style={{width:`${porcentRed}%`}}>
+                <div className="b-red" style={{width:`${red*2}%`}}>
                     {red}
                 </div>
-                <div className="b-yellow" style={{width:`${porcentYellow}%`}}>
+                <div className="b-yellow" style={{width:`${yellow*4}%`}}>
                     {yellow}
                 </div>
 
-                <div className="b-green" style={{width:`${porcentGreen}%`}}>
+                <div className="b-green" style={{width:`${green*2}%`}}>
                     {green}
                 </div>
 
