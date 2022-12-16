@@ -163,9 +163,9 @@ export default function LoginView() {
             >
               Ingresar
             </Button>
-            <Button variant="contained" color="secondary" onClick={authWithGoogle} endIcon={<GoogleIcon />} fullWidth>
+            {/* <Button variant="contained" color="secondary" onClick={authWithGoogle} endIcon={<GoogleIcon />} fullWidth>
               Google
-            </Button>
+            </Button> */}
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">

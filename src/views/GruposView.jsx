@@ -102,7 +102,8 @@ export default function GruposView() {
         setChecked3(event.target.checked);
     };
     const leerGruposFromRestApi = async () => {
-        setDeshabilitar2(true);
+        try {
+            setDeshabilitar2(true);
         setCambioGrupos(false);
         const response = await getGruposControlador(controlerState.mac, controlerState.ip)
         const responseFormat = []
@@ -120,6 +121,10 @@ export default function GruposView() {
         setGrupos(responseFormat)
         setDeshabilitar(false)
         setDeshabilitar2(false);
+        } catch (error) {
+            setDeshabilitar2(false);
+        }
+        
     }
     const mapConflicts = (respuesta) => {
         const ch1 = respuesta[controlerState.mac]['check1']
@@ -183,12 +188,17 @@ export default function GruposView() {
         }
     }
     const leerConflictosApi = async () => {
-        setDeshabilitar4(true)
-        setCambioConflictos(false)
-        const response = await getConflictoVerdesControlador(controlerState.mac, controlerState.ip)
-        mapConflicts(response)
-        setDeshabilitar3(false)
-        setDeshabilitar4(false)
+        try {
+            setDeshabilitar4(true)
+            setCambioConflictos(false)
+            const response = await getConflictoVerdesControlador(controlerState.mac, controlerState.ip)
+            mapConflicts(response)
+            setDeshabilitar3(false)
+            setDeshabilitar4(false)
+        } catch (error) {
+            setDeshabilitar4(false)
+        }
+  
     }
     const aplicarCambiosGrupos = () => {
         const newGrupo = currentGrupo
