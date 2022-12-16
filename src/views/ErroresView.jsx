@@ -9,6 +9,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import GridOnIcon from '@mui/icons-material/GridOn';
+import CardController from '../components/CardController';
 import "../css/ErroresView.css";
 const columns = [
 
@@ -100,6 +101,9 @@ export default function ErroresView() {
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
             <CircularProgress color="inherit" />
         </Backdrop>
+        <div className='horarios-card'>
+                <CardController />
+            </div>
         </>
     );
 

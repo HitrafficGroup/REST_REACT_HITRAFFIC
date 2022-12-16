@@ -4,7 +4,19 @@ import Swal from 'sweetalert2';
 const BASE_PATH_WS = 'http://127.0.0.1:8000';
 async function getIpsFromRestApi() {
 	console.log('se ejecuta peticion');
-	const res = await axios.get('http://127.0.0.1:8000/rest/listarIps')
+	var res;
+	await axios.get('http://127.0.0.1:8000/rest/listarIps').then(response => {
+		res = response.data
+		console.log(response.data)
+	}).catch(function (error) {
+		console.log(res);
+		Swal.fire({
+			icon: 'error',
+			title: 'Error de Conexión',
+			text: `${error}`,
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+		  })
+	})
 	return res
 }
 async function getFasesFromRestApi(mac, ip) {

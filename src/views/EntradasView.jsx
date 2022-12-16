@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { db } from "../firebase/firebase-config";
-import { collection, updateDoc, onSnapshot, doc } from "firebase/firestore";
+import { updateDoc, doc } from "firebase/firestore";
 import CardController from '../components/CardController';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';

@@ -16,17 +16,18 @@ import UpdateIcon from '@mui/icons-material/Update';
 import "../css/HomeView.css"
 import CustomProgress from "../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { getIpsFromRestApi, getFirmwareVersion, getAllDataIp } from '../js/apiFunctions'
+import { getIpsFromRestApi, getFirmwareVersion } from '../js/apiFunctions'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
-import { addFases, addPlanes, setInitialStateController } from "../features/controlers/controlerSlice";
+import { setInitialStateController } from "../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 // dependencias del custom Map
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from 'leaflet';
@@ -42,7 +43,6 @@ export default function HomeView() {
     const todaInformacion = useRef({});
     const modoControlador = useRef('Tiempo Fijo');
     const simulacion = useRef(false);
-    const tsimu = useRef(false);
     const timer1 = useRef(0);
     const timer2 = useRef(0);
     const faseActual = useRef(0);
@@ -65,6 +65,7 @@ export default function HomeView() {
     const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers)
     const [allData, setAllData] = useState({});
+    const [deshabilitar,setDeshabilitar] = useState(true);
 
     //prueba semaforo
     const semaforos2 = useRef();
@@ -134,56 +135,63 @@ export default function HomeView() {
         await setDoc(doc(ref, mac), datosFormat);
     }
     const seleccionarControlador = async (data) => {
-        simulacion.current = false;
-        setFlagsimu(false);
-        setCurrentControler(data);
-        dispatch(setInitialStateController(data));
-        let aux = await getFirmwareVersion(data.mac, data.ip);
-        let firmware = aux[data.mac]
-        enviarVersionFirebase(data.mac, data.ip, firmware);
-        onSnapshot(doc(db, "controladores", `${data.mac}`), (doc) => {
-            if (doc.exists()) {
-                let gruposController = doc.data().resumen
-                let aux = gruposController.map((item) => {
-                    if (item.grupo === "g1") {
-                        item['icon'] = semaforo;
-                    }
-                    else if (item.grupo === "g2") {
-                        item['icon'] = semaforo;
-                    }
-                    else if (item.grupo === "g3") {
-                        item['icon'] = semaforo;
-                    } else {
-                        item['icon'] = semaforo;
-                    }
-                    return item
-                })
-                
-                semaforos2.current = aux;
-                setSemaforos(aux);
-                setAllData(doc.data());
-                todaInformacion.current = doc.data()
-                parametrosCorriendo();
-            } else {
-                declararControlador(data.mac, data.ip);
-                console.log('no existe');
-            }
-            //setSemaforos(doc.data().grupos)
-        });
-        swal({
-            title: "Conectado!",
-            text: "Controlador Seleccionado Con Exito",
-            icon: "success",
-
-        });
-        const controls = controladores.map(item => {
-            if (item.mac === data.mac) {
-                item['seleccionado'] = true
-            } else {
-                item['seleccionado'] = false
-            }
-            return (item);
-        })
+        try {
+            
+            simulacion.current = false;
+            setFlagsimu(false);
+            setCurrentControler(data);
+            dispatch(setInitialStateController(data));
+            let aux = await getFirmwareVersion(data.mac, data.ip);
+            let firmware = aux[data.mac]
+            enviarVersionFirebase(data.mac, data.ip, firmware);
+            onSnapshot(doc(db, "controladores", `${data.mac}`), (doc) => {
+                if (doc.exists()) {
+                    let gruposController = doc.data().resumen
+                    let aux = gruposController.map((item) => {
+                        if (item.grupo === "g1") {
+                            item['icon'] = semaforo;
+                        }
+                        else if (item.grupo === "g2") {
+                            item['icon'] = semaforo;
+                        }
+                        else if (item.grupo === "g3") {
+                            item['icon'] = semaforo;
+                        } else {
+                            item['icon'] = semaforo;
+                        }
+                        return item
+                    })
+                    
+                    semaforos2.current = aux;
+                    setSemaforos(aux);
+                    setAllData(doc.data());
+                    todaInformacion.current = doc.data()
+                    parametrosCorriendo();
+                } else {
+                    declararControlador(data.mac, data.ip);
+                    console.log('no existe');
+                }
+                //setSemaforos(doc.data().grupos)
+            });
+            swal({
+                title: "Conectado!",
+                text: "Controlador Seleccionado Con Exito",
+                icon: "success",
+    
+            });
+            const controls = controladores.map(item => {
+                if (item.mac === data.mac) {
+                    item['seleccionado'] = true
+                } else {
+                    item['seleccionado'] = false
+                }
+                return (item);
+            })
+            setControladores(controls)
+            setDeshabilitar(false)
+        } catch (error) {
+            setDeshabilitar(false)
+        }
 
     }
     const enviarVersionFirebase = async (mac, ip, firmware) => {
@@ -241,17 +249,23 @@ export default function HomeView() {
     }
 
     const listarIps = async () => {
-        setAccionesUi(true);
-        setControladores([]);
-        const doc = await getIpsFromRestApi();
-        const ips = doc.data.Ips_disponibles;
-        var controladores = ips.map(item => {
-            item['seleccionado'] = false
-            return (item);
-        })
-        console.log(controladores);
-        setControladores(controladores);
-        setAccionesUi(false)
+        try {
+            setAccionesUi(true);
+            setControladores([]);
+            const doc = await getIpsFromRestApi();
+            const ips = doc.Ips_disponibles;
+            var controladores = ips.map(item => {
+                item['seleccionado'] = false
+                return (item);
+            })
+            console.log(controladores);
+            setControladores(controladores);
+            setAccionesUi(false)
+    
+        } catch (error) {
+            setAccionesUi(false)
+            
+        }
     }
     const agregarSemaforo = async () => {
         var data = newSemaforo;
@@ -644,7 +658,7 @@ export default function HomeView() {
                         <Button variant="contained" startIcon={<UpdateIcon />} disabled={btnAgregar} onClick={() => { setModalCrearSemaforo(true) }} color="azulm" fullWidth sx={{ height: "100%" }}>Agregar</Button>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button variant="contained" fullWidth sx={{height:"100%"}}  startIcon={flagsimu ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />} color={flagsimu ? 'verde' : 'morado1'} onClick={iniciarSimulacion}>Simular</Button>
+                        <Button variant="contained" disabled={deshabilitar} fullWidth sx={{height:"100%"}}  startIcon={flagsimu ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />} color={flagsimu ? 'verde' : 'morado1'} onClick={iniciarSimulacion}>Simular</Button>
                     </Grid>
                  
 
@@ -856,6 +870,9 @@ export default function HomeView() {
                     </Button>
                 </ModalFooter>
             </Modal>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={accionesUi}>
+            <CircularProgress color="inherit" />
+        </Backdrop>
         </div>
     );
 

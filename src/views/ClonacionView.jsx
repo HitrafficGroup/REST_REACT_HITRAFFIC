@@ -1,6 +1,6 @@
 import Container from '@mui/material/Container';
 import "../css/ClonacionView.css";
-
+import CardController from '../components/CardController';
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
@@ -171,8 +171,10 @@ export default function ClonacionView() {
           <Button variant="contained">Clonar Equipos</Button>
       </Grid>
     </Grid>
-   
       </Container>
+      <div className='horarios-card'>
+                <CardController />
+            </div>
     </>
   );
 }
