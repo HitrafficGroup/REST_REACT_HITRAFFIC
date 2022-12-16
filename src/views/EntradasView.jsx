@@ -32,48 +32,52 @@ export default function EntradasView() {
     const [deshabilitar,setDeshabilitar] = useState(true);
     const [deshabilitar2,setDeshabilitar2] = useState(false);
     const traerEntradasFromRestApi = async() =>{
-        const mac = controlerState.mac;
-        setDeshabilitar2(true);
-        let data = await getEntradasControlador(controlerState.mac,controlerState.ip);
-        let informacion = data[`${mac}`];
-        console.log(informacion);
-        setEntradas(informacion);
-        if(informacion.entrada1.checkbox ==='1'){
-            setEnt1(true);
-        }else{
-            setEnt1(false);
+        try {
+            const mac = controlerState.mac;
+            setDeshabilitar2(true);
+            let data = await getEntradasControlador(controlerState.mac,controlerState.ip);
+            let informacion = data[`${mac}`];
+            console.log(informacion);
+            setEntradas(informacion);
+            if(informacion.entrada1.checkbox ==='1'){
+                setEnt1(true);
+            }else{
+                setEnt1(false);
+            }
+            if(informacion.entrada2.checkbox ==='1'){
+                setEnt2(true);
+            }else{
+                setEnt2(false);
+            }
+            if(informacion.entrada3.checkbox ==='1'){
+                setEnt3(true);
+            }else{
+                setEnt3(false);
+            }
+            if(informacion.entrada4.checkbox === '1'){
+                setEnt4(true);
+            }else{
+                setEnt4(false);
+            }
+            setFase1(parseInt(informacion.entrada1.fase));
+            setFase2(parseInt(informacion.entrada2.fase));
+            setFase3(parseInt(informacion.entrada3.fase));
+            setFase4(parseInt(informacion.entrada4.fase));
+    
+            setT1(parseInt(informacion.entrada1.tiempo));
+            setT2(parseInt(informacion.entrada2.tiempo));
+            setT3(parseInt(informacion.entrada3.tiempo));
+            setT4(parseInt(informacion.entrada4.tiempo));
+    
+            setDeshabilitar2(false);
+            setDeshabilitar(false);
+    
+    
+    
+            console.log(informacion);
+        } catch (error) {
+            setDeshabilitar2(false);
         }
-        if(informacion.entrada2.checkbox ==='1'){
-            setEnt2(true);
-        }else{
-            setEnt2(false);
-        }
-        if(informacion.entrada3.checkbox ==='1'){
-            setEnt3(true);
-        }else{
-            setEnt3(false);
-        }
-        if(informacion.entrada4.checkbox === '1'){
-            setEnt4(true);
-        }else{
-            setEnt4(false);
-        }
-        setFase1(parseInt(informacion.entrada1.fase));
-        setFase2(parseInt(informacion.entrada2.fase));
-        setFase3(parseInt(informacion.entrada3.fase));
-        setFase4(parseInt(informacion.entrada4.fase));
-
-        setT1(parseInt(informacion.entrada1.tiempo));
-        setT2(parseInt(informacion.entrada2.tiempo));
-        setT3(parseInt(informacion.entrada3.tiempo));
-        setT4(parseInt(informacion.entrada4.tiempo));
-
-        setDeshabilitar2(false);
-        setDeshabilitar(false);
-
-
-
-        console.log(informacion);
     }
 
     const handleEnt1 = (event) =>{
@@ -148,7 +152,7 @@ export default function EntradasView() {
     <>
         <Container maxWidth="md">
             <div className='titulos-entradas'>
-                <h4>Configuracion de las Entradas Digitales</h4>
+                <h4>Configuración de las Entradas Digitales</h4>
             </div>
             <Grid container spacing={3}>
                 <Grid item xs={3}>

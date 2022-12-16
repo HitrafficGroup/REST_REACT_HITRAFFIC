@@ -8,16 +8,15 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import LightModeIcon from '@mui/icons-material/LightMode';
-import { collection, updateDoc, onSnapshot, doc } from "firebase/firestore";
+import { updateDoc,doc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import { getFasesFromRestApi, postFasesFromRestApi } from '../js/apiFunctions'
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Swal from 'sweetalert2';
-import { addFases } from "../features/controlers/controlerSlice"
 import '../css/FasesView.css';
 
 import CardController from '../components/CardController';
@@ -26,7 +25,6 @@ export default function FasesView() {
 
     const [fases, setFases] = useState(fasesIniciales)
     const [modalFase, setModalFase] = useState(false)
-    const dispatch = useDispatch();
     const [currentFase, setCurrentFase] = useState(faseInicial)
     const [faseg1, setFaseg1] = useState({ color: 0, colorDescripcion: 'rojo' })
     const [faseg2, setFaseg2] = useState({ color: 0, colorDescripcion: 'rojo' })
@@ -243,7 +241,7 @@ export default function FasesView() {
         <>
             <Container maxWidth="md">
                 <div className='titulo-fases'>
-                    <h4>Configuracion de las Fases del Controlador</h4>
+                    <h4>Configuración de las Fases del Controlador</h4>
                 </div>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>

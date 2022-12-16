@@ -37,19 +37,24 @@ export default function ErroresView() {
     const [deshabilitar2,setDeshabilitar2] = useState(false);
 
     const getDatosFromRestApi = async () =>{
-        setDeshabilitar2(true);
-        let data = await getRegistrosControlador(controlerState.mac,controlerState.ip)
-        let tablaData = data[controlerState.mac].registro;
-        let dataFormat = tablaData.map((data,index)=>{
-            return {
-                id:index+1,
-                fecha:data.fecha,
-                evento: data.evento
-            }
-        })
-        setErrores(dataFormat.reverse());
-        setDeshabilitar(false)
-        setDeshabilitar2(false)
+        try {
+            setDeshabilitar2(true);
+            let data = await getRegistrosControlador(controlerState.mac,controlerState.ip)
+            let tablaData = data[controlerState.mac].registro;
+            let dataFormat = tablaData.map((data,index)=>{
+                return {
+                    id:index+1,
+                    fecha:data.fecha,
+                    evento: data.evento
+                }
+            })
+            setErrores(dataFormat.reverse());
+            setDeshabilitar(false)
+            setDeshabilitar2(false)
+        } catch (error) {
+            setDeshabilitar2(false)
+        }
+       
 
     }
     

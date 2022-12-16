@@ -73,7 +73,6 @@ export default function PlanesView() {
         }
         catch (e) {
             console.log(e);
-            setDeshabilitar(true)
             setDeshabilitar2(false)
         }
     }
@@ -102,7 +101,7 @@ export default function PlanesView() {
     const leerOtrosParametrosApi = async () =>{
         try{
             setDeshabilitar4(true)
-            setDeshabilitar3(false)
+            
             var datosObtenidos = await getOtrosParametrosFromRestApi(controlerState.mac,controlerState.ip);
             var datosformateados = datosObtenidos[`${controlerState.mac}`];
             console.log(datosformateados)
@@ -115,14 +114,11 @@ export default function PlanesView() {
             setTiempoRojoPrender(parseInt(datosformateados.tiempo_rojo_prender));
             setTiempoTodoRojo(parseInt(datosformateados.tiempo_todo_rojo));
             setValorSincronizacion(parseInt(datosformateados.valor_sincronizacion));
+            setDeshabilitar3(false)
             setDeshabilitar4(false)
-            // Swal.fire({
-            //     title: "Completado",
-            //     text: "Datos Leidos Con Exito",
-            //     icon: "success",
-            //   });
         }catch(e){
             console.log(e);
+            setDeshabilitar4(false)
         }
     }
     const cargarOtrosParamFirebase = async(data) =>{
@@ -247,7 +243,7 @@ export default function PlanesView() {
         <>
             <Container maxWidth="md">
                 <div className='titulos-planes'>
-                   <h4>Configuracion de Planes</h4>
+                   <h4>Configuración de Planes</h4>
                 </div>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
@@ -314,7 +310,7 @@ export default function PlanesView() {
                             </Collapse>
                             </Grid>
                     <Grid item xs={12}>
-                        <h3>Parametros Operativos del Controlador</h3>
+                        <h3>Parámetros Operativos del Controlador</h3>
                     </Grid>
                     
                     <Grid item xs={4}>
@@ -411,7 +407,7 @@ export default function PlanesView() {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <h4>Sincronizacion</h4>
+                        <h4>Sincronización</h4>
                     </Grid>
                     <Grid item xs={3}>
                         <FormControl fullWidth>

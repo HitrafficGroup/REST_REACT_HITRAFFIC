@@ -8,9 +8,8 @@ import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { db } from "../firebase/firebase-config";
-import { collection, updateDoc, onSnapshot, doc } from "firebase/firestore";
+import { updateDoc, doc } from "firebase/firestore";
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import Collapse from '@mui/material/Collapse';
 import Alert from '@mui/material/Alert';
@@ -20,7 +19,7 @@ import { getHorariosFromRestApi, postHorariosFromRestApi, getDiasEspecialesContr
 import Checkbox from '@mui/material/Checkbox';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector} from 'react-redux';
 import '../css/HorariosView.css';
 import CardController from '../components/CardController';
 import Backdrop from '@mui/material/Backdrop';
@@ -31,9 +30,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 export default function HorariosView() {
     const [horarios, setHorarios] = useState(horariosPorDefecto);
-    const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers);
-    const [operativos, setOperativos] = useState([{ fecha: '', tiempoeje: '' }]);
     const [modalHorarios, setModalHorarios] = useState(false);
     const [tipoDia, setTipoDia] = useState('');
     const [planSemaforo, setPlanSemaforo] = useState('1');
@@ -202,6 +199,7 @@ export default function HorariosView() {
             setHabilitar2(false);
         } catch (e) {
             console.log(e);
+            setHabilitar2(false);
         }
     }
     const modoFormat = (tipo) => {
@@ -419,7 +417,7 @@ export default function HorariosView() {
         <>
             <Container maxWidth="md">
                 <div className='titulos-horarios'>
-                    <h4>Configuracion de Grupos</h4>
+                    <h4>Configuración de Horarios</h4>
                 </div>
                 <Grid container spacing={2}>
                     <Grid item xs={6} >
@@ -432,10 +430,10 @@ export default function HorariosView() {
                                 label="Tipo"
                                 onChange={handleTipoDia}
                             >
-                                <MenuItem value={''}>Escoga Una Opcion</MenuItem>
-                                <MenuItem value={'dia_ordinario'}>Dia Ordinario</MenuItem>
+                                <MenuItem value={''}>Escoja Una Opción</MenuItem>
+                                <MenuItem value={'dia_ordinario'}>Día Ordinario</MenuItem>
                                 <MenuItem value={'fin_semana'}>Fin De Semana</MenuItem>
-                                <MenuItem value={'dia_festivo'}>Dia Festivo</MenuItem>
+                                <MenuItem value={'dia_festivo'}>Día Festivo</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -493,15 +491,15 @@ export default function HorariosView() {
                             severity="warning"
                             sx={{ mb: 2 }}
                         >
-                            Se han Generado Cambios en los Dis Especiales sin cargar al controlador
+                            Se han Generado Cambios en los Días Especiales sin cargar al controlador
                         </Alert>
                     </Collapse>
                 </Grid>
                     <Grid item xs={12}>
-                        <h5>Parametros Operativos del Controlador</h5>
+                        <h5>Parámetros Operativos del Controlador</h5>
                     </Grid>
                     <Grid item xs={12}>
-                        <p>Definicion de Fin de Semana</p>
+                        <p>Definición de Fin de Semana</p>
                     </Grid>
                     <Grid item xs={12}>
                         <FormGroup className='alinear'>
@@ -515,7 +513,7 @@ export default function HorariosView() {
                         </FormGroup>
                     </Grid>
                     <Grid item xs={12}>
-                        <p>Definicion de dia Festivo</p>
+                        <p>Definición de día Festivo</p>
                     </Grid>
                     <Grid item xs={4}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -541,9 +539,9 @@ export default function HorariosView() {
                                 onChange={handleClaseDia}
                             >
                                 <MenuItem value={0}></MenuItem>
-                                <MenuItem value={1}>Dia Ordinario</MenuItem>
+                                <MenuItem value={1}>Día Ordinario</MenuItem>
                                 <MenuItem value={2}>Fin de Semana</MenuItem>
-                                <MenuItem value={3}>Dia Festivo</MenuItem>
+                                <MenuItem value={3}>Día Festivo</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -556,7 +554,7 @@ export default function HorariosView() {
                             <Thead>
                                 <Tr>
                                     <Th className='home-t-th'>Fecha</Th>
-                                    <Th className='home-t-th'>Tiempo de Ejecucion</Th>
+                                    <Th className='home-t-th'>Tiempo de Ejecución</Th>
                                     <></>
                                 </Tr>
                             </Thead>
@@ -583,7 +581,7 @@ export default function HorariosView() {
                             severity="warning"
                             sx={{ mb: 2 }}
                         >
-                            Se han Generado Cambios en los Dis Especiales sin cargar al controlador
+                            Se han Generado Cambios en los Días Especiales sin cargar al controlador
                         </Alert>
                     </Collapse>
                 </Grid>
@@ -608,7 +606,7 @@ export default function HorariosView() {
                 <ModalHeader>
                     <div>
                         <h1>
-                            Configuracion de Horarios
+                      Configuración de Horarios
                         </h1>
                     </div>
                 </ModalHeader>
