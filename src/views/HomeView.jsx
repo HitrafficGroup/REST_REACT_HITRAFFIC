@@ -128,7 +128,10 @@ export default function HomeView() {
     }
     const declararControlador = async (mac, ip) => {
         const ref = collection(db, "controladores");
-        await setDoc(doc(ref, mac), initialData);
+        let datosFormat = initialData
+        datosFormat.resumen = initialResumen
+        console.log(datosFormat)
+        await setDoc(doc(ref, mac), datosFormat);
     }
     const seleccionarControlador = async (data) => {
         simulacion.current = false;
@@ -246,7 +249,7 @@ export default function HomeView() {
             item['seleccionado'] = false
             return (item);
         })
-
+        console.log(controladores);
         setControladores(controladores);
         setAccionesUi(false)
     }
@@ -1022,3 +1025,43 @@ const initialData = {
         }
     ]
 }
+
+
+const initialResumen =  [
+    {
+        nombre: "sin nombre",
+        rojo: 10,
+        amarillo: 4,
+        verde: 20,
+        grupo: "g1",
+        position: [-2.8771059724090122, -78.96612703800203],
+        icon: {}
+    },
+    {
+        nombre: "sin nombre",
+        rojo: 10,
+        amarillo: 4,
+        verde: 20,
+        grupo: "g2",
+        position: [-2.8773367771587526, -78.96582663059236],
+        icon: {}
+    },
+    {
+        nombre: "sin nombre",
+        rojo: 10,
+        amarillo: 4,
+        verde: 20,
+        grupo: "g3",
+        position: [-2.877974763491086, -78.96494686603546],
+        icon: {}
+    },
+    {
+        nombre: "sin nombre",
+        rojo: 10,
+        amarillo: 4,
+        verde: 20,
+        grupo: "g4",
+        position: [-2.876842450523782, -78.9654189348221],
+        icon: {}
+    }
+]

@@ -8,18 +8,24 @@ async function getIpsFromRestApi() {
 	return res
 }
 async function getFasesFromRestApi(mac, ip) {
-	var fases;
+	var datos;
 	await axios.post(`${BASE_PATH_WS}/rest/restGetFasesControlador?mac=${mac}`, {
 		ip: ip
 	})
 		.then(response => {
-			fases = convertToFases(response.data, mac);
+			datos = convertToFases(response.data, mac);
 
 		})
 		.catch(function (error) {
 			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
 		});
-	return fases;
+	return datos;
 }
 async function postFasesFromRestApi(jsonData) {
 	await axios.post(`${BASE_PATH_WS}/rest/restSetFasesControlador?mac=${jsonData['mac']}`,jsonData)
@@ -27,89 +33,125 @@ async function postFasesFromRestApi(jsonData) {
 			console.log(response.data)
 			Swal.fire({
 				title: "Completado!",
-				text: "Cambios Cargados Con Exito",
+				text: "Cambios Cargados Con Éxito",
 				icon: "success",
 			});
 		})
 		.catch(function (error) {
 			console.error(error);
 			Swal.fire({
-				icon: 'Datos No Cargados',
-				title: 'Error de Conexion',
+				icon: 'error',
+				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aqui Para Notificar el error</a>'
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
 async function getPlanesFromRestApi(mac, ip) {
 
-	var planes;
+	var datos;
 	await axios.post(`${BASE_PATH_WS}/rest/restGetPlanesControlador?mac=${mac}`, {
 		ip: ip
 	})
 		.then(response => {
-			planes = convertToPlanes(response.data, mac);
+			datos = convertToPlanes(response.data, mac);
 
 
 		})
 		.catch(function (error) {
 			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
 		});
-	return planes;
+	return datos;
 }
 
 async function setPlanesFromRestApi(jsonData) {
 	await axios.post(`${BASE_PATH_WS}/rest/restSetPlanesControlador?mac=${jsonData['mac']}`, jsonData)
 		.then(response => {
 			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
 		})
 		.catch(function (error) {
 			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
 		});
 }
 
 async function getOtrosParametrosFromRestApi(mac,ip) {
-	var parametros;
+	var datos;
 	await axios.post(`${BASE_PATH_WS}/rest/restGetOtrosParamControlador?mac=${mac}`, {
 		ip: ip
 	})
 		.then(response => {
-			parametros = response.data
+			datos = response.data
 		})
 		.catch(function (error) {
 			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
 		});
-	return parametros;
+	return datos;
 }
 
 async function setOtrosParametrosFromRestApi(jsonData) {
 	await axios.post(`${BASE_PATH_WS}/rest/restSetOtrosParamControlador?mac=${jsonData['mac']}`,jsonData)
 		.then(response => {
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
 			console.log(response.data)
 		})
 		.catch(function (error) {
 			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
 		});
 }
 
 
 async function getHorariosFromRestApi(mac, ip) {
 
-	var horarios;
+	var datos;
 	await axios.post(`${BASE_PATH_WS}/rest/restGetHorariosControlador?mac=${mac}`, {
 		ip: ip
 	})
 		.then(response => {
-	
-	
-			horarios = createHorariosObject(response.data,mac)
-
-
+			datos = createHorariosObject(response.data,mac)
 		})
 		.catch(function (error) {
 			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
 		});
-	return horarios;
+	return datos;
 }
 
 async function postHorariosFromRestApi(jsonData) {
@@ -119,7 +161,7 @@ async function postHorariosFromRestApi(jsonData) {
 			console.log(response.data)
 			Swal.fire({
 				title: "Completado!",
-				text: "Cambios Cargados Con Exito",
+				text: "Cambios Cargados Con Éxito",
 				icon: "success",
 			});
 
@@ -128,49 +170,72 @@ async function postHorariosFromRestApi(jsonData) {
 			console.error(error);
 			Swal.fire({
 				icon: 'error',
-				title: 'Error de Conexion',
+				title: 'Error de Conexión',
 				text: 'Datos no Cargados!',
-				footer: '<a href="">Click Aqui Para Notificar el error</a>'
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
 
 
 async function getTimeControlador(mac,ip) {
-	var tiempo;
+	var datos;
 	await axios.post(`${BASE_PATH_WS}/rest/restGetTimeControlador?mac=${mac}`, {
 		ip: ip
 	})
 		.then(response => {
-			tiempo = response.data
+			datos = response.data
 		})
 		.catch(function (error) {
 			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
 		});
-	return tiempo;
+	return datos;
 }
 async function setTimeControlador(jsonData) {
 	
 	await axios.post(`${BASE_PATH_WS}/rest/restSetTimeControlador?mac=${jsonData.mac}`,jsonData)
 		.then(response => {
 			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
 		})
 		.catch(function (error) {
 			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: 'Datos no Cargados!',
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
 		});
 }
 async function  getGruposControlador(mac,ip) {
-	var grupos;
+	var datos;
 	await axios.post(`${BASE_PATH_WS}/rest/restGetGruposControlador?mac=${mac}`, {
 		ip: ip
 	})
 		.then(response => {
-			grupos = convertToGrupos(response.data,mac)
+			datos = convertToGrupos(response.data,mac)
 		})
 		.catch(function (error) {
 			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
 		});
-		return grupos;
+		return datos;
 	
 }
 async function setGruposControlador(jsonData){
@@ -179,7 +244,7 @@ async function setGruposControlador(jsonData){
 		console.log(response.data)
 		Swal.fire({
 			title: "Completado!",
-			text: "Cambios Cargados Con Exito",
+			text: "Cambios Cargados Con Éxito",
 			icon: "success",
 		});
 	})
@@ -187,9 +252,9 @@ async function setGruposControlador(jsonData){
 		console.error(error);
 		Swal.fire({
 			icon: 'error',
-			title: 'Error de Conexion',
+			title: 'Error de Conexión',
 			text: 'Datos no Cargados!',
-			footer: '<a href="">Click Aqui Para Notificar el error</a>'
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	});
 
@@ -197,18 +262,24 @@ async function setGruposControlador(jsonData){
 
 async function getConflictoVerdesControlador(mac,ip){
 	
-	var conflictos;
+	var datos;
 	await axios.post(`${BASE_PATH_WS}/rest/restGetConflictoVerdesControlador?mac=${mac}`, {
 		ip: ip
 	})
 		.then(response => {
-			conflictos = response.data
+			datos = response.data
 
 		})
 		.catch(function (error) {
 			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
 		});
-		return conflictos;
+		return datos;
 
 }
 
@@ -217,17 +288,17 @@ async function setConflictoVerdesControlador(jsonData){
 		console.log(response.data)
 		Swal.fire({
 			title: "Completado!",
-			text: "Cambios Cargados Con Exito",
+			text: "Cambios Cargados Con Éxito",
 			icon: "success",
 		});
 	})
 	.catch(function (error) {
 		console.error(error);
 		Swal.fire({
-			icon: 'Datos No Cargados',
-			title: 'Error de Conexion',
+			icon: 'error',
+			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aqui Para Notificar el error</a>'
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	});
 	
@@ -245,6 +316,12 @@ async function getDiasEspecialesControlador(mac,ip){
 		})
 		.catch(function (error) {
 			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
 		});
 		return datos;
 
@@ -255,17 +332,17 @@ async function setDiasEspecialesControlador(jsonData){
 		console.log(response.data)
 		Swal.fire({
 			title: "Completado!",
-			text: "Cambios Cargados Con Exito",
+			text: "Cambios Cargados Con Éxito",
 			icon: "success",
 		});
 	})
 	.catch(function (error) {
 		console.error(error);
 		Swal.fire({
-			icon: 'Datos No Cargados',
-			title: 'Error de Conexion',
+			icon: 'error',
+			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aqui Para Notificar el error</a>'
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	});
 }
@@ -283,9 +360,9 @@ async function getEntradasControlador(mac,ip){
 			console.error(error);
 			Swal.fire({
 				icon: 'error',
-				title: 'Error de Conexion',
+				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aqui Para Notificar el error</a>'
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 		return datos;
@@ -297,17 +374,17 @@ async function setEntradasControlador(jsonData){
 		console.log(response.data)
 		Swal.fire({
 			title: "Completado!",
-			text: "Cambios Cargados Con Exito",
+			text: "Cambios Cargados Con Éxito",
 			icon: "success",
 		});
 	})
 	.catch(function (error) {
 		console.error(error);
 		Swal.fire({
-			icon: 'Datos No Cargados',
-			title: 'Error de Conexion',
+			icon: 'error',
+			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aqui Para Notificar el error</a>'
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	});
 }
@@ -326,9 +403,9 @@ async function getRegistrosControlador(mac,ip){
 			console.error(error);
 			Swal.fire({
 				icon: 'error',
-				title: 'Error de Conexion',
+				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aqui Para Notificar el error</a>'
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 		return datos;
@@ -350,9 +427,9 @@ async function getResumenControlador(mac,ip){
 			console.error(error);
 			Swal.fire({
 				icon: 'error',
-				title: 'Error de Conexion',
+				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aqui Para Notificar el error</a>'
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 		return datos;
@@ -372,9 +449,9 @@ async function getAllDataIp(mac,ip){
 			console.error(error);
 			Swal.fire({
 				icon: 'error',
-				title: 'Error de Conexion',
+				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aqui Para Notificar el error</a>'
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 		return datos;
@@ -393,9 +470,9 @@ async function getFirmwareVersion(mac,ip){
 			console.error(error);
 			Swal.fire({
 				icon: 'error',
-				title: 'Error de Conexion',
+				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aqui Para Notificar el error</a>'
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 		return datos;
