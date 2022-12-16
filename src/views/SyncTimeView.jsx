@@ -36,6 +36,8 @@ export default function SyncTimeView() {
             setDeshabilitar2(false);
         }catch(e){
             console.log(e)
+      
+            setDeshabilitar2(false);
         }
 
     }
@@ -80,11 +82,6 @@ export default function SyncTimeView() {
                 if(result.isConfirmed){
                     setTimeControlador(newData);
                     updateHoraControllerFirebase(dataForFirebase);
-                    Swal.fire({
-                        title: "Completado!",
-                        text: "Cambios Cargados Con Exito",
-                        icon: "success",
-                      });
                  
                 }
             })        
