@@ -22,7 +22,6 @@ import Swal from 'sweetalert2';
 import Chip from '@mui/material/Chip';
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
-import CardController from '../components/CardController';
 export default function PlanesView() {
     const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers)
@@ -156,11 +155,7 @@ export default function PlanesView() {
                 setCambio(false);
                 setOtrosParametrosFromRestApi(newParams);
                 cargarOtrosParamFirebase(newParams);
-                Swal.fire({
-                    title: "Completado!",
-                    text: "Cambios Cargados Con Exito",
-                    icon: "success",
-                  });
+     
              
             }
         })        
@@ -213,11 +208,7 @@ export default function PlanesView() {
                 newData['mac'] = controlerState.mac
                 newData['num_plan'] = returnNumPlan(selectPlan)
                 setCambio(false);
-                Swal.fire({
-                    title: "Completado!",
-                    text: "Cambios Cargados Con Exito",
-                    icon: "success",
-                  });
+     
                 setPlanesFromRestApi(newData);
                 cargarPlanesFirebase();
                 console.log(planes);
@@ -503,9 +494,6 @@ export default function PlanesView() {
         <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar4}>
             <CircularProgress color="inherit" />
         </Backdrop>
-        <div className='horarios-card'>
-                <CardController />
-            </div>
         </>
     );
 

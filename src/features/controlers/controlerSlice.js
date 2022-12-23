@@ -8,6 +8,11 @@ export const controlerSlice = createSlice({
         status: '',
         fases: {},
         planes:{},
+        resumen:{
+            horas: '00',
+            minutos: '00',
+            pasos:[]
+        },
     },
     reducers: {
         addFases: (state,action)=>{
@@ -20,8 +25,11 @@ export const controlerSlice = createSlice({
             state.ip = action.payload.ip;
             state.mac = action.payload.mac;
             state.status = action.payload.status;
+        },
+        setResumen:(state,action)=>{
+            state.resumen = action.payload;
         }
     }
 })
-export const {addFases, addPlanes,setInitialStateController} = controlerSlice.actions
+export const {addFases, addPlanes,setInitialStateController,setResumen} = controlerSlice.actions
 export default controlerSlice.reducer

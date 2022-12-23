@@ -10,7 +10,6 @@ import {getTimeControlador,setTimeControlador} from '../js/apiFunctions'
 import { useSelector, useDispatch } from 'react-redux';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import CardController from '../components/CardController';
 import "../css/SyncTimeView.css"
 export default function SyncTimeView() {
     
@@ -134,9 +133,6 @@ export default function SyncTimeView() {
                 </Grid>
             </Grid>
         </Container>
-        <div className='horarios-card'>
-                <CardController />
-            </div>
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
             <CircularProgress color="inherit" />
         </Backdrop>

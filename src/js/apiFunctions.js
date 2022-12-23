@@ -3,11 +3,9 @@ import { convertToFases, convertToPlanes,createHorariosObject,convertToGrupos,co
 import Swal from 'sweetalert2';
 const BASE_PATH_WS = 'http://127.0.0.1:8000';
 async function getIpsFromRestApi() {
-	console.log('se ejecuta peticion');
 	var res;
 	await axios.get('http://127.0.0.1:8000/rest/listarIps').then(response => {
 		res = response.data
-		console.log(response.data)
 	}).catch(function (error) {
 		console.log(res);
 		Swal.fire({
@@ -297,7 +295,6 @@ async function getConflictoVerdesControlador(mac,ip){
 
 async function setConflictoVerdesControlador(jsonData){	
 	await axios.post(`${BASE_PATH_WS}/rest/restSetConflictoVerdesControlador?mac=${jsonData.mac}`,jsonData).then(response => {
-		console.log(response.data)
 		Swal.fire({
 			title: "Completado!",
 			text: "Cambios Cargados Con Éxito",

@@ -125,7 +125,7 @@ export default function ButtonAppBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {menuState.menu}
           </Typography>
-          <Button color="inherit">Login</Button>
+        Bienvenido!  david.diaz190799@gmail.com
         </Toolbar>
       </AppBar>
       <Drawer
@@ -138,11 +138,11 @@ export default function ButtonAppBar() {
           sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
           component="nav"
           aria-labelledby="nested-list-subheader"
-          subheader={
-            <ListSubheader component="div" id="nested-list-subheader">
-              <h3>HiTraffic Menu</h3>
-            </ListSubheader>
-          }
+          // subheader={
+          //   <ListSubheader component="div" id="nested-list-subheader">
+          //     <h3>HiTraffic Menu</h3>
+          //   </ListSubheader>
+          // }
         >
           {menuData.filter(item => item.visibility).map((item, index) => (
             <div key={index}>

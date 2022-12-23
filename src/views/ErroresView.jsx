@@ -101,9 +101,6 @@ export default function ErroresView() {
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
             <CircularProgress color="inherit" />
         </Backdrop>
-        <div className='horarios-card'>
-                <CardController />
-            </div>
         </>
     );
 

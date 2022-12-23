@@ -172,9 +172,7 @@ export default function ClonacionView() {
       </Grid>
     </Grid>
       </Container>
-      <div className='horarios-card'>
-                <CardController />
-            </div>
+
     </>
   );
 }

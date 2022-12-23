@@ -22,7 +22,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
-import { setInitialStateController } from "../features/controlers/controlerSlice";
+import { setInitialStateController,setResumen } from "../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Alert from '@mui/material/Alert';
@@ -48,7 +48,6 @@ export default function HomeView() {
     const faseActual = useRef(0);
     const [pasoexec,setPasoexec] = useState();
     const [currentSemaforo, setCurrentSemaforo] = useState({});
-    const [modal, setModal] = useState(false);
     const [accionesUi, setAccionesUi] = useState(false);
     const center = [-2.876428, -78.965342]
     const [draggable, setDraggable] = useState(false)
@@ -69,7 +68,7 @@ export default function HomeView() {
 
     //prueba semaforo
     const semaforos2 = useRef();
-    const [prueba1 ,setPrueba1] = useState(10);
+    
 
     const [newSemaforo, setNewSemaforo] = useState({
         nombre: "",
@@ -107,31 +106,11 @@ export default function HomeView() {
     }, [])
     const markerRef = useRef(null)
 
-    const toggle = () => setModal(!modal);
-    const getAllDataController = async (mac) => {
-        const docRef = doc(db, "controladores", `${mac}`);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
-            setAllData(docSnap.data());
-            todaInformacion.current = docSnap.data()
-        } else {
-            
-            console.log("No such document!");
-        }
-    }
-    const abrirSemaforoModal = (data) => {
-        console.log(data);
-        setCurrentSemaforo(data);
-        setModalSemaforo(true);
-
-    }
+   
     const declararControlador = async (mac, ip) => {
         const ref = collection(db, "controladores");
         let datosFormat = initialData
         datosFormat.resumen = initialResumen
-        console.log(datosFormat)
         await setDoc(doc(ref, mac), datosFormat);
     }
     const seleccionarControlador = async (data) => {
@@ -258,7 +237,6 @@ export default function HomeView() {
                 item['seleccionado'] = false
                 return (item);
             })
-            console.log(controladores);
             setControladores(controladores);
             setAccionesUi(false)
     
@@ -290,14 +268,7 @@ export default function HomeView() {
     const cerrarEditarSemaforo = () => {
         setModalSemaforo(false);
     }
-    const actualizarResumenSemaforo = async(data) =>{
-        const ref = doc(db, "controladores", `${controlerState.mac}`);
-        await updateDoc(ref, {
-             resumen: data
-         });
-    }
-    
-        
+ 
     const iniciarSimulacion = () => {
         simulacion.current = !simulacion.current;
         if (simulacion.current) {
@@ -338,24 +309,23 @@ export default function HomeView() {
              aux2 = parseInt(dia_ordinario[i].minutos)
              temp = aux*100 + aux2
              ref = horas*100 + minutos
-          console.log(ref)
             if(horas === aux){
                 indice = i
-                console.log('se cumple primera')
+              
                 break
             }
             else if (temp >= ref) {
-                console.log('se cumple segunda')
+              
                 indice = i-1
                 break
             }else if(temp!== 0 && temp > ref){
-                console.log('se cumple tercera')
+                
                 indice = i
                 break
                 
             }else if(aux !== 0){
                 indice = i
-                console.log('se cumple cuarta')
+               
             }
         }
 
@@ -364,7 +334,6 @@ export default function HomeView() {
         let modo = returnModo(dia_ordinario[indice].mod)
         setModoexec(modo)
         modoControlador.current = modo
-
         let plan_activo = dia_ordinario[indice].plan
         let planname = `plan${plan_activo}`
         let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
@@ -395,7 +364,17 @@ export default function HomeView() {
             }
             return item
         })
-
+    
+        let resumen ={
+            horas: dia_ordinario[indice].horas,
+            minutos: dia_ordinario[indice].minutos,
+            plan: dia_ordinario[indice].plan,
+            pasos:fases_pasos,
+            modo: modo,
+        }
+        dispatch(setResumen(resumen));
+        console.log(resumen);
+        console.log('datos',controlerState)
         let auxg1;
         let auxg2;
         let auxg3;
@@ -449,6 +428,7 @@ export default function HomeView() {
            //item['icon'] = {}
             return item
         })
+     
         setSemaforos3(newDataUpdate)
 
       
@@ -570,14 +550,7 @@ export default function HomeView() {
         }
     }
 
-    const aumenta =()=>{
-        setPrueba1(prueba1+1)
-        console.log(prueba1)
-    }
-    const disminuye = ()=>{
-        setPrueba1(prueba1-1)
-        console.log(prueba1)
-    }
+
     useEffect(() => {
         const interval = setInterval(() => {
 
@@ -632,7 +605,7 @@ export default function HomeView() {
                                         </Td>
                                         <Td >
                                            <FormControlLabel
-                                                control={<IOSSwitch sx={{ m: 1 }} defaultChecked estado={dato.status === 'online'? true:false} />}
+                                                control={<IOSSwitch sx={{ m: 1 }}  estado={dato.status === 'online'? true:false} />}
                                                     label={dato.status}
                                                 />
                                         </Td>

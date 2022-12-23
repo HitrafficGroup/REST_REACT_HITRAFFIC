@@ -20,6 +20,7 @@ import Collapse from '@mui/material/Collapse';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import CardController from '../components/CardController';
+
 import Swal from 'sweetalert2';
 import Alert from '@mui/material/Alert';
 import { CheckAndLinkBits } from '../js/manageData';
@@ -616,9 +617,6 @@ export default function GruposView() {
         <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar4}>
             <CircularProgress color="inherit" />
         </Backdrop>
-        <div className='horarios-card'>
-            <CardController />
-        </div>
     </>);
 }
 
