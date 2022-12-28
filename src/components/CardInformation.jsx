@@ -38,7 +38,7 @@ export default function CardInformation() {
                 </div>
                 <ul>
                     {controlerState.resumen.pasos.map((item,index)=>(
-                        <li>Fases-{item.fase}</li>
+                        <li key={index}>Fases-{item.fase}</li>
                     ))}
                     </ul>
                 <div className='card-text-i'>

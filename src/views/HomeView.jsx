@@ -28,7 +28,6 @@ import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Alert from '@mui/material/Alert';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-// dependencias del custom Map
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -140,7 +139,7 @@ export default function HomeView() {
                         }
                         return item
                     })
-                    
+                 
                     semaforos2.current = aux;
                     setSemaforos(aux);
                     setAllData(doc.data());
@@ -148,7 +147,7 @@ export default function HomeView() {
                     parametrosCorriendo();
                 } else {
                     declararControlador(data.mac, data.ip);
-                    console.log('no existe');
+                 
                 }
                 //setSemaforos(doc.data().grupos)
             });
@@ -199,11 +198,6 @@ export default function HomeView() {
             return 'Apagado'
         }
     }
-
-
-
-
-
     const DraggableMarker = () => {
 
 
@@ -248,23 +242,41 @@ export default function HomeView() {
     const agregarSemaforo = async () => {
         var data = newSemaforo;
         data['position'] = [position.lat,position.lng];
-        var aux = semaforos.filter((item) => {
+        const temp = semaforos
+        var aux = temp.filter((item) => {
             return item.grupo !== data.grupo;
         })
         aux.push(data)
-        console.log(aux);
+       
 
-        let semaforosFormateados = aux.map((item)=>{
-            item['icon'] = {}
-            return item
-        })
-        console.log(semaforosFormateados)
+        var semaforosFormateados = aux.map(sema=>({
+            nombre: sema.nombre,
+            position:   sema.position,
+            rojo: sema.rojo,
+            amarillo: sema.amarillo,
+            verde: sema.verde,
+            icon:{},
+            grupo: sema.grupo
+        }))
+  
         const ref = doc(db, "controladores", `${controlerState.mac}`);
+        setAccionesUi(true)
         await updateDoc(ref, {
              resumen: semaforosFormateados
          });
+         setAccionesUi(false)
+        setNewSemaforo({
+            nombre: "",
+            position: [],
+            rojo: 15,
+            amarillo: 5,
+            verde: 30,
+            icon:{},
+            grupo: '',
+        })
         setModalCrearSemaforo(false);
     }
+    
     const cerrarEditarSemaforo = () => {
         setModalSemaforo(false);
     }
@@ -311,11 +323,9 @@ export default function HomeView() {
              ref = horas*100 + minutos
             if(horas === aux){
                 indice = i
-              
                 break
             }
             else if (temp >= ref) {
-              
                 indice = i-1
                 break
             }else if(temp!== 0 && temp > ref){
@@ -338,32 +348,46 @@ export default function HomeView() {
         let planname = `plan${plan_activo}`
         let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
         let pasos = plan_filter[0].pasos
-        let pasos_habilitados = pasos.filter((item) => {
+        var pasos_habilitados = pasos.filter((item) => {
             if (item.duracion > 0) {
                 return item;
             }
         })
        
         let fases = todaInformacion.current.fases
-        let fases_pasos = pasos_habilitados.map(item => {
-            let aux2 = fases.filter(_item => _item.faseNum === item.fase);
+
+        var pasos_temp = pasos_habilitados
+        var fases_pasos = pasos_temp.map((item) =>{
+            let aux2 = fases.find(_item => _item.faseNum === item.fase)
+            let obj_mod = {
+                duracion: item.duracion,
+                fase: item.fase,
+                grupos: item.grupos,
+                name: item.name
+            }
+            let grupos_aux = aux2.grupos
+     
             if(modo === 'Destello'){
-                item['grupos'] = aux2[0].grupos.map(item=>{
+                grupos_aux  = aux2.grupos.map(item=>{
                     item['colorDescripcion'] = 'amarillo'
                     return item
                 })
+                obj_mod['grupos'] = grupos_aux
             
             }else if(modo === 'Todo en Rojo'){
-                item['grupos'] = aux2[0].grupos.map(item=>{
+                grupos_aux  = aux2.grupos.map(item=>{
                     item['colorDescripcion'] = 'rojo'
                     return item
                 })
+                obj_mod['grupos'] = grupos_aux
             }
             else{
-                item['grupos'] = aux2[0].grupos
+                
+                obj_mod['grupos'] = grupos_aux
             }
-            return item
-        })
+            return obj_mod
+            
+    })
     
         let resumen ={
             horas: dia_ordinario[indice].horas,
@@ -373,8 +397,7 @@ export default function HomeView() {
             modo: modo,
         }
         dispatch(setResumen(resumen));
-        console.log(resumen);
-        console.log('datos',controlerState)
+
         let auxg1;
         let auxg2;
         let auxg3;
@@ -449,7 +472,7 @@ export default function HomeView() {
         let g4;
         let dataUpdated;
         let aux;
-        console.log(timer1.current)
+   
         if(modoControlador.current ===  'Destello' ){
             
             if(timer1.current > 1){
@@ -543,9 +566,7 @@ export default function HomeView() {
                 if(timer2.current === faseActual.current.length){
                     timer2.current = 0
                 }
-                timer1.current = 0
-                console.log('se pasa al siguiente paso');
-                
+                timer1.current = 0     
             }
         }
     }
@@ -563,6 +584,7 @@ export default function HomeView() {
 
         }, 1000);
 
+      
         return () => clearInterval(interval);
     }, []);
 
@@ -605,7 +627,7 @@ export default function HomeView() {
                                         </Td>
                                         <Td >
                                            <FormControlLabel
-                                                control={<IOSSwitch sx={{ m: 1 }}  estado={dato.status === 'online'? true:false} />}
+                                                control={<IOSSwitch sx={{ m: 1 }}  estado={dato.status} />}
                                                     label={dato.status}
                                                 />
                                         </Td>
@@ -691,21 +713,24 @@ export default function HomeView() {
                                             {dato.fase}
                                         </Td>
                                         <Td className='home-t-th' >
-                                            <table>
-
-                                                <tr>
-                                                    <th>G1</th>
-                                                    <th>G2</th>
-                                                    <th>G3</th>
-                                                    <th>G4</th>
-                                                </tr>
-                                                <tr>
-                                                    <td> <Chip label={dato.grupos[0].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[0].colorDescripcion} /></td>
-                                                    <td> <Chip label={dato.grupos[1].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[1].colorDescripcion} /></td>
-                                                    <td> <Chip label={dato.grupos[2].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[2].colorDescripcion} /></td>
-                                                    <td> <Chip label={dato.grupos[3].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[3].colorDescripcion} /></td>
-                                                </tr>
-                                            </table>
+                                            <Table>
+                                            <Thead>
+                                                <Tr>
+                                                    <Th>G1</Th>
+                                                    <Th>G2</Th>
+                                                    <Th>G3</Th>
+                                                    <Th>G4</Th>
+                                                </Tr>
+                                            </Thead>
+                                            <Tbody>
+                                                <Tr>
+                                                    <Td> <Chip label={dato.grupos[0].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[0].colorDescripcion} /></Td>
+                                                    <Td> <Chip label={dato.grupos[1].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[1].colorDescripcion} /></Td>
+                                                    <Td> <Chip label={dato.grupos[2].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[2].colorDescripcion} /></Td>
+                                                    <Td> <Chip label={dato.grupos[3].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[3].colorDescripcion} /></Td>
+                                                </Tr>
+                                            </Tbody>
+                                            </Table>
                                         </Td>
                                     
                                     </Tr>
@@ -748,15 +773,7 @@ export default function HomeView() {
                             </Tbody>
                         </Table>
                     </Grid>
-                    {/* <Grid item xs={6}>
-                        <button onClick={aumenta}>aumentar</button>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <button onClick={disminuye}>disminuir</button>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <CustomProgress red={10} yellow={5} green={prueba1} />
-                    </Grid> */}
+        
                     <Grid item xs={12}>
                         <div className="home-view-footer">
 
@@ -852,7 +869,7 @@ export default function HomeView() {
 }
 
 const IOSSwitch = styled((props) => (
-    <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} checked={props.estado}  />
+    <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} checked={props.estado === 'online'? true:false}  />
   ))(({ theme }) => ({
     width: 42,
     height: 26,
