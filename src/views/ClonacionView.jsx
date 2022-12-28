@@ -1,6 +1,7 @@
 import Container from '@mui/material/Container';
 import "../css/ClonacionView.css";
-import CardController from '../components/CardController';
+import { getIpsFromRestApi, setClonarControlador } from '../js/apiFunctions';
+import { useSelector, useDispatch } from 'react-redux';
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
@@ -12,6 +13,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Swal from 'sweetalert2';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -30,7 +34,9 @@ export default function ClonacionView() {
   const [checked, setChecked] = React.useState([]);
   const [left, setLeft] = React.useState(datosIniciales1);
   const [right, setRight] = React.useState(datosIniciales2);
-
+  const controlerState = useSelector(state => state.controlers);
+  const [deshabilitar,setDeshabilitar] = React.useState(true);
+  const [deshabilitar2,setDeshabilitar2] = React.useState(false);
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
 
@@ -43,11 +49,30 @@ export default function ClonacionView() {
     } else {
       newChecked.splice(currentIndex, 1);
     }
-    console.log('lista',newChecked)
+    console.log('lista', newChecked)
     console.log(currentIndex)
     setChecked(newChecked);
   };
-
+  const obtenerIps = async () => {
+    try {
+      setDeshabilitar2(true);
+      setRight([])
+      let ips = await getIpsFromRestApi();
+      console.log(ips)
+      let ips_online = ips['Ips_disponibles'].filter(item => item.status === "online")
+      let ips_disponibles = ips_online.filter(item => item.mac !== controlerState.mac)
+      let ips_formateadas = ips_disponibles.map((item, index) => {
+        item["index"] = index
+        return item
+      })
+      console.log(ips_formateadas)
+      setLeft(ips_formateadas)
+      setDeshabilitar(false)
+      setDeshabilitar2(false);
+    } catch (error) {
+      setDeshabilitar2(false)
+    }
+  }
   const numberOfChecked = (items) => intersection(checked, items).length;
 
   const handleToggleAll = (items) => () => {
@@ -69,7 +94,36 @@ export default function ClonacionView() {
     setRight(not(right, rightChecked));
     setChecked(not(checked, rightChecked));
   };
-
+  const clonarEquipos = async() => {
+    if(right.length >0 ){
+      setDeshabilitar2(true)
+      console.log("equipos de clonacion")
+      console.log(right)
+      let jasonData = {
+        ip: controlerState.ip,
+        lista_controladores: [],
+        mac: controlerState.mac
+      }
+      let destino = right
+      let destino_format = destino.map(item => (
+        {
+          ip: item.ip,
+          mac: item.mac
+        }
+      ))
+      console.log(destino_format)
+      jasonData["lista_controladores"] = destino_format;
+      console.log(jasonData)
+      await setClonarControlador(jasonData)
+      setDeshabilitar2(false);
+    }else{
+        Swal.fire({
+          icon: 'warning',
+          title: 'No hay dispositivo Destino',
+          text: 'Selecciona un dispositivo de destino',
+        })
+    }
+  }
   const customList = (title, items) => (
     <Card>
       <CardHeader
@@ -109,7 +163,6 @@ export default function ClonacionView() {
             <ListItem
               key={value.index}
               role="listitem"
-              button
               onClick={handleToggle(value)}
             >
               <ListItemIcon>
@@ -135,58 +188,58 @@ export default function ClonacionView() {
     <>
       <Container maxWidth="md" >
         <div className='titulos-clonacion'>
-          <h4>Clonacion del Controlador</h4>
+          <h5>Equipo de referencia: </h5> <p className='parrafos-clonacion'>{controlerState.mac}</p>
         </div>
         <Grid container spacing={2} justifyContent="center" alignItems="center">
-          <Grid item xs={12} md={12}> 
-          <Button variant="contained">Cargar Datos</Button>
-          </Grid>
-      <Grid item xs={12} md={5}>{customList('Dispositivos Disponibles', left)}</Grid>
-      <Grid item xs={12} md={2}>
-        <Grid container direction="column" alignItems="center">
-          <Button
-            sx={{ my: 0.5 }}
-            variant="outlined"
-            size="small"
-            onClick={handleCheckedRight}
-            disabled={leftChecked.length === 0}
-            aria-label="move selected right"
-          >
-            &gt;
-          </Button>
-          <Button
-            sx={{ my: 0.5 }}
-            variant="outlined"
-            size="small"
-            onClick={handleCheckedLeft}
-            disabled={rightChecked.length === 0}
-            aria-label="move selected left"
-          >
-            &lt;
-          </Button>
-        </Grid>
-      </Grid>
-      <Grid item xs={12} md={5}>{customList('Dispositivos Seleccionados', right)}</Grid>
-      <Grid item xs={12} md={12}> 
-          <Button variant="contained">Clonar Equipos</Button>
-      </Grid>
-    </Grid>
-      </Container>
 
+          <Grid item xs={12} md={5}>{customList('Dispositivos Disponibles', left)}</Grid>
+          <Grid item xs={12} md={2}>
+            <Grid container direction="column" alignItems="center">
+              <Button
+                sx={{ my: 0.5 }}
+                variant="outlined"
+                size="small"
+                onClick={handleCheckedRight}
+                disabled={leftChecked.length === 0}
+                aria-label="move selected right"
+              >
+                &gt;
+              </Button>
+              <Button
+                sx={{ my: 0.5 }}
+                variant="outlined"
+                size="small"
+                onClick={handleCheckedLeft}
+                disabled={rightChecked.length === 0}
+                aria-label="move selected left"
+              >
+                &lt;
+              </Button>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} md={5}>{customList('Dispositivos Seleccionados', right)}</Grid>
+          <Grid item xs={6} md={6}>
+            <Button variant="contained" color='verde' disabled={deshabilitar2} onClick={obtenerIps}>Leer Datos</Button>
+          </Grid>
+          <Grid item xs={6} md={6}>
+            <Button variant="contained" disabled={deshabilitar} onClick={clonarEquipos}>Clonar Equipos</Button>
+          </Grid>
+          <Grid item xs={12} md={12}>
+            <div style={{ height: 90 }}>
+
+            </div>
+          </Grid>
+        </Grid>
+      </Container>
+      <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
+            <CircularProgress color="inherit" />
+        </Backdrop>
     </>
   );
 }
 
 const datosIniciales1 = [
-  {ip: '192.168.0.178', mac: '00:14:97:F2:D1:39', status: 'offline', seleccionado: false, index:0},
-  {ip: '192.168.5.150', mac: '00:14:97:F2:E5:B7', status: 'offline', seleccionado: false, index:1},
-  {ip: '192.168.1.150', mac: '00:14:97:F6:53:48', status: 'offline', seleccionado: false, index:2},
-  {ip: '192.168.5.160', mac: '00:14:97:F6:53:B1', status: 'offline', seleccionado: false, index:3},
-  {ip: '192.168.5.178', mac: '00:14:97:F6:59:28', status: 'offline', seleccionado: false, index:4},
-  {ip: '192.168.1.178', mac: '00:14:97:F6:5A:20', status: 'offline', seleccionado: false, index:5},
-  {ip: '192.168.5.155', mac: '00:14:97:F6:5A:25', status: 'offline', seleccionado: false, index:6},
-  {ip: '192.168.5.155', mac: '00:14:97:F6:5A:35', status: 'offline', seleccionado: false, index:7}
-
+  
 ]
 const datosIniciales2 = [
 

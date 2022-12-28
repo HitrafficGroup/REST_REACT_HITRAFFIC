@@ -491,7 +491,7 @@ export default function HorariosView() {
                             severity="warning"
                             sx={{ mb: 2 }}
                         >
-                            Se han Generado Cambios en los Días Especiales sin cargar al controlador
+                           Se han Generado Cambios en los Días Especiales sin cargar al controlador
                         </Alert>
                     </Collapse>
                 </Grid>
