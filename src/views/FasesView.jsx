@@ -78,7 +78,8 @@ export default function FasesView() {
                         setDeshabilitar2(true);
                         let lista_datos = []
                         let datos_fases = {
-                            "ip": controlerState.ip
+                            "ip": controlerState.ip,
+                            "mac":controlerState.mac,
                         }
                         const temp = fases
                         for (let index_f = 0; index_f < 16; index_f++) {
@@ -99,7 +100,7 @@ export default function FasesView() {
                             datos_fases["fase" + (index_f + 1).toString()] = parseInt(fase, 2).toString()
                             lista_datos.push(parseInt(fase, 2))
                         }
-                        
+                        console.log(datos_fases)
                         enviarFasesRestApi(datos_fases)
                         enviarFasesFirebase(fases);
                         setDeshabilitar2(false);
