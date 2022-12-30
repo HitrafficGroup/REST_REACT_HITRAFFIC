@@ -1,9 +1,8 @@
 import Box from '@mui/material/Box';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import Button from '@mui/material/Button';
 import MemoryIcon from '@mui/icons-material/Memory';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import FmdGoodIcon from '@mui/icons-material/FmdGood';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import TrafficIcon from '@mui/icons-material/Traffic';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -49,7 +48,10 @@ export default function CardInformation() {
                     <AssignmentTurnedInIcon sx={{marginRight:1}} />
                     <h6 style={{ marginBottom: 0, marginRight: 5 }} >Plan: </h6> <p style={{ marginBottom: 0 }}>{controlerState.resumen.plan}</p>
                 </div>
-        
+                <div className='card-text-i'>
+                    <PlayCircleIcon sx={{marginRight:1}} />
+                    <h6 style={{ marginBottom: 0, marginRight: 5 }} >Modo: </h6> <p style={{ marginBottom: 0 }}>{controlerState.resumen.modo}</p>
+                </div>
             </div>
         </div>
     );

@@ -251,6 +251,7 @@ export default function HomeView() {
 
         var semaforosFormateados = aux.map(sema=>({
             nombre: sema.nombre,
+            modo:"Tiempo Fijo",
             position:   sema.position,
             rojo: sema.rojo,
             amarillo: sema.amarillo,
@@ -267,6 +268,7 @@ export default function HomeView() {
          setAccionesUi(false)
         setNewSemaforo({
             nombre: "",
+            modo:"Tiempo Fijo",
             position: [],
             rojo: 15,
             amarillo: 5,
@@ -366,19 +368,25 @@ export default function HomeView() {
                 name: item.name
             }
             let grupos_aux = aux2.grupos
-     
+            console.log(grupos_aux)
             if(modo === 'Destello'){
-                grupos_aux  = aux2.grupos.map(item=>{
-                    item['colorDescripcion'] = 'amarillo'
-                    return item
-                })
+                grupos_aux  = aux2.grupos.map(item=>({
+                    colorDescripcion:"amarillo",
+                    faseNum:item.faseNum,
+                    id:item.id,
+                    grupoNum:item.grupoNum,
+                    color:item.color
+                }))
                 obj_mod['grupos'] = grupos_aux
             
             }else if(modo === 'Todo en Rojo'){
-                grupos_aux  = aux2.grupos.map(item=>{
-                    item['colorDescripcion'] = 'rojo'
-                    return item
-                })
+                grupos_aux  = aux2.grupos.map(item=>({
+                    colorDescripcion:"rojo",
+                    faseNum:item.faseNum,
+                    id:item.id,
+                    grupoNum:item.grupoNum,
+                    color:item.color
+                }))
                 obj_mod['grupos'] = grupos_aux
             }
             else{
@@ -438,15 +446,19 @@ export default function HomeView() {
             if(item.grupo === 'g1'){
                 item['rojo'] = objg1.rojo
                 item['verde'] = objg1.verde
+                item['modo'] = modo
             }else if(item.grupo === 'g2'){
                 item['rojo'] = objg2.rojo
                 item['verde'] = objg2.verde
+                item['modo'] = modo
             }else if(item.grupo === 'g3'){
                 item['rojo'] = objg3.rojo
                 item['verde'] = objg3.verde
+                item['modo'] = modo
             }else{
                 item['rojo'] = objg4.rojo
                 item['verde'] = objg4.verde
+                item['modo'] = modo
             }
            //item['icon'] = {}
             return item
@@ -763,7 +775,7 @@ export default function HomeView() {
                                             {dato.grupo}
                                         </Td>
                                         <Td >
-                                            <CustomProgress red={dato.rojo} yellow={dato.amarillo} green={dato.verde} />
+                                            <CustomProgress red={dato.rojo} yellow={dato.amarillo} green={dato.verde} modo={dato.modo} />
                                         </Td>
 
                                       
@@ -1037,6 +1049,7 @@ const initialData = {
 const initialResumen =  [
     {
         nombre: "sin nombre",
+        modo:"Tiempo Fijo",
         rojo: 10,
         amarillo: 4,
         verde: 20,
@@ -1046,6 +1059,7 @@ const initialResumen =  [
     },
     {
         nombre: "sin nombre",
+        modo:"Tiempo Fijo",
         rojo: 10,
         amarillo: 4,
         verde: 20,
@@ -1055,6 +1069,7 @@ const initialResumen =  [
     },
     {
         nombre: "sin nombre",
+        modo:"Tiempo Fijo",
         rojo: 10,
         amarillo: 4,
         verde: 20,
@@ -1064,6 +1079,7 @@ const initialResumen =  [
     },
     {
         nombre: "sin nombre",
+        modo:"Tiempo Fijo",
         rojo: 10,
         amarillo: 4,
         verde: 20,
