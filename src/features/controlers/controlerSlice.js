@@ -6,7 +6,10 @@ export const controlerSlice = createSlice({
         ip: '',
         mac: '',
         status: '',
+        latitud: '',
+        longitud:'',
         fases: {},
+        nombre:'',
         planes:{},
         resumen:{
             horas: '00',
@@ -25,6 +28,10 @@ export const controlerSlice = createSlice({
             state.ip = action.payload.ip;
             state.mac = action.payload.mac;
             state.status = action.payload.status;
+            state.nombre = action.payload.nombre;
+            state.latitud = action.payload.latitud;
+            state.longitud = action.payload.longitud;
+
         },
         setResumen:(state,action)=>{
             state.resumen = action.payload;

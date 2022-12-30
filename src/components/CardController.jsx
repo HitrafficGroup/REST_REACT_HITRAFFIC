@@ -41,7 +41,7 @@ export default function CardController() {
                 </div>
                 <div className='card-text'>
                     <FmdGoodIcon sx={{marginRight:1}} />
-                    <h6 style={{ marginBottom: 0, marginRight: 5 }} >Ubi: </h6> <p style={{ marginBottom: 0 }}>Sector Ricaurte</p>
+                    <h6 style={{ marginBottom: 0, marginRight: 5 }} >Ubi: </h6> <p style={{ marginBottom: 0 }}>{controlerState.nombre}</p>
                 </div>
 
 

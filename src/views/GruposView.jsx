@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { db } from "../firebase/firebase-config";
-import { collection, updateDoc, onSnapshot, doc } from "firebase/firestore";
+import { updateDoc, doc } from "firebase/firestore";
 import Container from '@mui/material/Container';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import Select from '@mui/material/Select';
@@ -19,7 +19,7 @@ import { getGruposControlador, getConflictoVerdesControlador,setGruposControlado
 import Collapse from '@mui/material/Collapse';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import CardController from '../components/CardController';
+
 
 import Swal from 'sweetalert2';
 import Alert from '@mui/material/Alert';
@@ -292,12 +292,12 @@ export default function GruposView() {
         }).then((result) => {
             if (result.isConfirmed) {
                 try {
-                    console.log(grupos)
+                    setDeshabilitar2(true);
                     const newGruposconf = convertirDatos(grupos)
                     setGruposControlador(newGruposconf);
                     cargarGruposFirebase(grupos);
                     setCambioGrupos(false)
-
+                    setDeshabilitar2(false);
                 } catch (e) {
                     console.log(e);
 
@@ -329,7 +329,7 @@ export default function GruposView() {
         }).then((result) => {
             if (result.isConfirmed) {
                 try {
-                    console.log('');
+                    setDeshabilitar4(true);
                     fila1=[conflictg1g4,conflictg1g3,conflictg1g2,false]
                     fila2=[conflictg2g4,conflictg2g3,false,false]
                     fila3=[conflictg3g4,false,false,false]
@@ -381,6 +381,7 @@ export default function GruposView() {
                     setConflictoVerdesControlador(newConflicto);
                     cargarConflictosFirebase(conflictoFirebase);
                     setCambioConflictos(false)
+                    setDeshabilitar4(false);
 
                 } catch (e) {
                     console.log(e);
@@ -648,5 +649,3 @@ const gruposDefault = [
     }
 
 ]
-//de los creadores de la mochila de albanil , llegaron los panuelos del ingeniero
-//no me juzgen raza , no tenian las del goku en la farmacia

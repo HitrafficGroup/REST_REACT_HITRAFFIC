@@ -5,7 +5,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import { collection, updateDoc, onSnapshot, doc, getDoc, setDoc } from "firebase/firestore";
+import { collection, updateDoc, onSnapshot, doc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
@@ -29,6 +29,7 @@ import Alert from '@mui/material/Alert';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import EditIcon from '@mui/icons-material/Edit';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../css/HomeView.css';
@@ -225,12 +226,39 @@ export default function HomeView() {
         try {
             setAccionesUi(true);
             setControladores([]);
+            let items_db = []
+            const querySnapshot = await getDocs(collection(db, "historial_controladores"));
+            querySnapshot.forEach((doc) => {
+            console.log(doc.id, " => ", doc.data());
+            items_db.push(doc.data());
+            });
             const doc = await getIpsFromRestApi();
             const ips = doc.Ips_disponibles;
             var controladores = ips.map(item => {
-                item['seleccionado'] = false
-                return (item);
+                let name = items_db.find(element => element.mac === item.mac)
+                if(name === undefined){
+                    return ({
+                        ip:item.ip,
+                        mac:item.mac,
+                        status:item.status,
+                        nombre:"sin declararse aun",
+                        latitud:-2.876428,
+                        longitud:-78.965342,
+                        seleccionado: false
+                    });
+                }else{
+                    return ({
+                        ip:item.ip,
+                        mac:item.mac,
+                        status:item.status,
+                        nombre:name.nombre,
+                        latitud:name.latitud,
+                        longitud:name.longitud,
+                        seleccionado: false
+                    });
+                }
             })
+
             setControladores(controladores);
             setAccionesUi(false)
     
@@ -617,6 +645,7 @@ export default function HomeView() {
                                 <Tr>
                                     <Th className='home-t-th'>#</Th>
                                     <Th className='home-t-th'>Acciones</Th>
+                                    <Th className='home-t-th'>Nombre</Th>
                                     <Th className='home-t-th'>Ip</Th>
                                     <Th className='home-t-th'>Mac</Th>
                                     <Th className='home-t-th'>status</Th>
@@ -630,6 +659,9 @@ export default function HomeView() {
                                         </Td>
                                         <Td >
                                             <Button variant="contained" disabled={accionesUi} color={dato.seleccionado ? 'verde2' : 'seleccion'} onClick={() => { seleccionarControlador(dato) }} >SELECCIONAR</Button>
+                                        </Td>
+                                        <Td >
+                                            {dato.nombre}
                                         </Td>
                                         <Td >
                                             {dato.ip}
@@ -652,9 +684,26 @@ export default function HomeView() {
                     <Grid item md={12}>
                         <div className="h-controler-select">
                             <h5>Controlador Seleccionado: </h5>
+                            </div>
+                    </Grid>
+                            <Grid item xs={12} md={5}>
+                        <TextField id="outlined" focused value={controlerState.nombre} label="Nombre" variant="outlined" aria-readonly={true} fullWidth />
+                    </Grid>
+                            <Grid item xs={12} md={2}>
+                        <TextField id="outlined" focused value={controlerState.latitud} label="Latitud" variant="outlined" aria-readonly fullWidth />
+                    </Grid>
+                    <Grid item xs={12} md={2}>
+                        <TextField id="outlined" focused value={controlerState.longitud} label="Longitud" variant="outlined" aria-readonly fullWidth />
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                        <Button variant="contained" startIcon={<EditIcon />}   color="advertencia" fullWidth sx={{ height: "100%" }}>Editar</Button>
+                    </Grid>
+                    
+                    <Grid item md={12}>
+                        <div className="h-controler-select">
+                            <h5>Gestionar Semaforos: </h5>
                         </div>
                     </Grid>
-           
                     <Grid item xs={12} md={3}>
                         <TextField id="outlined" focused value={position.lat} label="Latitud" variant="outlined" fullWidth />
                     </Grid>
