@@ -22,7 +22,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
-import { setInitialStateController,setResumen,addIpsDisponibles,setPasosActivos,setSemaforosActivos } from "../features/controlers/controlerSlice";
+import { setInitialStateController,setResumen,addIpsDisponibles,setPasosActivos,addCurrentControler } from "../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Alert from '@mui/material/Alert';
@@ -149,7 +149,9 @@ export default function HomeView() {
             setCurrentControler(data);
             setPosition([data.latitud,data.longitud])
             dispatch(setInitialStateController(data));
-            console.log(controlerState.ips)
+            dispatch(addCurrentControler(data));
+            console.log(controlerState)
+     
             setReloadMap(!reloadMap)
             let aux = await getFirmwareVersion(data.mac, data.ip);
             let firmware = aux[data.mac]
@@ -842,10 +844,10 @@ export default function HomeView() {
                                             </Thead>
                                             <Tbody>
                                                 <Tr>
-                                                    <Td> <Chip label={dato.grupos[0].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[0].colorDescripcion} /></Td>
-                                                    <Td> <Chip label={dato.grupos[1].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[1].colorDescripcion} /></Td>
-                                                    <Td> <Chip label={dato.grupos[2].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[2].colorDescripcion} /></Td>
-                                                    <Td> <Chip label={dato.grupos[3].colorDescripcion} sx={{width:70,marginRight:1}} color={dato.grupos[3].colorDescripcion} /></Td>
+                                                    <Td> <Chip label={dato.grupos[0].colorDescripcion} sx={{width:110,marginRight:1}} color={dato.grupos[0].colorDescripcion} /></Td>
+                                                    <Td> <Chip label={dato.grupos[1].colorDescripcion} sx={{width:110,marginRight:1}} color={dato.grupos[1].colorDescripcion} /></Td>
+                                                    <Td> <Chip label={dato.grupos[2].colorDescripcion} sx={{width:110,marginRight:1}} color={dato.grupos[2].colorDescripcion} /></Td>
+                                                    <Td> <Chip label={dato.grupos[3].colorDescripcion} sx={{width:110,marginRight:1}} color={dato.grupos[3].colorDescripcion} /></Td>
                                                 </Tr>
                                             </Tbody>
                                             </Table>
