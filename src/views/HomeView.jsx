@@ -22,7 +22,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
-import { setInitialStateController,setResumen } from "../features/controlers/controlerSlice";
+import { setInitialStateController,setResumen,addIpsDisponibles,setPasosActivos,setSemaforosActivos } from "../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Alert from '@mui/material/Alert';
@@ -37,6 +37,7 @@ import swal from 'sweetalert';
 
 
 export default function HomeView() {
+    const [map, setMap] = useState(null)
     const [controladores, setControladores] = useState([]);
     const [modalSemaforo, setModalSemaforo] = useState(false);
     const [flagsimu, setFlagsimu] = useState(false);
@@ -48,6 +49,7 @@ export default function HomeView() {
     const faseActual = useRef(0);
     const [pasoexec,setPasoexec] = useState();
     const [currentSemaforo, setCurrentSemaforo] = useState({});
+    const [modalEditControlador,setModalEditControlador] = useState(false);
     const [accionesUi, setAccionesUi] = useState(false);
     const center = [-2.876428, -78.965342]
     const [draggable, setDraggable] = useState(false)
@@ -56,15 +58,16 @@ export default function HomeView() {
     const [semaforos, setSemaforos] = useState(initialData.resumen);
     const [semaforos3,setSemaforos3] = useState(initialData.resumen)
     const [currentControler, setCurrentControler] = useState({})
-    const [pasosActivos, setPasosActivos] = useState([]);
     const [faseexec,setFaseexec] = useState("");
     const [horarioexec,setHorarioexec] = useState("");
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [modoexec,setModoexec] = useState("");
+    const [reloadMap,setReloadMap] = useState(true);
     const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers)
     const [allData, setAllData] = useState({});
     const [deshabilitar,setDeshabilitar] = useState(true);
+    const [newController,setNewController] = useState({});
 
     //prueba semaforo
     const semaforos2 = useRef();
@@ -94,12 +97,36 @@ export default function HomeView() {
         [],
     )
     const handleNewSemaforo = (event) => {
-        setNewSemaforo({
+        setNewSemaforo(
+            {
             ...newSemaforo,
             [event.target.name]: event.target.value,
-        })
-
-
+        }
+        )
+    }
+    const handleNewController =(event)=>{
+        setNewController(
+            {
+                ...newController,
+                [event.target.name]: event.target.value,
+            }
+        )
+    }
+    const abrirModalEditarControlador = () =>{
+        setNewController(controlerState)
+        setModalEditControlador(true);
+    }
+    const actualizarDatosControlador = async()=>{
+       
+        setModalEditControlador(false);
+        const ref = doc(db, "historial_controladores", `${controlerState.mac}`);
+        await updateDoc(ref, {
+            latitud: newController.latitud,
+            longitud: newController.longitud,
+            nombre: newController.nombre
+        });
+        dispatch(setInitialStateController(newController));
+       
     }
     const toggleDraggable = useCallback(() => {
         setDraggable((d) => !d)
@@ -113,15 +140,49 @@ export default function HomeView() {
         datosFormat.resumen = initialResumen
         await setDoc(doc(ref, mac), datosFormat);
     }
+    
     const seleccionarControlador = async (data) => {
         try {
             
             simulacion.current = false;
             setFlagsimu(false);
             setCurrentControler(data);
+            setPosition([data.latitud,data.longitud])
             dispatch(setInitialStateController(data));
+            console.log(controlerState.ips)
+            setReloadMap(!reloadMap)
             let aux = await getFirmwareVersion(data.mac, data.ip);
             let firmware = aux[data.mac]
+            let aux5 = controlerState.ips
+           
+            let controls = aux5.map(item => {
+                let dato = {}
+                if (item.mac === data.mac) {
+                    dato = {
+                        ip: item.ip,
+                        latitud: item.latitud,
+                        longitud: item.longitud,
+                        mac: item.mac,
+                        nombre:item.nombre,
+                        seleccionado:true,
+                        status: item.status
+                    }
+                } else {
+                    dato = {
+                        ip: item.ip,
+                        latitud: item.latitud,
+                        longitud: item.longitud,
+                        mac: item.mac,
+                        nombre:item.nombre,
+                        seleccionado:false,
+                        status: item.status
+                    }
+                }
+                return dato;
+            })
+
+            console.log("controls: ",controls)
+            dispatch(addIpsDisponibles(controls));
             enviarVersionFirebase(data.mac, data.ip, firmware);
             onSnapshot(doc(db, "controladores", `${data.mac}`), (doc) => {
                 if (doc.exists()) {
@@ -143,6 +204,7 @@ export default function HomeView() {
                  
                     semaforos2.current = aux;
                     setSemaforos(aux);
+             
                     setAllData(doc.data());
                     todaInformacion.current = doc.data()
                     parametrosCorriendo();
@@ -152,22 +214,13 @@ export default function HomeView() {
                 }
                 //setSemaforos(doc.data().grupos)
             });
+            setDeshabilitar(false)
             swal({
                 title: "Conectado!",
                 text: "Controlador Seleccionado Con Exito",
                 icon: "success",
     
             });
-            const controls = controladores.map(item => {
-                if (item.mac === data.mac) {
-                    item['seleccionado'] = true
-                } else {
-                    item['seleccionado'] = false
-                }
-                return (item);
-            })
-            setControladores(controls)
-            setDeshabilitar(false)
         } catch (error) {
             setDeshabilitar(false)
         }
@@ -229,7 +282,7 @@ export default function HomeView() {
             let items_db = []
             const querySnapshot = await getDocs(collection(db, "historial_controladores"));
             querySnapshot.forEach((doc) => {
-            console.log(doc.id, " => ", doc.data());
+       
             items_db.push(doc.data());
             });
             const doc = await getIpsFromRestApi();
@@ -260,6 +313,7 @@ export default function HomeView() {
             })
 
             setControladores(controladores);
+            dispatch(addIpsDisponibles(controladores));
             setAccionesUi(false)
     
         } catch (error) {
@@ -396,7 +450,8 @@ export default function HomeView() {
                 name: item.name
             }
             let grupos_aux = aux2.grupos
-            console.log(grupos_aux)
+    
+        
             if(modo === 'Destello'){
                 grupos_aux  = aux2.grupos.map(item=>({
                     colorDescripcion:"amarillo",
@@ -496,8 +551,9 @@ export default function HomeView() {
 
       
         timer1.current = 0
-      
-        setPasosActivos(fases_pasos)
+        console.log(fases_pasos)
+        dispatch(setPasosActivos(fases_pasos));
+        //setPasosActivos(fases_pasos)
         faseActual.current = fases_pasos
 
         //setSemaforo()
@@ -545,6 +601,7 @@ export default function HomeView() {
                             return item
                         })
             setSemaforos(dataUpdated);
+            
         }else if(modoControlador.current ===  'Todo en Rojo'){
             if(timer1.current > 1){
                 g1 = rojo
@@ -576,7 +633,7 @@ export default function HomeView() {
                             return item
                         })
             setSemaforos(dataUpdated);
-
+            
         }
         else{
 
@@ -600,7 +657,7 @@ export default function HomeView() {
                             return item
                         })
             setSemaforos(dataUpdated);
-        
+                      
             if(timer1.current >= faseActual.current[timer2.current].duracion){
                 timer2.current= timer2.current + 1
                 if(timer2.current === faseActual.current.length){
@@ -652,7 +709,7 @@ export default function HomeView() {
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {controladores.map((dato, index) => (
+                                {controlerState.ips.map((dato, index) => (
                                     <Tr key={index} >
                                         <Td>
                                             {index + 1}
@@ -696,7 +753,7 @@ export default function HomeView() {
                         <TextField id="outlined" focused value={controlerState.longitud} label="Longitud" variant="outlined" aria-readonly fullWidth />
                     </Grid>
                     <Grid item xs={12} md={3}>
-                        <Button variant="contained" startIcon={<EditIcon />}   color="advertencia" fullWidth sx={{ height: "100%" }}>Editar</Button>
+                        <Button variant="contained" startIcon={<EditIcon />} onClick={abrirModalEditarControlador}  color="advertencia" fullWidth sx={{ height: "100%" }}>Editar</Button>
                     </Grid>
                     
                     <Grid item md={12}>
@@ -720,7 +777,7 @@ export default function HomeView() {
 
                     <Grid item xs={12} md={12}>
                         <div className="map">
-                            <MapContainer center={position} zoom={19} scrollWheelZoom={false} className='map-container'>
+                            <MapContainer center={[controlerState.latitud,controlerState.longitud]} zoom={19} key={reloadMap}  scrollWheelZoom={false} className='map-container'>
                                 <TileLayer
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -759,7 +816,7 @@ export default function HomeView() {
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {pasosActivos.map((dato, index) => (
+                                {controlerState.pasos_activos.map((dato, index) => (
                                     <Tr key={index} >
                                         <Td>
                                             {index + 1}
@@ -917,6 +974,62 @@ export default function HomeView() {
                         Aplicar
                     </Button>
                     <Button variant="contained" onClick={()=>{setModalCrearSemaforo(false)}} sx={{ backgroundColor: "red", marginLeft: 1 }}>
+                        cancelar
+                    </Button>
+                </ModalFooter>
+            </Modal>
+            <Modal isOpen={modalEditControlador} >
+                <ModalHeader>
+                    <div>
+                        <h1>
+                            Editar Semaforo
+                        </h1>
+                    </div>
+                </ModalHeader>
+                <ModalBody>
+                    <Grid container spacing={4}>
+                        <Grid item xs={12}>
+                            <TextField
+                                id="outlined"
+                                value={newController.nombre}
+                                name='nombre'
+                                onChange={handleNewController}
+                                label="Nombre del Semaforo"
+                                variant="outlined"
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                id="outlined"
+                                value={newController.latitud}
+                                name='latitud'
+                                type="number"
+                                onChange={handleNewController}
+                                label="Latitud"
+                                variant="outlined"
+                                fullWidth
+                            />
+                        </Grid>
+                          <Grid item xs={12}>
+                            <TextField
+                                id="outlined"
+                                value={newController.longitud}
+                                name='longitud'
+                                type="number"
+                                onChange={handleNewController}
+                                label="Longitud"
+                                variant="outlined"
+                                fullWidth
+                            />
+                        </Grid>
+                    </Grid>
+                </ModalBody>
+                <ModalFooter >
+                    <Button variant="contained" color='anaranjado1' onClick={actualizarDatosControlador} sx={{ marginLeft: 1 }}>
+                        Aplicar
+                    </Button>
+                    <Button variant="contained" color='rojo' onClick={()=>{setModalEditControlador(false)}} sx={{ marginLeft: 1 }}>
                         cancelar
                     </Button>
                 </ModalFooter>

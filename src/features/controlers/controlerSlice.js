@@ -1,16 +1,19 @@
 import {createSlice} from '@reduxjs/toolkit'
-
+import L from 'leaflet';
 export const controlerSlice = createSlice({
     name: 'controlers',
     initialState: {
         ip: '',
         mac: '',
         status: '',
-        latitud: '',
-        longitud:'',
+        latitud: -2.876428,
+        longitud:-78.965342,
         fases: {},
         nombre:'',
         planes:{},
+        pasos_activos:[],
+        semaforos:[],
+        ips:[],
         resumen:{
             horas: '00',
             minutos: '00',
@@ -35,8 +38,18 @@ export const controlerSlice = createSlice({
         },
         setResumen:(state,action)=>{
             state.resumen = action.payload;
+        },
+        addIpsDisponibles:(state,action)=>{
+            state.ips = action.payload
+        },
+        setPasosActivos:(state,action)=>{
+            state.pasos_activos = action.payload
+        },
+        setSemaforosActivos:(state,action)=>{
+            state.semaforos = action.payload
         }
     }
 })
-export const {addFases, addPlanes,setInitialStateController,setResumen} = controlerSlice.actions
+export const {addFases, addPlanes,setInitialStateController,setResumen,addIpsDisponibles,setPasosActivos,setSemaforosActivos} = controlerSlice.actions
 export default controlerSlice.reducer
+
