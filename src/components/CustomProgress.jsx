@@ -2,32 +2,33 @@
 import React,{useState,useEffect, useRef} from 'react';
 import '../css/HomeView.css'
 
-export default function CustomProgress({red,yellow,green,modo}) {
+export default function CustomProgress({red,yellow,green,apagado,destello,modo}) {
     const [porcentRed,setPorcentRed] = useState(20);
     const [porcentYellow,setPorcentYellow] = useState(50);
     const [porcentGreen,setPorcentGreen] = useState(30);
-    const verde = useRef()
-    const rojo = useRef()
-    const amarillo = useRef()
+    const [porcentApagado,setPorcentApagado] = useState(20);
+    const [porcentDestello,setPorcentDestello] = useState(10);
+
     const calculatePorcentajes = () => {  
-        let yellowm = yellow + 5
-        let total = red+yellowm+green;
-        let pyellow = (yellowm*100)/total;
+       
+        let total = red+yellow+green+destello+apagado;
+        let pyellow = (yellow*100)/total;
         let pgreen = (green*100)/total;
         let pred = (red*100)/total;
-        verde.current = pgreen
-        rojo.current = pred
+        let papagado = (apagado*100)/total;
+        let pdestello = (destello*100)/total;
         if(modo=== "Destello"){
-            total = red+yellowm+green;
+            total = red+yellow+green;
             setPorcentGreen(0);
             setPorcentYellow(total);
             setPorcentRed(0);
         }else if(modo ==="Todo en Rojo"){
-            total = red+yellowm+green;
+            total = red+yellow+green;
             setPorcentGreen(0);
             setPorcentYellow(0);
             setPorcentRed(total);
-        }else{           
+        }
+        else{           
             setPorcentGreen(pgreen);
             setPorcentYellow(pyellow);
             setPorcentRed(pred);

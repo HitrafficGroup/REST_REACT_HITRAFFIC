@@ -46,6 +46,7 @@ export default function HomeView() {
     const simulacion = useRef(false);
     const timer1 = useRef(0);
     const timer2 = useRef(0);
+    const allInfo = useRef({});
     const faseActual = useRef(0);
     const [pasoexec,setPasoexec] = useState();
     const [currentSemaforo, setCurrentSemaforo] = useState({});
@@ -68,6 +69,7 @@ export default function HomeView() {
     const [allData, setAllData] = useState({});
     const [deshabilitar,setDeshabilitar] = useState(true);
     const [newController,setNewController] = useState({});
+    const [otrosParam,setOtrosParam] = useState();
 
     //prueba semaforo
     const semaforos2 = useRef();
@@ -150,8 +152,7 @@ export default function HomeView() {
             setPosition([data.latitud,data.longitud])
             dispatch(setInitialStateController(data));
             dispatch(addCurrentControler(data));
-            console.log(controlerState)
-     
+
             setReloadMap(!reloadMap)
             let aux = await getFirmwareVersion(data.mac, data.ip);
             let firmware = aux[data.mac]
@@ -183,7 +184,6 @@ export default function HomeView() {
                 return dato;
             })
 
-            console.log("controls: ",controls)
             dispatch(addIpsDisponibles(controls));
             enviarVersionFirebase(data.mac, data.ip, firmware);
             onSnapshot(doc(db, "controladores", `${data.mac}`), (doc) => {
@@ -206,8 +206,8 @@ export default function HomeView() {
                  
                     semaforos2.current = aux;
                     setSemaforos(aux);
-             
                     setAllData(doc.data());
+                    allInfo.current = doc.data()
                     todaInformacion.current = doc.data()
                     parametrosCorriendo();
                 } else {
@@ -326,7 +326,7 @@ export default function HomeView() {
     const agregarSemaforo = async () => {
         var data = newSemaforo;
         data['position'] = [position.lat,position.lng];
-        const temp = semaforos
+        const temp = semaforos.slice()
         var aux = temp.filter((item) => {
             return item.grupo !== data.grupo;
         })
@@ -398,39 +398,45 @@ export default function HomeView() {
         let minutos = hora_actual.getMinutes();
         let aux;
         let aux2;
-        let indice;
         let temp;
         let ref;
-        
-        for(let i=0;i<16;i++) {
-             aux = parseInt(dia_ordinario[i].horas)
-             aux2 = parseInt(dia_ordinario[i].minutos)
+        let plan;
+        let nro_horario;
+
+        let dias_ordenados = dia_ordinario.slice()
+        dias_ordenados.sort(function(a,b){
+            let a_aux = parseInt(a.horas)
+            let a_aux2 = parseInt(a.minutos)
+            let b_aux = parseInt(b.horas)
+            let b_aux2 = parseInt(b.minutos)
+            a = a_aux*100 + a_aux2
+            b = b_aux*100 + b_aux2
+            return b-a
+        })
+        console.log(dias_ordenados)
+        for(let i=0;i<dias_ordenados.length;i++) {
+             aux = parseInt(dias_ordenados[i].horas)
+             aux2 = parseInt(dias_ordenados[i].minutos)
              temp = aux*100 + aux2
              ref = horas*100 + minutos
-            if(horas === aux){
-                indice = i
+             //console.log("tiempo controlador: ",temp)
+             //console.log("tiempo referencia: ",ref)
+            if(ref > temp){
+                nro_horario = dias_ordenados[i].nro
+                //console.log("plan obtenido: ",plan)
                 break
             }
-            else if (temp >= ref) {
-                indice = i-1
-                break
-            }else if(temp!== 0 && temp > ref){
-                
-                indice = i
-                break
-                
-            }else if(aux !== 0){
-                indice = i
-               
+            
             }
-        }
 
-
-        setHorarioexec(dia_ordinario[indice]);
-        let modo = returnModo(dia_ordinario[indice].mod)
+        
+        let horario_activo = dias_ordenados.find(item => item.nro === nro_horario)
+        console.log("horario filtrado: ",horario_activo)
+        setHorarioexec(horario_activo);
+        let modo = returnModo(horario_activo.mod)
         setModoexec(modo)
         modoControlador.current = modo
-        let plan_activo = dia_ordinario[indice].plan
+        let plan_activo = horario_activo.plan
         let planname = `plan${plan_activo}`
         let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
         let pasos = plan_filter[0].pasos
@@ -440,7 +446,7 @@ export default function HomeView() {
             }
         })
        
-        let fases = todaInformacion.current.fases
+        let fases = todaInformacion.current.fases.slice()
 
         var pasos_temp = pasos_habilitados
         var fases_pasos = pasos_temp.map((item) =>{
@@ -483,9 +489,9 @@ export default function HomeView() {
     })
     
         let resumen ={
-            horas: dia_ordinario[indice].horas,
-            minutos: dia_ordinario[indice].minutos,
-            plan: dia_ordinario[indice].plan,
+            horas: horario_activo.horas,
+            minutos: horario_activo.minutos,
+            plan: horario_activo.plan,
             pasos:fases_pasos,
             modo: modo,
         }
@@ -526,23 +532,29 @@ export default function HomeView() {
                 objg4.rojo = objg4.rojo + fases_pasos[i1].duracion 
             }
         }
-        var ejemplo = semaforos2.current
+        var ejemplo = semaforos2.current.slice()
+        var t_amarillo = allInfo.current.otros_parametros.tiempo_amarillo_vehicular
+
         var newDataUpdate = ejemplo.map((item) =>{
             if(item.grupo === 'g1'){
                 item['rojo'] = objg1.rojo
                 item['verde'] = objg1.verde
+                item['amarillo'] = t_amarillo
                 item['modo'] = modo
             }else if(item.grupo === 'g2'){
                 item['rojo'] = objg2.rojo
                 item['verde'] = objg2.verde
+                item['amarillo'] = t_amarillo
                 item['modo'] = modo
             }else if(item.grupo === 'g3'){
                 item['rojo'] = objg3.rojo
                 item['verde'] = objg3.verde
+                item['amarillo'] = t_amarillo
                 item['modo'] = modo
             }else{
                 item['rojo'] = objg4.rojo
                 item['verde'] = objg4.verde
+                item['amarillo'] = t_amarillo
                 item['modo'] = modo
             }
            //item['icon'] = {}
@@ -553,7 +565,7 @@ export default function HomeView() {
 
       
         timer1.current = 0
-        console.log(fases_pasos)
+
         dispatch(setPasosActivos(fases_pasos));
         //setPasosActivos(fases_pasos)
         faseActual.current = fases_pasos
@@ -606,19 +618,14 @@ export default function HomeView() {
             
         }else if(modoControlador.current ===  'Todo en Rojo'){
             if(timer1.current > 1){
-                g1 = rojo
-                g2 = rojo
-                g3 = rojo
-                g4 = rojo
+               
                 timer1.current = 0
               
-            }else{
-                g1 = apagado
-                g2 = apagado
-                g3 = apagado
-                g4 = apagado
-          
             }
+            g1 = rojo
+            g2 = rojo
+            g3 = rojo
+            g4 = rojo
             setFaseexec(1)
             setPasoexec('Paso 2')
             aux = semaforos2.current
@@ -659,7 +666,6 @@ export default function HomeView() {
                             return item
                         })
             setSemaforos(dataUpdated);
-                      
             if(timer1.current >= faseActual.current[timer2.current].duracion){
                 timer2.current= timer2.current + 1
                 if(timer2.current === faseActual.current.length){
