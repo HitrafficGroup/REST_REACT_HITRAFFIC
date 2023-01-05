@@ -69,12 +69,7 @@ export default function ErroresView() {
                 <Grid item xs={4}>
                     <Button color="verde2" sx={{height:'100%'}} fullWidth variant="contained" onClick={getDatosFromRestApi}>Leer Datos</Button>
                 </Grid>
-                <Grid item xs={4}>
-                    <Button variant="contained" color='anaranjado1' disabled={deshabilitar} sx={{height:'100%'}} fullWidth  >Borrar Datos</Button>
-                </Grid>
-                <Grid item xs={4}>
-                    <Button variant="contained"  sx={{height:'100%'}} disabled={deshabilitar} fullWidth >Cargar Datos</Button>
-                </Grid>
+             
                 <Grid item xs={12}>
                     <Grid item xs={12}>
                         <div style={{ height: 400, width: '100%' }} className={deshabilitar? 'disabled-errores':'habilited-errores'}>

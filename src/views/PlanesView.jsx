@@ -13,10 +13,11 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { db } from "../firebase/firebase-config";
-import { collection, updateDoc, onSnapshot, doc } from "firebase/firestore";
+import { collection, updateDoc, onSnapshot, doc,getDoc } from "firebase/firestore";
 import '../css/PlanesView.css'
 import { useSelector, useDispatch } from 'react-redux';
 import { addPlanes } from "../features/controlers/controlerSlice";
+import { getCheckData,updateSamplingTime } from '../js/gestionSolicitudes';
 import { getPlanesFromRestApi,setPlanesFromRestApi,getOtrosParametrosFromRestApi,setOtrosParametrosFromRestApi } from '../js/apiFunctions';
 import Swal from 'sweetalert2';
 import Chip from '@mui/material/Chip';
@@ -55,17 +56,28 @@ export default function PlanesView() {
     
     const leerPlanesFromRestApis = async () => {
         let planesControlador
+        let plan_actual
         try {
             setDis('disabled')
             setDeshabilitar(true)
             setDeshabilitar2(true)
-            let result = await getPlanesFromRestApi(controlerState.mac, controlerState.ip)
-            planesControlador = result[controlerState.mac]
+            let flag =  await getCheckData(controlerState.mac,"planes",30)
+           
+            if(flag !== false){
+                planesControlador = flag
+                
+            }else{
+                let result = await getPlanesFromRestApi(controlerState.mac, controlerState.ip)
+                planesControlador = result[controlerState.mac].slice()
+                await updateSamplingTime(controlerState.mac)
+            }
+            plan_actual = planesControlador[0].pasos.slice()
             setPlanes(planesControlador)
-            setCurrentPlan(planesControlador[0].pasos)
-            console.log('planes formateados: ',planesControlador[0].pasos)
-            console.log(planesControlador)
+            setCurrentPlan(plan_actual)
+
+    
             //dispatch(addPlanes(planesControlador))
+
             setDis('habilited')
             setDeshabilitar2(false)
             setDeshabilitar(false)
