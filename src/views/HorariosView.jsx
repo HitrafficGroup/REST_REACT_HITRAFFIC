@@ -11,16 +11,17 @@ import { db } from "../firebase/firebase-config";
 import { updateDoc, doc } from "firebase/firestore";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
+import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import Collapse from '@mui/material/Collapse';
 import Alert from '@mui/material/Alert';
 import Swal from 'sweetalert2';
 import FormGroup from '@mui/material/FormGroup';
 import { getHorariosFromRestApi, postHorariosFromRestApi, getDiasEspecialesControlador, setDiasEspecialesControlador } from '../js/apiFunctions'
 import Checkbox from '@mui/material/Checkbox';
-import { getCheckData,updateSamplingTime } from '../js/gestionSolicitudes';
+import { getCheckData, updateSamplingTime } from '../js/gestionSolicitudes';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import '../css/HorariosView.css';
 import CardController from '../components/CardController';
 import Backdrop from '@mui/material/Backdrop';
@@ -52,24 +53,36 @@ export default function HorariosView() {
     const [cdomingo, setCDomingo] = useState(false);
     const [claseDia, setClaseDia] = useState(1);
     const [tablaDias, setTablaDias] = useState([]);
-    const [cambiosHorarios,setCambiosHorarios] = useState(false);
+    const [cambiosHorarios, setCambiosHorarios] = useState(false);
     const [value, setValue] = useState(null);
     const [currentDiaFestivo, setCurrentDiaFestivo] = useState();
-    const [cambioDias,setCambioDias] = useState(false);
+    const [cambioDias, setCambioDias] = useState(false);
     const [currentHorario, setCurrentHorario] = useState(
         { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
     );
     const editarHorarios = (data) => {
         console.log(data)
-        setCurrentHorario(data);
-        setPlanSemaforo(data.plan.toString())
-        setModoSemaforo(data.mod)
-        setDesfaseSemaforo(data.desfase)
-        let horas = data.horas
-        let minutos = data.minutos
+       
+        let plan
+        let respaldo_data = JSON.parse(JSON.stringify(data));
+        setCurrentHorario(respaldo_data)
+        if(respaldo_data.plan.toString()=== "0"){
+            
+                plan = "1"
+        }else{
+                plan = respaldo_data.plan.toString()
+        }
+        setPlanSemaforo(plan)
+        setModoSemaforo(respaldo_data.mod)
+        setDesfaseSemaforo(respaldo_data.desfase)
+        let horas = respaldo_data.horas
+        let minutos = respaldo_data.minutos
         let tiempo = new Date(`Nov 02 1999 ${horas}:${minutos} GMT-0500 (Ecuador Time)`)
+
         setTime1(tiempo)
+        console.log(respaldo_data)
         setModalHorarios(true);
+        
 
     }
     const ChangeLunes = (event) => {
@@ -103,11 +116,11 @@ export default function HorariosView() {
 
 
     const handleTime1 = (newValue) => {
-        let h =  new Date(newValue.$d)
-        let horas =  h.getHours()
-        horas =  ("0" + horas).slice(-2);
+        let h = new Date(newValue.$d)
+        let horas = h.getHours()
+        horas = ("0" + horas).slice(-2);
         let minutos = h.getMinutes()
-        minutos  =  ("0" + minutos).slice(-2);
+        minutos = ("0" + minutos).slice(-2);
         console.log(horas)
         console.log(minutos)
         setTime1(newValue)
@@ -115,13 +128,39 @@ export default function HorariosView() {
         currentHorario['minutos'] = minutos
     }
     const aplicarLosCambios = () => {
+        let newObjectHorario;
+        let aux_horarios = JSON.parse(JSON.stringify(horarios));
+        if(modoSemaforo !== 0){
+             newObjectHorario = {
+                plan:planSemaforo,
+                mod:modoSemaforo,
+                desfase:desfaseSemaforo,
+                horas: currentHorario.horas,
+                minutos:currentHorario.minutos,
+                nro:currentHorario.nro,
+    
+            }
+        }else{
+           newObjectHorario = { 
+            nro: currentHorario.nro, 
+            horas: '00',
+             minutos: '00', 
+             mod: 0, 
+             plan: 0, 
+             desfase: "0" } 
+        }
 
-        var temp = currentHorario
-        temp['plan'] = parseInt(planSemaforo)
-        temp['mod'] = modoSemaforo
-        temp['desfase'] = desfaseSemaforo
-        setCurrentHorario(temp)
-        console.log(temp);
+        let datos_actualizados = aux_horarios.map((item)=>{
+            if(item.nro === currentHorario.nro){
+                return newObjectHorario
+            }else{
+                return item
+            }
+
+        })
+        console.log(datos_actualizados)
+        setHorarios(datos_actualizados)
+        // console.log(temp);
         setModalHorarios(false);
         setCambiosHorarios(true);
     }
@@ -138,7 +177,7 @@ export default function HorariosView() {
 
         setClaseDia(event.target.value);
     }
-    const chargeHorario =(data)=> {
+    const chargeHorario = (data) => {
         setTipoDia('dia_ordinario')
         setHorarios(data['dia_ordinario'])
     }
@@ -192,18 +231,19 @@ export default function HorariosView() {
         try {
             let result;
             setHabilitar2(true);
-            let flag =  await getCheckData(controlerState.mac,"horarios",40)
-            if(flag !== false){
+            let flag = await getCheckData(controlerState.mac, "horarios",50)
+            if (flag !== false) {
                 result = flag
-                
-            }else{
+
+            } else {
                 result = await getHorariosFromRestApi(controlerState.mac, controlerState.ip)
+                cargarHorariosFirebase(result)
                 await updateSamplingTime(controlerState.mac)
             }
             setObjHorarios(result)
             console.log(result);
             chargeHorario(result);
-            
+
             setHabilitar1(false)
             setHabilitar2(false);
         } catch (e) {
@@ -280,10 +320,10 @@ export default function HorariosView() {
         })
 
     }
-    const cargarDiaFestivosFirebase = async(data) =>{
+    const cargarDiaFestivosFirebase = async (data) => {
         const ref = doc(db, "controladores", `${controlerState.mac}`);
-        await updateDoc(ref,{
-            dias_especiales:data
+        await updateDoc(ref, {
+            dias_especiales: data
         });
     }
     const setDiafestivoFromrestApi = async () => {
@@ -317,22 +357,53 @@ export default function HorariosView() {
         newDiasFest['fines_semana'] = dato_entero.toString();
         newDiasFest['ip'] = controlerState.ip;
         newDiasFest['mac'] = controlerState.mac;
- 
+
         let newDiasFirebase = {
-            dia_festivo:tablaDias,
-            fines_semana:[    
-                {dia: 'domingo', estado: cdomingo},
-                {dia: 'lunes', estado: clunes},
-                {dia: 'martes', estado: cmartes},
-                {dia: 'miercoles', estado: cmiercoles},
-                {dia: 'jueves', estado: cjueves},
-                {dia: 'viernes', estado: cviernes},
-                {dia: 'sabado', estado: csabado}
+            dia_festivo: tablaDias,
+            fines_semana: [
+                { dia: 'domingo', estado: cdomingo },
+                { dia: 'lunes', estado: clunes },
+                { dia: 'martes', estado: cmartes },
+                { dia: 'miercoles', estado: cmiercoles },
+                { dia: 'jueves', estado: cjueves },
+                { dia: 'viernes', estado: cviernes },
+                { dia: 'sabado', estado: csabado }
             ]
-        } 
+        }
         await setDiasEspecialesControlador(newDiasFest);
         cargarDiaFestivosFirebase(newDiasFirebase)
         setDeshabilitar4(false);
+    }
+    const removeHorario = (_data) => {
+
+        Swal.fire({
+            title: 'Deseas Quitar Horario ?',
+            text: 'Estos Cambios se guardaran en el Controlador',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, actualizar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log("se removera el siguiente dato", _data)
+                let obj_horarios_new = Object.assign({}, objHorarios);
+                let objeto_vacio = { nro: 17, horas: '00', minutos: '00', mod: 0, plan: 0, desfase: "0" }
+                let aux_horarios  = JSON.parse(JSON.stringify(horarios));
+                console.log("horarios sin modificar:", horarios)
+                let filter_h = aux_horarios.filter((item) => item.nro !== _data.nro)
+                filter_h.push(objeto_vacio)
+                filter_h.forEach((i, index) => {
+                    i.nro = index
+                })
+                console.log(filter_h)
+                setHorarios(filter_h)
+                obj_horarios_new['dia_ordinario'] = filter_h
+                setObjHorarios(obj_horarios_new);
+                console.log(filter_h)
+                setCambiosHorarios(true)
+            }
+        })
     }
     const borrarDiaFestivo = (data) => {
         setCurrentDiaFestivo(data);
@@ -350,10 +421,10 @@ export default function HorariosView() {
         setCambioDias(true);
     }
 
-    const cargarHorariosFirebase = async(data)=>{
+    const cargarHorariosFirebase = async (data) => {
         const ref = doc(db, "controladores", `${controlerState.mac}`);
-        await updateDoc(ref,{
-            horarios:data
+        await updateDoc(ref, {
+            horarios: data
         });
     }
 
@@ -370,7 +441,7 @@ export default function HorariosView() {
         }).then((result) => {
             if (result.isConfirmed) {
                 try {
-                   
+
                     cargarHorariosFromRestApi();
                     setCambiosHorarios(false);
                 } catch (e) {
@@ -383,17 +454,14 @@ export default function HorariosView() {
 
 
     }
-    const cargarHorariosFromRestApi = async() =>{
+    const cargarHorariosFromRestApi = async () => {
         setHabilitar2(true);
-        const data = horarios
+        const data = horarios.slice()
         console.log(data)
         var newObject = {}
         for (let num = 0; num < 16; num++) {
-
-
             let mod = data[num].mod
             let plan = data[num].plan
-
             mod = parseInt(mod).toString(2)
             plan = parseInt(plan).toString(2)
             let bits_faltantes_mod = 3 - mod.length
@@ -412,12 +480,10 @@ export default function HorariosView() {
             newObject['minuto' + (num + 1)] = parseInt(minutos, 16).toString()
             newObject['desfase' + (num + 1)] = data[num].desfase
             newObject['mod_plan' + (num + 1)] = mod_plan
-
-
         }
         newObject['ip'] = controlerState.ip
         newObject['num_horario'] = formatearTipoDia(tipoDia)
-  
+        console.log(objHorarios)
         cargarHorariosFirebase(objHorarios)
         await postHorariosFromRestApi(newObject);
         setHabilitar2(false);
@@ -470,7 +536,7 @@ export default function HorariosView() {
                                         {horarios.map((dato, index) => (
                                             <Tr key={index} >
                                                 <Td>
-                                                    {index + 1}
+                                                    {dato.nro}
                                                 </Td>
                                                 <Td >
                                                     {dato.horas + ':' + dato.minutos}
@@ -486,6 +552,7 @@ export default function HorariosView() {
                                                 </Td>
                                                 <Td >
                                                     <Button variant="contained" onClick={() => { editarHorarios(dato) }} color='crema'>Editar</Button>
+                                                    <Button variant="contained" onClick={() => { removeHorario(dato) }} sx={{ marginLeft: 2 }} color='rojo'>QUITAR</Button>
                                                 </Td>
                                             </Tr>
                                         ))}
@@ -495,15 +562,15 @@ export default function HorariosView() {
                         </div>
                     </Grid>
                     <Grid item xs={12}>
-                    <Collapse in={cambiosHorarios}>
-                        <Alert
-                            severity="warning"
-                            sx={{ mb: 2 }}
-                        >
-                           Se han Generado Cambios en los Días Especiales sin cargar al controlador
-                        </Alert>
-                    </Collapse>
-                </Grid>
+                        <Collapse in={cambiosHorarios}>
+                            <Alert
+                                severity="warning"
+                                sx={{ mb: 2 }}
+                            >
+                                Se han Generado Cambios en los Días Especiales sin cargar al controlador
+                            </Alert>
+                        </Collapse>
+                    </Grid>
                     <Grid item xs={12}>
                         <h5>Parámetros Operativos del Controlador</h5>
                     </Grid>
@@ -585,15 +652,15 @@ export default function HorariosView() {
                         </Table>
                     </Grid>
                     <Grid item xs={12}>
-                    <Collapse in={cambioDias}>
-                        <Alert
-                            severity="warning"
-                            sx={{ mb: 2 }}
-                        >
-                            Se han Generado Cambios en los Días Especiales sin cargar al controlador
-                        </Alert>
-                    </Collapse>
-                </Grid>
+                        <Collapse in={cambioDias}>
+                            <Alert
+                                severity="warning"
+                                sx={{ mb: 2 }}
+                            >
+                                Se han Generado Cambios en los Días Especiales sin cargar al controlador
+                            </Alert>
+                        </Collapse>
+                    </Grid>
                     <Grid item xs={4} >
                         <Button variant="contained" fullWidth sx={{ height: '100%' }} onClick={LeerParamOperativos} color='verde2'>LEER DATOS</Button>
                     </Grid>
@@ -615,7 +682,7 @@ export default function HorariosView() {
                 <ModalHeader>
                     <div>
                         <h1>
-                      Configuración de Horarios
+                            Configuración de Horarios
                         </h1>
                     </div>
                 </ModalHeader>
@@ -642,6 +709,7 @@ export default function HorariosView() {
                                     name='mod'
                                     onChange={handleModoSemaforo}
                                 >
+                                    <MenuItem value={0}>Ninguno</MenuItem>
                                     <MenuItem value={1}>Tiempo Fijo</MenuItem>
                                     <MenuItem value={2}>Pulsante</MenuItem>
                                     <MenuItem value={3}>Destello</MenuItem>
@@ -720,4 +788,4 @@ const horariosPorDefecto = [
 ]
 
 
-const planes2 = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']
+const planes2 = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']

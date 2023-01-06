@@ -61,7 +61,7 @@ export default function PlanesView() {
             setDis('disabled')
             setDeshabilitar(true)
             setDeshabilitar2(true)
-            let flag =  await getCheckData(controlerState.mac,"planes",30)
+            let flag =  await getCheckData(controlerState.mac,"planes",50)
            
             if(flag !== false){
                 planesControlador = flag
