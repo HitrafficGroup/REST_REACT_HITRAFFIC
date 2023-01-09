@@ -1,3 +1,5 @@
+import CardInformation from '../components/CardInformation';
+import CardController from "../components/CardController";
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import Chip from '@mui/material/Chip';
@@ -20,7 +22,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Swal from 'sweetalert2';
 import '../css/FasesView.css';
 
-import CardController from '../components/CardController';
+
 
 export default function FasesView() {
 

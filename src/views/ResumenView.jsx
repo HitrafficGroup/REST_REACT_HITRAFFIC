@@ -1,3 +1,5 @@
+import CardInformation from '../components/CardInformation';
+import CardController from "../components/CardController";
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import "../css/ResumenView.css";

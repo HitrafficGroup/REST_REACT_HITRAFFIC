@@ -1,3 +1,5 @@
+import CardInformation from '../components/CardInformation';
+import CardController from "../components/CardController";
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
@@ -785,7 +787,7 @@ export default function HomeView() {
 
                     <Grid item xs={12} md={12}>
                         <div className="map">
-                            <MapContainer center={[controlerState.latitud,controlerState.longitud]} zoom={19} key={reloadMap}  scrollWheelZoom={false} className='map-container'>
+                            <MapContainer center={[controlerState.latitud,controlerState.longitud]} zoom={19} key={reloadMap}  scrollWheelZoom={false} className='map-container leaflet-container-2'>
                                 <TileLayer
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

@@ -1,3 +1,5 @@
+import CardInformation from '../components/CardInformation';
+import CardController from "../components/CardController";
 import React, { useState } from 'react';
 import { db } from "../firebase/firebase-config";
 import { updateDoc, doc } from "firebase/firestore";

@@ -1,3 +1,5 @@
+import CardInformation from '../components/CardInformation';
+import CardController from "../components/CardController";
 import React, { useState } from 'react';
 import Select from '@mui/material/Select';
 import Container from '@mui/material/Container';
@@ -23,7 +25,6 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import '../css/HorariosView.css';
-import CardController from '../components/CardController';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';

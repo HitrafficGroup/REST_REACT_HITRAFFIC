@@ -1,3 +1,5 @@
+import CardInformation from '../components/CardInformation';
+import CardController from "../components/CardController";
 import Container from '@mui/material/Container';
 import "../css/ClonacionView.css";
 import { getIpsFromRestApi, setClonarControlador } from '../js/apiFunctions';

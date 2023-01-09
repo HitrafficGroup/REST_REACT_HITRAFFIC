@@ -1,3 +1,5 @@
+import CardInformation from '../components/CardInformation';
+import CardController from "../components/CardController";
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -7,7 +9,7 @@ import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { db } from "../firebase/firebase-config";
 import { updateDoc, doc } from "firebase/firestore";
-import CardController from '../components/CardController';
+
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import {getEntradasControlador,setEntradasControlador} from "../js/apiFunctions";

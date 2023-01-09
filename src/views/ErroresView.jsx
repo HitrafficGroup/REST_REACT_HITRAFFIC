@@ -1,3 +1,5 @@
+import CardInformation from '../components/CardInformation';
+import CardController from "../components/CardController";
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -9,7 +11,6 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import GridOnIcon from '@mui/icons-material/GridOn';
-import CardController from '../components/CardController';
 import "../css/ErroresView.css";
 const columns = [
 
