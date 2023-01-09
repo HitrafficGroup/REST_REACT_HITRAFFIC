@@ -17,7 +17,8 @@ import { collection, updateDoc, onSnapshot, doc,getDoc } from "firebase/firestor
 import '../css/PlanesView.css'
 import { useSelector, useDispatch } from 'react-redux';
 import { addPlanes } from "../features/controlers/controlerSlice";
-import { getCheckData,updateSamplingTime } from '../js/gestionSolicitudes';
+//mitze rodriguez
+import { updatePlanesSamplingTime,getCheckDataPlanes } from '../js/gestionSolicitudes';
 import { getPlanesFromRestApi,setPlanesFromRestApi,getOtrosParametrosFromRestApi,setOtrosParametrosFromRestApi } from '../js/apiFunctions';
 import Swal from 'sweetalert2';
 import Chip from '@mui/material/Chip';
@@ -61,15 +62,18 @@ export default function PlanesView() {
             setDis('disabled')
             setDeshabilitar(true)
             setDeshabilitar2(true)
-            let flag =  await getCheckData(controlerState.mac,"planes",50)
-           
+            let flag =  await getCheckDataPlanes(controlerState.mac,"planes",10)
+            //eusart
+            //usart
             if(flag !== false){
                 planesControlador = flag
                 
             }else{
                 let result = await getPlanesFromRestApi(controlerState.mac, controlerState.ip)
                 planesControlador = result[controlerState.mac].slice()
-                await updateSamplingTime(controlerState.mac)
+                console.log(planesControlador)
+                await updatePlanesSamplingTime(controlerState.mac)
+                await cargarPlanesFirebase(planesControlador)
             }
             plan_actual = planesControlador[0].pasos.slice()
             setPlanes(planesControlador)
@@ -102,11 +106,11 @@ export default function PlanesView() {
        setCurrentPlan(planselect[0].pasos);
        console.log(planselect);
     }
-    const cargarPlanesFirebase = async() =>{
+    const cargarPlanesFirebase = async(_planes) =>{
         const ref = doc(db, "controladores", `${controlerState.mac}`);
-        console.log(planes)
+        console.log(_planes)
         await updateDoc(ref,{
-            planes:planes
+            planes:_planes
         });
     }
     const leerOtrosParametrosApi = async () =>{
@@ -222,9 +226,8 @@ export default function PlanesView() {
                 setCambio(false);
      
                 setPlanesFromRestApi(newData);
-                cargarPlanesFirebase();
-                console.log(planes);
-                console.log(currentPlan);
+                cargarPlanesFirebase(planes);
+                
             }
         })        
     }catch(e){

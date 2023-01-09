@@ -13,6 +13,7 @@ import { db } from "../firebase/firebase-config";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import { getFasesFromRestApi, postFasesFromRestApi } from '../js/apiFunctions'
+import { updateFasesSamplingTime,getCheckDataFases } from '../js/gestionSolicitudes';
 import { useSelector } from 'react-redux';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -100,8 +101,9 @@ export default function FasesView() {
                             datos_fases["fase" + (index_f + 1).toString()] = parseInt(fase, 2).toString()
                             lista_datos.push(parseInt(fase, 2))
                         }
-                        console.log(datos_fases)
+                        //console.log(datos_fases)
                         enviarFasesRestApi(datos_fases)
+                        console.log(fases)
                         enviarFasesFirebase(fases);
                         setDeshabilitar2(false);
     
@@ -213,17 +215,26 @@ export default function FasesView() {
     */
     const leerDatosFases = async () => {
         try {
+            let result = []
             setDeshabilitar2(true);
-            const result = await getFasesFromRestApi(controlerState.mac, controlerState.ip)
-            var arregloFases = []
-            for (let index_plan = 1; index_plan < 17; index_plan++) {
-                var faseT = result["fase" + index_plan]
-                arregloFases.push(faseT)
-
+            let flag = await getCheckDataFases(controlerState.mac, "fases",10)
+            if (flag !== false) {
+                result = flag
+                setFases(result);
+            } else {
+                result = await getFasesFromRestApi(controlerState.mac, controlerState.ip)
+                var arregloFases = []
+                for (let index_plan = 1; index_plan < 17; index_plan++) {
+                    var faseT = result["fase" + index_plan]
+                    arregloFases.push(faseT)
+    
+                }
+                setFases(arregloFases);
+                enviarFasesFirebase(arregloFases);
+                await updateFasesSamplingTime(controlerState.mac)
             }
-            const ndatos = arregloFases
             
-            setFases(ndatos);
+            
             setDeshabilitar(false);
             setDeshabilitar2(false);
             //dispatch(addFases(ndatos));

@@ -12,6 +12,7 @@ import ListSubheader from '@mui/material/ListSubheader';
 import Drawer from '@mui/material/Drawer';
 import ClonacionMenu from '../components/content/ClonacionMenu';
 import EntradasMenu from '../components/content/EntradasMenu';
+import MapaUniversalMenu from './content/MapaUniversalMenu';
 import FasesMenu from '../components/content/FasesMenu';
 import HorariosMenu from '../components/content/HorariosMenu';
 import PlanesMenu from '../components/content/PlanesMenu';
@@ -32,55 +33,60 @@ export default function ButtonAppBar() {
 
   const menuData = [
     {
-      child: <HomeMenu />,
+      child: <MapaUniversalMenu/>,
       visibility: true,
-      key: 0
+      key: 9
     },
     {
-      child: <SyncMenu />,
+      child: <HomeMenu />,
       visibility: true,
       key: 10
     },
     {
+      child: <SyncMenu />,
+      visibility: true,
+      key: 20
+    },
+    {
       child: <GruposMenu />,
-      visibility: true,
-      key: 11
-    },
-    {
-      child: <FasesMenu />,
-      visibility: true,
-      key: 12
-    },
-    {
-      child: <PlanesMenu />,
-      visibility: true,
-      key: 13
-    },
-    {
-      child: <HorariosMenu />,
-      visibility: true,
-      key: 50
-    },
-    {
-      child: <EntradasMenu />,
       visibility: true,
       key: 30
     },
     {
+      child: <FasesMenu />,
+      visibility: true,
+      key: 40
+    },
+    {
+      child: <PlanesMenu />,
+      visibility: true,
+      key: 50
+    },
+    {
+      child: <HorariosMenu />,
+      visibility: true,
+      key: 60
+    },
+    {
+      child: <EntradasMenu />,
+      visibility: true,
+      key: 80
+    },
+    {
       child: <RegistroErrores />,
       visibility: true,
-      key: 70
+      key: 90
     },
     {
       child: <ClonacionMenu />,
       visibility: true,
-      key: 20
+      key: 100
     },
 
     {
       child: <SalirMenu />,
       visibility: true,
-      key: 90
+      key: 110
     },
   ]
 

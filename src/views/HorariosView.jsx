@@ -18,7 +18,7 @@ import Swal from 'sweetalert2';
 import FormGroup from '@mui/material/FormGroup';
 import { getHorariosFromRestApi, postHorariosFromRestApi, getDiasEspecialesControlador, setDiasEspecialesControlador } from '../js/apiFunctions'
 import Checkbox from '@mui/material/Checkbox';
-import { getCheckData, updateSamplingTime } from '../js/gestionSolicitudes';
+import { getCheckDataHorarios, updateHorarioSamplingTime } from '../js/gestionSolicitudes';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useSelector } from 'react-redux';
@@ -231,14 +231,14 @@ export default function HorariosView() {
         try {
             let result;
             setHabilitar2(true);
-            let flag = await getCheckData(controlerState.mac, "horarios",50)
+            let flag = await getCheckDataHorarios(controlerState.mac, "horarios",10)
             if (flag !== false) {
                 result = flag
 
             } else {
                 result = await getHorariosFromRestApi(controlerState.mac, controlerState.ip)
                 cargarHorariosFirebase(result)
-                await updateSamplingTime(controlerState.mac)
+                await updateHorarioSamplingTime(controlerState.mac)
             }
             setObjHorarios(result)
             console.log(result);
