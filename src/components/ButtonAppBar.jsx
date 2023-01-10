@@ -32,15 +32,16 @@ export default function ButtonAppBar() {
   const menuState = useSelector(state => state.menu);
 
   const menuData = [
-    {
-      child: <MapaUniversalMenu/>,
-      visibility: true,
-      key: 9
-    },
+   
     {
       child: <HomeMenu />,
       visibility: true,
       key: 10
+    },
+    {
+      child: <MapaUniversalMenu/>,
+      visibility: true,
+      key:11
     },
     {
       child: <SyncMenu />,
