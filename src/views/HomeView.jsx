@@ -696,6 +696,7 @@ export default function HomeView() {
     }, []);
 
     return (
+        
         <div>
             <Container maxWidth="md">
                 <div className='titulos-home'>
@@ -1047,7 +1048,10 @@ export default function HomeView() {
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={accionesUi}>
             <CircularProgress color="inherit" />
         </Backdrop>
+        <CardController/>
+        <CardInformation/>
         </div>
+        
     );
 
 }

@@ -232,7 +232,7 @@ export default function HorariosView() {
         try {
             let result;
             setHabilitar2(true);
-            let flag = await getCheckDataHorarios(controlerState.mac, "horarios",10)
+            let flag = await getCheckDataHorarios(controlerState.mac, "horarios",3)
             if (flag !== false) {
                 result = flag
 
@@ -619,6 +619,7 @@ export default function HorariosView() {
                                 <MenuItem value={1}>Día Ordinario</MenuItem>
                                 <MenuItem value={2}>Fin de Semana</MenuItem>
                                 <MenuItem value={3}>Día Festivo</MenuItem>
+                            
                             </Select>
                         </FormControl>
                     </Grid>
@@ -747,14 +748,12 @@ export default function HorariosView() {
                 </ModalBody>
                 <ModalFooter >
                     <div className='botones-modal-h'>
-
                         <Button variant="contained" sx={{ marginRight: 5 }} onClick={aplicarLosCambios} color='verde2' >
                             Aplicar
                         </Button>
                         <Button variant="contained" onClick={() => { setModalHorarios(false) }} color='rojo' >
                             Cancelar
                         </Button>
-
                     </div>
                 </ModalFooter>
             </Modal>
@@ -764,6 +763,8 @@ export default function HorariosView() {
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={habilitar2}>
                 <CircularProgress color="inherit" />
             </Backdrop>
+            <CardController/>
+            <CardInformation/>
         </>
     );
 
