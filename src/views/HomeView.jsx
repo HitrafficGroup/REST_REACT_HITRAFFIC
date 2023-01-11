@@ -35,7 +35,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../css/HomeView.css';
-import swal from 'sweetalert';
+import Swal from 'sweetalert2';
 
 
 export default function HomeView() {
@@ -121,7 +121,6 @@ export default function HomeView() {
         setModalEditControlador(true);
     }
     const actualizarDatosControlador = async()=>{
-       
         setModalEditControlador(false);
         const ref = doc(db, "historial_controladores", `${controlerState.mac}`);
         await updateDoc(ref, {
@@ -147,7 +146,7 @@ export default function HomeView() {
     
     const seleccionarControlador = async (data) => {
         try {
-            
+            if(data.declarado){
             simulacion.current = false;
             setFlagsimu(false);
             setCurrentControler(data);
@@ -170,7 +169,8 @@ export default function HomeView() {
                         mac: item.mac,
                         nombre:item.nombre,
                         seleccionado:true,
-                        status: item.status
+                        status: item.status,
+                        declarado:item.declarado
                     }
                 } else {
                     dato = {
@@ -180,7 +180,8 @@ export default function HomeView() {
                         mac: item.mac,
                         nombre:item.nombre,
                         seleccionado:false,
-                        status: item.status
+                        status: item.status,
+                        declarado:item.declarado
                     }
                 }
                 return dato;
@@ -219,15 +220,32 @@ export default function HomeView() {
                 //setSemaforos(doc.data().grupos)
             });
             setDeshabilitar(false)
-            swal({
-                title: "Conectado!",
-                text: "Controlador Seleccionado Con Exito",
-                icon: "success",
-    
-            });
+            Swal.fire({
+                icon: 'success',
+                title: 'Controlador Conectado',
+                showConfirmButton: false,
+                timer: 900
+              })
+        }else{
+            Swal.fire({
+                title: 'Controlador Nuevo',
+                text: "Deseas declarar este nuevo controlador?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  
+                }
+              })
+            setDeshabilitar(false)
+        }
         } catch (error) {
             setDeshabilitar(false)
         }
+    
 
     }
     const enviarVersionFirebase = async (mac, ip, firmware) => {
@@ -301,7 +319,8 @@ export default function HomeView() {
                         nombre:"sin declararse aun",
                         latitud:-2.876428,
                         longitud:-78.965342,
-                        seleccionado: false
+                        seleccionado: false,
+                        declarado: false
                     });
                 }else{
                     return ({
@@ -311,7 +330,8 @@ export default function HomeView() {
                         nombre:name.nombre,
                         latitud:name.latitud,
                         longitud:name.longitud,
-                        seleccionado: false
+                        seleccionado: false,
+                        declarado:true
                     });
                 }
             })

@@ -35,7 +35,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 export default function MapaUniversalView() {
     const [semaforos, setSemaforos] = useState([]);
     const controladores = useRef([]);
-    const [semaforosCompletos, setSemaforosCompletos] = useState([]);
+    const semaforosCompletos = useRef([]);
     const timer1 = useRef(0);
     const timer2 = useRef(0);
     const paso = useRef(0);
@@ -63,7 +63,7 @@ export default function MapaUniversalView() {
         }
         controladores.current = items_db
         setSemaforos(semaforos_aux)
-        setSemaforosCompletos(semaforos_db)
+        semaforosCompletos.current = semaforos_db
 
 
     }
@@ -102,7 +102,7 @@ export default function MapaUniversalView() {
     const iniciarAnimacion = () => {
 
         let aux_datos_actuales = JSON.parse(JSON.stringify(datosActuales.current));
-        let semaforos_temp = JSON.parse(JSON.stringify(semaforosCompletos));
+        let semaforos_temp = JSON.parse(JSON.stringify(semaforosCompletos.current));
         let g1;
         let g2;
         let g3;
@@ -283,7 +283,7 @@ export default function MapaUniversalView() {
 
             }
 
-        }, 5000);
+        }, 1000);
         getData();
         return () => clearInterval(interval);
     }, []);
