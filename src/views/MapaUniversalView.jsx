@@ -103,19 +103,20 @@ export default function MapaUniversalView() {
 
         let aux_datos_actuales = JSON.parse(JSON.stringify(datosActuales.current));
         let semaforos_temp = JSON.parse(JSON.stringify(semaforosCompletos.current));
+        console.log(aux_datos_actuales)
         let g1;
         let g2;
         let g3;
         let g4;
+        let tiempos = [];
+        let valores = [];
         let dataUpdated = [];
-        let aux;
         let semaforos_unidos = [];
         console.log(aux_datos_actuales)
         for (let i = 0; i < aux_datos_actuales.length; i++) {
             // if(aux_datos_actuales[i].modo ===  'Tiempo Fijo' ){
             // console.log("estamos en modo fijo")
             //primero debemos ver en que paso estamos y en que tiempo 
-
             g1 = devolverColor(aux_datos_actuales[i].fases_pasos[0].grupos[0].colorDescripcion);
             g2 = devolverColor(aux_datos_actuales[i].fases_pasos[0].grupos[1].colorDescripcion);
             g3 = devolverColor(aux_datos_actuales[i].fases_pasos[0].grupos[2].colorDescripcion);

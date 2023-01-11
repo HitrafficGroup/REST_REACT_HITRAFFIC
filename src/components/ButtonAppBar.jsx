@@ -83,7 +83,6 @@ export default function ButtonAppBar() {
       visibility: true,
       key: 100
     },
-
     {
       child: <SalirMenu />,
       visibility: true,

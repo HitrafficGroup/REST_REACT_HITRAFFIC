@@ -24,7 +24,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
-import { setInitialStateController,setResumen,addIpsDisponibles,setPasosActivos,addCurrentControler } from "../features/controlers/controlerSlice";
+import { setInitialStateController,setResumen,addIpsDisponibles,setPasosActivos,addCurrentControler,createNewController } from "../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Alert from '@mui/material/Alert';
@@ -36,7 +36,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../css/HomeView.css';
 import Swal from 'sweetalert2';
-
+import { useNavigate } from 'react-router-dom';
 
 export default function HomeView() {
     const [map, setMap] = useState(null)
@@ -45,6 +45,7 @@ export default function HomeView() {
     const [flagsimu, setFlagsimu] = useState(false);
     const todaInformacion = useRef({});
     const modoControlador = useRef('Tiempo Fijo');
+    const navigate = useNavigate();
     const simulacion = useRef(false);
     const timer1 = useRef(0);
     const timer2 = useRef(0);
@@ -87,7 +88,7 @@ export default function HomeView() {
         grupo: '',
     });
     const eventHandlers = useMemo(
-        () => ({
+() => ({
             dragend() {
                 const marker = markerRef.current
                 if (marker != null) {
@@ -115,6 +116,9 @@ export default function HomeView() {
                 [event.target.name]: event.target.value,
             }
         )
+    }
+    const Changeview = (referencia) => {
+        navigate(referencia);
     }
     const abrirModalEditarControlador = () =>{
         setNewController(controlerState)
@@ -237,7 +241,12 @@ export default function HomeView() {
                 confirmButtonText: 'Si'
               }).then((result) => {
                 if (result.isConfirmed) {
-                  
+                    console.log(data)
+                    dispatch(createNewController({
+                        mac:data.mac,
+                        ip:data.ip,
+                    }));
+                    Changeview("/david-diaz/declarar-controlador")
                 }
               })
             setDeshabilitar(false)
@@ -275,9 +284,6 @@ export default function HomeView() {
         }
     }
     const DraggableMarker = () => {
-
-
-
         return (
             <Marker
                 icon={ubi}
@@ -288,9 +294,7 @@ export default function HomeView() {
 
                 <Popup minWidth={90}>
                     <span onClick={toggleDraggable}>
-                        {draggable
-                            ? 'Marker is draggable'
-                            : 'Click here to make marker draggable'}
+                        {draggable ? 'Marker is draggable': 'Click here to make marker draggable'}
                     </span>
                 </Popup>
             </Marker>
@@ -775,7 +779,9 @@ export default function HomeView() {
                             </div>
                     </Grid>
                             <Grid item xs={12} md={5}>
+
                         <TextField id="outlined" focused value={controlerState.nombre} label="Nombre" variant="outlined" aria-readonly={true} fullWidth />
+                    
                     </Grid>
                             <Grid item xs={12} md={2}>
                         <TextField id="outlined" focused value={controlerState.latitud} label="Latitud" variant="outlined" aria-readonly fullWidth />

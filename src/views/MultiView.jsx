@@ -10,29 +10,30 @@ import HorariosView from "./HorariosView";
 import PlanesView from "./PlanesView";
 import ErroresView from "./ErroresView";
 import SyncTimeView from "./SyncTimeView";
-
 import MapaUniversalView from "./MapaUniversalView";
-export default function MultiView(){
+import DeclararControladorView from "./DeclararControladorView";
 
-return(
-    <>
-    
-    <ButtonAppBar/>
-        <Routes>
-        <Route path="home" element={<HomeView/>}/>
-                <Route path="clonacion" element={<ClonacionView />}/>
-                <Route path="resumen" element={<ResumenView />}/>
-                <Route path="entradas" element={<EntradasView />}/>
-                <Route path="fases" element={<FasesView />}/>
-                <Route path="horarios" element={<HorariosView />}/>
-                <Route path="planes" element={<PlanesView />}/>
-                <Route path="errores" element={<ErroresView />}/>
-                <Route path="grupos" element={<GruposView />}/>
-                <Route path="sincronizar-tiempos" element={<SyncTimeView/>}/>
-                <Route path="mapa-universal" element={<MapaUniversalView/>}/>
-        </Routes>
-        {/* <CardInformation/>
-        <CardController/> */}
-    </>
-);
+export default function MultiView() {
+
+    return (
+        <>
+            <ButtonAppBar />
+            <Routes>
+                <Route path="home" element={<HomeView />} />
+                <Route path="clonacion" element={<ClonacionView />} />
+                <Route path="resumen" element={<ResumenView />} />
+                <Route path="entradas" element={<EntradasView />} />
+                <Route path="fases" element={<FasesView />} />
+                <Route path="horarios" element={<HorariosView />} />
+                <Route path="planes" element={<PlanesView />} />
+                <Route path="errores" element={<ErroresView />} />
+                <Route path="grupos" element={<GruposView />} />
+                <Route path="sincronizar-tiempos" element={<SyncTimeView />} />
+                <Route path="mapa-universal" element={<MapaUniversalView />} />
+                <Route path="declarar-controlador" element={<DeclararControladorView />} />
+            </Routes>
+            {/* <CardInformation/>
+                <CardController/> */}
+        </>
+    );
 }

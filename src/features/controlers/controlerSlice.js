@@ -14,6 +14,7 @@ export const controlerSlice = createSlice({
         pasos_activos:[],
         semaforos:[],
         current_controler:{},
+        nuevo_controlador:{ },
         ips:[],
         resumen:{
             horas: '00',
@@ -51,10 +52,16 @@ export const controlerSlice = createSlice({
         },
         addCurrentControler:(state,action)=>{
             state.current_controler = action.payload
-        }
+        },
+        createNewController:(state,action)=>{
+            state.nuevo_controlador = action.payload
+        },
+
     }
 })
-export const {addFases, addPlanes,setInitialStateController,setResumen,addIpsDisponibles,setPasosActivos,setSemaforosActivos,
-    addCurrentControler} = controlerSlice.actions
+export const {addFases, addPlanes,setInitialStateController,
+    setResumen,addIpsDisponibles,
+    setPasosActivos,setSemaforosActivos,
+    createNewController,addCurrentControler} = controlerSlice.actions
 export default controlerSlice.reducer
 
