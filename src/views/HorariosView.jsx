@@ -117,6 +117,7 @@ export default function HorariosView() {
 
 
     const handleTime1 = (newValue) => {
+
         let h = new Date(newValue.$d)
         let horas = h.getHours()
         horas = ("0" + horas).slice(-2);
@@ -130,6 +131,7 @@ export default function HorariosView() {
     }
     const aplicarLosCambios = () => {
         let newObjectHorario;
+        let horarios_dias= JSON.parse(JSON.stringify(objHorarios));
         let aux_horarios = JSON.parse(JSON.stringify(horarios));
         if(modoSemaforo !== 0){
              newObjectHorario = {
@@ -150,7 +152,6 @@ export default function HorariosView() {
              plan: 0, 
              desfase: "0" } 
         }
-
         let datos_actualizados = aux_horarios.map((item)=>{
             if(item.nro === currentHorario.nro){
                 return newObjectHorario
@@ -159,8 +160,9 @@ export default function HorariosView() {
             }
 
         })
-        console.log(datos_actualizados)
+        horarios_dias['dia_ordinario'] = datos_actualizados
         setHorarios(datos_actualizados)
+        setObjHorarios(horarios_dias)
         // console.log(temp);
         setModalHorarios(false);
         setCambiosHorarios(true);
@@ -444,6 +446,7 @@ export default function HorariosView() {
                 try {
 
                     cargarHorariosFromRestApi();
+                    
                     setCambiosHorarios(false);
                 } catch (e) {
                     console.log(e);
@@ -457,7 +460,7 @@ export default function HorariosView() {
     }
     const cargarHorariosFromRestApi = async () => {
         setHabilitar2(true);
-        const data = horarios.slice()
+        const data = JSON.parse(JSON.stringify(horarios))
         console.log(data)
         var newObject = {}
         for (let num = 0; num < 16; num++) {

@@ -449,7 +449,7 @@ export default function HomeView() {
         })
        
         let fases = todaInformacion.current.fases.slice()
-
+        console.log(fases)
         var pasos_temp = pasos_habilitados
         var fases_pasos = pasos_temp.map((item) =>{
             let aux2 = fases.find(_item => _item.faseNum === item.fase)
