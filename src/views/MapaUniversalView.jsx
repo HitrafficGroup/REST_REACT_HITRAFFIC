@@ -37,6 +37,7 @@ export default function MapaUniversalView() {
     const controladores = useRef([]);
     const semaforosCompletos = useRef([]);
     const timer1 = useRef(0);
+    const ciclos = useRef([]);
     const timer2 = useRef(0);
     const paso = useRef(0);
     const simulacion = useRef(false);
@@ -103,7 +104,7 @@ export default function MapaUniversalView() {
 
         let aux_datos_actuales = JSON.parse(JSON.stringify(datosActuales.current));
         let semaforos_temp = JSON.parse(JSON.stringify(semaforosCompletos.current));
-        console.log(aux_datos_actuales)
+
         let g1;
         let g2;
         let g3;
@@ -112,7 +113,7 @@ export default function MapaUniversalView() {
         let valores = [];
         let dataUpdated = [];
         let semaforos_unidos = [];
-        console.log(aux_datos_actuales)
+        
         for (let i = 0; i < aux_datos_actuales.length; i++) {
             // if(aux_datos_actuales[i].modo ===  'Tiempo Fijo' ){
             // console.log("estamos en modo fijo")
@@ -176,6 +177,7 @@ export default function MapaUniversalView() {
             let temp;
             let ref;
             let nro_horario;
+            let nro_horario_sig;
             let dias_ordenados = dia_ordinario.slice()
             dias_ordenados.sort(function (a, b) {
                 let a_aux = parseInt(a.horas)
@@ -186,7 +188,7 @@ export default function MapaUniversalView() {
                 b = b_aux * 100 + b_aux2
                 return b - a
             })
-          
+            console.log(dias_ordenados)
             for (let i = 0; i < dias_ordenados.length; i++) {
                 aux = parseInt(dias_ordenados[i].horas)
                 aux2 = parseInt(dias_ordenados[i].minutos)
@@ -195,13 +197,19 @@ export default function MapaUniversalView() {
                 //console.log("tiempo controlador: ",temp)
                 //console.log("tiempo referencia: ",ref)
                 if (ref > temp) {
+                    let aux3 = i-1
+                    
+                    if(aux3 <0){
+                        aux3 = 0
+                    }
                     nro_horario = dias_ordenados[i].nro
+                    nro_horario_sig = dias_ordenados[aux3].nro
                     //console.log("plan obtenido: ",plan)
                     break
                 }
             }
             let horario_activo = dias_ordenados.find(item => item.nro === nro_horario)
-
+            let horario_siguiente = dias_ordenados.find(item => item.nro === nro_horario_sig)
             //setHorarioexec(horario_activo);
             let modo = returnModo(horario_activo.mod)
 
@@ -217,7 +225,7 @@ export default function MapaUniversalView() {
             })
 
             let fases = JSON.parse(JSON.stringify(controladores_aux[i].fases))
-            var pasos_temp = pasos_habilitados
+            var pasos_temp = JSON.parse(JSON.stringify(pasos_habilitados))
           
             var fases_pasos = pasos_temp.map((item) => {
                 let aux2 = fases.find(_item => _item.faseNum === item.fase)
@@ -259,6 +267,7 @@ export default function MapaUniversalView() {
             objNuevoDatos = {
                 mac: controladores_aux[i].mac,
                 horario_activo: horario_activo,
+                horario_siguiente: horario_siguiente,
                 fases_pasos: fases_pasos,
                 modo: modo,
                 pasos: pasos_habilitados
@@ -268,8 +277,29 @@ export default function MapaUniversalView() {
         }
         console.log(datos_para_simular)
         //setDatosActuales(datos_para_simular)
-        datosActuales.current = datos_para_simular
 
+        for(let i = 0; i<datos_para_simular.length;i++){
+            let horas_1 = parseInt(datos_para_simular[i].horario_activo.horas)
+            let minutos_1 = parseInt(datos_para_simular[i].horario_activo.minutos)
+            let horas_2 = parseInt(datos_para_simular[i].horario_siguiente.horas)
+            let minutos_2 = parseInt(datos_para_simular[i].horario_siguiente.minutos)
+            let t_inicio = horas_1*3600 + minutos_1*60
+            let t_final = horas_2*3600 + minutos_2*60
+            let desfase = 5
+            let pas_activos = datos_para_simular[i].pasos
+            let ciclo = 0
+            let segundos_pasos = {} 
+            let pasos_duracion = []
+            console.log(pas_activos)
+            for(let i = 0;i<pas_activos.length;i++){
+                let aux = pas_activos[i].duracion
+                pasos_duracion.push(aux)
+                ciclo += aux
+            }
+            console.log(ciclo)
+
+        }
+        datosActuales.current = datos_para_simular
     }
 
 

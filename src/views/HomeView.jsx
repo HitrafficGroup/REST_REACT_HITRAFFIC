@@ -51,6 +51,7 @@ export default function HomeView() {
     const timer2 = useRef(0);
     const allInfo = useRef({});
     const faseActual = useRef(0);
+    const calculoEjecucion = useRef([]);
     const [pasoexec,setPasoexec] = useState();
     const [currentSemaforo, setCurrentSemaforo] = useState({});
     const [modalEditControlador,setModalEditControlador] = useState(false);
@@ -414,11 +415,25 @@ export default function HomeView() {
         }
 
     }
+    const devolverPaso = () =>{
+        const referencia =  new Date().getHours()*3600 + new Date().getMinutes()*60 + new Date().getSeconds()
+        let datos_interes = calculoEjecucion.current
+        let paso_actual
+        for(let i = 0 ;i<datos_interes.length;i++){
+            let temp = datos_interes[i].valores
+            let busqueda = temp.find(element => element===referencia)
+            if(busqueda === referencia){
+                paso_actual = datos_interes[i].paso
+            }
+        }
+        return paso_actual
+    }
 
     const parametrosCorriendo = () => {
         
-        let dia_ordinario = todaInformacion.current.horarios.dia_ordinario;
-        let planes = todaInformacion.current.planes
+        let dia_ordinario_aux = todaInformacion.current.horarios.dia_ordinario;
+        let dia_ordinario = JSON.parse(JSON.stringify(dia_ordinario_aux))
+        let planes = JSON.parse(JSON.stringify(todaInformacion.current.planes))
         let hora_actual = new Date();
         let horas = hora_actual.getHours();
         let minutos = hora_actual.getMinutes();
@@ -426,10 +441,9 @@ export default function HomeView() {
         let aux2;
         let temp;
         let ref;
-        let plan;
         let nro_horario;
-
         let dias_ordenados = dia_ordinario.slice()
+
         dias_ordenados.sort(function(a,b){
             let a_aux = parseInt(a.horas)
             let a_aux2 = parseInt(a.minutos)
@@ -439,25 +453,29 @@ export default function HomeView() {
             b = b_aux*100 + b_aux2
             return b-a
         })
-        console.log(dias_ordenados)
-        for(let i=0;i<dias_ordenados.length;i++) {
+        let dias_ordenados_filtrados = dias_ordenados.filter(item => item.mod !== 0)
+        let nro_horario_sig = 0
+        for(let i=0;i<dias_ordenados_filtrados.length;i++) {
              aux = parseInt(dias_ordenados[i].horas)
              aux2 = parseInt(dias_ordenados[i].minutos)
              temp = aux*100 + aux2
              ref = horas*100 + minutos
-             //console.log("tiempo controlador: ",temp)
-             //console.log("tiempo referencia: ",ref)
+             //console.log("ref: ",ref)
+             //console.log("temp: ",temp)
             if(ref > temp){
                 nro_horario = dias_ordenados[i].nro
-                //console.log("plan obtenido: ",plan)
+                nro_horario_sig =   dias_ordenados[i-1].nro
+                //console.log("plan obtenido: ",nro_horario)
                 break
             }
-            
+                nro_horario =   dias_ordenados[0].nro
+                nro_horario_sig =   dias_ordenados[i].nro
             }
 
         
         let horario_activo = dias_ordenados.find(item => item.nro === nro_horario)
-        console.log("horario filtrado: ",horario_activo)
+        let horario_siguiente  = dias_ordenados.find(item => item.nro === nro_horario_sig)
+       
         setHorarioexec(horario_activo);
         let modo = returnModo(horario_activo.mod)
         setModoexec(modo)
@@ -471,9 +489,8 @@ export default function HomeView() {
                 return item;
             }
         })
-       
+        
         let fases = todaInformacion.current.fases.slice()
-        console.log(fases)
         var pasos_temp = pasos_habilitados
         var fases_pasos = pasos_temp.map((item) =>{
             let aux2 = fases.find(_item => _item.faseNum === item.fase)
@@ -595,7 +612,54 @@ export default function HomeView() {
         dispatch(setPasosActivos(fases_pasos));
         //setPasosActivos(fases_pasos)
         faseActual.current = fases_pasos
+        let horas_1 = parseInt(horario_activo.horas)
+        let minutos_1 = parseInt(horario_activo.minutos)
+        let horas_2 = parseInt(horario_siguiente.horas)
+        let minutos_2 = parseInt(horario_siguiente.minutos)
+        let t_inicio = horas_1*3600 + minutos_1*60
+        let t_final = horas_2*3600 + minutos_2*60
+        let pas_activos = JSON.parse(JSON.stringify(fases_pasos))
+        let ciclo = 0
+        let segundos_pasos = [] 
+        let pasos_duracion = []
+   
+        for(let i = 0;i<pas_activos.length;i++){
+            let aux = pas_activos[i].duracion
+            pasos_duracion.push(aux)
+            ciclo += aux
+        }
+       
+        let seguntos_totales = t_final - t_inicio
+        let frequencia = parseInt(seguntos_totales/ciclo)
+        let desfase = seguntos_totales%ciclo
+        let index_periodicidad = 0
+        let temp_i = t_inicio
+      
+        for(let i = 0; i<pas_activos.length;i++){
+            let aux = {
+                paso:i,
+                name:`Paso ${i+1}`,
+                valores:[]
+            }
+            segundos_pasos.push(aux)
+        }
 
+        // console.log(pasos_duracion)
+        // console.log(segundos_pasos)
+        // console.log("seg",seguntos_totales)
+        // console.log("freq",frequencia)
+        // console.log("desfase",desfase)
+        for(let i1 = 0; i1<frequencia;i1++){
+            let index = 0
+            for(let j1 = 0 ;j1<pasos_duracion.length;j1++){
+                let aux_7 =  pasos_duracion[j1]
+                for(let k = 0;k<aux_7;k++){
+                    temp_i +=1
+                    segundos_pasos[j1].valores.push(temp_i)
+                }
+            }
+        }
+        calculoEjecucion.current = segundos_pasos
         //setSemaforo()
        
 
@@ -671,14 +735,15 @@ export default function HomeView() {
             
         }
         else{
-
-            g1 = devolverColor(faseActual.current[timer2.current].grupos[0].colorDescripcion);
-            g2 = devolverColor(faseActual.current[timer2.current].grupos[1].colorDescripcion);
-            g3 = devolverColor(faseActual.current[timer2.current].grupos[2].colorDescripcion);
-            g4 = devolverColor(faseActual.current[timer2.current].grupos[3].colorDescripcion);
+            let paso_actual = devolverPaso()
+            console.log("paso actual: ",paso_actual)
+            g1 = devolverColor(faseActual.current[paso_actual].grupos[0].colorDescripcion);
+            g2 = devolverColor(faseActual.current[paso_actual].grupos[1].colorDescripcion);
+            g3 = devolverColor(faseActual.current[paso_actual].grupos[2].colorDescripcion);
+            g4 = devolverColor(faseActual.current[paso_actual].grupos[3].colorDescripcion);
             aux = semaforos2.current
-            setFaseexec(faseActual.current[timer2.current].fase)
-            setPasoexec(faseActual.current[timer2.current].name)
+            setFaseexec(faseActual.current[paso_actual].fase)
+            setPasoexec(faseActual.current[paso_actual].name)
             dataUpdated = aux.map((item) => {
                             if (item.grupo === "g1") {
                                 item['icon'] = g1;
