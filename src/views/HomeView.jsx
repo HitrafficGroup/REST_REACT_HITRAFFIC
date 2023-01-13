@@ -48,8 +48,7 @@ export default function HomeView() {
     const navigate = useNavigate();
     const simulacion = useRef(false);
     const timer1 = useRef(0);
-    const timer2 = useRef(0);
-    const allInfo = useRef({});
+    const timer2 = useRef(0);    const allInfo = useRef({});
     const faseActual = useRef(0);
     const calculoEjecucion = useRef([]);
     const [pasoexec,setPasoexec] = useState();
@@ -62,7 +61,6 @@ export default function HomeView() {
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
     const [semaforos, setSemaforos] = useState(initialData.resumen);
     const [semaforos3,setSemaforos3] = useState(initialData.resumen)
-    const [currentControler, setCurrentControler] = useState({})
     const [faseexec,setFaseexec] = useState("");
     const [horarioexec,setHorarioexec] = useState("");
     const [btnAgregar, setBtnAgregar] = useState(true);
@@ -154,7 +152,7 @@ export default function HomeView() {
             if(data.declarado){
             simulacion.current = false;
             setFlagsimu(false);
-            setCurrentControler(data);
+            
             setPosition([data.latitud,data.longitud])
             dispatch(setInitialStateController(data));
             dispatch(addCurrentControler(data));
@@ -413,7 +411,6 @@ export default function HomeView() {
         } else {
             return amarillo
         }
-
     }
     const devolverPaso = () =>{
         const referencia =  new Date().getHours()*3600 + new Date().getMinutes()*60 + new Date().getSeconds()
@@ -430,10 +427,9 @@ export default function HomeView() {
     }
 
     const parametrosCorriendo = () => {
-        
-        let dia_ordinario_aux = todaInformacion.current.horarios.dia_ordinario;
-        let dia_ordinario = JSON.parse(JSON.stringify(dia_ordinario_aux))
-        let planes = JSON.parse(JSON.stringify(todaInformacion.current.planes))
+        let datos_controlador = JSON.parse(JSON.stringify( todaInformacion.current))
+        let dia_ordinario = datos_controlador.horarios.dia_ordinario
+        let planes = datos_controlador.planes
         let hora_actual = new Date();
         let horas = hora_actual.getHours();
         let minutos = hora_actual.getMinutes();
@@ -442,8 +438,7 @@ export default function HomeView() {
         let temp;
         let ref;
         let nro_horario;
-        let dias_ordenados = dia_ordinario.slice()
-
+        let dias_ordenados = dia_ordinario
         dias_ordenados.sort(function(a,b){
             let a_aux = parseInt(a.horas)
             let a_aux2 = parseInt(a.minutos)
@@ -671,8 +666,10 @@ export default function HomeView() {
         let g3;
         let g4;
         let dataUpdated;
-        let aux;
-   
+        let aux = semaforos2.current;
+        setPasoexec('---')
+        setFaseexec('---')
+        
         if(modoControlador.current ===  'Destello' ){
             
             if(timer1.current > 1){
@@ -689,9 +686,7 @@ export default function HomeView() {
                 g4 = apagado
           
             }
-            setFaseexec(1)
-            setPasoexec('Paso 2')
-            aux = semaforos2.current
+            // aux = semaforos2.current
             dataUpdated = aux.map((item) => {
                             if (item.grupo === "g1") {
                                 item['icon'] = g1;
@@ -706,28 +701,18 @@ export default function HomeView() {
                         })
             setSemaforos(dataUpdated);
             
-        }else if(modoControlador.current ===  'Todo en Rojo'){
-            if(timer1.current > 1){
-               
-                timer1.current = 0
-              
-            }
-            g1 = rojo
-            g2 = rojo
-            g3 = rojo
-            g4 = rojo
-            setFaseexec(1)
-            setPasoexec('Paso 2')
-            aux = semaforos2.current
+        }else if(modoControlador.current ===  'Todo en Rojo'){      
+            setPasoexec('Rojo')
+            // aux = semaforos2.current
             dataUpdated = aux.map((item) => {
                             if (item.grupo === "g1") {
-                                item['icon'] = g1;
+                                item['icon'] = rojo;
                             } else if (item.grupo === "g2") {
-                                item['icon'] = g2;
+                                item['icon'] = rojo;
                             } else if (item.grupo === "g3") {
-                                item['icon'] = g3;
+                                item['icon'] = rojo;
                             } else if (item.grupo === "g4") {
-                                item['icon'] = g4;
+                                item['icon'] = rojo;
                             }
                             return item
                         })
@@ -757,13 +742,7 @@ export default function HomeView() {
                             return item
                         })
             setSemaforos(dataUpdated);
-            if(timer1.current >= faseActual.current[timer2.current].duracion){
-                timer2.current= timer2.current + 1
-                if(timer2.current === faseActual.current.length){
-                    timer2.current = 0
-                }
-                timer1.current = 0     
-            }
+           
         }
     }
 
