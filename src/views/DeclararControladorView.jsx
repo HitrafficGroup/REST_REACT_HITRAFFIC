@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef,useMemo,useCallback } from 'react';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { useSelector } from 'react-redux';
 import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
+import L from 'leaflet';
 import EditIcon from '@mui/icons-material/Edit';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
@@ -16,8 +17,16 @@ import Swal from 'sweetalert2';
 export default function DeclararControladorView() {
     const controlerState = useSelector(state => state.controlers)
     const [grupo,setGrupo] = useState("");
+    const center = [-2.876428, -78.965342]
+    const [position, setPosition] = useState(center);
+    const [reloadMap,setReloadMap] = useState(false);
+    const [latitud,setLatitud] = useState(-2.876428);
+    const [longitud,setLongitud] = useState(-78.965342)
+    const [draggable, setDraggable] = useState(false)
     const [nombreSemaforo,setNombreSemaforo] = useState("");
     const [nombreControlador,setNombreControlador]  = useState("");
+    const [semaforos,setSemaforos] = useState(semaforosIniciales);
+    const markerRef = useRef(null)
     const declararControlador =()=>{
         Swal.fire({
             title: 'Creacion de controlador',
@@ -37,23 +46,64 @@ export default function DeclararControladorView() {
             }
           })
         }
-        // const DraggableMarker = () => {
-        //     return (
-        //         <Marker
-        //             icon={ubi}
-        //             draggable={!flagsimu}
-        //             eventHandlers={eventHandlers}
-        //             position={position}
-        //             ref={markerRef}>
+        const encontrarUbicacion =()=>{
+            let aux = [latitud,longitud]
+            setPosition(aux)
+            setReloadMap(!reloadMap)
+        }
+        const agregarSemaforo =()=>{
+            console.log("se agrego el siguiente semaforo");
+            let aux  = semaforos
+            let newObjeto = {
+                position: position,
+                grupo:grupo,
+                amarillo:0,
+                rojo:0,
+                verde:0,
+                icon: semaforo,
+                modo: "Tiempo Fijo",
+                nombre: nombreSemaforo,
+
+            }
+
+        }
+        const eventHandlers = useMemo(
+            () => ({
+                dragend() {
+                    const marker = markerRef.current
+                    if (marker != null) {
+                        console.log(marker.getLatLng())
+                        let aux = [marker.getLatLng().lat,marker.getLatLng().lng]
+                        
+                        setPosition(aux)
+                        
+                    } else {
+                        
+                    }
+                },
+            }),
+            [],
+        )
+        const toggleDraggable = useCallback(() => {
+            setDraggable((d) => !d)
+        }, [])
+        const DraggableMarker = () => {
+            return (
+                <Marker
+                    icon={ubi}
+                    draggable={true}
+                    eventHandlers={eventHandlers}
+                    position={position}
+                    ref={markerRef}>
     
-        //             <Popup minWidth={90}>
-        //                 <span onClick={toggleDraggable}>
-        //                     {draggable ? 'Marker is draggable': 'Click here to make marker draggable'}
-        //                 </span>
-        //             </Popup>
-        //         </Marker>
-        //     )
-        // }
+                    <Popup minWidth={90}>
+                        <span onClick={toggleDraggable}>
+                            {draggable ? 'Marker is draggable': 'Click here to make marker draggable'}
+                        </span>
+                    </Popup>
+                </Marker>
+            )
+        }
     return (
         <>
             <Container maxWidth="md" >
@@ -72,30 +122,39 @@ export default function DeclararControladorView() {
                         <TextField id="outlined" value={controlerState.nuevo_controlador.mac} fullWidth focused  label="Mac" variant="outlined" aria-readonly={true}  />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <TextField id="outlined"   label="Nombre del Controlador" variant="outlined"  fullWidth   />
+                        <TextField id="outlined"  value={nombreControlador}  label="Nombre del Controlador"variant="outlined" onChange={(e)=>{setNombreControlador(e.target.value)}}  fullWidth   />
                     </Grid>
                     <Grid item xs={12} md={4.5}>
-                        <TextField id="outlined"   label="Latitud" variant="outlined"  fullWidth />
+                        <TextField id="outlined" value={latitud}  label="Latitud" variant="outlined"  onChange={(e)=>{setLatitud(e.target.value)}}   fullWidth />
                     </Grid>
                     <Grid item xs={12} md={4.5}>
-                        <TextField id="outlined"   label="Longitud" variant="outlined"  fullWidth />
+                        <TextField id="outlined"  value={longitud} label="Longitud" variant="outlined"  onChange={(e)=>{setLongitud(e.target.value)}} fullWidth />
                     </Grid>
                     <Grid item xs={12} md={3}>
-                        <Button variant="contained" startIcon={<LocationOnIcon/>} color="morado1" fullWidth sx={{ height: "100%" }}>GeoLocalizar</Button>
+                        <Button variant="contained" startIcon={<LocationOnIcon/>} color="morado1" fullWidth sx={{ height: "100%" }} onClick={encontrarUbicacion}>GeoLocalizar</Button>
                     </Grid>
                     <Grid item xs={12} md={12}>
                     
-                            <MapContainer center={[controlerState.latitud,controlerState.longitud]} zoom={19}   scrollWheelZoom={false} className='map-container'>
+                            <MapContainer center={position} zoom={19}  key={reloadMap} scrollWheelZoom={false} className='map-container'>
                                 <TileLayer
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                                     <DraggableMarker />
+                                     {semaforos.map((item, index) => (
+
+                                        <Marker position={item.position} key={index} icon={item.icon}>
+                                            <Popup>
+                                                Semaforo {item.nombre} - Grupo: {item.grupo}
+                                            </Popup>
+                                        </Marker>
+                                        ))}
                             </MapContainer>
 
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <div>
                             <p>
-                                <strong style={{marginLeft:5,marginRight:5}}>Longitud del semaforo:</strong>-2.1231231231234532 <strong style={{marginLeft:5,marginRight:5}}>Latitud del semaforo:</strong>-2.1231231231234532
+                                <strong style={{marginLeft:5,marginRight:5}}>Longitud del semaforo:</strong>{position[0]} <strong style={{marginLeft:5,marginRight:5}}>Latitud del semaforo:</strong>{position[1]}
                             </p>
                         </div>
                     </Grid>
@@ -122,7 +181,7 @@ export default function DeclararControladorView() {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={3}>
-                        <Button variant="contained" startIcon={<AddIcon/>} color="primary" fullWidth sx={{ height: "100%" }}>AGREGAR</Button>
+                        <Button variant="contained" startIcon={<AddIcon/>} color="primary" fullWidth sx={{ height: "100%" }} onClick={agregarSemaforo} >AGREGAR</Button>
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <div>
@@ -143,3 +202,66 @@ export default function DeclararControladorView() {
     );
 
 }
+const ubi = new L.Icon({
+    iconUrl: require('../assets/ubica.png'),
+    iconRetinaUrl: require('../assets/ubica.png'),
+    iconSize: [20, 30], // size of the icon
+    shadowSize: [50, 64], // size of the shadow
+    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor: [-3, -76]
+
+});
+const semaforo = new L.Icon({
+    iconUrl: require('../assets/semaforo3.png'),
+    iconRetinaUrl: require('../assets/semaforo3.png'),
+    iconSize: [50, 50], // size of the icon
+    shadowSize: [50, 64], // size of the shadow
+    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor: [-3, -76]
+
+});
+const semaforosIniciales = [
+    {
+        nombre: "sin nombre",
+        modo: "Tiempo Fijo",
+        rojo: 10,
+        amarillo: 4,
+        verde: 20,
+        grupo: "g1",
+        position:  [-2.877331224126658,-78.96603009964582],
+        icon: semaforo
+    },
+    {
+        nombre: "sin nombre",
+        modo: "Tiempo Fijo",
+        rojo: 10,
+        amarillo: 4,
+        verde: 20,
+        grupo: "g2",
+        position:  [-2.877872982757359, -78.96525268979977],
+        icon: semaforo
+    },
+    {
+        nombre: "sin nombre",
+        modo: "Tiempo Fijo",
+        rojo: 10,
+        amarillo: 4,
+        verde: 20,
+        grupo: "g3",
+        position: [-2.876865269460137,-78.96537600114729],
+        icon: semaforo
+    },
+    {
+        nombre: "sin nombre",
+        modo: "Tiempo Fijo",
+        rojo: 10,
+        amarillo: 4,
+        verde: 20,
+        grupo: "g4",
+        position:  [-2.8775672459352046, -78.9645128400452],
+        icon: semaforo
+    }
+
+]
