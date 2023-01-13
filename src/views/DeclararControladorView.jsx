@@ -14,6 +14,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import AddIcon from '@mui/icons-material/Add';
 import Swal from 'sweetalert2';
+import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 export default function DeclararControladorView() {
     const controlerState = useSelector(state => state.controlers)
     const [grupo,setGrupo] = useState("");
@@ -57,14 +58,26 @@ export default function DeclararControladorView() {
             let newObjeto = {
                 position: position,
                 grupo:grupo,
-                amarillo:0,
-                rojo:0,
-                verde:0,
+                amarillo:4,
+                rojo:10,
+                verde:20,
                 icon: semaforo,
                 modo: "Tiempo Fijo",
                 nombre: nombreSemaforo,
-
             }
+            console.log(newObjeto)
+            console.log(aux)
+            let newDatosModificados = aux.map(item=> {
+                if(item.grupo === grupo){
+                    return newObjeto
+                }else{
+                    return item
+                }
+            })
+            //console.log(newDatosModificados)
+            setSemaforos(newDatosModificados)
+            
+            
 
         }
         const eventHandlers = useMemo(
@@ -141,7 +154,6 @@ export default function DeclararControladorView() {
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
                                      <DraggableMarker />
                                      {semaforos.map((item, index) => (
-
                                         <Marker position={item.position} key={index} icon={item.icon}>
                                             <Popup>
                                                 Semaforo {item.nombre} - Grupo: {item.grupo}
@@ -187,6 +199,40 @@ export default function DeclararControladorView() {
                         <div>
                             <p><strong>Semaforos Declarados:</strong></p>
                         </div>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                        <Table className='home-t'>
+                            <Thead>
+                                <Tr>
+                                    <Th className='home-t-th'>#</Th>
+                                    <Th className='home-t-th'>Paso</Th>
+                                    <Th className='home-t-th'>Duracion</Th>
+                                    <Th className='home-t-th'>Latitud</Th>
+                                    <Th className='home-t-th'>Longitud</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                {semaforos.map((dato, index) => (
+                                    <Tr key={index} >
+                                        <Td>
+                                            {index + 1}
+                                        </Td>
+                                        <Td >
+                                            {dato.nombre}
+                                        </Td>
+                                        <Td >
+                                            {dato.grupo}
+                                        </Td>
+                                        <Td >
+                                            {dato.position[0]}
+                                        </Td>
+                                        <Td >
+                                            {dato.position[1]}
+                                        </Td>
+                                    </Tr>
+                                ))}
+                            </Tbody>
+                        </Table>
                     </Grid>
                     <Grid item xs={12} md={12}>
                     <div style={{display:"flex",justifyContent:"center"}}>
