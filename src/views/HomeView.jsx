@@ -408,6 +408,10 @@ export default function HomeView() {
             return verde
         } else if (_data === "rojo") {
             return rojo
+        }else if (_data === "apagado") {
+            return apagado
+        }else if (_data === "destello") {
+            return destello
         } else {
             return amarillo
         }
@@ -433,7 +437,6 @@ export default function HomeView() {
         let planes = datos_controlador.planes
         let parametros_operativos = datos_controlador.otros_parametros
         let tiempo_amarillo =  parseInt(parametros_operativos.tiempo_amarillo_vehicular)
-
         let hora_actual = new Date();
         let horas = hora_actual.getHours();
         let minutos = hora_actual.getMinutes();
@@ -535,7 +538,6 @@ export default function HomeView() {
             let fases_pasos_aux2 = JSON.parse(JSON.stringify(fases_pasos))
             let fases_pasos_aux = JSON.parse(JSON.stringify(fases_pasos))
             let aux_copias = fases_pasos.length*2
-           
             let nuevos_pasos = fases_pasos_aux.map((item) =>{
                     let grupos_aux = item.grupos.map(item2 =>{
                         let grupo_temp= {}
@@ -565,7 +567,7 @@ export default function HomeView() {
             ))
             let index_aux = 0
             let index_aux2 = 0
-                for(let i = 0;i<aux_copias;i++){
+            for(let i = 0;i<aux_copias;i++){
                 let aux_resi = i%2
                 if(aux_resi !== 0){
                     datos_amarillo.push(nuevos_pasos[index_aux])
@@ -575,8 +577,8 @@ export default function HomeView() {
                     index_aux2 += 1
                 }
             }
+            datos_amarillo.map((item,index)=>(item.name = `Paso ${index+1}`))
         }
-        datos_amarillo.map((item,index)=>(item.name = `Paso ${index+1}`))
         let resumen = {
             horas: horario_activo.horas,
             minutos: horario_activo.minutos,
@@ -683,7 +685,7 @@ export default function HomeView() {
 
         let seguntos_totales = t_final - t_inicio
         let desfase = seguntos_totales % ciclo
-        console.log("el desfase es: ",desfase)
+
         let frequencia = parseInt(seguntos_totales / ciclo)
         let index_periodicidad = 0
         let temp_i = t_inicio
@@ -712,7 +714,7 @@ export default function HomeView() {
                 }
             }
         }
-        console.log(segundos_pasos)
+
         calculoEjecucion.current = segundos_pasos
         //setSemaforo()
 
@@ -880,18 +882,18 @@ export default function HomeView() {
                             <h5>Controlador Seleccionado: </h5>
                         </div>
                     </Grid>
-                    <Grid item xs={12} md={5}>
+                    <Grid item xs={12} md={4}>
 
                         <TextField id="outlined" focused value={controlerState.nombre} label="Nombre" variant="outlined" aria-readonly={true} fullWidth />
 
                     </Grid>
-                    <Grid item xs={12} md={2}>
+                    <Grid item xs={12} md={3}>
                         <TextField id="outlined" focused value={controlerState.latitud} label="Latitud" variant="outlined" aria-readonly fullWidth />
                     </Grid>
-                    <Grid item xs={12} md={2}>
+                    <Grid item xs={12} md={3}>
                         <TextField id="outlined" focused value={controlerState.longitud} label="Longitud" variant="outlined" aria-readonly fullWidth />
                     </Grid>
-                    <Grid item xs={12} md={3}>
+                    <Grid item xs={12} md={2}>
                         <Button variant="contained" startIcon={<EditIcon />} onClick={abrirModalEditarControlador} color="advertencia" fullWidth sx={{ height: "100%" }}>Editar</Button>
                     </Grid>
 
@@ -900,16 +902,16 @@ export default function HomeView() {
                             <h5>Gestionar Semaforos: </h5>
                         </div>
                     </Grid>
-                    <Grid item xs={12} md={3}>
+                    <Grid item xs={12} md={4}>
                         <TextField id="outlined" focused value={position.lat} label="Latitud" variant="outlined" fullWidth />
                     </Grid>
-                    <Grid item xs={12} md={3}>
+                    <Grid item xs={12} md={4}>
                         <TextField id="outlined" focused value={position.lng} label="Longitud" variant="outlined" fullWidth />
                     </Grid>
-                    <Grid item xs={12} md={3}>
+                    <Grid item xs={12} md={2}>
                         <Button variant="contained" startIcon={<UpdateIcon />} disabled={btnAgregar} onClick={() => { setModalCrearSemaforo(true) }} color="azulm" fullWidth sx={{ height: "100%" }}>Agregar</Button>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={12} md={2}>
                         <Button variant="contained" disabled={deshabilitar} fullWidth sx={{ height: "100%" }} startIcon={flagsimu ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />} color={flagsimu ? 'verde' : 'morado1'} onClick={iniciarSimulacion}>Simular</Button>
                     </Grid>
 
@@ -1249,7 +1251,7 @@ const semaforo = new L.Icon({
 });
 
 const rojo = new L.Icon({
-    iconUrl: require('../assets/semaforo3.png'),
+    iconUrl: require('../assets/rojo.png'),
     iconRetinaUrl: require('../assets/rojo.png'),
     iconSize: [50, 50], // size of the icon
     shadowSize: [50, 64], // size of the shadow
@@ -1259,7 +1261,7 @@ const rojo = new L.Icon({
 });
 
 const verde = new L.Icon({
-    iconUrl: require('../assets/semaforo3.png'),
+    iconUrl: require('../assets/verde.png'),
     iconRetinaUrl: require('../assets/verde.png'),
     iconSize: [50, 50], // size of the icon
     shadowSize: [50, 64], // size of the shadow
@@ -1268,7 +1270,7 @@ const verde = new L.Icon({
     popupAnchor: [-3, -76]
 });
 const amarillo = new L.Icon({
-    iconUrl: require('../assets/semaforo3.png'),
+    iconUrl: require('../assets/amarillo.png'),
     iconRetinaUrl: require('../assets/amarillo.png'),
     iconSize: [50, 50], // size of the icon
     shadowSize: [50, 64], // size of the shadow
@@ -1277,7 +1279,7 @@ const amarillo = new L.Icon({
     popupAnchor: [-3, -76]
 });
 const apagado = new L.Icon({
-    iconUrl: require('../assets/semaforo3.png'),
+    iconUrl: require('../assets/apagado.png'),
     iconRetinaUrl: require('../assets/apagado.png'),
     iconSize: [50, 50], // size of the icon
     shadowSize: [50, 64], // size of the shadow
@@ -1288,6 +1290,17 @@ const apagado = new L.Icon({
 const ubi = new L.Icon({
     iconUrl: require('../assets/ubica.png'),
     iconRetinaUrl: require('../assets/ubica.png'),
+    iconSize: [20, 30], // size of the icon
+    shadowSize: [50, 64], // size of the shadow
+    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor: [-3, -76]
+
+});
+
+const destello = new L.Icon({
+    iconUrl: require('../assets/destello.png'),
+    iconRetinaUrl: require('../assets/destello.png'),
     iconSize: [20, 30], // size of the icon
     shadowSize: [50, 64], // size of the shadow
     iconAnchor: [22, 94], // point of the icon which will correspond to marker's location

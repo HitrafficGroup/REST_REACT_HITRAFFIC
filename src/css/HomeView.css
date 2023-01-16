@@ -71,10 +71,36 @@
     margin-top: 10px;
     
 }
+.b-todo-verde{
+    color: white;
+    height: 24px;
+    background-color: #28B463;
+    justify-content: center;
+    text-align: center;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
 .home-view-footer{
     height: 50px;
 }
 .titulos-home{
     margin-top: 20px;
     margin-bottom: 30px;
+}
+
+@media only screen and (max-width: 1080px) {
+    .card-controller{
+        position: initial;
+        width: 90%;
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+    .card-location-i{
+        position: initial;
+        width: 90%;
+        margin:5%;
+        
+    }
 }

@@ -17,6 +17,8 @@ export default function CustomProgress({red,yellow,green,apagado,destello,modo})
         let pred = (red*100)/total;
         let papagado = (apagado*100)/total;
         let pdestello = (destello*100)/total;
+
+
         if(modo=== "Destello"){
             total = red+yellow+green;
             setPorcentGreen(0);
@@ -38,19 +40,36 @@ export default function CustomProgress({red,yellow,green,apagado,destello,modo})
     }
     const BarIndicator = (props) =>{
         const modo = props.modo;
+        const aux_rojo = props.red;
+        const aux_verde = props.green;
         if (modo === "Destello") {
           return (<>
                 <div className="b-destello" style={{width:"100%"}}>
                     Destello Activado
                 </div>
           </>);
+        }else if(aux_verde === 0){
+            return (<>
+              <div className="b-enrojo" style={{width:"100%"}}>
+                    Semaforo  en Rojo
+                </div>
+          </>);
+        
         }else if(modo === "Todo en Rojo"){
             return (<>
               <div className="b-enrojo" style={{width:"100%"}}>
                     Todo en Rojo Activado
                 </div>
           </>);
-            
+        
+        }
+        else if(aux_rojo === 0){
+            return (<>
+              <div className="b-todo-verde" style={{width:"100%"}}>
+                    Semaforo en Verde
+                </div>
+          </>);
+        
         }else{
             return (
             <>
@@ -76,7 +95,7 @@ export default function CustomProgress({red,yellow,green,apagado,destello,modo})
     return (
         <div>
             <div className='bar-container'>
-               <BarIndicator modo={modo}/>
+               <BarIndicator modo={modo} red={red} green={green}/>
             </div>
         </div>
     );
