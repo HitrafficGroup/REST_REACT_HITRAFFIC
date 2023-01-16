@@ -213,7 +213,7 @@ export default function DeclararControladorView() {
                             </Thead>
                             <Tbody>
                                 {semaforos.map((dato, index) => (
-                                    <Tr key={index} >
+                                    <Tr className="tablas-focus" key={index} >
                                         <Td>
                                             {index + 1}
                                         </Td>

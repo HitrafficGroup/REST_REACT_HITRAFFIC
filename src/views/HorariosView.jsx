@@ -538,7 +538,7 @@ export default function HorariosView() {
                                     </Thead>
                                     <Tbody>
                                         {horarios.map((dato, index) => (
-                                            <Tr key={index} >
+                                            <Tr className="tablas-focus" key={index} >
                                                 <Td>
                                                     {dato.nro}
                                                 </Td>

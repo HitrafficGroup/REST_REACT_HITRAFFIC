@@ -288,7 +288,7 @@ export default function PlanesView() {
                                 </Thead>
                                 <Tbody>
                                     {currentPlan.map((dato, index) => (
-                                        <Tr className="tr-planes" key={index} >
+                                        <Tr className="tr-planes tablas-focus" key={index} >
                                             <Td>
                                                 {dato.name}
                                             </Td>

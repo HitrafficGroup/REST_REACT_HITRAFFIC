@@ -275,7 +275,7 @@ export default function FasesView() {
 
                                 <Tbody>
                                     {fases.map((dato, index) => (
-                                        <Tr key={index} >
+                                        <Tr className="tablas-focus" key={index} >
                                             <Td>
                                                 <b>{`Fase-${index + 1}`}</b>
                                             </Td>

@@ -849,7 +849,7 @@ export default function HomeView() {
                             </Thead>
                             <Tbody>
                                 {controlerState.ips.map((dato, index) => (
-                                    <Tr key={index} >
+                                    <Tr  className="tablas-focus" key={index} >
                                         <Td>
                                             {index + 1}
                                         </Td>
@@ -958,7 +958,7 @@ export default function HomeView() {
                             </Thead>
                             <Tbody>
                                 {controlerState.pasos_activos.map((dato, index) => (
-                                    <Tr key={index} >
+                                    <Tr className={"tablas-focus"} key={index} >
                                         <Td>
                                             {index + 1}
                                         </Td>
@@ -982,7 +982,7 @@ export default function HomeView() {
                                                     </Tr>
                                                 </Thead>
                                                 <Tbody>
-                                                    <Tr>
+                                                    <Tr >
                                                         <Td> <Chip label={dato.grupos[0].colorDescripcion} sx={{ width: 110, marginRight: 1 }} color={dato.grupos[0].colorDescripcion} /></Td>
                                                         <Td> <Chip label={dato.grupos[1].colorDescripcion} sx={{ width: 110, marginRight: 1 }} color={dato.grupos[1].colorDescripcion} /></Td>
                                                         <Td> <Chip label={dato.grupos[2].colorDescripcion} sx={{ width: 110, marginRight: 1 }} color={dato.grupos[2].colorDescripcion} /></Td>
@@ -1011,7 +1011,7 @@ export default function HomeView() {
                             <Tbody>
 
                                 {semaforos3.map((dato, index) => (
-                                    <Tr key={index} >
+                                    <Tr className="tablas-focus" key={index} >
                                         <Td>
                                             {index + 1}
                                         </Td>

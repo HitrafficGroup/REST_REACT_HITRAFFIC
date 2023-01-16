@@ -89,6 +89,10 @@
     margin-top: 20px;
     margin-bottom: 30px;
 }
+.tablas-focus:hover{
+    background-color: #b4bcbfb9  !important ;
+    margin-top: 5px I !important;
+}
 
 @media only screen and (max-width: 1080px) {
     .card-controller{
