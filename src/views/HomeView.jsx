@@ -415,6 +415,7 @@ export default function HomeView() {
     const devolverPaso = () => {
         const referencia = new Date().getHours() * 3600 + new Date().getMinutes() * 60 + new Date().getSeconds()
         let datos_interes = calculoEjecucion.current
+        //console.log(datos_interes)
         let paso_actual
         for (let i = 0; i < datos_interes.length; i++) {
             let temp = datos_interes[i].valores
@@ -430,6 +431,9 @@ export default function HomeView() {
         let datos_controlador = JSON.parse(JSON.stringify(todaInformacion.current))
         let dia_ordinario = datos_controlador.horarios.dia_ordinario
         let planes = datos_controlador.planes
+        let parametros_operativos = datos_controlador.otros_parametros
+        let tiempo_amarillo =  parseInt(parametros_operativos.tiempo_amarillo_vehicular)
+
         let hora_actual = new Date();
         let horas = hora_actual.getHours();
         let minutos = hora_actual.getMinutes();
@@ -496,7 +500,7 @@ export default function HomeView() {
                 name: item.name
             }
             let grupos_aux = aux2.grupos
-
+            
 
             if (modo === 'Destello') {
                 grupos_aux = aux2.grupos.map(item => ({
@@ -525,7 +529,54 @@ export default function HomeView() {
             return obj_mod
 
         })
-
+        let datos_amarillo = []
+        // esta parte del codigo se encarga de animar los ciclos en amarillo
+        if(tiempo_amarillo >0){
+            let fases_pasos_aux2 = JSON.parse(JSON.stringify(fases_pasos))
+            let fases_pasos_aux = JSON.parse(JSON.stringify(fases_pasos))
+            let aux_copias = fases_pasos.length*2
+           
+            let nuevos_pasos = fases_pasos_aux.map((item) =>{
+                    let grupos_aux = item.grupos.map(item2 =>{
+                        let grupo_temp= {}
+                        if(item2.colorDescripcion === "rojo"){
+                             grupo_temp = {faseNum: item2.faseNum, colorDescripcion: item2.colorDescripcion, color: item2.color, grupoNum: item2.grupoNum, id:item2.id}
+                        }else{
+                             grupo_temp = {faseNum: item2.faseNum, colorDescripcion: "amarillo", color: 2, grupoNum: item2.grupoNum, id:item2.id}
+                        }
+                        return grupo_temp
+                    })
+                    let paso_editado = {
+                        duracion: tiempo_amarillo,
+                        fase: item.fase,
+                        grupos:grupos_aux,
+                        name: item.name,
+                    }
+                return paso_editado
+            })
+    
+            let nuevos_pasos_2 = fases_pasos_aux2.map(item=>(
+                {
+                    duracion: item.duracion -tiempo_amarillo,
+                    fase: item.fase,
+                    grupos:item.grupos,
+                    name: item.name,
+                }
+            ))
+            let index_aux = 0
+            let index_aux2 = 0
+                for(let i = 0;i<aux_copias;i++){
+                let aux_resi = i%2
+                if(aux_resi !== 0){
+                    datos_amarillo.push(nuevos_pasos[index_aux])
+                    index_aux += 1
+                }else{
+                    datos_amarillo.push(nuevos_pasos_2[index_aux2])
+                    index_aux2 += 1
+                }
+            }
+        }
+        datos_amarillo.map((item,index)=>(item.name = `Paso ${index+1}`))
         let resumen = {
             horas: horario_activo.horas,
             minutos: horario_activo.minutos,
@@ -570,29 +621,27 @@ export default function HomeView() {
                 objg4.rojo = objg4.rojo + fases_pasos[i1].duracion
             }
         }
-        var ejemplo = semaforos2.current.slice()
-        var t_amarillo = allInfo.current.otros_parametros.tiempo_amarillo_vehicular
-
+        var ejemplo = JSON.parse(JSON.stringify(semaforos2.current))
         var newDataUpdate = ejemplo.map((item) => {
             if (item.grupo === 'g1') {
                 item['rojo'] = objg1.rojo
                 item['verde'] = objg1.verde
-                item['amarillo'] = t_amarillo
+                item['amarillo'] = tiempo_amarillo
                 item['modo'] = modo
             } else if (item.grupo === 'g2') {
                 item['rojo'] = objg2.rojo
                 item['verde'] = objg2.verde
-                item['amarillo'] = t_amarillo
+                item['amarillo'] = tiempo_amarillo
                 item['modo'] = modo
             } else if (item.grupo === 'g3') {
                 item['rojo'] = objg3.rojo
                 item['verde'] = objg3.verde
-                item['amarillo'] = t_amarillo
+                item['amarillo'] = tiempo_amarillo
                 item['modo'] = modo
             } else {
                 item['rojo'] = objg4.rojo
                 item['verde'] = objg4.verde
-                item['amarillo'] = t_amarillo
+                item['amarillo'] = tiempo_amarillo
                 item['modo'] = modo
             }
             //item['icon'] = {}
@@ -605,19 +654,27 @@ export default function HomeView() {
         timer1.current = 0
 
         dispatch(setPasosActivos(fases_pasos));
+
         //setPasosActivos(fases_pasos)
-        faseActual.current = fases_pasos
+       
+
         let horas_1 = parseInt(horario_activo.horas)
         let minutos_1 = parseInt(horario_activo.minutos)
         let horas_2 = parseInt(horario_siguiente.horas)
         let minutos_2 = parseInt(horario_siguiente.minutos)
-        let t_inicio = horas_1 * 3600 + minutos_1 * 60
-        let t_final = horas_2 * 3600 + minutos_2 * 60
-        let pas_activos = JSON.parse(JSON.stringify(fases_pasos))
+        let t_inicio = horas_1 * 3600 + minutos_1 * 60 + 2
+        let t_final = horas_2 * 3600 + minutos_2 * 60 + 2
         let ciclo = 0
         let segundos_pasos = []
         let pasos_duracion = []
-
+        let pas_activos = []
+        if(tiempo_amarillo>0){
+             pas_activos = JSON.parse(JSON.stringify(datos_amarillo))
+             faseActual.current = datos_amarillo
+        }else{
+             pas_activos = JSON.parse(JSON.stringify(fases_pasos))
+             faseActual.current = fases_pasos
+        }
         for (let i = 0; i < pas_activos.length; i++) {
             let aux = pas_activos[i].duracion
             pasos_duracion.push(aux)
@@ -625,8 +682,9 @@ export default function HomeView() {
         }
 
         let seguntos_totales = t_final - t_inicio
-        let frequencia = parseInt(seguntos_totales / ciclo)
         let desfase = seguntos_totales % ciclo
+        console.log("el desfase es: ",desfase)
+        let frequencia = parseInt(seguntos_totales / ciclo)
         let index_periodicidad = 0
         let temp_i = t_inicio
 
@@ -654,6 +712,7 @@ export default function HomeView() {
                 }
             }
         }
+        console.log(segundos_pasos)
         calculoEjecucion.current = segundos_pasos
         //setSemaforo()
 
@@ -721,7 +780,6 @@ export default function HomeView() {
         }
         else {
             let paso_actual = devolverPaso()
-            console.log("paso actual: ", paso_actual)
             g1 = devolverColor(faseActual.current[paso_actual].grupos[0].colorDescripcion);
             g2 = devolverColor(faseActual.current[paso_actual].grupos[1].colorDescripcion);
             g3 = devolverColor(faseActual.current[paso_actual].grupos[2].colorDescripcion);
