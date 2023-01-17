@@ -6,15 +6,22 @@ import { useSelector } from 'react-redux';
 import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
 import L from 'leaflet';
-import EditIcon from '@mui/icons-material/Edit';
+import { db } from "../firebase/firebase-config";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { useNavigate } from 'react-router-dom';
+import { setNameMenu } from '../features/menu/menuSlice';
+import { reloadIps } from '../features/controlers/controlerSlice';
 import AddIcon from '@mui/icons-material/Add';
 import Swal from 'sweetalert2';
+import { doc, setDoc } from "firebase/firestore"; 
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
+import Backdrop from '@mui/material/Backdrop';
+import { useDispatch  } from 'react-redux';
+import CircularProgress from '@mui/material/CircularProgress';
 export default function DeclararControladorView() {
     const controlerState = useSelector(state => state.controlers)
     const [grupo,setGrupo] = useState("");
@@ -23,12 +30,20 @@ export default function DeclararControladorView() {
     const [reloadMap,setReloadMap] = useState(false);
     const [latitud,setLatitud] = useState(-2.876428);
     const [longitud,setLongitud] = useState(-78.965342)
+    const [flagCargando,setFlagCargando] = useState(false);
     const [draggable, setDraggable] = useState(false)
     const [nombreSemaforo,setNombreSemaforo] = useState("");
     const [nombreControlador,setNombreControlador]  = useState("");
     const [semaforos,setSemaforos] = useState(semaforosIniciales);
     const markerRef = useRef(null)
-    const declararControlador =()=>{
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const Changeview = (referencia) => {
+        dispatch(setNameMenu("Dashboard Hitraffic"))
+        dispatch(reloadIps())
+        navigate(referencia);
+    }
+    const declararControlador = async()=>{
         Swal.fire({
             title: 'Creacion de controlador',
             text: "Se va a crear el siguiente controlador",
@@ -37,13 +52,86 @@ export default function DeclararControladorView() {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Si'
-          }).then((result) => {
+          }).then(async(result) => {
             if (result.isConfirmed) {
-              Swal.fire(
-                'Completado',
-                'Controlador Agregado Con Exito ! ',
-                'success'
-              )
+            let  ip = controlerState.nuevo_controlador.ip 
+            console.log(controlerState.nuevo_controlador.ip)
+            if(ip === "" || ip === undefined ){
+ 
+                Swal.fire(
+                    'Error No Ip',
+                    'Salga de la ventana y vuelva a entrar ! ',
+                    'error'
+                    )
+            }else{
+                if(nombreControlador !== ""){
+
+                    let resumen_aux =  JSON.parse(JSON.stringify(semaforos))   
+                    let aux_1 = resumen_aux.map(function(element){
+                        element.icon = {}
+                        return element ;
+                    }) 
+                  
+                    let parametrosIniciales = {
+                        // parametros inicializados por defecto
+                        resumen:aux_1,
+                        t_fases:1667372400000,
+                        t_horarios: 1667372400000,
+                        t_peticion: 1667372400000,
+                        t_planes: 1667372400000,
+                        ip:ip,
+                        mac:controlerState.nuevo_controlador.mac,
+                        informacion:{
+                            nombre:nombreControlador,
+                            ubicacion:[latitud,longitud]
+                        },
+                        // parametros que se iran llenando conforme actualice el controlador
+                        version: {},
+                        conflictos_verdes:{},
+                        dias_especiales:{},
+                        entradas:{},
+                        fases:{},
+                        grupos:{},
+                        hora_controlador:{},
+                        horarios:{},
+                        
+                        otros_parametros:{},
+                        planes:{},
+    
+                    }
+                    let historialControladorData = {
+                        nombre:nombreControlador,
+                        latitud:latitud,
+                        longitud:longitud,
+                        mac:controlerState.nuevo_controlador.mac,
+                    }
+                    try {
+                        setFlagCargando(true);
+                        await setDoc(doc(db, "controladores",controlerState.nuevo_controlador.mac ), parametrosIniciales);
+                        await setDoc(doc(db, "historial_controladores",controlerState.nuevo_controlador.mac ), historialControladorData);
+                        Swal.fire(
+                            'Exito',
+                            'Controlador Declarado! ',
+                            'success'
+                            )
+                        setFlagCargando(false);
+                        Changeview('/david-diaz/home')
+                    } catch (error) {
+                        Swal.fire(
+                            'Error',
+                            `Error: ${error}`,
+                            'error'
+                            )
+                            setFlagCargando(false);
+                    }
+                }else{
+                      Swal.fire(
+                        'Falta el Nombre',
+                        'Llene el nombre del Controlador ! ',
+                        'warning'
+                        )
+                }
+            }
             }
           })
         }
@@ -52,8 +140,9 @@ export default function DeclararControladorView() {
             setPosition(aux)
             setReloadMap(!reloadMap)
         }
+  
         const agregarSemaforo =()=>{
-            console.log("se agrego el siguiente semaforo");
+            
             let aux  = semaforos
             let newObjeto = {
                 position: position,
@@ -65,8 +154,9 @@ export default function DeclararControladorView() {
                 modo: "Tiempo Fijo",
                 nombre: nombreSemaforo,
             }
-            console.log(newObjeto)
-            console.log(aux)
+            if(nombreSemaforo === ""){
+                newObjeto.nombre = "Sin Nombre"
+            }
             let newDatosModificados = aux.map(item=> {
                 if(item.grupo === grupo){
                     return newObjeto
@@ -236,7 +326,7 @@ export default function DeclararControladorView() {
                     </Grid>
                     <Grid item xs={12} md={12}>
                     <div style={{display:"flex",justifyContent:"center"}}>
-                            <Button sx={{height:60}} variant="outlined">CREAR CONTROLADOR</Button>
+                            <Button sx={{height:60}} variant="outlined" onClick={declararControlador}>CREAR CONTROLADOR</Button>
                         </div>
                     </Grid>
                 </Grid>
@@ -244,6 +334,9 @@ export default function DeclararControladorView() {
 
                 </div>
             </Container>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={flagCargando}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
         </>
     );
 

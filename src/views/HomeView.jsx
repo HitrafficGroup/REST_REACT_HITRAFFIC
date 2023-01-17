@@ -664,8 +664,8 @@ export default function HomeView() {
         let minutos_1 = parseInt(horario_activo.minutos)
         let horas_2 = parseInt(horario_siguiente.horas)
         let minutos_2 = parseInt(horario_siguiente.minutos)
-        let t_inicio = horas_1 * 3600 + minutos_1 * 60 + 2
-        let t_final = horas_2 * 3600 + minutos_2 * 60 + 2
+        let t_inicio = horas_1 * 3600 + minutos_1 * 60 + 6
+        let t_final = horas_2 * 3600 + minutos_2 * 60 + 6
         let ciclo = 0
         let segundos_pasos = []
         let pasos_duracion = []

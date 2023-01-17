@@ -56,12 +56,15 @@ export const controlerSlice = createSlice({
         createNewController:(state,action)=>{
             state.nuevo_controlador = action.payload
         },
+        reloadIps:(state)=>{
+            state.ips = []
+        }
 
     }
 })
 export const {addFases, addPlanes,setInitialStateController,
     setResumen,addIpsDisponibles,
     setPasosActivos,setSemaforosActivos,
-    createNewController,addCurrentControler} = controlerSlice.actions
+    createNewController,addCurrentControler,reloadIps} = controlerSlice.actions
 export default controlerSlice.reducer
 
