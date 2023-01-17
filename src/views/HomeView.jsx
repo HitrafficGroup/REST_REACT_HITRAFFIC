@@ -146,7 +146,9 @@ export default function HomeView() {
         datosFormat.resumen = initialResumen
         await setDoc(doc(ref, mac), datosFormat);
     }
-
+    /* funcion encargada  de cargar los datos del controlador seleccionado , estos
+    datos nos serviran para poder llamar los planes , fases etc del controlador, la funcion
+    se encarga de actualizar el reducer con la informacion del controlador actual */
     const seleccionarControlador = async (data) => {
         try {
             if (data.declarado) {
@@ -256,6 +258,8 @@ export default function HomeView() {
 
 
     }
+
+    /* funcion para actualizar la variable version en firebase, dependiendo del controlador*/
     const enviarVersionFirebase = async (mac, ip, firmware) => {
         const ref = doc(db, "controladores", `${mac}`);
         await updateDoc(ref, {
@@ -264,7 +268,7 @@ export default function HomeView() {
             version: firmware
         });
     }
-
+    /*funcion encargada  de devolvernos el estado en el que se encuentra tal semaforo*/
     const returnModo = (data) => {
         if (data === 1) {
             return 'Tiempo Fijo'
@@ -349,6 +353,10 @@ export default function HomeView() {
 
         }
     }
+    /*
+    esta funcion agrega y actualiza el semaforo que se selecciona en los grupos
+    ,nos permite desplazar elsemaforo dentro del mapa actualizando su latitud y longitud
+    */
     const agregarSemaforo = async () => {
         var data = newSemaforo;
         data['position'] = [position.lat, position.lng];
@@ -392,7 +400,9 @@ export default function HomeView() {
     const cerrarEditarSemaforo = () => {
         setModalSemaforo(false);
     }
-
+    /* funcion encargada de actualizar el valor del useRef con la finalidad de permitir que se 
+    inicie la simulacion debido a que maneja un valor booleano que activa una funcion en el hook
+    useEffect */
     const iniciarSimulacion = () => {
         simulacion.current = !simulacion.current;
         if (simulacion.current) {
@@ -403,7 +413,11 @@ export default function HomeView() {
         setBtnAgregar(simulacion.current)
 
     }
-
+    /*
+        devolvercolor recibe como parametro el nombre del color y nos devuelve el icono leaflet
+        paracolocarlo en el semaforo cada vez que cambia de paso , esta funcion es importante para actualizar
+        la imagen del semaforo y que se realice la animacion
+    */
     const devolverColor = (_data) => {
         if (_data === "verde") {
             return verde
@@ -417,6 +431,13 @@ export default function HomeView() {
             return amarillo
         }
     }
+
+    /*
+        debido a que determinamos el paso en el que estamos a partir de un arreglo con cada uno de los segundos 
+    en los cuales debe estar activado ese paso , creamos una funcion de busqueda que a partir del segundo que recibe
+    en el valor de referencia este lo buscara dentro de los arreglos que existe por cada paso del controlador y nos
+    dira a que paso pertenece ese preciso segundo
+    */
     const devolverPaso = () => {
         const referencia = new Date().getHours() * 3600 + new Date().getMinutes() * 60 + new Date().getSeconds()
         let datos_interes = calculoEjecucion.current
@@ -725,6 +746,7 @@ export default function HomeView() {
 
 
     }
+    /* esta  funcion se encarga de animar el mapa segun el paso en el que se encuentre*/
 
     const iniciarAnimacion = () => {
         let g1;
@@ -815,6 +837,9 @@ export default function HomeView() {
         console.log("existen datos")
     }
 
+    /* use effect es un hook que nos permite ejecutar nuestro temporizador en tiempo real
+    como un sub procesos y de este modo generar las animaciones del semaforo
+    */
 
     useEffect(() => {
         const interval = setInterval(() => {

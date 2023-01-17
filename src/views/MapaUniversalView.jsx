@@ -9,6 +9,9 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import MemoryIcon from '@mui/icons-material/Memory';
+import WifiIcon from '@mui/icons-material/Wifi';
+import FmdGoodIcon from '@mui/icons-material/FmdGood';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import { collection, updateDoc, onSnapshot, doc, getDocs, setDoc } from "firebase/firestore";
 import CardUniversal from '../components/CardUniversal';
@@ -344,8 +347,8 @@ export default function MapaUniversalView() {
         let minutos_1 = parseInt(horario_activo.minutos)
         let horas_2 = parseInt(horario_siguiente.horas)
         let minutos_2 = parseInt(horario_siguiente.minutos)
-        let t_inicio = horas_1 * 3600 + minutos_1 * 60 + 6
-        let t_final = horas_2 * 3600 + minutos_2 * 60 + 6
+        let t_inicio = horas_1 * 3600 + minutos_1 * 60 + 5
+        let t_final = horas_2 * 3600 + minutos_2 * 60 + 5
         let ciclo = 0
         let segundos_pasos = []
         let pasos_duracion = []
@@ -431,7 +434,15 @@ export default function MapaUniversalView() {
 
                         <Marker position={item.position} key={index} icon={item.icon} >
                             <Popup>
-                                Semaforo {item.nombre} - Grupo: {item.grupo}
+                                <div className='card-structure-universal'>
+                                <div className='titulo-card'>
+                                    <h5 className='title-c' style={{color:"white"}}>Controlador Activo</h5>
+                                    <MemoryIcon fontSize="large" sx={{color:"white"}}/>
+                                </div>
+                                <div className='card-body'>
+                                    Semaforo {item.nombre} - Grupo: {item.grupo}
+                                    </div>
+                                </div>
                             </Popup>
                         </Marker>
                     ))}
@@ -443,7 +454,7 @@ export default function MapaUniversalView() {
                         <PlayCircleOutlineIcon sx={{ mr: 1 }} />
                         Play
                     </Fab>
-                    <CardUniversal />
+                    {/* <CardUniversal /> */}
                 </MapContainer>
             </div>
             {/* </Container> */}
