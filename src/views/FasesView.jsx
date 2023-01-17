@@ -219,7 +219,7 @@ export default function FasesView() {
         try {
             let result = []
             setDeshabilitar2(true);
-            let flag = await getCheckDataFases(controlerState.mac, "fases",10)
+            let flag = await getCheckDataFases(controlerState.mac, "fases",50)
             if (flag !== false) {
                 result = flag
                 setFases(result);

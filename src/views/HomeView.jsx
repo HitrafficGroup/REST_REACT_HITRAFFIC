@@ -432,6 +432,10 @@ export default function HomeView() {
         return paso_actual
     }
 
+    /* 
+        Funcion encargada de cargar los datos necesarios para animar los semaforos
+        del mapa.
+     */
     const parametrosCorriendo = () => {
         let datos_controlador = JSON.parse(JSON.stringify(todaInformacion.current))
         let dia_ordinario = datos_controlador.horarios.dia_ordinario
@@ -665,8 +669,8 @@ export default function HomeView() {
         let minutos_1 = parseInt(horario_activo.minutos)
         let horas_2 = parseInt(horario_siguiente.horas)
         let minutos_2 = parseInt(horario_siguiente.minutos)
-        let t_inicio = horas_1 * 3600 + minutos_1 * 60 + 6
-        let t_final = horas_2 * 3600 + minutos_2 * 60 + 6
+        let t_inicio = horas_1 * 3600 + minutos_1 * 60 + 5
+        let t_final = horas_2 * 3600 + minutos_2 * 60 +5
         let ciclo = 0
         let segundos_pasos = []
         let pasos_duracion = []
@@ -686,7 +690,7 @@ export default function HomeView() {
 
         let seguntos_totales = t_final - t_inicio
         let desfase = seguntos_totales % ciclo
-
+        console.log("desfase:",desfase)
         let frequencia = parseInt(seguntos_totales / ciclo)
         let index_periodicidad = 0
         let temp_i = t_inicio

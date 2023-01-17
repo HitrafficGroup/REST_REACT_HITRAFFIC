@@ -64,7 +64,7 @@ export default function PlanesView() {
             setDis('disabled')
             setDeshabilitar(true)
             setDeshabilitar2(true)
-            let flag =  await getCheckDataPlanes(controlerState.mac,"planes",10)
+            let flag =  await getCheckDataPlanes(controlerState.mac,"planes",50)
             //eusart
             //usart
             if(flag !== false){

@@ -234,7 +234,7 @@ export default function HorariosView() {
         try {
             let result;
             setHabilitar2(true);
-            let flag = await getCheckDataHorarios(controlerState.mac, "horarios",3)
+            let flag = await getCheckDataHorarios(controlerState.mac, "horarios",50)
             if (flag !== false) {
                 result = flag
 

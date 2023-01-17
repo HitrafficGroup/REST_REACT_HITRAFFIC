@@ -100,6 +100,22 @@ export default function MapaUniversalView() {
         }
 
     }
+
+    const devolverPaso = (_datos) => {
+        const referencia = new Date().getHours() * 3600 + new Date().getMinutes() * 60 + new Date().getSeconds()
+        let datos_interes = _datos
+
+        let paso_actual
+        for (let i = 0; i < datos_interes.length; i++) {
+            let temp = datos_interes[i].valores
+            let busqueda = temp.find(element => element === referencia)
+            if (busqueda === referencia) {
+                paso_actual = datos_interes[i].paso
+            }
+        }
+        return paso_actual
+    }
+
     const iniciarAnimacion = () => {
 
         let aux_datos_actuales = JSON.parse(JSON.stringify(datosActuales.current));
@@ -113,17 +129,20 @@ export default function MapaUniversalView() {
         let valores = [];
         let dataUpdated = [];
         let semaforos_unidos = [];
-        
+        console.log(aux_datos_actuales)
         for (let i = 0; i < aux_datos_actuales.length; i++) {
+
+            let paso_actual = devolverPaso(aux_datos_actuales[i].calculo);
+           
             // if(aux_datos_actuales[i].modo ===  'Tiempo Fijo' ){
             // console.log("estamos en modo fijo")
             //primero debemos ver en que paso estamos y en que tiempo 
-            g1 = devolverColor(aux_datos_actuales[i].fases_pasos[0].grupos[0].colorDescripcion);
-            g2 = devolverColor(aux_datos_actuales[i].fases_pasos[0].grupos[1].colorDescripcion);
-            g3 = devolverColor(aux_datos_actuales[i].fases_pasos[0].grupos[2].colorDescripcion);
-            g4 = devolverColor(aux_datos_actuales[i].fases_pasos[0].grupos[3].colorDescripcion);
+            g1 = devolverColor(aux_datos_actuales[i].fases_pasos[paso_actual].grupos[0].colorDescripcion);
+            g2 = devolverColor(aux_datos_actuales[i].fases_pasos[paso_actual].grupos[1].colorDescripcion);
+            g3 = devolverColor(aux_datos_actuales[i].fases_pasos[paso_actual].grupos[2].colorDescripcion);
+            g4 = devolverColor(aux_datos_actuales[i].fases_pasos[paso_actual].grupos[3].colorDescripcion);
 
-     
+
             dataUpdated = semaforos_temp[i].map((item) => {
                 if (item.grupo === "g1") {
                     item['icon'] = g1;
@@ -141,7 +160,7 @@ export default function MapaUniversalView() {
 
         }
         let newData = recursionSemaforo(semaforos_unidos)
-        
+
         setSemaforos(newData)
         //setSemaforos(newData)
     }
@@ -165,10 +184,14 @@ export default function MapaUniversalView() {
     const parametrosCorriendo = async () => {
         let datos_para_simular = []
         let controladores_aux = JSON.parse(JSON.stringify(controladores.current))
+       
         let objNuevoDatos = {}
         for (let i = 0; i < controladores_aux.length; i++) {
-            let dia_ordinario = controladores_aux[i].horarios.dia_ordinario;
-            let planes = controladores_aux[i].planes
+            let datos_controlador = JSON.parse(JSON.stringify(controladores_aux[i]))
+            let dia_ordinario = datos_controlador.horarios.dia_ordinario;
+            let planes = datos_controlador.planes
+            let parametros_operativos = datos_controlador.otros_parametros
+            let tiempo_amarillo = parseInt(parametros_operativos.tiempo_amarillo_vehicular)
             let hora_actual = new Date();
             let horas = hora_actual.getHours();
             let minutos = hora_actual.getMinutes();
@@ -177,8 +200,8 @@ export default function MapaUniversalView() {
             let temp;
             let ref;
             let nro_horario;
-            let nro_horario_sig;
-            let dias_ordenados = dia_ordinario.slice()
+            let pas_activos = []
+            let dias_ordenados = dia_ordinario
             dias_ordenados.sort(function (a, b) {
                 let a_aux = parseInt(a.horas)
                 let a_aux2 = parseInt(a.minutos)
@@ -188,32 +211,29 @@ export default function MapaUniversalView() {
                 b = b_aux * 100 + b_aux2
                 return b - a
             })
-            console.log(dias_ordenados)
-            for (let i = 0; i < dias_ordenados.length; i++) {
+            let dias_ordenados_filtrados = dias_ordenados.filter(item => item.mod !== 0)
+            let nro_horario_sig = 0
+            for (let i = 0; i < dias_ordenados_filtrados.length; i++) {
                 aux = parseInt(dias_ordenados[i].horas)
                 aux2 = parseInt(dias_ordenados[i].minutos)
                 temp = aux * 100 + aux2
                 ref = horas * 100 + minutos
-                //console.log("tiempo controlador: ",temp)
-                //console.log("tiempo referencia: ",ref)
+                //console.log("ref: ",ref)
+                //console.log("temp: ",temp)
                 if (ref > temp) {
-                    let aux3 = i-1
-                    
-                    if(aux3 <0){
-                        aux3 = 0
-                    }
                     nro_horario = dias_ordenados[i].nro
-                    nro_horario_sig = dias_ordenados[aux3].nro
-                    //console.log("plan obtenido: ",plan)
+                    nro_horario_sig = dias_ordenados[i - 1].nro
+                    //console.log("plan obtenido: ",nro_horario)
                     break
                 }
+                nro_horario = dias_ordenados[0].nro
+                nro_horario_sig = dias_ordenados[i].nro
             }
+
             let horario_activo = dias_ordenados.find(item => item.nro === nro_horario)
             let horario_siguiente = dias_ordenados.find(item => item.nro === nro_horario_sig)
             //setHorarioexec(horario_activo);
             let modo = returnModo(horario_activo.mod)
-
-
             let plan_activo = horario_activo.plan
             let planname = `plan${plan_activo}`
             let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
@@ -224,9 +244,9 @@ export default function MapaUniversalView() {
                 }
             })
 
-            let fases = JSON.parse(JSON.stringify(controladores_aux[i].fases))
-            var pasos_temp = JSON.parse(JSON.stringify(pasos_habilitados))
-          
+            let fases = datos_controlador.fases
+            var pasos_temp = pasos_habilitados
+
             var fases_pasos = pasos_temp.map((item) => {
                 let aux2 = fases.find(_item => _item.faseNum === item.fase)
                 let obj_mod = {
@@ -263,43 +283,122 @@ export default function MapaUniversalView() {
                 return obj_mod
 
             })
+            let datos_amarillo = []
+            // esta parte del codigo se encarga de animar los ciclos en amarillo
+            if (tiempo_amarillo > 0) {
+                let fases_pasos_aux2 = JSON.parse(JSON.stringify(fases_pasos))
+                let fases_pasos_aux = JSON.parse(JSON.stringify(fases_pasos))
+                let aux_copias = fases_pasos.length * 2
+                let nuevos_pasos = fases_pasos_aux.map((item) => {
+                    let grupos_aux = item.grupos.map(item2 => {
+                        let grupo_temp = {}
+                        if (item2.colorDescripcion === "rojo") {
+                            grupo_temp = { faseNum: item2.faseNum, colorDescripcion: item2.colorDescripcion, color: item2.color, grupoNum: item2.grupoNum, id: item2.id }
+                        } else {
+                            grupo_temp = { faseNum: item2.faseNum, colorDescripcion: "amarillo", color: 2, grupoNum: item2.grupoNum, id: item2.id }
+                        }
+                        return grupo_temp
+                    })
+                    let paso_editado = {
+                        duracion: tiempo_amarillo,
+                        fase: item.fase,
+                        grupos: grupos_aux,
+                        name: item.name,
+                    }
+                    return paso_editado
+                })
+
+                let nuevos_pasos_2 = fases_pasos_aux2.map(item => (
+                    {
+                        duracion: item.duracion - tiempo_amarillo,
+                        fase: item.fase,
+                        grupos: item.grupos,
+                        name: item.name,
+                    }
+                ))
+                let index_aux = 0
+                let index_aux2 = 0
+                for (let i = 0; i < aux_copias; i++) {
+                    let aux_resi = i % 2
+                    if (aux_resi !== 0) {
+                        datos_amarillo.push(nuevos_pasos[index_aux])
+                        index_aux += 1
+                    } else {
+                        datos_amarillo.push(nuevos_pasos_2[index_aux2])
+                        index_aux2 += 1
+                    }
+                }
+                datos_amarillo.map((item, index) => (item.name = `Paso ${index + 1}`))
+            }
+            let fases_pasos_3 = []
+            if (tiempo_amarillo > 0) {
+                pas_activos = JSON.parse(JSON.stringify(datos_amarillo))
+                fases_pasos_3 = datos_amarillo
+            } else {
+                pas_activos = JSON.parse(JSON.stringify(fases_pasos))
+                fases_pasos_3 = fases_pasos
+            }
+
+            
+        let horas_1 = parseInt(horario_activo.horas)
+        let minutos_1 = parseInt(horario_activo.minutos)
+        let horas_2 = parseInt(horario_siguiente.horas)
+        let minutos_2 = parseInt(horario_siguiente.minutos)
+        let t_inicio = horas_1 * 3600 + minutos_1 * 60 + 6
+        let t_final = horas_2 * 3600 + minutos_2 * 60 + 6
+        let ciclo = 0
+        let segundos_pasos = []
+        let pasos_duracion = []
+      
+    
+        for (let i = 0; i < pas_activos.length; i++) {
+            let aux = pas_activos[i].duracion
+            pasos_duracion.push(aux)
+            ciclo += aux
+        }
+
+        let seguntos_totales = t_final - t_inicio
+        let desfase = seguntos_totales % ciclo
+
+        let frequencia = parseInt(seguntos_totales / ciclo)
+        let index_periodicidad = 0
+        let temp_i = t_inicio
+
+        for (let i = 0; i < pas_activos.length; i++) {
+            let aux = {
+                paso: i,
+                name: `Paso ${i + 1}`,
+                valores: []
+            }
+            segundos_pasos.push(aux)
+        }
+
+        for (let i1 = 0; i1 < frequencia; i1++) {
+            let index = 0
+            for (let j1 = 0; j1 < pasos_duracion.length; j1++) {
+                let aux_7 = pasos_duracion[j1]
+                for (let k = 0; k < aux_7; k++) {
+                    temp_i += 1
+                    segundos_pasos[j1].valores.push(temp_i)
+                }
+            }
+        }
 
             objNuevoDatos = {
-                mac: controladores_aux[i].mac,
+                mac: datos_controlador.mac,
                 horario_activo: horario_activo,
                 horario_siguiente: horario_siguiente,
-                fases_pasos: fases_pasos,
+                fases_pasos: fases_pasos_3,
                 modo: modo,
-                pasos: pasos_habilitados
+                pasos: pasos_habilitados,
+                calculo:segundos_pasos
             }
             datos_para_simular.push(objNuevoDatos)
 
         }
-        console.log(datos_para_simular)
-        //setDatosActuales(datos_para_simular)
 
-        for(let i = 0; i<datos_para_simular.length;i++){
-            let horas_1 = parseInt(datos_para_simular[i].horario_activo.horas)
-            let minutos_1 = parseInt(datos_para_simular[i].horario_activo.minutos)
-            let horas_2 = parseInt(datos_para_simular[i].horario_siguiente.horas)
-            let minutos_2 = parseInt(datos_para_simular[i].horario_siguiente.minutos)
-            let t_inicio = horas_1*3600 + minutos_1*60
-            let t_final = horas_2*3600 + minutos_2*60
-            let desfase = 5
-            let pas_activos = datos_para_simular[i].pasos
-            let ciclo = 0
-            let segundos_pasos = {} 
-            let pasos_duracion = []
-            console.log(pas_activos)
-            for(let i = 0;i<pas_activos.length;i++){
-                let aux = pas_activos[i].duracion
-                pasos_duracion.push(aux)
-                ciclo += aux
-            }
-            console.log(ciclo)
-
-        }
         datosActuales.current = datos_para_simular
+        
     }
 
 
