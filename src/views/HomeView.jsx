@@ -299,7 +299,8 @@ export default function HomeView() {
             </Marker>
         )
     }
-
+    /*funcion Encargada de obtener los datos de las ips de los controladores y comparar si ya fueron delcarados
+    antes en la base de datos de firebase*/
     const listarIps = async () => {
         try {
             setAccionesUi(true);
@@ -805,6 +806,10 @@ export default function HomeView() {
 
         }
     }
+    // funcion que compara los datos almacenados en la store
+    const verifyDataSemaforos = () =>{
+        console.log("existen datos")
+    }
 
 
     useEffect(() => {
@@ -819,8 +824,9 @@ export default function HomeView() {
 
         }, 1000);
 
-
+        verifyDataSemaforos()
         return () => clearInterval(interval);
+        
     }, []);
 
     return (
