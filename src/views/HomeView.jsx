@@ -220,7 +220,6 @@ export default function HomeView() {
                         declararControlador(data.mac, data.ip);
 
                     }
-                    //setSemaforos(doc.data().grupos)
                 });
                 setDeshabilitar(false)
                 Swal.fire({
@@ -435,7 +434,6 @@ export default function HomeView() {
     const devolverPaso = () => {
         const referencia = new Date().getHours() * 3600 + new Date().getMinutes() * 60 + new Date().getSeconds()
         let datos_interes = calculoEjecucion.current
-        //console.log(datos_interes)
         let paso_actual
         for (let i = 0; i < datos_interes.length; i++) {
             let temp = datos_interes[i].valores
@@ -764,7 +762,13 @@ export default function HomeView() {
         
         let segundos_pasos = []
         if (ultimo_horario){
-            segundos_pasos = devolverSegundosPaso(horario_activo,{minutos:0,horas:24})
+            const fecha = new Date()
+            let horas_1 = parseInt(horario_activo.horas)
+            if(fecha.getHours() > horas_1){
+                segundos_pasos = devolverSegundosPaso(horario_activo,{minutos:0,horas:24})
+            }else{
+                segundos_pasos = devolverSegundosPaso({minutos:0,horas:0,horario_siguiente})
+            }
         }else{
            segundos_pasos = devolverSegundosPaso(horario_activo,horario_siguiente)
         }
