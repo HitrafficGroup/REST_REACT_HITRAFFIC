@@ -560,7 +560,11 @@ export default function HomeView() {
         })
         let datos_amarillo = []
         // esta parte del codigo se encarga de animar los ciclos en amarillo
-        if(tiempo_amarillo >0){
+
+       
+
+        if(tiempo_amarillo >0 && modo === "Tiempo Fijo"){
+     
             let fases_pasos_aux2 = JSON.parse(JSON.stringify(fases_pasos))
             let fases_pasos_aux = JSON.parse(JSON.stringify(fases_pasos))
             let aux_copias = fases_pasos.length*2
@@ -696,10 +700,15 @@ export default function HomeView() {
         let segundos_pasos = []
         let pasos_duracion = []
         let pas_activos = []
-        if(tiempo_amarillo>0){
+        if(tiempo_amarillo>0 && modo === "Tiempo Fijo"){
              pas_activos = JSON.parse(JSON.stringify(datos_amarillo))
              faseActual.current = datos_amarillo
-        }else{
+        }
+        else if(modo === "Destello"){
+            pas_activos = JSON.parse(JSON.stringify(pasosDestello))
+            faseActual.current = pasosDestello
+        }
+        else{
              pas_activos = JSON.parse(JSON.stringify(fases_pasos))
              faseActual.current = fases_pasos
         }
@@ -708,10 +717,10 @@ export default function HomeView() {
             pasos_duracion.push(aux)
             ciclo += aux
         }
-
+        console.log(fases_pasos)
         let seguntos_totales = t_final - t_inicio
         let desfase = seguntos_totales % ciclo
-        console.log("desfase:",desfase)
+        
         let frequencia = parseInt(seguntos_totales / ciclo)
         let index_periodicidad = 0
         let temp_i = t_inicio
@@ -755,59 +764,7 @@ export default function HomeView() {
         let g4;
         let dataUpdated;
         let aux = semaforos2.current;
-        setPasoexec('---')
-        setFaseexec('---')
-
-        if (modoControlador.current === 'Destello') {
-
-            if (timer1.current > 1) {
-                g1 = amarillo
-                g2 = amarillo
-                g3 = amarillo
-                g4 = amarillo
-                timer1.current = 0
-
-            } else {
-                g1 = apagado
-                g2 = apagado
-                g3 = apagado
-                g4 = apagado
-
-            }
-            // aux = semaforos2.current
-            dataUpdated = aux.map((item) => {
-                if (item.grupo === "g1") {
-                    item['icon'] = g1;
-                } else if (item.grupo === "g2") {
-                    item['icon'] = g2;
-                } else if (item.grupo === "g3") {
-                    item['icon'] = g3;
-                } else if (item.grupo === "g4") {
-                    item['icon'] = g4;
-                }
-                return item
-            })
-            setSemaforos(dataUpdated);
-
-        } else if (modoControlador.current === 'Todo en Rojo') {
-            setPasoexec('Rojo')
-            // aux = semaforos2.current
-            dataUpdated = aux.map((item) => {
-                if (item.grupo === "g1") {
-                    item['icon'] = rojo;
-                } else if (item.grupo === "g2") {
-                    item['icon'] = rojo;
-                } else if (item.grupo === "g3") {
-                    item['icon'] = rojo;
-                } else if (item.grupo === "g4") {
-                    item['icon'] = rojo;
-                }
-                return item
-            })
-            setSemaforos(dataUpdated);
-
-        }
-        else {
+   
             let paso_actual = devolverPaso()
             g1 = devolverColor(faseActual.current[paso_actual].grupos[0].colorDescripcion);
             g2 = devolverColor(faseActual.current[paso_actual].grupos[1].colorDescripcion);
@@ -830,7 +787,7 @@ export default function HomeView() {
             })
             setSemaforos(dataUpdated);
 
-        }
+        // }
     }
     // funcion que compara los datos almacenados en la store
     const verifyDataSemaforos = () =>{
@@ -1336,13 +1293,14 @@ const ubi = new L.Icon({
 const destello = new L.Icon({
     iconUrl: require('../assets/destello.png'),
     iconRetinaUrl: require('../assets/destello.png'),
-    iconSize: [20, 30], // size of the icon
+    iconSize: [50, 50], // size of the icon
     shadowSize: [50, 64], // size of the shadow
     iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
     shadowAnchor: [4, 62],  // the same for the shadow
     popupAnchor: [-3, -76]
 
 });
+
 
 const initialData = {
     conflictos_verdes: {},
@@ -1439,4 +1397,29 @@ const initialResumen = [
         position: [-2.876842450523782, -78.9654189348221],
         icon: {}
     }
+]
+
+//pasos modo destello
+let pasosDestello = [
+    {
+        duracion: 1,
+        fase: 1,
+        grupos: [
+                    {colorDescripcion: 'amarillo', faseNum: 1, id: 'g1_fase_1', grupoNum: 1, color: 0}, 
+                    {colorDescripcion: 'amarillo', faseNum: 1, id: 'g2_fase_1', grupoNum: 2, color: 0},
+                    {colorDescripcion: 'amarillo', faseNum: 1, id: 'g3_fase_1', grupoNum: 3, color: 0},
+                    {colorDescripcion: 'amarillo', faseNum: 1, id: 'g4_fase_1', grupoNum: 4, color: 0} ],
+        name: 'Paso 1'
+    },
+    {
+        duracion: 1,
+        fase: 2,
+        grupos: [
+                    {colorDescripcion: 'apagado', faseNum: 2, id: 'g1_fase_2', grupoNum: 1, color: 3}, 
+                    {colorDescripcion: 'apagado', faseNum: 2, id: 'g2_fase_2', grupoNum: 2, color: 3},
+                    {colorDescripcion: 'apagado', faseNum: 2, id: 'g3_fase_2', grupoNum: 3, color: 3},
+                    {colorDescripcion: 'apagado', faseNum: 2, id: 'g4_fase_2', grupoNum: 4, color: 3} ],
+        name: 'Paso 2'
+    }
+
 ]

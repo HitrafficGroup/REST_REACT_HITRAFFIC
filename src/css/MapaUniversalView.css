@@ -7,3 +7,88 @@
     border-radius: 10px;
     box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
 }
+.card-str-mu{
+    background-color: whitesmoke;
+    justify-content: center;
+    align-items: center;
+    height: 190px;
+    padding-left: 3%;
+    padding-right: 3%;
+    width: 90%;
+    margin-top: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
+
+}
+.container-mu{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.titulo-card-mu{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 10px;
+    width: 100%;
+    height: 40px;
+
+}
+.title-c-mu{
+    
+margin: 0;
+}
+.card-body-mu{
+    padding: 15px;
+}
+.contenedor-semaforo-mu{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    
+}
+.g1-mu{
+    background-color: #2ECC71;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.amarillo{
+    background-color: #F4D03F;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.verde{
+    background-color: #2ECC71;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.rojo{
+    background-color: #EC7063;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.text-indicador{
+    margin: 0;
+    padding: 0;
+    font-style: italic;
+    font-weight:700 ;
+    color: #F4F6F7 ;
+}
