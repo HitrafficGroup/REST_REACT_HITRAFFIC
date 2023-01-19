@@ -39,24 +39,23 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 
 export default function HomeView() {
-    const [map, setMap] = useState(null)
-    const [controladores, setControladores] = useState([]);
-    const [modalSemaforo, setModalSemaforo] = useState(false);
     const [flagsimu, setFlagsimu] = useState(false);
     const todaInformacion = useRef({});
     const modoControlador = useRef('Tiempo Fijo');
     const navigate = useNavigate();
     const simulacion = useRef(false);
     const timer1 = useRef(0);
-    const timer2 = useRef(0); const allInfo = useRef({});
+    const fases_pasos_aux = useRef([])
+    const allInfo = useRef({});
     const faseActual = useRef(0);
     const calculoEjecucion = useRef([]);
     const [pasoexec, setPasoexec] = useState();
-    const [currentSemaforo, setCurrentSemaforo] = useState({});
     const [modalEditControlador, setModalEditControlador] = useState(false);
     const [accionesUi, setAccionesUi] = useState(false);
     const center = [-2.876428, -78.965342]
     const [draggable, setDraggable] = useState(false)
+    const tiempo_amarillo  = useRef(0)
+    const datos_amarillo_aux = useRef(0)
     const [position, setPosition] = useState(center)
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
     const [semaforos, setSemaforos] = useState(initialData.resumen);
@@ -68,10 +67,9 @@ export default function HomeView() {
     const [reloadMap, setReloadMap] = useState(true);
     const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers)
-    const [allData, setAllData] = useState({});
     const [deshabilitar, setDeshabilitar] = useState(true);
     const [newController, setNewController] = useState({});
-    const [otrosParam, setOtrosParam] = useState();
+
 
     //prueba semaforo
     const semaforos2 = useRef();
@@ -214,7 +212,7 @@ export default function HomeView() {
 
                         semaforos2.current = aux;
                         setSemaforos(aux);
-                        setAllData(doc.data());
+                    
                         allInfo.current = doc.data()
                         todaInformacion.current = doc.data()
                         parametrosCorriendo();
@@ -308,7 +306,6 @@ export default function HomeView() {
     const listarIps = async () => {
         try {
             setAccionesUi(true);
-            setControladores([]);
             let items_db = []
             const querySnapshot = await getDocs(collection(db, "historial_controladores"));
             querySnapshot.forEach((doc) => {
@@ -344,7 +341,6 @@ export default function HomeView() {
                 }
             })
 
-            setControladores(controladores);
             dispatch(addIpsDisponibles(controladores));
             setAccionesUi(false)
 
@@ -397,9 +393,7 @@ export default function HomeView() {
         setModalCrearSemaforo(false);
     }
 
-    const cerrarEditarSemaforo = () => {
-        setModalSemaforo(false);
-    }
+
     /* funcion encargada de actualizar el valor del useRef con la finalidad de permitir que se 
     inicie la simulacion debido a que maneja un valor booleano que activa una funcion en el hook
     useEffect */
@@ -454,6 +448,66 @@ export default function HomeView() {
     }
 
     /* 
+        funcion encargada de devolver los segundos en los cuales va estar activo cada paso
+    */
+        const devolverSegundosPaso = (horario_activo,horario_siguiente) => {
+            let horas_1 = parseInt(horario_activo.horas)
+            let minutos_1 = parseInt(horario_activo.minutos)
+            let horas_2 = parseInt(horario_siguiente.horas)
+            let minutos_2 = parseInt(horario_siguiente.minutos)
+            let t_inicio = horas_1 * 3600 + minutos_1 * 60 + 5
+            let t_final = horas_2 * 3600 + minutos_2 * 60 + 5
+            let ciclo = 0
+            let segundos_pasos = []
+            let pasos_duracion = []
+            let pas_activos = []
+            if(tiempo_amarillo.current>0 && modoControlador.current === "Tiempo Fijo"){
+                 pas_activos = JSON.parse(JSON.stringify(datos_amarillo_aux.current))
+                 faseActual.current = datos_amarillo_aux.current
+            }
+            else if(modoControlador.current === "Destello"){
+                pas_activos = JSON.parse(JSON.stringify(pasosDestello))
+                faseActual.current = pasosDestello
+            }
+            else{
+                 pas_activos = JSON.parse(JSON.stringify(fases_pasos_aux.current))
+                 faseActual.current = fases_pasos_aux.current
+            }
+            for (let i = 0; i < pas_activos.length; i++) {
+                let aux = pas_activos[i].duracion
+                pasos_duracion.push(aux)
+                ciclo += aux
+            }
+
+            let seguntos_totales = t_final - t_inicio
+            // let desfase = seguntos_totales % ciclo
+            
+            let frequencia = parseInt(seguntos_totales / ciclo)
+            // let index_periodicidad = 0
+            let temp_i = t_inicio
+    
+            for (let i = 0; i < pas_activos.length; i++) {
+                let aux = {
+                    paso: i,
+                    name: `Paso ${i + 1}`,
+                    valores: []
+                }
+                segundos_pasos.push(aux)
+            }
+    
+            for (let i1 = 0; i1 < frequencia; i1++) {
+                for (let j1 = 0; j1 < pasos_duracion.length; j1++) {
+                    let aux_7 = pasos_duracion[j1]
+                    for (let k = 0; k < aux_7; k++) {
+                        temp_i += 1
+                        segundos_pasos[j1].valores.push(temp_i)
+                    }
+                }
+            }
+            return segundos_pasos
+        }
+
+    /* 
         Funcion encargada de cargar los datos necesarios para animar los semaforos
         del mapa.
      */
@@ -462,16 +516,17 @@ export default function HomeView() {
         let dia_ordinario = datos_controlador.horarios.dia_ordinario
         let planes = datos_controlador.planes
         let parametros_operativos = datos_controlador.otros_parametros
-        let tiempo_amarillo =  parseInt(parametros_operativos.tiempo_amarillo_vehicular)
+        tiempo_amarillo.current =  parseInt(parametros_operativos.tiempo_amarillo_vehicular)
         let hora_actual = new Date();
         let horas = hora_actual.getHours();
         let minutos = hora_actual.getMinutes();
+        let ultimo_horario = false 
         let aux;
         let aux2;
         let temp;
         let ref;
         let nro_horario;
-        let dias_ordenados = dia_ordinario
+        let dias_ordenados = JSON.parse(JSON.stringify(dia_ordinario))
         dias_ordenados.sort(function (a, b) {
             let a_aux = parseInt(a.horas)
             let a_aux2 = parseInt(a.minutos)
@@ -491,19 +546,35 @@ export default function HomeView() {
             //console.log("ref: ",ref)
             //console.log("temp: ",temp)
             if (ref > temp) {
-                nro_horario = dias_ordenados[i].nro
-                nro_horario_sig = dias_ordenados[i - 1].nro
-                //console.log("plan obtenido: ",nro_horario)
+                if(i === 0){
+                    nro_horario = dias_ordenados[0].nro
+                    nro_horario_sig = dia_ordinario[0].nro
+                    ultimo_horario = true
+                }else{
+                    nro_horario = dias_ordenados[i].nro
+                    nro_horario_sig = dias_ordenados[i - 1].nro
+                    ultimo_horario = false
+                }
+               
                 break
             }
-            nro_horario = dias_ordenados[0].nro
-            nro_horario_sig = dias_ordenados[i].nro
+            if(i === 0){
+                nro_horario = dias_ordenados[0].nro
+                nro_horario_sig = dia_ordinario[0].nro
+                ultimo_horario = true
+            }else{
+                nro_horario = dias_ordenados[0].nro
+                nro_horario_sig = dias_ordenados[i].nro
+                ultimo_horario = false
+            }
+            
         }
 
 
         let horario_activo = dias_ordenados.find(item => item.nro === nro_horario)
         let horario_siguiente = dias_ordenados.find(item => item.nro === nro_horario_sig)
-
+        console.log(horario_activo)
+        console.log(horario_siguiente)
         setHorarioexec(horario_activo);
         let modo = returnModo(horario_activo.mod)
         setModoexec(modo)
@@ -559,11 +630,12 @@ export default function HomeView() {
 
         })
         let datos_amarillo = []
+        fases_pasos_aux.current =fases_pasos
         // esta parte del codigo se encarga de animar los ciclos en amarillo
 
        
 
-        if(tiempo_amarillo >0 && modo === "Tiempo Fijo"){
+        if(tiempo_amarillo.current >0 && modo === "Tiempo Fijo"){
      
             let fases_pasos_aux2 = JSON.parse(JSON.stringify(fases_pasos))
             let fases_pasos_aux = JSON.parse(JSON.stringify(fases_pasos))
@@ -579,7 +651,7 @@ export default function HomeView() {
                         return grupo_temp
                     })
                     let paso_editado = {
-                        duracion: tiempo_amarillo,
+                        duracion: tiempo_amarillo.current,
                         fase: item.fase,
                         grupos:grupos_aux,
                         name: item.name,
@@ -589,7 +661,7 @@ export default function HomeView() {
     
             let nuevos_pasos_2 = fases_pasos_aux2.map(item=>(
                 {
-                    duracion: item.duracion -tiempo_amarillo,
+                    duracion: item.duracion -tiempo_amarillo.current,
                     fase: item.fase,
                     grupos:item.grupos,
                     name: item.name,
@@ -609,6 +681,7 @@ export default function HomeView() {
             }
             datos_amarillo.map((item,index)=>(item.name = `Paso ${index+1}`))
         }
+        datos_amarillo_aux.current = datos_amarillo
         let resumen = {
             horas: horario_activo.horas,
             minutos: horario_activo.minutos,
@@ -658,22 +731,22 @@ export default function HomeView() {
             if (item.grupo === 'g1') {
                 item['rojo'] = objg1.rojo
                 item['verde'] = objg1.verde
-                item['amarillo'] = tiempo_amarillo
+                item['amarillo'] = tiempo_amarillo.current
                 item['modo'] = modo
             } else if (item.grupo === 'g2') {
                 item['rojo'] = objg2.rojo
                 item['verde'] = objg2.verde
-                item['amarillo'] = tiempo_amarillo
+                item['amarillo'] = tiempo_amarillo.current
                 item['modo'] = modo
             } else if (item.grupo === 'g3') {
                 item['rojo'] = objg3.rojo
                 item['verde'] = objg3.verde
-                item['amarillo'] = tiempo_amarillo
+                item['amarillo'] = tiempo_amarillo.current
                 item['modo'] = modo
             } else {
                 item['rojo'] = objg4.rojo
                 item['verde'] = objg4.verde
-                item['amarillo'] = tiempo_amarillo
+                item['amarillo'] = tiempo_amarillo.current
                 item['modo'] = modo
             }
             //item['icon'] = {}
@@ -688,66 +761,12 @@ export default function HomeView() {
         dispatch(setPasosActivos(fases_pasos));
 
         //setPasosActivos(fases_pasos)
-       
-
-        let horas_1 = parseInt(horario_activo.horas)
-        let minutos_1 = parseInt(horario_activo.minutos)
-        let horas_2 = parseInt(horario_siguiente.horas)
-        let minutos_2 = parseInt(horario_siguiente.minutos)
-        let t_inicio = horas_1 * 3600 + minutos_1 * 60 + 5
-        let t_final = horas_2 * 3600 + minutos_2 * 60 +5
-        let ciclo = 0
-        let segundos_pasos = []
-        let pasos_duracion = []
-        let pas_activos = []
-        if(tiempo_amarillo>0 && modo === "Tiempo Fijo"){
-             pas_activos = JSON.parse(JSON.stringify(datos_amarillo))
-             faseActual.current = datos_amarillo
-        }
-        else if(modo === "Destello"){
-            pas_activos = JSON.parse(JSON.stringify(pasosDestello))
-            faseActual.current = pasosDestello
-        }
-        else{
-             pas_activos = JSON.parse(JSON.stringify(fases_pasos))
-             faseActual.current = fases_pasos
-        }
-        for (let i = 0; i < pas_activos.length; i++) {
-            let aux = pas_activos[i].duracion
-            pasos_duracion.push(aux)
-            ciclo += aux
-        }
-        console.log(fases_pasos)
-        let seguntos_totales = t_final - t_inicio
-        let desfase = seguntos_totales % ciclo
         
-        let frequencia = parseInt(seguntos_totales / ciclo)
-        let index_periodicidad = 0
-        let temp_i = t_inicio
-
-        for (let i = 0; i < pas_activos.length; i++) {
-            let aux = {
-                paso: i,
-                name: `Paso ${i + 1}`,
-                valores: []
-            }
-            segundos_pasos.push(aux)
-        }
-
-        // console.log(pasos_duracion)
-        // console.log(segundos_pasos)
-        // console.log("seg",seguntos_totales)
-        // console.log("freq",frequencia)
-        // console.log("desfase",desfase)
-        for (let i1 = 0; i1 < frequencia; i1++) {
-            let index = 0
-            for (let j1 = 0; j1 < pasos_duracion.length; j1++) {
-                let aux_7 = pasos_duracion[j1]
-                for (let k = 0; k < aux_7; k++) {
-                    temp_i += 1
-                    segundos_pasos[j1].valores.push(temp_i)
-                }
-            }
+        let segundos_pasos = []
+        if (ultimo_horario){
+            segundos_pasos = devolverSegundosPaso(horario_activo,{minutos:0,horas:24})
+        }else{
+           segundos_pasos = devolverSegundosPaso(horario_activo,horario_siguiente)
         }
 
         calculoEjecucion.current = segundos_pasos
@@ -812,7 +831,7 @@ export default function HomeView() {
 
         verifyDataSemaforos()
         return () => clearInterval(interval);
-        
+        // eslint-disable-next-line
     }, []);
 
     return (
@@ -1031,33 +1050,7 @@ export default function HomeView() {
                         </div>
                     </Grid>
                 </Grid>
-                <Modal isOpen={modalSemaforo} >
-                    <ModalHeader>
-                        <div>
-                            <h1>
-                                Ajustes del Semaforo
-                            </h1>
-                        </div>
-                    </ModalHeader>
-                    <ModalBody>
-                        <Grid container spacing={4}>
-                            <Grid item xs={12}>
-                                <TextField id="outlined" value={currentSemaforo.rojo} label="Tiempo en Rojo" variant="outlined" fullWidth />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField id="outlined" value={currentSemaforo.amarillo} label="Tiempo en Amarillo" variant="outlined" fullWidth />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField id="outlined" value={currentSemaforo.verde} label="Tiempo en Verde" variant="outlined" fullWidth />
-                            </Grid>
-                        </Grid>
-                    </ModalBody>
-                    <ModalFooter >
-                        <Button variant="contained" onClick={cerrarEditarSemaforo} sx={{ backgroundColor: "#F0B27A", marginLeft: 1 }}>
-                            Aplicar
-                        </Button>
-                    </ModalFooter>
-                </Modal>
+               
             </Container>
 
             <Modal isOpen={modalCrearSemaforo} >

@@ -15,7 +15,6 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 
-
 export default function MapaUniversalView() {
     const [semaforos, setSemaforos] = useState([]);
     const controladores = useRef([]);
@@ -125,8 +124,6 @@ export default function MapaUniversalView() {
         let g2;
         let g3;
         let g4;
-        let tiempos = [];
-        let valores = [];
         let dataUpdated = [];
         let semaforos_unidos = [];
         let flag = []
@@ -398,10 +395,10 @@ export default function MapaUniversalView() {
             }
             
             let seguntos_totales = t_final - t_inicio
-            let desfase = seguntos_totales % ciclo
+            //let desfase = seguntos_totales % ciclo
 
             let frequencia = parseInt(seguntos_totales / ciclo)
-            let index_periodicidad = 0
+            //let index_periodicidad = 0
             let temp_i = t_inicio
 
             for (let i = 0; i < pas_activos.length; i++) {
