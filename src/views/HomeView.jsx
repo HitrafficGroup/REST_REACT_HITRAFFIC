@@ -49,13 +49,13 @@ export default function HomeView() {
     const allInfo = useRef({});
     const faseActual = useRef(0);
     const calculoEjecucion = useRef([]);
+    const tiempo_amarillo  = useRef(0)
+    const datos_amarillo_aux = useRef(0)
     const [pasoexec, setPasoexec] = useState();
     const [modalEditControlador, setModalEditControlador] = useState(false);
     const [accionesUi, setAccionesUi] = useState(false);
     const center = [-2.876428, -78.965342]
     const [draggable, setDraggable] = useState(false)
-    const tiempo_amarillo  = useRef(0)
-    const datos_amarillo_aux = useRef(0)
     const [position, setPosition] = useState(center)
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
     const [semaforos, setSemaforos] = useState(initialData.resumen);
@@ -304,6 +304,7 @@ export default function HomeView() {
     antes en la base de datos de firebase*/
     const listarIps = async () => {
         try {
+            console.log("entra a esta expresion")
             setAccionesUi(true);
             let items_db = []
             const querySnapshot = await getDocs(collection(db, "historial_controladores"));
@@ -311,7 +312,9 @@ export default function HomeView() {
 
                 items_db.push(doc.data());
             });
+            
             const doc = await getIpsFromRestApi();
+            console.log(doc)
             const ips = doc.Ips_disponibles;
             var controladores = ips.map(item => {
                 let name = items_db.find(element => element.mac === item.mac)
@@ -571,8 +574,7 @@ export default function HomeView() {
 
         let horario_activo = dias_ordenados.find(item => item.nro === nro_horario)
         let horario_siguiente = dias_ordenados.find(item => item.nro === nro_horario_sig)
-        console.log(horario_activo)
-        console.log(horario_siguiente)
+
         setHorarioexec(horario_activo);
         let modo = returnModo(horario_activo.mod)
         setModoexec(modo)
@@ -763,8 +765,9 @@ export default function HomeView() {
         let segundos_pasos = []
         if (ultimo_horario){
             const fecha = new Date()
-            let horas_1 = parseInt(horario_activo.horas)
+            let horas_1 = parseInt(horario_siguiente.horas)
             if(fecha.getHours() > horas_1){
+            
                 segundos_pasos = devolverSegundosPaso(horario_activo,{minutos:0,horas:24})
             }else{
                 segundos_pasos = devolverSegundosPaso({minutos:0,horas:0,horario_siguiente})
