@@ -943,7 +943,6 @@ export default function HomeView() {
                                 />
                                 <DraggableMarker />
                                 {semaforos.map((item, index) => (
-
                                     <Marker position={item.position} key={index} icon={item.icon}>
                                         <Popup>
                                             Semaforo {item.nombre} - Grupo: {item.grupo}

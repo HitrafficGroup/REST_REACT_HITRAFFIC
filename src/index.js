@@ -12,10 +12,10 @@ import { Provider } from 'react-redux'
 const theme = createTheme({
   palette: {
     verde2: {
-      // This is green.A700 as hex.
       main: '#52BE80',
       contrastText: '#fff',
-      darker: '#053e85',
+      light: '#1E8449',
+      darker: '#1E8449',
     },
     oscuro: {
       main: '#2E4053',

@@ -164,7 +164,6 @@ export default function DeclararControladorView() {
                     return item
                 }
             })
-            //console.log(newDatosModificados)
             setSemaforos(newDatosModificados)
             
             
@@ -346,7 +345,7 @@ const ubi = new L.Icon({
     iconRetinaUrl: require('../assets/ubica.png'),
     iconSize: [20, 30], // size of the icon
     shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+    iconAnchor: [24, 94], // point of the icon which will correspond to marker's location
     shadowAnchor: [4, 62],  // the same for the shadow
     popupAnchor: [-3, -76]
 

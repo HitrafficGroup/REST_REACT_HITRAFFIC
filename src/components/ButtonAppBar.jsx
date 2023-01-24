@@ -23,6 +23,7 @@ import HomeMenu from './content/HomeMenu';
 import SyncMenu from './content/SyncMenu.jsx'
 import GruposMenu from './content/GruposMenu.jsx'
 import { useSelector } from 'react-redux';
+import PruebasMenu from './content/PruebasMenu';
 export default function ButtonAppBar() {
 
   const [state, setState] = React.useState({
@@ -82,6 +83,10 @@ export default function ButtonAppBar() {
       child: <ClonacionMenu />,
       visibility: true,
       key: 100
+    },{
+      child: <PruebasMenu />,
+      visibility: true,
+      key: 101
     },
     {
       child: <SalirMenu />,

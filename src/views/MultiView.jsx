@@ -12,7 +12,7 @@ import ErroresView from "./ErroresView";
 import SyncTimeView from "./SyncTimeView";
 import MapaUniversalView from "./MapaUniversalView";
 import DeclararControladorView from "./DeclararControladorView";
-
+import PruebasView from "./PruebasView";
 export default function MultiView() {
 
     return (
@@ -30,6 +30,7 @@ export default function MultiView() {
                 <Route path="grupos" element={<GruposView />} />
                 <Route path="sincronizar-tiempos" element={<SyncTimeView />} />
                 <Route path="mapa-universal" element={<MapaUniversalView />} />
+                <Route path="pruebas" element={<PruebasView />} />
                 <Route path="declarar-controlador" element={<DeclararControladorView />} />
             </Routes>
             {/* <CardInformation/>
