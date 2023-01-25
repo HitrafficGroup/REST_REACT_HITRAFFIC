@@ -740,8 +740,8 @@ export default function PruebasView() {
     }
     const eliminarArea = async (_data) => {
         Swal.fire({
-            title: 'Controlador Nuevo',
-            text: "Deseas declarar este nuevo controlador?",
+            title: 'Borrar Arear',
+            text: "Deseas Borrar esta area?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -995,7 +995,56 @@ export default function PruebasView() {
 
 
                     <Grid item xs={12} md={12}>
+                        <Table className='home-t'>
+                            <Thead>
+                                <Tr>
+                                    <Th className='home-t-th'>#</Th>
+                                    <Th className='home-t-th'>Paso</Th>
+                                    <Th className='home-t-th'>Duracion</Th>
+                                    <Th className='home-t-th'>Fase</Th>
+                                    <Th className='home-t-th'>Grupos</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                {controlerState.pasos_activos.map((dato, index) => (
+                                    <Tr className={"tablas-focus"} key={index} >
+                                        <Td>
+                                            {index + 1}
+                                        </Td>
+                                        <Td >
+                                            {dato.name}
+                                        </Td>
+                                        <Td >
+                                            {dato.duracion}
+                                        </Td>
+                                        <Td >
+                                            {dato.fase}
+                                        </Td>
+                                        <Td className='home-t-th' >
+                                            <Table>
+                                                <Thead>
+                                                    <Tr>
+                                                        <Th>G1</Th>
+                                                        <Th>G2</Th>
+                                                        <Th>G3</Th>
+                                                        <Th>G4</Th>
+                                                    </Tr>
+                                                </Thead>
+                                                <Tbody>
+                                                    <Tr >
+                                                        <Td> <Chip label={dato.grupos[0].colorDescripcion} sx={{ width: 110, marginRight: 1 }} color={dato.grupos[0].colorDescripcion} /></Td>
+                                                        <Td> <Chip label={dato.grupos[1].colorDescripcion} sx={{ width: 110, marginRight: 1 }} color={dato.grupos[1].colorDescripcion} /></Td>
+                                                        <Td> <Chip label={dato.grupos[2].colorDescripcion} sx={{ width: 110, marginRight: 1 }} color={dato.grupos[2].colorDescripcion} /></Td>
+                                                        <Td> <Chip label={dato.grupos[3].colorDescripcion} sx={{ width: 110, marginRight: 1 }} color={dato.grupos[3].colorDescripcion} /></Td>
+                                                    </Tr>
+                                                </Tbody>
+                                            </Table>
+                                        </Td>
 
+                                    </Tr>
+                                ))}
+                            </Tbody>
+                        </Table>
                     </Grid>
 
 

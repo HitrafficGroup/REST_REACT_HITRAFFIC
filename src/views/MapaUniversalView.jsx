@@ -15,7 +15,7 @@ import "../css/MapaUniversalView.css";
 import '../css/FasesView.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polygon, FeatureGroup} from "react-leaflet";
 
 export default function MapaUniversalView() {
     const [semaforos, setSemaforos] = useState([]);
@@ -33,31 +33,39 @@ export default function MapaUniversalView() {
     const [centerMap, setCenterMap] = useState([-2.9002025261800206, -78.99967753716173])
     const datosActuales = useRef([]);
     const [controlers, setControlers] = useState([]);
+    const [controlerIcon,setControlerIcon] = useState([]);
     const [play, setPlay] = useState(false)
+    //variables para mapear por areas
+    const [areas, setAreas] = useState([]);
+    
     const getData = async () => {
 
         let items_db = []
         let semaforos_db = []
         let semaforos_aux = [];
+        let icons_controler = []
         const querySnapshot = await getDocs(collection(db, "controladores"));
         querySnapshot.forEach((doc) => {
             items_db.push(doc.data());
-            semaforos_db.push(doc.data().resumen);
+            semaforos_db.push(doc.data().semaforos);
         });
         for (let i = 0; i < items_db.length; i++) {
-            let temp = items_db[i].resumen
+            let temp = items_db[i].semaforos
+            let position = [items_db[i].latitud,items_db[i].longitud]
+            icons_controler.push(position)
             for (let j = 0; j < temp.length; j++) {
                 let obj_semaforo = JSON.parse(JSON.stringify(temp[j]))
-                obj_semaforo.icon = semaforo
                 obj_semaforo["mac"] = items_db[i].mac
-                semaforos_aux.push(obj_semaforo)
+                    let puntos_aux = obj_semaforo.points
+                    obj_semaforo["points"] = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
+                    semaforos_aux.push(obj_semaforo)
             }
         }
         controladores.current = items_db
-        setSemaforos(semaforos_aux)
+        setControlerIcon(icons_controler)
+        setAreas(semaforos_aux)
+        console.log(semaforos_aux)
         semaforosCompletos.current = semaforos_db
-
-
     }
     const botonPlay = async () => {
         await parametrosCorriendo()
@@ -122,7 +130,19 @@ export default function MapaUniversalView() {
         }
         return paso_actual
     }
-
+    const devolverColor2 = (_data) => {
+        if (_data === "verde") {
+            return { color: 'green' }
+        } else if (_data === "rojo") {
+            return { color: 'red' }
+        } else if (_data === "apagado") {
+            return { color: 'black' }
+        } else if (_data === "destello") {
+            return { color: 'cyan' }
+        } else {
+            return { color: 'yellow' }
+        }
+    }
     const iniciarAnimacion = () => {
         let aux_datos_actuales = JSON.parse(JSON.stringify(datosActuales.current));
         let semaforos_temp = JSON.parse(JSON.stringify(semaforosCompletos.current));
@@ -147,10 +167,10 @@ export default function MapaUniversalView() {
             flag[i] = paso_actual
             if (flag1[i] !== flag[i]) {
                 flag1[i] = paso_actual
-                g1 = devolverColor(aux_datos_actuales[i].fases_pasos[paso_actual].grupos[0].colorDescripcion);
-                g2 = devolverColor(aux_datos_actuales[i].fases_pasos[paso_actual].grupos[1].colorDescripcion);
-                g3 = devolverColor(aux_datos_actuales[i].fases_pasos[paso_actual].grupos[2].colorDescripcion);
-                g4 = devolverColor(aux_datos_actuales[i].fases_pasos[paso_actual].grupos[3].colorDescripcion);
+                g1 = devolverColor2(aux_datos_actuales[i].fases_pasos[paso_actual].grupos[0].colorDescripcion);
+                g2 = devolverColor2(aux_datos_actuales[i].fases_pasos[paso_actual].grupos[1].colorDescripcion);
+                g3 = devolverColor2(aux_datos_actuales[i].fases_pasos[paso_actual].grupos[2].colorDescripcion);
+                g4 = devolverColor2(aux_datos_actuales[i].fases_pasos[paso_actual].grupos[3].colorDescripcion);
 
                 fase_actual = aux_datos_actuales[i].fases_pasos[paso_actual].grupos[0].faseNum
                 
@@ -158,23 +178,23 @@ export default function MapaUniversalView() {
 
 
                 //let fase_siguiente = aux_datos_actuales[i-1].fases_pasos[paso_actual].grupos[0].faseNum
-                  aux_datos_actuales[i]["fase_actual"] = `fase-${fase_actual}`
-                  aux_datos_actuales[i]["grupo_1"] = aux_datos_actuales[i].fases_pasos[paso_actual].grupos[0].colorDescripcion
-                  aux_datos_actuales[i]["grupo_2"] = aux_datos_actuales[i].fases_pasos[paso_actual].grupos[1].colorDescripcion
-                  aux_datos_actuales[i]["grupo_3"] = aux_datos_actuales[i].fases_pasos[paso_actual].grupos[2].colorDescripcion
-                  aux_datos_actuales[i]["grupo_4"] = aux_datos_actuales[i].fases_pasos[paso_actual].grupos[3].colorDescripcion
+                aux_datos_actuales[i]["fase_actual"] = `fase-${fase_actual}`
+                aux_datos_actuales[i]["grupo_1"] = aux_datos_actuales[i].fases_pasos[paso_actual].grupos[0].colorDescripcion
+                aux_datos_actuales[i]["grupo_2"] = aux_datos_actuales[i].fases_pasos[paso_actual].grupos[1].colorDescripcion
+                aux_datos_actuales[i]["grupo_3"] = aux_datos_actuales[i].fases_pasos[paso_actual].grupos[2].colorDescripcion
+                aux_datos_actuales[i]["grupo_4"] = aux_datos_actuales[i].fases_pasos[paso_actual].grupos[3].colorDescripcion
                 dataUpdated = semaforos_temp[i].map((item) => {
                     if (item.grupo === "g1") {
-                        item['icon'] = g1;
+                        item['color'] = g1;
                         item['fase_actual'] = `fase-${fase_actual}`
                     } else if (item.grupo === "g2") {
-                        item['icon'] = g2;
+                        item['color'] = g2;
                         item['fase_actual'] = `fase-${fase_actual}`
                     } else if (item.grupo === "g3") {
-                        item['icon'] = g3;
+                        item['color'] = g3;
                         item['fase_actual'] = `fase-${fase_actual}`
                     } else if (item.grupo === "g4") {
-                        item['icon'] = g4;
+                        item['color'] = g4;
                         item['fase_actual'] = `fase-${fase_actual}`
                     }
                     return item
@@ -189,8 +209,13 @@ export default function MapaUniversalView() {
 
         if (flag3) {
             let newData = recursionSemaforo(semaforos_unidos)
+            newData.map((item)=>{
+                let puntos_aux = item.points
+                item["points"] = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
+            })
             setControlers(aux_datos_actuales)
-            setSemaforos(newData)
+            
+            setAreas(newData)
             flag3 = false
         }
     
@@ -502,22 +527,20 @@ export default function MapaUniversalView() {
                         <MapContainer center={centerMap} zoom={zoomMap} key={reloadMap} scrollWheelZoom={false} className={"leaflet-container-2"}>
                             <TileLayer
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                                {semaforos.map((item, index) => (
-                                <Marker position={item.position} key={index} icon={item.icon} >
-                                    <Popup>
-                                        <div className='card-structure-universal'>
-                                            <div className='titulo-card'>
-                                                <h5 className='title-c' style={{ color: "white" }}>Controlador Activo</h5>
-                                                <MemoryIcon fontSize="large" sx={{ color: "white" }} />
-                                            </div>
-                                            <div className='card-body'>
-                                                Semaforo {item.nombre} - Grupo: {item.grupo}
-                                            </div>
-                                        </div>
-                                    </Popup>
-                                </Marker>
+                                url="https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=b08eb869c89646fa8accf539b81e80de" />
+                                {areas.map((item, index) => (
+                                    <FeatureGroup pathOptions={item.color}>
+                                        <Popup>
+                                            <p style={{ margin: 0, fontStyle: "italic" }}><strong>Area: </strong>{item.nombre} <strong>Grupo: </strong>{item.grupo}</p>
+                                        </Popup>
+                                        <Polygon positions={item.points} />
+                                    </FeatureGroup>
                             ))}
+                             {controlerIcon.map((item, index) => (
+                                    <Marker position={item} key={index} icon={semaforo}>
+                                        
+                                    </Marker>
+                                ))}
                             <Fab color="primary" variant="extended" sx={{ position: "absolute", bottom: 50, right: 90 }} disabled={!play} onClick={botonPause} >
                                 <PauseCircleOutlineIcon sx={{ mr: 1 }} />
                                 Pause
@@ -595,11 +618,11 @@ export default function MapaUniversalView() {
 
 
 const semaforo = new L.Icon({
-    iconUrl: require('../assets/apagado.png'),
-    iconRetinaUrl: require('../assets/apagado.png'),
-    iconSize: [50, 50], // size of the icon
+    iconUrl: require('../assets/semaforo2.png'),
+    iconRetinaUrl: require('../assets/semaforo2.png'),
+    iconSize: [50, 60], // size of the icon
     shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+    iconAnchor: [22, 60], // point of the icon which will correspond to marker's location
     shadowAnchor: [4, 62],  // the same for the shadow
     popupAnchor: [-3, -76]
 
@@ -651,6 +674,14 @@ const apagado = new L.Icon({
     iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
     shadowAnchor: [4, 62],  // the same for the shadow
     popupAnchor: [-3, -76]
+});
+const controlador_img = new L.Icon({
+    iconUrl: require('../assets/controler.png'),
+    iconRetinaUrl: require('../assets/controler.png'),
+    iconSize: [30, 30], // size of the icon
+    shadowSize: [60, 64], // size of the shadow
+    iconAnchor: [15, 30], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
 });
 let semaforos4 = [
     { nombre: "ricaurte" }, { nombre: "capulispamba" }, { nombre: "miraflores" }, { nombre: "centro historico" }, { nombre: "chordeleg" }, { nombre: "turi" }
