@@ -7,7 +7,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import { collection, updateDoc, onSnapshot, doc, getDocs, setDoc } from "firebase/firestore";
+import SaveIcon from '@mui/icons-material/Save';
+import MapIcon from '@mui/icons-material/Map';
+import { collection, updateDoc, onSnapshot, doc, getDocs, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
@@ -24,13 +26,15 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
+import Fab from '@mui/material/Fab';
 import { setInitialStateController, setResumen, addIpsDisponibles, setPasosActivos, addCurrentControler, createNewController } from "../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Alert from '@mui/material/Alert';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polygon, FeatureGroup } from "react-leaflet";
 import EditIcon from '@mui/icons-material/Edit';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -38,10 +42,11 @@ import '../css/HomeView.css';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 
-export default function HomeView() {
+export default function PruebasView() {
     const [flagsimu, setFlagsimu] = useState(false);
     const todaInformacion = useRef({});
     const modoControlador = useRef('Tiempo Fijo');
+    const [areas, setAreas] = useState([]);
     const navigate = useNavigate();
     const simulacion = useRef(false);
     const timer1 = useRef(0);
@@ -49,12 +54,14 @@ export default function HomeView() {
     const allInfo = useRef({});
     const faseActual = useRef(0);
     const calculoEjecucion = useRef([]);
-    const tiempo_amarillo  = useRef(0)
+    const tiempo_amarillo = useRef(0)
     const datos_amarillo_aux = useRef(0)
     const [pasoexec, setPasoexec] = useState();
     const [modalEditControlador, setModalEditControlador] = useState(false);
+    const [modalDeclararSemaforo, setModalDeclararSemaforo] = useState(false);
+    const [pointsArea, setPointsArea] = useState([]);
     const [accionesUi, setAccionesUi] = useState(false);
-    const center = [-2.876428, -78.965342]
+    const center = [-2.898794750323891, -79.00108637169295]
     const [draggable, setDraggable] = useState(false)
     const [position, setPosition] = useState(center)
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
@@ -69,7 +76,8 @@ export default function HomeView() {
     const controlerState = useSelector(state => state.controlers)
     const [deshabilitar, setDeshabilitar] = useState(true);
     const [newController, setNewController] = useState({});
-
+    const [indicadorData,setIndicadorData] = useState(initialData.resumen);
+    const puntosArea = useRef([]);
 
     //prueba semaforo
     const semaforos2 = useRef();
@@ -117,6 +125,7 @@ export default function HomeView() {
     const Changeview = (referencia) => {
         navigate(referencia);
     }
+    const purpleOptions = { color: 'purple' }
     const abrirModalEditarControlador = () => {
         setNewController(controlerState)
         setModalEditControlador(true);
@@ -143,11 +152,13 @@ export default function HomeView() {
         let datosFormat = initialData
         datosFormat.resumen = initialResumen
         await setDoc(doc(ref, mac), datosFormat);
+
     }
     /* funcion encargada  de cargar los datos del controlador seleccionado , estos
     datos nos serviran para poder llamar los planes , fases etc del controlador, la funcion
     se encarga de actualizar el reducer con la informacion del controlador actual */
     const seleccionarControlador = async (data) => {
+        setAccionesUi(true)
         try {
             if (data.declarado) {
                 simulacion.current = false;
@@ -156,7 +167,7 @@ export default function HomeView() {
                 setPosition([data.latitud, data.longitud])
                 dispatch(setInitialStateController(data));
                 dispatch(addCurrentControler(data));
-
+                
                 setReloadMap(!reloadMap)
                 let aux = await getFirmwareVersion(data.mac, data.ip);
                 let firmware = aux[data.mac]
@@ -192,35 +203,23 @@ export default function HomeView() {
 
                 dispatch(addIpsDisponibles(controls));
                 enviarVersionFirebase(data.mac, data.ip, firmware);
-                onSnapshot(doc(db, "controladores", `${data.mac}`), (doc) => {
-                    if (doc.exists()) {
-                        let gruposController = doc.data().resumen
-                        let aux = gruposController.map((item) => {
-                            if (item.grupo === "g1") {
-                                item['icon'] = semaforo;
-                            }
-                            else if (item.grupo === "g2") {
-                                item['icon'] = semaforo;
-                            }
-                            else if (item.grupo === "g3") {
-                                item['icon'] = semaforo;
-                            } else {
-                                item['icon'] = semaforo;
-                            }
-                            return item
-                        })
 
-                        semaforos2.current = aux;
-                        setSemaforos(aux);
-                    
-                        allInfo.current = doc.data()
-                        todaInformacion.current = doc.data()
-                        parametrosCorriendo();
-                    } else {
-                        declararControlador(data.mac, data.ip);
+                let docRef = doc(db, "controladores", data.mac);
+                console.log("Pedimos los datos de Firebase", docRef);
+                let document = await getDoc(docRef);
+                let gruposController = document.data().semaforos
+                let areas_temp = JSON.parse(JSON.stringify(gruposController))
+                areas_temp.map((item) => {
+                    let puntos_aux = item.points
+                    item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
+                })
 
-                    }
-                });
+                semaforos2.current = areas_temp
+                setAreas(areas_temp)
+                allInfo.current = document.data()
+                console.log(controlerState.pasos_activos)
+                todaInformacion.current = document.data()
+                parametrosCorriendo();
                 setDeshabilitar(false)
                 Swal.fire({
                     icon: 'success',
@@ -251,8 +250,9 @@ export default function HomeView() {
             }
         } catch (error) {
             setDeshabilitar(false)
+            setAccionesUi(false)
         }
-
+        setAccionesUi(false)
 
     }
 
@@ -312,7 +312,7 @@ export default function HomeView() {
 
                 items_db.push(doc.data());
             });
-            
+
             const doc = await getIpsFromRestApi();
             console.log(doc)
             const ips = doc.Ips_disponibles;
@@ -356,45 +356,129 @@ export default function HomeView() {
     ,nos permite desplazar elsemaforo dentro del mapa actualizando su latitud y longitud
     */
     const agregarSemaforo = async () => {
-        var data = newSemaforo;
-        data['position'] = [position.lat, position.lng];
-        const temp = semaforos.slice()
-        var aux = temp.filter((item) => {
-            return item.grupo !== data.grupo;
-        })
-        aux.push(data)
-
-
-        var semaforosFormateados = aux.map(sema => ({
-            nombre: sema.nombre,
-            modo: "Tiempo Fijo",
-            position: sema.position,
-            rojo: sema.rojo,
-            amarillo: sema.amarillo,
-            verde: sema.verde,
-            icon: {},
-            grupo: sema.grupo
-        }))
-
-        const ref = doc(db, "controladores", `${controlerState.mac}`);
         setAccionesUi(true)
+        const docRef = doc(db, "controladores", controlerState.mac);
+        let docsanp = await getDoc(docRef);
+        let areas_aux = docsanp.data().semaforos
+
+        let newpositions = pointsArea.map((item) => (
+            {
+                pos: item.position
+            }
+        ))
+        console.log(newpositions)
+
+        let newPolilyneFirebase = {
+            rojo: 10,
+            amarillo: 4,
+            verde: 20,
+            nombre: newSemaforo.nombre,
+            grupo: newSemaforo.grupo,
+            points: newpositions,
+            color: devolverColor2(newSemaforo.grupo),
+        }
+
+        areas_aux.push(newPolilyneFirebase);
+        const ref = doc(db, "controladores", controlerState.mac);
         await updateDoc(ref, {
-            resumen: semaforosFormateados
+            semaforos: areas_aux
         });
+        let areas_temp = JSON.parse(JSON.stringify(areas_aux))
+        areas_temp.map((item) => {
+            let puntos_aux = item.points
+            item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
+        })
+        console.log(areas_temp)
+        semaforos2.current = areas_temp
+        setAreas(areas_temp)
+        setPointsArea([])
+        setModalCrearSemaforo(false)
         setAccionesUi(false)
         setNewSemaforo({
-            nombre: "",
-            modo: "Tiempo Fijo",
-            position: [],
-            rojo: 15,
-            amarillo: 5,
-            verde: 30,
-            icon: {},
-            grupo: '',
+            nombre:"",
+            grupo:"",
         })
-        setModalCrearSemaforo(false);
-    }
 
+    }
+    const devolverColor2 = (_grupo) => {
+        if (_grupo === "g1") {
+            return grupo_1
+        } else if (_grupo === "g2") {
+            return grupo_2
+        } else if (_grupo === "g3") {
+            return grupo_3
+        } else {
+            return grupo_4
+        }
+    }
+    /*
+        funcion para poder estructurar la informacion que deben mostrar los indicadores
+    */
+   const informacionDelIndicador = ()=>{
+        let temp = JSON.parse(JSON.stringify(faseActual.current))
+        let auxg1;
+        let auxg2;
+        let auxg3;
+        let auxg4;
+        let objg1 = { verde: 0, rojo: 0 }
+        let objg2 = { verde: 0, rojo: 0 }
+        let objg3 = { verde: 0, rojo: 0 }
+        let objg4 = { verde: 0, rojo: 0 }
+        
+        for (let i1 = 0; i1 < temp.length; i1++) {
+            auxg1 = temp[i1].grupos[0].color
+            auxg2 = temp[i1].grupos[1].color
+            auxg3 = temp[i1].grupos[2].color
+            auxg4 = temp[i1].grupos[3].color
+            if (auxg1 === 1) {
+                objg1.verde = objg1.verde + temp[i1].duracion
+            } else {
+                objg1.rojo = objg1.rojo + temp[i1].duracion
+            }
+            if (auxg2 === 1) {
+                objg2.verde = objg2.verde + temp[i1].duracion
+            } else {
+                objg2.rojo = objg2.rojo + temp[i1].duracion
+            }
+            if (auxg3 === 1) {
+                objg3.verde = objg3.verde + temp[i1].duracion
+            } else {
+                objg3.rojo = objg3.rojo + temp[i1].duracion
+            }
+            if (auxg4 === 1) {
+                objg4.verde = objg4.verde + temp[i1].duracion
+            } else {
+                objg4.rojo = objg4.rojo + temp[i1].duracion
+            }
+        }
+        let ejemplo = indicadorData
+        var newDataUpdate = ejemplo.map((item) => {
+            if (item.grupo === 'g1') {
+                item['rojo'] = objg1.rojo - tiempo_amarillo.current
+                item['verde'] = objg1.verde 
+                item['amarillo'] = tiempo_amarillo.current
+                item['modo'] =  modoControlador.current
+            } else if (item.grupo === 'g2') {
+                item['rojo'] = objg2.rojo -tiempo_amarillo.current
+                item['verde'] = objg2.verde
+                item['amarillo'] = tiempo_amarillo.current
+                item['modo'] =  modoControlador.current
+            } else if (item.grupo === 'g3') {
+                item['rojo'] = objg3.rojo -tiempo_amarillo.current
+                item['verde'] = objg3.verde
+                item['amarillo'] = tiempo_amarillo.current
+                item['modo'] =  modoControlador.current
+            } else {
+                item['rojo'] = objg4.rojo -tiempo_amarillo.current
+                item['verde'] = objg4.verde
+                item['amarillo'] = tiempo_amarillo.current
+                item['modo'] = modoControlador.current
+            }
+            item['icon'] = {}
+            return item
+        })
+        setIndicadorData(newDataUpdate)
+   }
 
     /* funcion encargada de actualizar el valor del useRef con la finalidad de permitir que se 
     inicie la simulacion debido a que maneja un valor booleano que activa una funcion en el hook
@@ -416,15 +500,15 @@ export default function HomeView() {
     */
     const devolverColor = (_data) => {
         if (_data === "verde") {
-            return verde
+            return { color: 'green' }
         } else if (_data === "rojo") {
-            return rojo
-        }else if (_data === "apagado") {
-            return apagado
-        }else if (_data === "destello") {
-            return destello
+            return { color: 'red' }
+        } else if (_data === "apagado") {
+            return { color: 'black' }
+        } else if (_data === "destello") {
+            return { color: 'cyan' }
         } else {
-            return amarillo
+            return { color: 'yellow' }
         }
     }
 
@@ -447,66 +531,72 @@ export default function HomeView() {
         }
         return paso_actual
     }
-
+    const polyline = [
+        [-2.877686537595122, -78.96498704076764],
+        [-2.8777401141269854, -78.96492266775697],
+        [-2.8778097636146276, -78.9649441254272],
+        [-2.8777401141269854, -78.96501386285543],
+    ]
+    const limeOptions = { color: 'lime' }
     /* 
         funcion encargada de devolver los segundos en los cuales va estar activo cada paso
     */
-        const devolverSegundosPaso = (horario_activo,horario_siguiente) => {
-            let horas_1 = parseInt(horario_activo.horas)
-            let minutos_1 = parseInt(horario_activo.minutos)
-            let horas_2 = parseInt(horario_siguiente.horas)
-            let minutos_2 = parseInt(horario_siguiente.minutos)
-            let t_inicio = horas_1 * 3600 + minutos_1 * 60 + 5
-            let t_final = horas_2 * 3600 + minutos_2 * 60 + 5
-            let ciclo = 0
-            let segundos_pasos = []
-            let pasos_duracion = []
-            let pas_activos = []
-            if(tiempo_amarillo.current>0 && modoControlador.current === "Tiempo Fijo"){
-                 pas_activos = JSON.parse(JSON.stringify(datos_amarillo_aux.current))
-                 faseActual.current = datos_amarillo_aux.current
-            }
-            else if(modoControlador.current === "Destello"){
-                pas_activos = JSON.parse(JSON.stringify(pasosDestello))
-                faseActual.current = pasosDestello
-            }
-            else{
-                 pas_activos = JSON.parse(JSON.stringify(fases_pasos_aux.current))
-                 faseActual.current = fases_pasos_aux.current
-            }
-            for (let i = 0; i < pas_activos.length; i++) {
-                let aux = pas_activos[i].duracion
-                pasos_duracion.push(aux)
-                ciclo += aux
-            }
-
-            let seguntos_totales = t_final - t_inicio
-            // let desfase = seguntos_totales % ciclo
-            
-            let frequencia = parseInt(seguntos_totales / ciclo)
-            // let index_periodicidad = 0
-            let temp_i = t_inicio
-    
-            for (let i = 0; i < pas_activos.length; i++) {
-                let aux = {
-                    paso: i,
-                    name: `Paso ${i + 1}`,
-                    valores: []
-                }
-                segundos_pasos.push(aux)
-            }
-    
-            for (let i1 = 0; i1 < frequencia; i1++) {
-                for (let j1 = 0; j1 < pasos_duracion.length; j1++) {
-                    let aux_7 = pasos_duracion[j1]
-                    for (let k = 0; k < aux_7; k++) {
-                        temp_i += 1
-                        segundos_pasos[j1].valores.push(temp_i)
-                    }
-                }
-            }
-            return segundos_pasos
+    const devolverSegundosPaso = (horario_activo, horario_siguiente) => {
+        let horas_1 = parseInt(horario_activo.horas)
+        let minutos_1 = parseInt(horario_activo.minutos)
+        let horas_2 = parseInt(horario_siguiente.horas)
+        let minutos_2 = parseInt(horario_siguiente.minutos)
+        let t_inicio = horas_1 * 3600 + minutos_1 * 60 + 5
+        let t_final = horas_2 * 3600 + minutos_2 * 60 + 5
+        let ciclo = 0
+        let segundos_pasos = []
+        let pasos_duracion = []
+        let pas_activos = []
+        if (tiempo_amarillo.current > 0 && modoControlador.current === "Tiempo Fijo") {
+            pas_activos = JSON.parse(JSON.stringify(datos_amarillo_aux.current))
+            faseActual.current = datos_amarillo_aux.current
         }
+        else if (modoControlador.current === "Destello") {
+            pas_activos = JSON.parse(JSON.stringify(pasosDestello))
+            faseActual.current = pasosDestello
+        }
+        else {
+            pas_activos = JSON.parse(JSON.stringify(fases_pasos_aux.current))
+            faseActual.current = fases_pasos_aux.current
+        }
+        for (let i = 0; i < pas_activos.length; i++) {
+            let aux = pas_activos[i].duracion
+            pasos_duracion.push(aux)
+            ciclo += aux
+        }
+
+        let seguntos_totales = t_final - t_inicio
+        // let desfase = seguntos_totales % ciclo
+
+        let frequencia = parseInt(seguntos_totales / ciclo)
+        // let index_periodicidad = 0
+        let temp_i = t_inicio
+
+        for (let i = 0; i < pas_activos.length; i++) {
+            let aux = {
+                paso: i,
+                name: `Paso ${i + 1}`,
+                valores: []
+            }
+            segundos_pasos.push(aux)
+        }
+
+        for (let i1 = 0; i1 < frequencia; i1++) {
+            for (let j1 = 0; j1 < pasos_duracion.length; j1++) {
+                let aux_7 = pasos_duracion[j1]
+                for (let k = 0; k < aux_7; k++) {
+                    temp_i += 1
+                    segundos_pasos[j1].valores.push(temp_i)
+                }
+            }
+        }
+        return segundos_pasos
+    }
 
     /* 
         Funcion encargada de cargar los datos necesarios para animar los semaforos
@@ -517,11 +607,11 @@ export default function HomeView() {
         let dia_ordinario = datos_controlador.horarios.dia_ordinario
         let planes = datos_controlador.planes
         let parametros_operativos = datos_controlador.otros_parametros
-        tiempo_amarillo.current =  parseInt(parametros_operativos.tiempo_amarillo_vehicular)
+        tiempo_amarillo.current = parseInt(parametros_operativos.tiempo_amarillo_vehicular)
         let hora_actual = new Date();
         let horas = hora_actual.getHours();
         let minutos = hora_actual.getMinutes();
-        let ultimo_horario = false 
+        let ultimo_horario = false
         let aux;
         let aux2;
         let temp;
@@ -547,28 +637,28 @@ export default function HomeView() {
             //console.log("ref: ",ref)
             //console.log("temp: ",temp)
             if (ref > temp) {
-                if(i === 0){
+                if (i === 0) {
                     nro_horario = dias_ordenados[0].nro
                     nro_horario_sig = dia_ordinario[0].nro
                     ultimo_horario = true
-                }else{
+                } else {
                     nro_horario = dias_ordenados[i].nro
                     nro_horario_sig = dias_ordenados[i - 1].nro
                     ultimo_horario = false
                 }
-               
+
                 break
             }
-            if(i === 0){
+            if (i === 0) {
                 nro_horario = dias_ordenados[0].nro
                 nro_horario_sig = dia_ordinario[0].nro
                 ultimo_horario = true
-            }else{
+            } else {
                 nro_horario = dias_ordenados[0].nro
                 nro_horario_sig = dias_ordenados[i].nro
                 ultimo_horario = false
             }
-            
+
         }
 
 
@@ -600,7 +690,7 @@ export default function HomeView() {
                 name: item.name
             }
             let grupos_aux = aux2.grupos
-            
+
 
             if (modo === 'Destello') {
                 grupos_aux = aux2.grupos.map(item => ({
@@ -630,56 +720,56 @@ export default function HomeView() {
 
         })
         let datos_amarillo = []
-        fases_pasos_aux.current =fases_pasos
+        fases_pasos_aux.current = fases_pasos
         // esta parte del codigo se encarga de animar los ciclos en amarillo
 
-       
 
-        if(tiempo_amarillo.current >0 && modo === "Tiempo Fijo"){
-     
+
+        if (tiempo_amarillo.current > 0 && modo === "Tiempo Fijo") {
+
             let fases_pasos_aux2 = JSON.parse(JSON.stringify(fases_pasos))
             let fases_pasos_aux = JSON.parse(JSON.stringify(fases_pasos))
-            let aux_copias = fases_pasos.length*2
-            let nuevos_pasos = fases_pasos_aux.map((item) =>{
-                    let grupos_aux = item.grupos.map(item2 =>{
-                        let grupo_temp= {}
-                        if(item2.colorDescripcion === "rojo"){
-                             grupo_temp = {faseNum: item2.faseNum, colorDescripcion: item2.colorDescripcion, color: item2.color, grupoNum: item2.grupoNum, id:item2.id}
-                        }else{
-                             grupo_temp = {faseNum: item2.faseNum, colorDescripcion: "amarillo", color: 2, grupoNum: item2.grupoNum, id:item2.id}
-                        }
-                        return grupo_temp
-                    })
-                    let paso_editado = {
-                        duracion: tiempo_amarillo.current,
-                        fase: item.fase,
-                        grupos:grupos_aux,
-                        name: item.name,
+            let aux_copias = fases_pasos.length * 2
+            let nuevos_pasos = fases_pasos_aux.map((item) => {
+                let grupos_aux = item.grupos.map(item2 => {
+                    let grupo_temp = {}
+                    if (item2.colorDescripcion === "rojo") {
+                        grupo_temp = { faseNum: item2.faseNum, colorDescripcion: item2.colorDescripcion, color: item2.color, grupoNum: item2.grupoNum, id: item2.id }
+                    } else {
+                        grupo_temp = { faseNum: item2.faseNum, colorDescripcion: "amarillo", color: 2, grupoNum: item2.grupoNum, id: item2.id }
                     }
+                    return grupo_temp
+                })
+                let paso_editado = {
+                    duracion: tiempo_amarillo.current,
+                    fase: item.fase,
+                    grupos: grupos_aux,
+                    name: item.name,
+                }
                 return paso_editado
             })
-    
-            let nuevos_pasos_2 = fases_pasos_aux2.map(item=>(
+
+            let nuevos_pasos_2 = fases_pasos_aux2.map(item => (
                 {
-                    duracion: item.duracion -tiempo_amarillo.current,
+                    duracion: item.duracion - tiempo_amarillo.current,
                     fase: item.fase,
-                    grupos:item.grupos,
+                    grupos: item.grupos,
                     name: item.name,
                 }
             ))
             let index_aux = 0
             let index_aux2 = 0
-            for(let i = 0;i<aux_copias;i++){
-                let aux_resi = i%2
-                if(aux_resi !== 0){
+            for (let i = 0; i < aux_copias; i++) {
+                let aux_resi = i % 2
+                if (aux_resi !== 0) {
                     datos_amarillo.push(nuevos_pasos[index_aux])
                     index_aux += 1
-                }else{
+                } else {
                     datos_amarillo.push(nuevos_pasos_2[index_aux2])
                     index_aux2 += 1
                 }
             }
-            datos_amarillo.map((item,index)=>(item.name = `Paso ${index+1}`))
+            datos_amarillo.map((item, index) => (item.name = `Paso ${index + 1}`))
         }
         datos_amarillo_aux.current = datos_amarillo
         let resumen = {
@@ -691,93 +781,67 @@ export default function HomeView() {
         }
         dispatch(setResumen(resumen));
 
-        let auxg1;
-        let auxg2;
-        let auxg3;
-        let auxg4;
-        let objg1 = { verde: 0, rojo: 0 }
-        let objg2 = { verde: 0, rojo: 0 }
-        let objg3 = { verde: 0, rojo: 0 }
-        let objg4 = { verde: 0, rojo: 0 }
-
-        for (let i1 = 0; i1 < pasos_habilitados.length; i1++) {
-            auxg1 = fases_pasos[i1].grupos[0].color
-            auxg2 = fases_pasos[i1].grupos[1].color
-            auxg3 = fases_pasos[i1].grupos[2].color
-            auxg4 = fases_pasos[i1].grupos[3].color
-            if (auxg1 === 1) {
-                objg1.verde = objg1.verde + fases_pasos[i1].duracion
-            } else {
-                objg1.rojo = objg1.rojo + fases_pasos[i1].duracion
-            }
-            if (auxg2 === 1) {
-                objg2.verde = objg2.verde + fases_pasos[i1].duracion
-            } else {
-                objg2.rojo = objg2.rojo + fases_pasos[i1].duracion
-            }
-            if (auxg3 === 1) {
-                objg3.verde = objg3.verde + fases_pasos[i1].duracion
-            } else {
-                objg3.rojo = objg3.rojo + fases_pasos[i1].duracion
-            }
-            if (auxg4 === 1) {
-                objg4.verde = objg4.verde + fases_pasos[i1].duracion
-            } else {
-                objg4.rojo = objg4.rojo + fases_pasos[i1].duracion
-            }
-        }
-        var ejemplo = JSON.parse(JSON.stringify(semaforos2.current))
-        var newDataUpdate = ejemplo.map((item) => {
-            if (item.grupo === 'g1') {
-                item['rojo'] = objg1.rojo
-                item['verde'] = objg1.verde
-                item['amarillo'] = tiempo_amarillo.current
-                item['modo'] = modo
-            } else if (item.grupo === 'g2') {
-                item['rojo'] = objg2.rojo
-                item['verde'] = objg2.verde
-                item['amarillo'] = tiempo_amarillo.current
-                item['modo'] = modo
-            } else if (item.grupo === 'g3') {
-                item['rojo'] = objg3.rojo
-                item['verde'] = objg3.verde
-                item['amarillo'] = tiempo_amarillo.current
-                item['modo'] = modo
-            } else {
-                item['rojo'] = objg4.rojo
-                item['verde'] = objg4.verde
-                item['amarillo'] = tiempo_amarillo.current
-                item['modo'] = modo
-            }
-            //item['icon'] = {}
-            return item
-        })
-        
-        setSemaforos3(newDataUpdate)
 
 
         timer1.current = 0
 
         dispatch(setPasosActivos(fases_pasos));
-
-        //setPasosActivos(fases_pasos)
+        // aqui haremos el calculo para los indicadores 
         
+        //setPasosActivos(fases_pasos)
+
         let segundos_pasos = []
-        if (ultimo_horario){
+        if (ultimo_horario) {
             const fecha = new Date()
             let horas_1 = parseInt(horario_siguiente.horas)
-            if(fecha.getHours() > horas_1){
-            
-                segundos_pasos = devolverSegundosPaso(horario_activo,{minutos:0,horas:24})
-            }else{
-                segundos_pasos = devolverSegundosPaso({minutos:0,horas:0,horario_siguiente})
+            if (fecha.getHours() >= horas_1) {
+                segundos_pasos = devolverSegundosPaso(horario_activo, { minutos: 0, horas: 24 })
+            } else {
+                segundos_pasos = devolverSegundosPaso({ minutos: 0, horas: 0, horario_siguiente })
             }
-        }else{
-           segundos_pasos = devolverSegundosPaso(horario_activo,horario_siguiente)
+        } else {
+            segundos_pasos = devolverSegundosPaso(horario_activo, horario_siguiente)
         }
-
+        informacionDelIndicador()
         calculoEjecucion.current = segundos_pasos
         //setSemaforo()
+
+
+    }
+    const eliminarArea = async (_data) => {
+        Swal.fire({
+            title: 'Borrar Arear',
+            text: "Deseas Borrar esta area?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                setAccionesUi(true)
+                let aux = JSON.parse(JSON.stringify(semaforos2.current))
+                let semaforosActualizados = aux.filter(item => item.nombre !== _data.nombre)
+
+                const ref = doc(db, "controladores", controlerState.mac);
+                let areas_temp = JSON.parse(JSON.stringify(semaforosActualizados))
+                areas_temp.map((item) => {
+                    let puntos_aux = item.points
+                    item.points = puntos_aux.map((_item) => (
+                        {
+                            pos: _item
+                        }
+                    ))
+                })
+
+                await updateDoc(ref, {
+                    semaforos: areas_temp
+                });
+                semaforos2.current = semaforosActualizados
+                setAreas(semaforosActualizados)
+                setAccionesUi(false)
+            }
+        })
 
 
     }
@@ -790,34 +854,71 @@ export default function HomeView() {
         let g4;
         let dataUpdated;
         let aux = semaforos2.current;
-   
-            let paso_actual = devolverPaso()
-            g1 = devolverColor(faseActual.current[paso_actual].grupos[0].colorDescripcion);
-            g2 = devolverColor(faseActual.current[paso_actual].grupos[1].colorDescripcion);
-            g3 = devolverColor(faseActual.current[paso_actual].grupos[2].colorDescripcion);
-            g4 = devolverColor(faseActual.current[paso_actual].grupos[3].colorDescripcion);
-            aux = semaforos2.current
-            setFaseexec(faseActual.current[paso_actual].fase)
-            setPasoexec(faseActual.current[paso_actual].name)
-            dataUpdated = aux.map((item) => {
-                if (item.grupo === "g1") {
-                    item['icon'] = g1;
-                } else if (item.grupo === "g2") {
-                    item['icon'] = g2;
-                } else if (item.grupo === "g3") {
-                    item['icon'] = g3;
-                } else if (item.grupo === "g4") {
-                    item['icon'] = g4;
-                }
-                return item
-            })
-            setSemaforos(dataUpdated);
+        console.log(aux)
+        // console.log("hasta aqui llega el programa");
 
-        // }
+        let paso_actual = devolverPaso()
+        g1 = devolverColor(faseActual.current[paso_actual].grupos[0].colorDescripcion);
+        g2 = devolverColor(faseActual.current[paso_actual].grupos[1].colorDescripcion);
+        g3 = devolverColor(faseActual.current[paso_actual].grupos[2].colorDescripcion);
+        g4 = devolverColor(faseActual.current[paso_actual].grupos[3].colorDescripcion);
+        aux = semaforos2.current
+        setFaseexec(faseActual.current[paso_actual].fase)
+        setPasoexec(faseActual.current[paso_actual].name)
+        dataUpdated = aux.map((item) => {
+            if (item.grupo === "g1") {
+                item['color'] = g1;
+            } else if (item.grupo === "g2") {
+                item['color'] = g2;
+            } else if (item.grupo === "g3") {
+                item['color'] = g3;
+            } else if (item.grupo === "g4") {
+                item['color'] = g4;
+            }
+            return item
+        })
+        console.log(dataUpdated)
+        setAreas(dataUpdated);
+
     }
     // funcion que compara los datos almacenados en la store
-    const verifyDataSemaforos = () =>{
+    const verifyDataSemaforos = () => {
         console.log("existen datos")
+    }
+    const obtenerCoordenadas = () => {
+        let puntos = JSON.parse(JSON.stringify(pointsArea))
+        let data
+        console.log(position)
+        let newPoint = {
+            icon: point,
+            position: [position.lat, position.lng]
+        }
+
+        console.log(newPoint)
+        if (puntos.length < 4) {
+            puntos.push(newPoint)
+            data = puntos.map(item => (
+                {
+
+                    icon: point,
+                    position: item.position
+                }
+            ))
+        } else {
+            puntos.pop()
+            puntos.push(newPoint)
+            data = puntos.map(item => (
+                {
+                    icon: point,
+                    position: item.position
+                }))
+        }
+        setPointsArea(data)
+
+    }
+
+    const limpiarPuntos = () =>{
+        setPointsArea([])
     }
 
     /* use effect es un hook que nos permite ejecutar nuestro temporizador en tiempo real
@@ -842,7 +943,6 @@ export default function HomeView() {
     }, []);
 
     return (
-
         <div>
             <Container maxWidth="md">
                 <div className='titulos-home'>
@@ -867,7 +967,7 @@ export default function HomeView() {
                             </Thead>
                             <Tbody>
                                 {controlerState.ips.map((dato, index) => (
-                                    <Tr  className="tablas-focus" key={index} >
+                                    <Tr className="tablas-focus" key={index} >
                                         <Td>
                                             {index + 1}
                                         </Td>
@@ -889,7 +989,6 @@ export default function HomeView() {
                                                 label={dato.status}
                                             />
                                         </Td>
-
                                     </Tr>
                                 ))}
                             </Tbody>
@@ -901,9 +1000,7 @@ export default function HomeView() {
                         </div>
                     </Grid>
                     <Grid item xs={12} md={4}>
-
                         <TextField id="outlined" focused value={controlerState.nombre} label="Nombre" variant="outlined" aria-readonly={true} fullWidth />
-
                     </Grid>
                     <Grid item xs={12} md={3}>
                         <TextField id="outlined" focused value={controlerState.latitud} label="Latitud" variant="outlined" aria-readonly fullWidth />
@@ -912,7 +1009,7 @@ export default function HomeView() {
                         <TextField id="outlined" focused value={controlerState.longitud} label="Longitud" variant="outlined" aria-readonly fullWidth />
                     </Grid>
                     <Grid item xs={12} md={2}>
-                        <Button variant="contained" startIcon={<EditIcon />} onClick={abrirModalEditarControlador} color="advertencia" fullWidth sx={{ height: "100%" }}>Editar</Button>
+                        <Button variant="contained" startIcon={<EditIcon />} onClick={abrirModalEditarControlador} disabled={btnAgregar} color="advertencia" fullWidth sx={{ height: "100%" }}>Editar</Button>
                     </Grid>
 
                     <Grid item md={12}>
@@ -920,17 +1017,20 @@ export default function HomeView() {
                             <h5>Gestionar Semaforos: </h5>
                         </div>
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={3}>
                         <TextField id="outlined" focused value={position.lat} label="Latitud" variant="outlined" fullWidth />
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={3}>
                         <TextField id="outlined" focused value={position.lng} label="Longitud" variant="outlined" fullWidth />
                     </Grid>
                     <Grid item xs={12} md={2}>
-                        <Button variant="contained" startIcon={<UpdateIcon />} disabled={btnAgregar} onClick={() => { setModalCrearSemaforo(true) }} color="azulm" fullWidth sx={{ height: "100%" }}>Agregar</Button>
+                        <Button variant="contained" startIcon={<SaveIcon />} disabled={btnAgregar} onClick={() => { obtenerCoordenadas() }} color="azulm" fullWidth sx={{ height: "100%" }}>GUARDAR</Button>
                     </Grid>
                     <Grid item xs={12} md={2}>
-                        <Button variant="contained" disabled={deshabilitar} fullWidth sx={{ height: "100%" }} startIcon={flagsimu ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />} color={flagsimu ? 'verde' : 'morado1'} onClick={iniciarSimulacion}>Simular</Button>
+                        <Button variant="contained"color='verde2' startIcon={<MapIcon />} disabled={btnAgregar} onClick={() => { setModalCrearSemaforo(true) }}  fullWidth sx={{ height: "100%" }}>CREAR</Button>
+                    </Grid>
+                    <Grid item xs={12} md={2}>
+                        <Button variant="contained" color='anaranjado1' disabled={btnAgregar}  fullWidth sx={{ height: "100%" }} onClick={limpiarPuntos} >LIMPIAR</Button>
                     </Grid>
 
 
@@ -939,29 +1039,31 @@ export default function HomeView() {
                             <MapContainer center={[controlerState.latitud, controlerState.longitud]} zoom={19} key={reloadMap} scrollWheelZoom={false} className='map-container leaflet-container-2'>
                                 <TileLayer
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                    url="https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=b08eb869c89646fa8accf539b81e80de"
                                 />
                                 <DraggableMarker />
-                                {semaforos.map((item, index) => (
-                                    <Marker position={item.position} key={index} icon={item.icon}>
-                                        <Popup>
-                                            Semaforo {item.nombre} - Grupo: {item.grupo}
-                                        </Popup>
+                                {pointsArea.map((item, index) => (
+                                    <Marker position={item.position} icon={item.icon}>
                                     </Marker>
                                 ))}
+                                {areas.map((item, index) => (
+                                    <FeatureGroup pathOptions={item.color}>
+                                        <Popup>
+                                            <p style={{ margin: 0, fontStyle: "italic" }}><strong>Area: </strong>{item.nombre} <strong>Grupo: </strong>{item.grupo}</p>
+                                            <Button color='rojo' sx={{ marginTop: 2 }} onClick={() => { eliminarArea(item) }} variant="contained">Eliminar</Button>
+                                        </Popup>
+                                        <Polygon positions={item.points} />
+                                    </FeatureGroup>
+                                ))}
+                                <Fab color={simulacion.current ? "error":"success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={iniciarSimulacion}>
+                                    {simulacion.current ? <PauseCircleOutlineIcon/>:<PlayCircleOutlineIcon />}
+                                </Fab>
+
                             </MapContainer>
                         </div>
                     </Grid>
-                    <Grid item xs={6}>
-                        <Alert severity="success">
-                            <strong>Plan Activo:</strong>    {horarioexec.plan}    <strong>Horario:</strong>    {horarioexec.horas + ':' + horarioexec.minutos}    <strong>Modo:</strong> {modoexec}
-                        </Alert>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Alert severity="info">
-                            Se esta Ejecutando - <strong>Fase{faseexec} y {pasoexec}</strong>
-                        </Alert>
-                    </Grid>
+
+
                     <Grid item xs={12} md={12}>
                         <Table className='home-t'>
                             <Thead>
@@ -1027,7 +1129,7 @@ export default function HomeView() {
                             </Thead>
                             <Tbody>
 
-                                {semaforos3.map((dato, index) => (
+                                {indicadorData.map((dato, index) => (
                                     <Tr className="tablas-focus" key={index} >
                                         <Td>
                                             {index + 1}
@@ -1056,7 +1158,7 @@ export default function HomeView() {
                         </div>
                     </Grid>
                 </Grid>
-               
+
             </Container>
 
             <Modal isOpen={modalCrearSemaforo} >
@@ -1110,7 +1212,42 @@ export default function HomeView() {
                     </Button>
                 </ModalFooter>
             </Modal>
-            <Modal isOpen={modalEditControlador} >
+            <Modal isOpen={modalDeclararSemaforo} >
+                <ModalHeader>
+                    <div>
+                        <h1>
+                            Editar Semaforo
+                        </h1>
+                    </div>
+                </ModalHeader>
+                <ModalBody>
+                    <Grid container spacing={4}>
+                        <Grid item xs={12}>
+                            <TextField
+                                id="outlined"
+                                value={newController.nombre}
+                                name='nombre'
+                                onChange={handleNewController}
+                                label="Nombre del Semaforo"
+                                variant="outlined"
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+
+                        </Grid>
+                    </Grid>
+                </ModalBody>
+                <ModalFooter >
+                    <Button variant="contained" color='anaranjado1' onClick={actualizarDatosControlador} sx={{ marginLeft: 1 }}>
+                        Aplicar
+                    </Button>
+                    <Button variant="contained" color='rojo' onClick={() => { setModalEditControlador(false) }} sx={{ marginLeft: 1 }}>
+                        cancelar
+                    </Button>
+                </ModalFooter>
+            </Modal>
+            <Modal isOpen={modalDeclararSemaforo} >
                 <ModalHeader>
                     <div>
                         <h1>
@@ -1172,7 +1309,6 @@ export default function HomeView() {
             <CardController />
             <CardInformation />
         </div>
-
     );
 
 }
@@ -1228,7 +1364,26 @@ const IOSSwitch = styled((props) => (
     },
 }));
 
+const point = new L.Icon({
+    iconUrl: require('../assets/point2.png'),
+    iconRetinaUrl: require('../assets/point2.png'),
+    iconSize: [8, 8], // size of the icon
+    shadowSize: [50, 64], // size of the shadow
+    iconAnchor: [3, 4], // point of the icon which will correspond to marker's location
+    shadowAnchor: [10, 100],  // the same for the shadow
+    popupAnchor: [-3, -76]
 
+});
+const ubi = new L.Icon({
+    iconUrl: require('../assets/ubica.png'),
+    iconRetinaUrl: require('../assets/ubica.png'),
+    iconSize: [20, 30], // size of the icon
+    shadowSize: [50, 64], // size of the shadow
+    iconAnchor: [9, 30], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor: [-3, -76]
+
+});
 
 const semaforo = new L.Icon({
     iconUrl: require('../assets/semaforo3.png'),
@@ -1278,16 +1433,7 @@ const apagado = new L.Icon({
     shadowAnchor: [4, 62],  // the same for the shadow
     popupAnchor: [-3, -76]
 });
-const ubi = new L.Icon({
-    iconUrl: require('../assets/ubica.png'),
-    iconRetinaUrl: require('../assets/ubica.png'),
-    iconSize: [20, 30], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
 
-});
 
 const destello = new L.Icon({
     iconUrl: require('../assets/destello.png'),
@@ -1393,7 +1539,8 @@ const initialResumen = [
         amarillo: 4,
         verde: 20,
         grupo: "g4",
-        position: [-2.876842450523782, -78.9654189348221],
+        position: [[-2.876842450523782, -78.9654189348221],
+        []],
         icon: {}
     }
 ]
@@ -1404,21 +1551,25 @@ let pasosDestello = [
         duracion: 1,
         fase: 1,
         grupos: [
-                    {colorDescripcion: 'amarillo', faseNum: 1, id: 'g1_fase_1', grupoNum: 1, color: 0}, 
-                    {colorDescripcion: 'amarillo', faseNum: 1, id: 'g2_fase_1', grupoNum: 2, color: 0},
-                    {colorDescripcion: 'amarillo', faseNum: 1, id: 'g3_fase_1', grupoNum: 3, color: 0},
-                    {colorDescripcion: 'amarillo', faseNum: 1, id: 'g4_fase_1', grupoNum: 4, color: 0} ],
+            { colorDescripcion: 'amarillo', faseNum: 1, id: 'g1_fase_1', grupoNum: 1, color: 0 },
+            { colorDescripcion: 'amarillo', faseNum: 1, id: 'g2_fase_1', grupoNum: 2, color: 0 },
+            { colorDescripcion: 'amarillo', faseNum: 1, id: 'g3_fase_1', grupoNum: 3, color: 0 },
+            { colorDescripcion: 'amarillo', faseNum: 1, id: 'g4_fase_1', grupoNum: 4, color: 0 }],
         name: 'Paso 1'
     },
     {
         duracion: 1,
         fase: 2,
         grupos: [
-                    {colorDescripcion: 'apagado', faseNum: 2, id: 'g1_fase_2', grupoNum: 1, color: 3}, 
-                    {colorDescripcion: 'apagado', faseNum: 2, id: 'g2_fase_2', grupoNum: 2, color: 3},
-                    {colorDescripcion: 'apagado', faseNum: 2, id: 'g3_fase_2', grupoNum: 3, color: 3},
-                    {colorDescripcion: 'apagado', faseNum: 2, id: 'g4_fase_2', grupoNum: 4, color: 3} ],
+            { colorDescripcion: 'apagado', faseNum: 2, id: 'g1_fase_2', grupoNum: 1, color: 3 },
+            { colorDescripcion: 'apagado', faseNum: 2, id: 'g2_fase_2', grupoNum: 2, color: 3 },
+            { colorDescripcion: 'apagado', faseNum: 2, id: 'g3_fase_2', grupoNum: 3, color: 3 },
+            { colorDescripcion: 'apagado', faseNum: 2, id: 'g4_fase_2', grupoNum: 4, color: 3 }],
         name: 'Paso 2'
     }
 
 ]
+const grupo_1 = { color: 'purple' }
+const grupo_2 = { color: 'blue' }
+const grupo_3 = { color: 'black' }
+const grupo_4 = { color: 'orange' }

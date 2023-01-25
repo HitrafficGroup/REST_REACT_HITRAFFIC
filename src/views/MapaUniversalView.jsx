@@ -469,11 +469,14 @@ export default function MapaUniversalView() {
             if (ultimo_horario){
                 const fecha = new Date()
                 let horas_1 = parseInt(horario_siguiente.horas)
-                if(fecha.getHours() > horas_1){
+                console.log(horas_1)
+                if(fecha.getHours() >= horas_1){
                 
+                    console.log("entra en este caso")
                     segundos_pasos = devolverSegundosPaso(horario_activo,{minutos:0,horas:24})
                 }else{
-                    segundos_pasos = devolverSegundosPaso({minutos:0,horas:0,horario_siguiente})
+                    console.log("entra en este caso2")
+                    segundos_pasos = devolverSegundosPaso({minutos:0,horas:0},horario_siguiente)
                 }
             }else{
                segundos_pasos = devolverSegundosPaso(horario_activo,horario_siguiente)
