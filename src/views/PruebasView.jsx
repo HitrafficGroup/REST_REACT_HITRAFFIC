@@ -76,6 +76,7 @@ export default function PruebasView() {
     const controlerState = useSelector(state => state.controlers)
     const [deshabilitar, setDeshabilitar] = useState(true);
     const [newController, setNewController] = useState({});
+    const [indicadorData,setIndicadorData] = useState(initialData.resumen);
     const puntosArea = useRef([]);
 
     //prueba semaforo
@@ -166,7 +167,7 @@ export default function PruebasView() {
                 setPosition([data.latitud, data.longitud])
                 dispatch(setInitialStateController(data));
                 dispatch(addCurrentControler(data));
-
+                
                 setReloadMap(!reloadMap)
                 let aux = await getFirmwareVersion(data.mac, data.ip);
                 let firmware = aux[data.mac]
@@ -216,6 +217,7 @@ export default function PruebasView() {
                 semaforos2.current = areas_temp
                 setAreas(areas_temp)
                 allInfo.current = document.data()
+                console.log(controlerState.pasos_activos)
                 todaInformacion.current = document.data()
                 parametrosCorriendo();
                 setDeshabilitar(false)
@@ -409,6 +411,74 @@ export default function PruebasView() {
             return grupo_4
         }
     }
+    /*
+        funcion para poder estructurar la informacion que deben mostrar los indicadores
+    */
+   const informacionDelIndicador = ()=>{
+        let temp = JSON.parse(JSON.stringify(faseActual.current))
+        let auxg1;
+        let auxg2;
+        let auxg3;
+        let auxg4;
+        let objg1 = { verde: 0, rojo: 0 }
+        let objg2 = { verde: 0, rojo: 0 }
+        let objg3 = { verde: 0, rojo: 0 }
+        let objg4 = { verde: 0, rojo: 0 }
+        
+        for (let i1 = 0; i1 < temp.length; i1++) {
+            auxg1 = temp[i1].grupos[0].color
+            auxg2 = temp[i1].grupos[1].color
+            auxg3 = temp[i1].grupos[2].color
+            auxg4 = temp[i1].grupos[3].color
+            if (auxg1 === 1) {
+                objg1.verde = objg1.verde + temp[i1].duracion
+            } else {
+                objg1.rojo = objg1.rojo + temp[i1].duracion
+            }
+            if (auxg2 === 1) {
+                objg2.verde = objg2.verde + temp[i1].duracion
+            } else {
+                objg2.rojo = objg2.rojo + temp[i1].duracion
+            }
+            if (auxg3 === 1) {
+                objg3.verde = objg3.verde + temp[i1].duracion
+            } else {
+                objg3.rojo = objg3.rojo + temp[i1].duracion
+            }
+            if (auxg4 === 1) {
+                objg4.verde = objg4.verde + temp[i1].duracion
+            } else {
+                objg4.rojo = objg4.rojo + temp[i1].duracion
+            }
+        }
+        let ejemplo = indicadorData
+        var newDataUpdate = ejemplo.map((item) => {
+            if (item.grupo === 'g1') {
+                item['rojo'] = objg1.rojo - tiempo_amarillo.current
+                item['verde'] = objg1.verde 
+                item['amarillo'] = tiempo_amarillo.current
+                item['modo'] =  modoControlador.current
+            } else if (item.grupo === 'g2') {
+                item['rojo'] = objg2.rojo -tiempo_amarillo.current
+                item['verde'] = objg2.verde
+                item['amarillo'] = tiempo_amarillo.current
+                item['modo'] =  modoControlador.current
+            } else if (item.grupo === 'g3') {
+                item['rojo'] = objg3.rojo -tiempo_amarillo.current
+                item['verde'] = objg3.verde
+                item['amarillo'] = tiempo_amarillo.current
+                item['modo'] =  modoControlador.current
+            } else {
+                item['rojo'] = objg4.rojo -tiempo_amarillo.current
+                item['verde'] = objg4.verde
+                item['amarillo'] = tiempo_amarillo.current
+                item['modo'] = modoControlador.current
+            }
+            item['icon'] = {}
+            return item
+        })
+        setIndicadorData(newDataUpdate)
+   }
 
     /* funcion encargada de actualizar el valor del useRef con la finalidad de permitir que se 
     inicie la simulacion debido a que maneja un valor booleano que activa una funcion en el hook
@@ -716,7 +786,8 @@ export default function PruebasView() {
         timer1.current = 0
 
         dispatch(setPasosActivos(fases_pasos));
-
+        // aqui haremos el calculo para los indicadores 
+        
         //setPasosActivos(fases_pasos)
 
         let segundos_pasos = []
@@ -732,7 +803,7 @@ export default function PruebasView() {
         } else {
             segundos_pasos = devolverSegundosPaso(horario_activo, horario_siguiente)
         }
-
+        informacionDelIndicador()
         calculoEjecucion.current = segundos_pasos
         //setSemaforo()
 
@@ -784,7 +855,7 @@ export default function PruebasView() {
         let g4;
         let dataUpdated;
         let aux = semaforos2.current;
-
+        console.log(aux)
         // console.log("hasta aqui llega el programa");
 
         let paso_actual = devolverPaso()
@@ -939,7 +1010,7 @@ export default function PruebasView() {
                         <TextField id="outlined" focused value={controlerState.longitud} label="Longitud" variant="outlined" aria-readonly fullWidth />
                     </Grid>
                     <Grid item xs={12} md={2}>
-                        <Button variant="contained" startIcon={<EditIcon />} onClick={abrirModalEditarControlador} color="advertencia" fullWidth sx={{ height: "100%" }}>Editar</Button>
+                        <Button variant="contained" startIcon={<EditIcon />} onClick={abrirModalEditarControlador} disabled={btnAgregar} color="advertencia" fullWidth sx={{ height: "100%" }}>Editar</Button>
                     </Grid>
 
                     <Grid item md={12}>
@@ -954,13 +1025,13 @@ export default function PruebasView() {
                         <TextField id="outlined" focused value={position.lng} label="Longitud" variant="outlined" fullWidth />
                     </Grid>
                     <Grid item xs={12} md={2}>
-                        <Button variant="contained" startIcon={<SaveIcon />} onClick={() => { obtenerCoordenadas() }} color="azulm" fullWidth sx={{ height: "100%" }}>GUARDAR</Button>
+                        <Button variant="contained" startIcon={<SaveIcon />} disabled={btnAgregar} onClick={() => { obtenerCoordenadas() }} color="azulm" fullWidth sx={{ height: "100%" }}>GUARDAR</Button>
                     </Grid>
                     <Grid item xs={12} md={2}>
                         <Button variant="contained"color='verde2' startIcon={<MapIcon />} disabled={btnAgregar} onClick={() => { setModalCrearSemaforo(true) }}  fullWidth sx={{ height: "100%" }}>CREAR</Button>
                     </Grid>
                     <Grid item xs={12} md={2}>
-                        <Button variant="contained" color='anaranjado1' disabled={deshabilitar} fullWidth sx={{ height: "100%" }} onClick={limpiarPuntos} >LIMPIAR</Button>
+                        <Button variant="contained" color='anaranjado1' disabled={btnAgregar}  fullWidth sx={{ height: "100%" }} onClick={limpiarPuntos} >LIMPIAR</Button>
                     </Grid>
 
 
@@ -1046,7 +1117,41 @@ export default function PruebasView() {
                             </Tbody>
                         </Table>
                     </Grid>
+                    <Grid item xs={12}>
+                        <Table className='home-t'>
+                            <Thead>
+                                <Tr>
+                                    <Th className='home-t-th'>#</Th>
+                                    <Th className='home-t-th'>Semaforo</Th>
+                                    <Th className='home-t-th'>Grupo</Th>
+                                    <Th className='home-t-th'>Indicador en Segundos</Th>
 
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+
+                                {indicadorData.map((dato, index) => (
+                                    <Tr className="tablas-focus" key={index} >
+                                        <Td>
+                                            {index + 1}
+                                        </Td>
+                                        <Td >
+                                            {dato.nombre}
+                                        </Td>
+                                        <Td >
+                                            {dato.grupo}
+                                        </Td>
+                                        <Td >
+                                            <CustomProgress red={dato.rojo} yellow={dato.amarillo} green={dato.verde} modo={dato.modo} />
+                                        </Td>
+
+
+
+                                    </Tr>
+                                ))}
+                            </Tbody>
+                        </Table>
+                    </Grid>
 
                     <Grid item xs={12}>
                         <div className="home-view-footer">
