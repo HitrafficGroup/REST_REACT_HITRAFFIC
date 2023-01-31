@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { convertToFases, convertToPlanes,createHorariosObject,convertToGrupos,convertirDiasEspeciales } from './manageData'
 import Swal from 'sweetalert2';
-const BASE_PATH_WS = 'http://127.0.0.1:8000';
+const BASE_PATH_WS = 'http://127.0.0.2:8000';
 async function getIpsFromRestApi() {
 	var res;
-	await axios.get('http://127.0.0.1:8000/rest/listarIps').then(response => {
+	await axios.get(`${BASE_PATH_WS}/rest/listarIps`).then(response => {
 		res = response.data
+		console.log(res)
 	}).catch(function (error) {
 		console.log(res);
 		Swal.fire({
