@@ -6,7 +6,7 @@ async function getIpsFromRestApi() {
 	var res;
 	await axios.get(`${BASE_PATH_WS}/rest/listarIps`).then(response => {
 		res = response.data
-		console.log(res)
+		
 	}).catch(function (error) {
 		console.log(res);
 		Swal.fire({
@@ -20,9 +20,7 @@ async function getIpsFromRestApi() {
 }
 async function getFasesFromRestApi(mac, ip) {
 	var datos;
-	await axios.post(`${BASE_PATH_WS}/rest/restGetFasesControlador?mac=${mac}`, {
-		ip: ip
-	})
+	await axios.get(`${BASE_PATH_WS}/rest/restGetFasesControlador?mac=${mac}&ip=${ip}`)
 		.then(response => {
 			datos = convertToFases(response.data, mac);
 
@@ -61,9 +59,7 @@ async function postFasesFromRestApi(jsonData) {
 async function getPlanesFromRestApi(mac, ip) {
 
 	var datos;
-	await axios.post(`${BASE_PATH_WS}/rest/restGetPlanesControlador?mac=${mac}`, {
-		ip: ip
-	})
+	await axios.get(`${BASE_PATH_WS}/rest/restGetPlanesControlador?mac=${mac}&ip=${ip}`)
 		.then(response => {
 			datos = convertToPlanes(response.data, mac);
 
@@ -104,9 +100,7 @@ async function setPlanesFromRestApi(jsonData) {
 
 async function getOtrosParametrosFromRestApi(mac,ip) {
 	var datos;
-	await axios.post(`${BASE_PATH_WS}/rest/restGetOtrosParamControlador?mac=${mac}`, {
-		ip: ip
-	})
+	await axios.get(`${BASE_PATH_WS}/rest/restGetOtrosParamControlador?mac=${mac}&ip=${ip}`)
 		.then(response => {
 			datos = response.data
 		})
@@ -147,9 +141,7 @@ async function setOtrosParametrosFromRestApi(jsonData) {
 async function getHorariosFromRestApi(mac, ip) {
 
 	var datos;
-	await axios.post(`${BASE_PATH_WS}/rest/restGetHorariosControlador?mac=${mac}`, {
-		ip: ip
-	})
+	await axios.get(`${BASE_PATH_WS}/rest/restGetHorariosControlador?mac=${mac}&ip=${ip}`)
 		.then(response => {
 			datos = createHorariosObject(response.data,mac)
 		})
@@ -191,9 +183,7 @@ async function postHorariosFromRestApi(jsonData) {
 
 async function getTimeControlador(mac,ip) {
 	var datos;
-	await axios.post(`${BASE_PATH_WS}/rest/restGetTimeControlador?mac=${mac}`, {
-		ip: ip
-	})
+	await axios.get(`${BASE_PATH_WS}/rest/restGetTimeControlador?mac=${mac}&ip=${ip}`)
 		.then(response => {
 			datos = response.data
 		})
@@ -231,9 +221,7 @@ async function setTimeControlador(jsonData) {
 }
 async function  getGruposControlador(mac,ip) {
 	var datos;
-	await axios.post(`${BASE_PATH_WS}/rest/restGetGruposControlador?mac=${mac}`, {
-		ip: ip
-	})
+	await axios.get(`${BASE_PATH_WS}/rest/restGetGruposControlador?mac=${mac}&ip=${ip}`)
 		.then(response => {
 			datos = convertToGrupos(response.data,mac)
 		})
@@ -274,9 +262,7 @@ async function setGruposControlador(jsonData){
 async function getConflictoVerdesControlador(mac,ip){
 	
 	var datos;
-	await axios.post(`${BASE_PATH_WS}/rest/restGetConflictoVerdesControlador?mac=${mac}`, {
-		ip: ip
-	})
+	await axios.get(`${BASE_PATH_WS}/rest/restGetConflictoVerdesControlador?mac=${mac}&ip=${ip}`)
 		.then(response => {
 			datos = response.data
 
@@ -318,9 +304,7 @@ async function setConflictoVerdesControlador(jsonData){
 async function getDiasEspecialesControlador(mac,ip){
 	
 	var datos;
-	await axios.post(`${BASE_PATH_WS}/rest/restGetDiasEspecialesControlador?mac=${mac}`, {
-		ip: ip
-	})
+	await axios.get(`${BASE_PATH_WS}/rest/restGetDiasEspecialesControlador?mac=${mac}&ip=${ip}`)
 		.then(response => {
 			datos = convertirDiasEspeciales(response.data,mac);
 		})
@@ -360,9 +344,7 @@ async function setDiasEspecialesControlador(jsonData){
 async function getEntradasControlador(mac,ip){
 	
 	var datos;
-	await axios.post(`${BASE_PATH_WS}/rest/restGetEntradasControlador?mac=${mac}`, {
-		ip: ip
-	})
+	await axios.get(`${BASE_PATH_WS}/rest/restGetEntradasControlador?mac=${mac}&ip=${ip}`)
 		.then(response => {
 			datos = response.data;
 		})
@@ -399,13 +381,10 @@ async function setEntradasControlador(jsonData){
 	});
 }
 
-async function getRegistrosControlador(mac,ip){
+async function getRegistrosControlador(mac,ip,pg){
 	
 	var datos;
-	await axios.post(`${BASE_PATH_WS}/rest/restGetRegistrosControlador?mac=${mac}`, {
-		ip: ip,
-		pagina:"0"
-	})
+	await axios.get(`${BASE_PATH_WS}/rest/restGetRegistrosControlador?mac=${mac}&ip=${ip}&pg=${pg}`)
 		.then(response => {
 			datos = response.data;
 		})
@@ -470,9 +449,7 @@ async function getAllDataIp(mac,ip){
 async function getFirmwareVersion(mac,ip){
 	
 	var datos;
-	await axios.post(`${BASE_PATH_WS}/rest/restGetVersionFirmware?mac=${mac}`, {
-		ip: ip,
-	})
+	await axios.get(`${BASE_PATH_WS}/rest/restGetVersionFirmware?mac=${mac}&ip=${ip}`)
 		.then(response => {
 			datos = response.data;
 		})
@@ -488,7 +465,32 @@ async function getFirmwareVersion(mac,ip){
 		return datos;
 
 }
+// async function getFirmwareVersion(mac,ip){
+// 	var data = JSON.stringify({
+// 		"ip": "192.168.1.170"
+// 	});
 
+// 	var config = {
+// 		method: 'get',
+// 	  maxBodyLength: Infinity,
+// 		url: 'http://127.0.0.2:8000/rest/restGetVersionFirmware?mac=00:14:97:F6:EE:E6',
+// 		headers: { 
+// 		  'Content-Type': 'application/json'
+// 		},
+// 		data : data
+// 	  };
+	  
+	  
+// 	await axios(config)
+// 	.then(function (response) {
+// 	return (JSON.stringify(response.data));
+// 	})
+// 	.catch(function (error) {
+// 	console.log(error);
+// 	});
+
+
+// }
 async function setClonarControlador(jsonData){
 	await axios.post(`${BASE_PATH_WS}/rest/restClonarConfiguracionEnLote?mac=${jsonData.mac}`,jsonData)
 	.then(response => {

@@ -41,7 +41,7 @@ export default function ErroresView() {
     const getDatosFromRestApi = async () =>{
         try {
             setDeshabilitar2(true);
-            let data = await getRegistrosControlador(controlerState.mac,controlerState.ip)
+            let data = await getRegistrosControlador(controlerState.mac,controlerState.ip,0)
             let tablaData = data[controlerState.mac].registro;
             let dataFormat = tablaData.map((data,index)=>{
                 return {

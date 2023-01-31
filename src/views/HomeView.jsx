@@ -9,14 +9,13 @@ import Switch from '@mui/material/Switch';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import SaveIcon from '@mui/icons-material/Save';
 import MapIcon from '@mui/icons-material/Map';
-import { collection, updateDoc, onSnapshot, doc, getDocs, setDoc, getDoc } from "firebase/firestore";
+import { collection, updateDoc, doc, getDocs, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
-import UpdateIcon from '@mui/icons-material/Update';
 import "../css/HomeView.css"
 import CustomProgress from "../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
@@ -29,7 +28,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import Fab from '@mui/material/Fab';
 import { setInitialStateController, setResumen, addIpsDisponibles, setPasosActivos, addCurrentControler, createNewController } from "../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
-import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Alert from '@mui/material/Alert';
 import Backdrop from '@mui/material/Backdrop';
@@ -147,13 +145,6 @@ export default function PruebasView() {
     const markerRef = useRef(null)
 
 
-    const declararControlador = async (mac, ip) => {
-        const ref = collection(db, "controladores");
-        let datosFormat = initialData
-        datosFormat.resumen = initialResumen
-        await setDoc(doc(ref, mac), datosFormat);
-
-    }
     /* funcion encargada  de cargar los datos del controlador seleccionado , estos
     datos nos serviran para poder llamar los planes , fases etc del controlador, la funcion
     se encarga de actualizar el reducer con la informacion del controlador actual */
@@ -315,7 +306,12 @@ export default function PruebasView() {
 
             const doc = await getIpsFromRestApi();
             console.log(doc)
-            const ips = doc.Ips_disponibles;
+            const aux_ips = doc.Ips_disponibles;
+            let ips = aux_ips.map(item=>({
+                    ip:item.ip,
+                    mac:item.mac,
+                    status:"online",
+            }))
             var controladores = ips.map(item => {
                 let name = items_db.find(element => element.mac === item.mac)
                 if (name === undefined) {
