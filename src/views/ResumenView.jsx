@@ -348,19 +348,19 @@ export default function ResumenView() {
                     <Grid item xs={12}>
                         <div className='contenedor-modos'>
                            <div className='disposicion'>
-                                <p style={{margin:0}}>Modo Tiempo Fijo: </p> <div className='fijo'></div>
+                                <p style={{margin:0}}>Modo Tiempo Fijo: </p> <div className='fijo-r'></div>
                             </div> 
                             <div className='disposicion'>
-                                <p style={{margin:0}}>Modo Pulsante: </p> <div className='pulsante'></div>
+                                <p style={{margin:0}}>Modo Pulsante: </p> <div className='pulsante-r'></div>
                             </div> 
                             <div className='disposicion'>
-                                <p style={{margin:0}}>Modo Destello: </p> <div className='destello'></div>
+                                <p style={{margin:0}}>Modo Destello: </p> <div className='destello-r'></div>
                             </div> 
                             <div className='disposicion'>
-                                <p style={{margin:0}}>Modo Todo en Rojo: </p> <div className='rojo'></div>
+                                <p style={{margin:0}}>Modo Todo en Rojo: </p> <div className='rojo-r'></div>
                             </div> 
                             <div className='disposicion'>
-                                <p style={{margin:0}}>Apagado: </p> <div className='apagado'></div>
+                                <p style={{margin:0}}>Apagado: </p> <div className='apagado-r'></div>
                             </div> 
                         </div>
                     </Grid>
