@@ -8,10 +8,13 @@ import Button from '@mui/material/Button';
 import L from 'leaflet';
 import { db } from "../firebase/firebase-config";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup,FeatureGroup,Polygon } from "react-leaflet";
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import SaveIcon from '@mui/icons-material/Save';
+import MapIcon from '@mui/icons-material/Map';
 import { useNavigate } from 'react-router-dom';
 import { setNameMenu } from '../features/menu/menuSlice';
 import { reloadIps } from '../features/controlers/controlerSlice';
@@ -22,19 +25,38 @@ import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import Backdrop from '@mui/material/Backdrop';
 import { useDispatch  } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
+import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 export default function DeclararControladorView() {
     const controlerState = useSelector(state => state.controlers)
     const [grupo,setGrupo] = useState("");
-    const center = [-2.876428, -78.965342]
+    const center = [-2.876428, -78.965342];
+    const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
+    const [modalDeclararSemaforo, setModalDeclararSemaforo] = useState(false);
     const [position, setPosition] = useState(center);
     const [reloadMap,setReloadMap] = useState(false);
     const [latitud,setLatitud] = useState(-2.876428);
     const [longitud,setLongitud] = useState(-78.965342)
-    const [flagCargando,setFlagCargando] = useState(false);
+
+    const [areas,setAreas] = useState([]);
     const [draggable, setDraggable] = useState(false)
-    const [nombreSemaforo,setNombreSemaforo] = useState("");
     const [nombreControlador,setNombreControlador]  = useState("");
     const [semaforos,setSemaforos] = useState(semaforosIniciales);
+    const [newController, setNewController] = useState({});
+    const [pointsArea,setPointsArea] = useState([]);
+    const [deshabilitar,setDeshabilitar] = useState(false);
+    //banderas para los botones 
+    const [flagCargando,setFlagCargando] = useState(false);
+    const [botonCrear,setBotonCrear] = useState(true);
+    // variables para los semaforos
+    const [newSemaforo, setNewSemaforo] = useState({
+        nombre: "",
+        position: [],
+        rojo: 15,
+        amarillo: 5,
+        verde: 30,
+        icon: {},
+        grupo: '',
+    });
     const markerRef = useRef(null)
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -43,6 +65,94 @@ export default function DeclararControladorView() {
         dispatch(reloadIps())
         navigate(referencia);
     }
+    const limpiarPuntos = () =>{
+        setBotonCrear(true);
+        setPointsArea([])
+    }
+    const handleNewSemaforo = (event) => {
+        setNewSemaforo(
+            {
+                ...newSemaforo,
+                [event.target.name]: event.target.value,
+            }
+        )
+    }
+   
+    const obtenerCoordenadas = () => {
+        let puntos = JSON.parse(JSON.stringify(pointsArea))
+        let data;
+
+        let newPoint = {
+            icon: point,
+            position: [position[0], position[1]]
+        }
+
+        console.log(newPoint)
+        if (puntos.length < 4) {
+            puntos.push(newPoint)
+            data = puntos.map(item => (
+                {
+
+                    icon: point,
+                    position: item.position
+                }
+            ))
+            setBotonCrear(true)
+        } else {
+            puntos.pop()
+            puntos.push(newPoint)
+            data = puntos.map(item => (
+                {
+                    icon: point,
+                    position: item.position
+                }))
+            
+        }
+        if(puntos.length === 4){
+            setBotonCrear(false)
+        }
+        setPointsArea(data)
+
+    }
+
+
+
+    const devolverColor2 = (_grupo) => {
+        if (_grupo === "g1") {
+            return grupo_1
+        } else if (_grupo === "g2") {
+            return grupo_2
+        } else if (_grupo === "g3") {
+            return grupo_3
+        } else {
+            return grupo_4
+        }
+    }
+    const agregarSemaforo = async () => {
+        
+        let areas_temp = JSON.parse(JSON.stringify(areas))
+        let posiciones = pointsArea.map(item=> (item.position))
+        let newArea = {
+            rojo: 10,
+            amarillo: 4,
+            verde: 20,
+            nombre: newSemaforo.nombre,
+            grupo: newSemaforo.grupo,
+            points: posiciones,
+            color: devolverColor2(newSemaforo.grupo),
+        }
+        areas_temp.push(newArea)
+        setAreas(areas_temp)
+        setPointsArea([])
+        setBotonCrear(true)
+        setModalCrearSemaforo(false)
+        setNewSemaforo({
+            nombre:"",
+            grupo:"",
+        })
+
+    }
+
     const declararControlador = async()=>{
         Swal.fire({
             title: 'Creacion de controlador',
@@ -57,7 +167,6 @@ export default function DeclararControladorView() {
             let  ip = controlerState.nuevo_controlador.ip 
             console.log(controlerState.nuevo_controlador.ip)
             if(ip === "" || ip === undefined ){
- 
                 Swal.fire(
                     'Error No Ip',
                     'Salga de la ventana y vuelva a entrar ! ',
@@ -71,6 +180,16 @@ export default function DeclararControladorView() {
                         element.icon = {}
                         return element ;
                     }) 
+                    let areas_aux = JSON.parse(JSON.stringify(areas)) 
+                    areas_aux.map((item) => {
+                        let puntos_aux = item.points
+                        item.points = puntos_aux.map((_item) => (
+                            {
+                                pos: _item
+                            }
+                        ))
+                    })
+                    console.log(areas_aux)
                   
                     let parametrosIniciales = {
                         // parametros inicializados por defecto
@@ -94,15 +213,17 @@ export default function DeclararControladorView() {
                         grupos:{},
                         hora_controlador:{},
                         horarios:{},
-                        
+                        semaforos:areas_aux,
                         otros_parametros:{},
                         planes:{},
+                        latitud: parseFloat(latitud),
+                        longitud:parseFloat(longitud),
     
                     }
                     let historialControladorData = {
                         nombre:nombreControlador,
-                        latitud:latitud,
-                        longitud:longitud,
+                        latitud:parseFloat(latitud),
+                        longitud:parseFloat(longitud),
                         mac:controlerState.nuevo_controlador.mac,
                     }
                     try {
@@ -140,34 +261,10 @@ export default function DeclararControladorView() {
             setPosition(aux)
             setReloadMap(!reloadMap)
         }
-  
-        const agregarSemaforo =()=>{
-            
-            let aux  = semaforos
-            let newObjeto = {
-                position: position,
-                grupo:grupo,
-                amarillo:4,
-                rojo:10,
-                verde:20,
-                icon: semaforo,
-                modo: "Tiempo Fijo",
-                nombre: nombreSemaforo,
-            }
-            if(nombreSemaforo === ""){
-                newObjeto.nombre = "Sin Nombre"
-            }
-            let newDatosModificados = aux.map(item=> {
-                if(item.grupo === grupo){
-                    return newObjeto
-                }else{
-                    return item
-                }
-            })
-            setSemaforos(newDatosModificados)
-            
-            
-
+        const eliminarArea = async (_data) => {
+            let aux = JSON.parse(JSON.stringify(areas))
+            let semaforosActualizados = aux.filter(item => item.nombre !== _data.nombre)
+            setAreas(semaforosActualizados)
         }
         const eventHandlers = useMemo(
             () => ({
@@ -237,18 +334,26 @@ export default function DeclararControladorView() {
                     </Grid>
                     <Grid item xs={12} md={12}>
                     
-                            <MapContainer center={position} zoom={19}  key={reloadMap} scrollWheelZoom={false} className='map-container'>
+                    <MapContainer center={[position[0], position[1]]} zoom={19} key={reloadMap} scrollWheelZoom={false} className='map-container leaflet-container-2'>
                                 <TileLayer
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
-                                     <DraggableMarker />
-                                     {semaforos.map((item, index) => (
-                                        <Marker position={item.position} key={index} icon={item.icon}>
-                                            <Popup>
-                                                Semaforo {item.nombre} - Grupo: {item.grupo}
-                                            </Popup>
-                                        </Marker>
-                                        ))}
+                                    url="https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=b08eb869c89646fa8accf539b81e80de"
+                                />
+                                <DraggableMarker />
+                                {pointsArea.map((item, index) => (
+                                    <Marker position={item.position} icon={item.icon}>
+                                    </Marker>
+                                ))}
+                                {areas.map((item, index) => (
+                                    <FeatureGroup pathOptions={item.color}>
+                                        <Popup>
+                                            <p style={{ margin: 0, fontStyle: "italic" }}><strong>Area: </strong>{item.nombre} <strong>Grupo: </strong>{item.grupo}</p>
+                                            <Button color='rojo' sx={{ marginTop: 2 }} onClick={() => { eliminarArea(item) }} variant="contained">Eliminar</Button>
+                                        </Popup>
+                                        <Polygon positions={item.points} />
+                                    </FeatureGroup>
+                                ))}
+                          
                             </MapContainer>
 
                     </Grid>
@@ -259,30 +364,32 @@ export default function DeclararControladorView() {
                             </p>
                         </div>
                     </Grid>
-                    <Grid item xs={12} md={4.5}>
-                        <TextField id="outlined" value={nombreSemaforo} onChange={(e)=>{setNombreSemaforo(e.target.value)}} label="Nombre del semaforo" variant="outlined"  fullWidth />
-                    </Grid>
-                    <Grid item xs={12} md={4.5}>
-                        <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Grupos</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    label="Grupos"
-                                    name='grupo'
-                                    value={grupo}
-                                    onChange={(event,newValue)=>{setGrupo(event.target.value)}}
-                                >
-                                    <MenuItem value={''}>None</MenuItem>
-                                    <MenuItem value={'g1'}>Grupo 1</MenuItem>
-                                    <MenuItem value={'g2'}>Grupo 2</MenuItem>
-                                    <MenuItem value={'g3'}>Grupo 3</MenuItem>
-                                    <MenuItem value={'g4'}>Grupo 4</MenuItem>
-                                </Select>
-                        </FormControl>
+                    <Grid item xs={12} md={3}>
+                        <TextField id="outlined" focused value={position[0]} label="Latitud" variant="outlined" fullWidth />
                     </Grid>
                     <Grid item xs={12} md={3}>
-                        <Button variant="contained" startIcon={<AddIcon/>} color="primary" fullWidth sx={{ height: "100%" }} onClick={agregarSemaforo} >AGREGAR</Button>
+                        <TextField id="outlined" focused value={position[1]} label="Longitud" variant="outlined" fullWidth />
+                    </Grid>
+                    <Grid item xs={12} md={2}>
+                        <Button variant="contained" startIcon={<SaveIcon />} 
+                        // disabled={btnAgregar}
+                        onClick={() => { obtenerCoordenadas() }}
+                         color="azulm" fullWidth sx={{ height: "100%" }}>GUARDAR</Button>
+                    </Grid>
+                    <Grid item xs={12} md={2}>
+                        <Button variant="contained"
+                        color='verde2' 
+                        startIcon={<MapIcon />} 
+                          disabled={botonCrear} 
+                          onClick={() => { setModalCrearSemaforo(true) }}
+                          fullWidth sx={{ height: "100%" }}>CREAR</Button>
+                    </Grid>
+                    <Grid item xs={12} md={2}>
+                        <Button variant="contained"
+                         color='anaranjado1' 
+                        //  disabled={btnAgregar} 
+                           onClick={limpiarPuntos} 
+                     fullWidth sx={{ height: "100%" }}>LIMPIAR</Button>
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <div>
@@ -294,14 +401,12 @@ export default function DeclararControladorView() {
                             <Thead>
                                 <Tr>
                                     <Th className='home-t-th'>#</Th>
-                                    <Th className='home-t-th'>Paso</Th>
-                                    <Th className='home-t-th'>Duracion</Th>
-                                    <Th className='home-t-th'>Latitud</Th>
-                                    <Th className='home-t-th'>Longitud</Th>
+                                    <Th className='home-t-th'>Nombre:</Th>
+                                    <Th className='home-t-th'>Grupos:</Th>
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {semaforos.map((dato, index) => (
+                                {areas.map((dato, index) => (
                                     <Tr className="tablas-focus" key={index} >
                                         <Td>
                                             {index + 1}
@@ -312,12 +417,7 @@ export default function DeclararControladorView() {
                                         <Td >
                                             {dato.grupo}
                                         </Td>
-                                        <Td >
-                                            {dato.position[0]}
-                                        </Td>
-                                        <Td >
-                                            {dato.position[1]}
-                                        </Td>
+                                    
                                     </Tr>
                                 ))}
                             </Tbody>
@@ -332,6 +432,57 @@ export default function DeclararControladorView() {
                 <div style={{height:100}}>
 
                 </div>
+                <Modal isOpen={modalCrearSemaforo} >
+                <ModalHeader>
+                    <div>
+                        <h1>
+                            Crear Semaforo
+                        </h1>
+                    </div>
+                </ModalHeader>
+                <ModalBody>
+                    <Grid container spacing={4}>
+                        <Grid item xs={12}>
+                            <TextField
+                                id="outlined"
+                                value={newSemaforo.nombre}
+                                name='nombre'
+                                onChange={handleNewSemaforo}
+                                label="Nombre del Semaforo"
+                                variant="outlined"
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Grupos</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    label="Grupos"
+                                    name='grupo'
+                                    value={newSemaforo.grupo}
+                                    onChange={handleNewSemaforo}
+                                >
+                                    <MenuItem value={''}>None</MenuItem>
+                                    <MenuItem value={'g1'}>Grupo 1</MenuItem>
+                                    <MenuItem value={'g2'}>Grupo 2</MenuItem>
+                                    <MenuItem value={'g3'}>Grupo 3</MenuItem>
+                                    <MenuItem value={'g4'}>Grupo 4</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                </ModalBody>
+                <ModalFooter >
+                    <Button variant="contained" onClick={agregarSemaforo} sx={{ backgroundColor: "#F0B27A", marginLeft: 1 }}>
+                        Aplicar
+                    </Button>
+                    <Button variant="contained" onClick={() => { setModalCrearSemaforo(false) }} sx={{ backgroundColor: "red", marginLeft: 1 }}>
+                        cancelar
+                    </Button>
+                </ModalFooter>
+            </Modal>
             </Container>
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={flagCargando}>
                 <CircularProgress color="inherit" />
@@ -340,16 +491,7 @@ export default function DeclararControladorView() {
     );
 
 }
-const ubi = new L.Icon({
-    iconUrl: require('../assets/ubica.png'),
-    iconRetinaUrl: require('../assets/ubica.png'),
-    iconSize: [20, 30], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [24, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
 
-});
 const semaforo = new L.Icon({
     iconUrl: require('../assets/semaforo3.png'),
     iconRetinaUrl: require('../assets/semaforo3.png'),
@@ -403,3 +545,30 @@ const semaforosIniciales = [
     }
 
 ]
+const point = new L.Icon({
+    iconUrl: require('../assets/point2.png'),
+    iconRetinaUrl: require('../assets/point2.png'),
+    iconSize: [8, 8], // size of the icon
+    shadowSize: [50, 64], // size of the shadow
+    iconAnchor: [3, 4], // point of the icon which will correspond to marker's location
+    shadowAnchor: [10, 100],  // the same for the shadow
+    popupAnchor: [-3, -76]
+
+});
+
+
+const ubi = new L.Icon({
+    iconUrl: require('../assets/ubica.png'),
+    iconRetinaUrl: require('../assets/ubica.png'),
+    iconSize: [20, 30], // size of the icon
+    shadowSize: [50, 64], // size of the shadow
+    iconAnchor: [9, 30], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor: [-3, -76]
+
+});
+
+const grupo_1 = { color: 'purple' }
+const grupo_2 = { color: 'blue' }
+const grupo_3 = { color: 'black' }
+const grupo_4 = { color: 'orange' }

@@ -2,3 +2,72 @@
     margin-top: 20px;
     margin-bottom: 30px;
 }
+.mod1{
+    background-color: #48C9B0 !important;
+}
+.mod2{
+    background-color: #5DADE2 !important;
+}
+.mod3{
+    background-color: #F4D03F !important;
+}
+.mod4{
+    background-color: #CD6155 !important;
+}
+.mod5{
+    background-color: #34495E !important;
+}
+.contenedor-modos{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    border: 2px solid #34495E;
+    height: 60px;
+    border-radius: 10px;
+}
+.fijo{
+    background-color: #48C9B0;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    margin-left: 10px;
+    margin-right: 20px;
+}
+.destello{
+    background-color:  #F4D03F;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    margin-left: 10px;
+    margin-right: 20px;
+}
+.pulsante{
+    background-color:  #5DADE2;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    margin-left: 10px;
+    margin-right: 20px;
+}
+.rojo{
+    background-color:  #CD6155;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    margin-left: 10px;
+    margin-right: 20px;
+}
+
+.apagado{
+    background-color:  #34495E;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    margin-left: 10px;
+    margin-right: 20px;
+}
+.disposicion{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
