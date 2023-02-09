@@ -94,7 +94,7 @@
     margin-top: 5px I !important;
 }
 
-@media only screen and (max-width: 1080px) {
+@media only screen and (max-width: 1260px) {
     .card-controller{
         position: initial;
         width: 90%;

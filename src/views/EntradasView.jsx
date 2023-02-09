@@ -296,8 +296,13 @@ export default function EntradasView() {
                 <Grid item xs={6}>
                 <Button variant="contained"  disabled={deshabilitar} onClick={cargarDatosRest} >Cargar Datos</Button>
                 </Grid>
-    
+                        
             </Grid>
+            <Grid item xs={6}>
+                    <div style={{height:30}}>
+
+                    </div>
+                </Grid>
         </Container>
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
             <CircularProgress color="inherit" />
