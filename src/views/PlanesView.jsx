@@ -254,7 +254,7 @@ export default function PlanesView() {
                    <h4>Configuración de Planes</h4>
                 </div>
                 <Grid container spacing={2}>
-                    <Grid item xs={6}>
+                    <Grid item md={6} xs={12} >
                         <Autocomplete
                             onChange={(event, newValue) => { planSelectManager(newValue) }}
                             options={planes4}
@@ -264,13 +264,13 @@ export default function PlanesView() {
                             disabled={deshabilitar}
                         />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item md={3} xs={12}>
                         <Button variant="contained" fullWidth color='verde2' disabled={deshabilitar2} onClick={leerPlanesFromRestApis} sx={{ height: '100%' }} >Leer Datos</Button>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item md={3} xs={12}>
                         <Button variant="contained" fullWidth sx={{ height: '100%' }} disabled={deshabilitar} onClick={cargarCambios} color="primary">Cargar Cambios</Button>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item md={6} xs={12}>
 
                     </Grid>
                     <Grid item xs={12}>
@@ -288,7 +288,7 @@ export default function PlanesView() {
                                 </Thead>
                                 <Tbody>
                                     {currentPlan.map((dato, index) => (
-                                        <Tr className="tr-planes tablas-focus" key={index} >
+                                        <Tr  key={index} >
                                             <Td>
                                                 {dato.name}
                                             </Td>
@@ -321,7 +321,7 @@ export default function PlanesView() {
                         <h3>Parámetros Operativos del Controlador</h3>
                     </Grid>
                     
-                    <Grid item xs={4}>
+                    <Grid item md={4} xs={12}>
 
                         <TextField
                             id="outlined-number"
@@ -329,14 +329,16 @@ export default function PlanesView() {
                             type="number"
                             disabled={deshabilitar3}
                             onChange={(event) => {setTiempoDestelloPrender(event.target.value) }}
+                            fullWidth
                             value={tiempoDestelloPrender}
                             InputLabelProps={{
                                 shrink: true,
                             }}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item md={4} xs={12}>
                         <TextField
+                        fullWidth
                             id="outlined-number"
                             label="Tiempo en rojo al prender (s)"
                             type="number"
@@ -348,12 +350,13 @@ export default function PlanesView() {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item md={4} xs={12}>
 
                         <TextField
                             id="outlined-number"
                             label="Destellar luz verde peatonal (s)"
                             type="number"
+                            fullWidth
                             disabled={deshabilitar3}
                             onChange={(event) => {setDestellarVerdePeatonal(event.target.value) }}
                             value={destellarVerdePeatonal}
@@ -362,11 +365,12 @@ export default function PlanesView() {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item md={4} xs={12}>
                         <TextField
                             id="outlined-number"
                             label="Destellar luz verde vehicular (s)"
                             type="number"
+                            fullWidth
                             disabled={deshabilitar3}
                             onChange={(event) => {setDestellarVerdeVehicular(event.target.value) }}
                             value={destellarVerdeVehicular}
@@ -375,11 +379,12 @@ export default function PlanesView() {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item md={4} xs={12}>
                         <TextField
                             id="outlined-number"
                             label="Tiempo en amarillo vehicular (s)"
                             type="number"
+                            fullWidth
                             disabled={deshabilitar3}
                             onChange={(event) => { setTiempoAmarilloVehicular(event.target.value) }}
                             value={tiempoAmarilloVehicular}
@@ -388,11 +393,12 @@ export default function PlanesView() {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item md={4} xs={12}>
                         <TextField
                             id="outlined-number"
                             label=" Tiempo de todo en rojo (s)"
                             type="number"
+                            fullWidth
                             disabled={deshabilitar3}
                             onChange={(event) => { setTiempoTodoRojo(event.target.value) }}
                             value={tiempoTodoRojo}
@@ -401,12 +407,13 @@ export default function PlanesView() {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item md={4} xs={12}>
                         <TextField
                             id="outlined-number"
                             label="Tiempo minimo en verde (s)"
                             disabled={deshabilitar3}
                             type="number"
+                            fullWidth
                             onChange={(event) => { setTiempoMinimoVerde1(event.target.value) }}
                             value={tiempoMinimoVerde1}
                             InputLabelProps={{
@@ -417,7 +424,7 @@ export default function PlanesView() {
                     <Grid item xs={12}>
                         <h4>Sincronización</h4>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item md={3} xs={12}>
                         <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
                             <Select
@@ -433,7 +440,7 @@ export default function PlanesView() {
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item md={3} xs={12}>
                         <TextField id="outlined-basic" label="Retardo requerido para otros (s)" 
                         variant="outlined" 
                         fullWidth  
@@ -442,15 +449,15 @@ export default function PlanesView() {
                         onChange={(event) => {setValorSincronizacion(event.target.value) }}
                         value={valorSincronizacion} />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item md={3} xs={12}>
                     <Button variant="contained"  color='verde2' fullWidth sx={{height:'100%'}}   onClick={leerOtrosParametrosApi} >Leer Datos</Button>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item md={3} xs={12}>
                     <Button variant="contained" fullWidth sx={{height:'100%'}} onClick={cargarOtrosParametrosAPI} disabled={deshabilitar3} >Cargar Cambios</Button>
                     </Grid>
                   
                     <Grid item xs={12}>
-                        <div className='blank-box'>
+                        <div style={{height:8}}>
 
                         </div>
                     </Grid>

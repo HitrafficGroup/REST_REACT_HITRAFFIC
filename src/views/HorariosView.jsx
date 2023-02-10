@@ -500,7 +500,7 @@ export default function HorariosView() {
                     <h4>Configuración de Horarios</h4>
                 </div>
                 <Grid container spacing={2}>
-                    <Grid item xs={6} >
+                    <Grid item md={6} xs={12} >
                         <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
                             <Select
@@ -517,10 +517,10 @@ export default function HorariosView() {
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item md={3} xs={12}>
                         <Button variant="contained" color='verde2' onClick={leerHorariosFromRestApi} sx={{ height: '100%' }} disabled={habilitar2} fullWidth>Leer Datos</Button>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item md={3} xs={12}>
                         <Button variant="contained" sx={{ height: '100%' }} fullWidth onClick={cargarDatos} disabled={habilitar1} >Cargar Datos</Button>
                     </Grid>
                     <Grid item xs={12} >
@@ -596,19 +596,20 @@ export default function HorariosView() {
                     <Grid item xs={12}>
                         <p>Definición de día Festivo</p>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item md={4} xs={12}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                                 label="Escoga Fecha"
                                 value={value}
+                               
                                 onChange={(newValue) => {
                                     setValue(newValue);
                                 }}
-                                renderInput={(params) => <TextField {...params} />}
+                                renderInput={(params) => <TextField  fullWidth {...params} />}
                             />
                         </LocalizationProvider>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item md={4} xs={12}>
                         <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">Tipo de Dia</InputLabel>
                             <Select
@@ -627,7 +628,7 @@ export default function HorariosView() {
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item md={4} xs={12}>
                         <Button variant="contained" fullWidth sx={{ height: '100%' }} disabled={deshabilitar3} onClick={crearDiaEspecial} color='primary'>Crear</Button>
                     </Grid>
 
@@ -667,14 +668,14 @@ export default function HorariosView() {
                             </Alert>
                         </Collapse>
                     </Grid>
-                    <Grid item xs={4} >
+                    <Grid item md={4} xs={12} >
                         <Button variant="contained" fullWidth sx={{ height: '100%' }} onClick={LeerParamOperativos} color='verde2'>LEER DATOS</Button>
                     </Grid>
-                    <Grid item xs={4} >
+                    <Grid item md={4} xs={12} >
                         <Button variant="contained" fullWidth sx={{ height: '100%' }} onClick={cargarDiaFestivo} disabled={deshabilitar3} >CARGAR DATOS</Button>
                     </Grid>
                     <Grid item xs={12} >
-                        <div className='blank-box'>
+                        <div style={{height:8}}>
 
                         </div>
                     </Grid>

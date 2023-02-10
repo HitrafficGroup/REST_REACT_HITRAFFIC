@@ -123,13 +123,13 @@ export default function SyncTimeView() {
                 <Grid xs={12}>
                     <h5>Funciones del Controlador</h5>
                 </Grid>
-                <Grid xs={3}>
-                    <Button variant="contained" onClick={obtenerTiempoFromRestApi}  disabled={deshabilitar2} color="verde" sx={{height:'100%'}}>
+                <Grid md={3} xs={12}>
+                    <Button variant="contained" onClick={obtenerTiempoFromRestApi} fullWidth disabled={deshabilitar2} color="verde" sx={{height:'100%'}}>
                      LEER DATOS
                     </Button>
                 </Grid>
-                <Grid xs={3}>
-                    <Button variant="contained" onClick={sincronizarTiempoFromRest} disabled={deshabilitar} sx={{height:'100%'}}>
+                <Grid md={3} xs={12}>
+                    <Button variant="contained" onClick={sincronizarTiempoFromRest} fullWidth disabled={deshabilitar} sx={{height:'100%'}}>
                         Actualizar DATOS
                     </Button>
                 </Grid>

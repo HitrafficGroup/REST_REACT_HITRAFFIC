@@ -67,7 +67,7 @@ export default function ErroresView() {
                     <h4>Tabla de Registro de Errores</h4>
                 </div>
                 <Grid container spacing={2}>
-                <Grid item xs={4}>
+                <Grid item md={4} xs={12}>
                     <Button color="verde2" sx={{height:'100%'}} fullWidth variant="contained" onClick={getDatosFromRestApi}>Leer Datos</Button>
                 </Grid>
              
@@ -86,13 +86,17 @@ export default function ErroresView() {
                         </div>
                     </Grid>
                 </Grid>
-                <Grid item xs={3}>
-                    <Button variant="contained"  sx={{height:'100%',bgcolor:'#CB4335'}} disabled={deshabilitar} fullWidth onClick={getDatosFromRestApi}  endIcon={<PictureAsPdfIcon />}>Generar PDF</Button>
+                <Grid item md={3} xs={12}>
+                    <Button variant="contained"   sx={{height:'100%',bgcolor:'#CB4335'}} disabled={deshabilitar} fullWidth onClick={getDatosFromRestApi}  endIcon={<PictureAsPdfIcon />}>Generar PDF</Button>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item md={3} xs={12}>
                     <Button variant="contained"  sx={{height:'100%',bgcolor:'#117A65'}} disabled={deshabilitar} fullWidth onClick={getDatosFromRestApi}  endIcon={<GridOnIcon />} >Generar Excel</Button>
                 </Grid>
+
                 </Grid>
+                <div style={{height:15}}>
+
+                </div>
             </Container>
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
             <CircularProgress color="inherit" />

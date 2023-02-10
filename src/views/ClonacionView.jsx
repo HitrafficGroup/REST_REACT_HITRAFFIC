@@ -220,14 +220,14 @@ export default function ClonacionView() {
             </Grid>
           </Grid>
           <Grid item xs={12} md={5}>{customList('Dispositivos Seleccionados', right)}</Grid>
-          <Grid item xs={6} md={6}>
-            <Button variant="contained" color='verde' disabled={deshabilitar2} onClick={obtenerIps}>Leer Datos</Button>
+          <Grid item xs={12} md={6}>
+            <Button variant="contained" fullWidth color='verde' disabled={deshabilitar2} onClick={obtenerIps}>Leer Datos</Button>
           </Grid>
-          <Grid item xs={6} md={6}>
-            <Button variant="contained" disabled={deshabilitar} onClick={clonarEquipos}>Clonar Equipos</Button>
+          <Grid item xs={12} md={6}>
+            <Button variant="contained" fullWidth disabled={deshabilitar} onClick={clonarEquipos}>Clonar Equipos</Button>
           </Grid>
           <Grid item xs={12} md={12}>
-            <div style={{ height: 90 }}>
+            <div style={{ height: 8 }}>
 
             </div>
           </Grid>

@@ -26,6 +26,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Swal from 'sweetalert2';
 import Alert from '@mui/material/Alert';
 import { CheckAndLinkBits } from '../js/manageData';
+
 export default function GruposView() {
     const controlerState = useSelector(state => state.controlers);
     const [grupos, setGrupos] = useState(gruposDefault);
@@ -449,11 +450,11 @@ export default function GruposView() {
                     </Collapse>
                 </Grid>
 
-                <Grid item xs={3}>
-                    <Button variant="contained" color='verde2' sx={{ height: '100%' }} onClick={leerGruposFromRestApi}>Leer Datos</Button>
+                <Grid item md={3} xs={12}>
+                    <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={leerGruposFromRestApi}>Leer Datos</Button>
                 </Grid>
-                <Grid item xs={3}>
-                    <Button variant="contained" sx={{ height: '100%' }} onClick={cargarDatosGrupos} disabled={deshabilitar} >Cargar Cambios</Button>
+                <Grid item md={3} xs={12}>
+                    <Button variant="contained" sx={{ height: '100%' }} fullWidth onClick={cargarDatosGrupos} disabled={deshabilitar} >Cargar Cambios</Button>
                 </Grid>
                 <Grid item xs={12}>
                     <h5>Configuracion conflicto de Verdes</h5>
@@ -522,14 +523,14 @@ export default function GruposView() {
                         </Alert>
                     </Collapse>
                 </Grid>
-                <Grid item xs={3}>
-                    <Button variant="contained" onClick={leerConflictosApi} disabled={deshabilitar4} color={'verde2'}>Leer Datos</Button>
+                <Grid item md={3} xs={12}>
+                    <Button variant="contained" fullWidth onClick={leerConflictosApi} disabled={deshabilitar4}  color={'verde2'}>Leer Datos</Button>
                 </Grid>
-                <Grid item xs={3}>
-                    <Button variant="contained" onClick={cargarDatosConflictos} disabled={deshabilitar3} >Cargar Cambios</Button>
+                <Grid item md={3} xs={12}>
+                    <Button variant="contained" fullWidth onClick={cargarDatosConflictos} disabled={deshabilitar3} >Cargar Cambios</Button>
                 </Grid>
                 <Grid item xs={12}>
-                    <div className='blank-space'>
+                    <div style={{height:8}}>
 
                     </div>
                 </Grid>

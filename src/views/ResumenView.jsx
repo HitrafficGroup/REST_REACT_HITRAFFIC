@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import React, { useState,useEffect, useRef } from 'react';
 import "../css/ResumenView.css";
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
-import CalendarSemaforo from '../components/CalendarSemaforo';
+import CloudIcon from '@mui/icons-material/Cloud';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CustomProgress from "../components/CustomProgress";
 import Button from '@mui/material/Button';
@@ -262,12 +262,15 @@ export default function ResumenView() {
     return (
         <>
             <Container  >
+             
+                <Grid container spacing={1}>
+                <Grid item xs={12}>
                 <div className='titulos-resumen'>
                     <h4>Resumen del Controlador</h4>
                 </div>
-                <Grid item xs={12}>
+                </Grid>
                     <Grid item xs={12}>
-                    <div>
+                    <div className='tabla-resumen'>
                     <h5>Programación semanal</h5>
                     <table id="tabla_resumen" className="table table-bordered">
                         <thead id="fecha_dia">
@@ -420,15 +423,16 @@ export default function ResumenView() {
                             </Tbody>
                         </Table>
                     </Grid>
-                    <Grid item xs={12}>   
-                        <Button variant="outlined" onClick={datosDePrueba} startIcon={<DeleteIcon />}>
+                    <Grid item xs={12} md={4} >   
+                        <Button variant="outlined" color='verde2' fullWidth onClick={datosDePrueba} startIcon={<CloudIcon />}>
                             LEER DATOS
                         </Button>
                     </Grid>
+                
             
                     
                     <Grid item xs={12}>   
-                        <div style={{height:70}}>
+                        <div style={{height:10}}>
                             
                         </div>
                     </Grid>

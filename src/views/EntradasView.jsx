@@ -157,10 +157,10 @@ export default function EntradasView() {
                 <h4>Configuración de las Entradas Digitales</h4>
             </div>
             <Grid container spacing={3}>
-                <Grid item xs={3}>
+                <Grid item md={3} xs={5}>
                     <FormControlLabel control={<Switch  value={ent1} checked={ent1} onChange={handleEnt1} disabled={deshabilitar} />} label="Entrada 1" />
                 </Grid>
-                <Grid item xs={4.5}>
+                <Grid item md={4.5} xs={7}>
                     <TextField
                         fullWidth
                         id="outlined-number"
@@ -175,7 +175,7 @@ export default function EntradasView() {
                         }}
                     />
                 </Grid>
-                <Grid item xs={4.5}>
+                <Grid item md={4.5} xs={12}>
                     <TextField
                         fullWidth
                         id="outlined-number"
@@ -190,10 +190,10 @@ export default function EntradasView() {
                         }}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item md={3} xs={5}>
                     <FormControlLabel control={<Switch value={ent2} checked={ent2} onChange={handleEnt2} disabled={deshabilitar} />} label="Entrada 2" />
                 </Grid>
-                <Grid item xs={4.5}>
+                <Grid item md={4.5} xs={7}>
                     <TextField
                         fullWidth
                         id="outlined-number"
@@ -208,7 +208,7 @@ export default function EntradasView() {
                         }}
                     />
                 </Grid>
-                <Grid item xs={4.5}>
+                <Grid item md={4.5} xs={12}>
                     <TextField
                         fullWidth
                         id="outlined-number"
@@ -223,10 +223,10 @@ export default function EntradasView() {
                         }}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item md={3} xs={5}>
                     <FormControlLabel control={<Switch value={ent3} checked={ent3} onChange={handleEnt3} disabled={deshabilitar} />} label="Entrada 3" />
                 </Grid>
-                <Grid item xs={4.5}>
+                <Grid item md={4.5} xs={7}>
                     <TextField
                         fullWidth
                         id="outlined-number"
@@ -242,7 +242,7 @@ export default function EntradasView() {
                         }}
                     />
                 </Grid>
-                <Grid item xs={4.5}>
+                <Grid item md={4.5} xs={12}>
                     <TextField
                         fullWidth
                         id="outlined-number"
@@ -257,10 +257,10 @@ export default function EntradasView() {
                         }}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item md={3} xs={5}>
                     <FormControlLabel control={<Switch value={ent4} checked={ent4} onChange={handleEnt4} disabled={deshabilitar} />} label="Entrada 4" />
                 </Grid>
-                <Grid item xs={4.5}>
+                <Grid item md={4.5} xs={7}>
                     <TextField
                         fullWidth
                         id="outlined-number"
@@ -275,7 +275,7 @@ export default function EntradasView() {
                         }}
                     />
                 </Grid>
-                <Grid item xs={4.5}>
+                <Grid item md={4.5} xs={12}>
                     <TextField
                         fullWidth
                         id="outlined-number"
@@ -290,11 +290,11 @@ export default function EntradasView() {
                         }}
                     />
                 </Grid>
-                <Grid item xs={6}>
-                <Button variant="contained" color="verde2" disabled={deshabilitar2} onClick={traerEntradasFromRestApi} >Leer Datos</Button>
+                <Grid item md={6} xs={12}>
+                <Button variant="contained"  fullWidth color="verde2" disabled={deshabilitar2} onClick={traerEntradasFromRestApi} >Leer Datos</Button>
                 </Grid>
-                <Grid item xs={6}>
-                <Button variant="contained"  disabled={deshabilitar} onClick={cargarDatosRest} >Cargar Datos</Button>
+                <Grid item md={6} xs={12}>
+                <Button variant="contained"  fullWidth disabled={deshabilitar} onClick={cargarDatosRest} >Cargar Datos</Button>
                 </Grid>
                         
             </Grid>
