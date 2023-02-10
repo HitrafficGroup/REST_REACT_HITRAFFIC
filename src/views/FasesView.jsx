@@ -35,7 +35,7 @@ export default function FasesView() {
     const [faseg4, setFaseg4] = useState({ color: 0, colorDescripcion: 'rojo' })
     const [deshabilitar,setDeshabilitar] = useState(true);
     const [deshabilitar2,setDeshabilitar2] = useState(false);
-    
+    const [deshabilitar3,setDeshabilitar3] = useState(false);
     const controlerState = useSelector(state => state.controlers)
     const abrirModalFase = (data) => {
 
@@ -77,8 +77,9 @@ export default function FasesView() {
                 denyButtonText: 'Cancelar',
             }).then((result) => {
                 if (result.isConfirmed) {
+                    setDeshabilitar2(true);
+                  
                     try {
-                        setDeshabilitar2(true);
                         let lista_datos = []
                         let datos_fases = {
                             "ip": controlerState.ip,
@@ -107,7 +108,8 @@ export default function FasesView() {
                         enviarFasesRestApi(datos_fases)
                         console.log(fases)
                         enviarFasesFirebase(fases);
-                        setDeshabilitar2(false);
+                       
+
     
                     } catch (e) {
                         console.log(e);
@@ -124,7 +126,7 @@ export default function FasesView() {
         //dispatch(addFases(temp));
     }
     const enviarFasesFirebase = async(data) =>{
-
+        setDeshabilitar2(true)
     const ref = doc(db, "controladores", `${controlerState.mac}`);
         await updateDoc(ref,{
             fases:data
@@ -132,11 +134,14 @@ export default function FasesView() {
 
     }
     const enviarFasesRestApi = async (data) => {
+        
         try {
             await postFasesFromRestApi(data);
         } catch (e) {
             console.log(e)
         }
+        setDeshabilitar2(false)
+        deshabilitar(false)
     }
     /*
     funcion para escribir en la api rest , envia un objeto con todos los parametros de cada fase
@@ -176,15 +181,15 @@ export default function FasesView() {
             colorDescripcion: 'rojo'
         }
         let aux = definirAtributoColor(e.target.value)
-        if (e.target.name == "1") {
+        if (e.target.name === "1") {
             newDataFase['colorDescripcion'] = e.target.value
             newDataFase['color'] = aux
             setFaseg1(newDataFase)
-        } else if (e.target.name == "2") {
+        } else if (e.target.name === "2") {
             newDataFase['colorDescripcion'] = e.target.value
             newDataFase['color'] = aux
             setFaseg2(newDataFase)
-        } else if (e.target.name == "3") {
+        } else if (e.target.name === "3") {
             newDataFase['colorDescripcion'] = e.target.value
             newDataFase['color'] = aux
             setFaseg3(newDataFase)
@@ -261,7 +266,7 @@ export default function FasesView() {
                     <Grid item xs={12}>
                     <div className={deshabilitar ? 'disabled-fases' : 'habilited-fases'}>
                         <div className='f-scroller'>
-                            <Table className='home-t'>
+                            <Table>
                                 <Thead>
                                     <Tr>
 
@@ -291,7 +296,7 @@ export default function FasesView() {
                                             <Td >
                                                 <Chip label={dato.grupos[3].colorDescripcion} color={dato.grupos[3].colorDescripcion} icon={<LightModeIcon />} sx={{ width: '90%' }} />
                                             </Td>
-                                            <Td >
+                                            <Td className="b-fases">
                                                 <Button variant="contained" color='advertencia' onClick={() => { abrirModalFase(dato) }} >Modificar</Button>
                                             </Td>
 
@@ -302,14 +307,14 @@ export default function FasesView() {
                         </div>
                         </div>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={12} md={4}>
                         <Button variant="contained" color='verde2'   sx={{height:40}} fullWidth onClick={leerDatosFases}>Leer Datos</Button>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={12} md={4}>
                         <Button variant="contained" sx={{height:40}} fullWidth onClick={cargarDatosController} disabled={deshabilitar} >Cargar Datos</Button>
                     </Grid>
                     <Grid item xs={12}>
-                        <div className='blank-box'>
+                        <div style={{height:8}}>
 
                         </div>
                     </Grid>
@@ -415,6 +420,7 @@ export default function FasesView() {
         <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
             <CircularProgress color="inherit" />
         </Backdrop>
+      
         <CardController/>
         <CardInformation/>
         </>

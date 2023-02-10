@@ -23,6 +23,7 @@ import HomeMenu from './content/HomeMenu';
 import SyncMenu from './content/SyncMenu.jsx'
 import GruposMenu from './content/GruposMenu.jsx'
 import { useSelector } from 'react-redux';
+import "../css/ButtonAppBar.css"
 import PruebasMenu from './content/PruebasMenu';
 export default function ButtonAppBar() {
 
@@ -138,10 +139,10 @@ export default function ButtonAppBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography className='titulo-app-bar' variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {menuState.menu}
           </Typography>
-        Bienvenido!  david.diaz190799@gmail.com
+    david.diaz190799@gmail.com
         </Toolbar>
       </AppBar>
       <Drawer

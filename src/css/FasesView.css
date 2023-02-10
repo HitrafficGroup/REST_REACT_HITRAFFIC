@@ -27,3 +27,9 @@
     margin-top: 20px;
     margin-bottom: 30px;
   }
+
+  @media only screen and (max-width: 1260px) {
+    .b-fases {
+      margin-left: 20px;
+    }
+}
