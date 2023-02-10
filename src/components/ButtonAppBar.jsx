@@ -3,7 +3,6 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import List from '@mui/material/List';
@@ -34,21 +33,21 @@ export default function ButtonAppBar() {
   const menuState = useSelector(state => state.menu);
 
   const menuData = [
-   
+
     {
       child: <HomeMenu />,
       visibility: true,
       key: 10
     },
     {
-      child: <ResumenMenu/>,
+      child: <ResumenMenu />,
       visibility: true,
       key: 10
     },
     {
-      child: <MapaUniversalMenu/>,
+      child: <MapaUniversalMenu />,
       visibility: true,
-      key:11
+      key: 11
     },
     {
       child: <SyncMenu />,
@@ -89,7 +88,7 @@ export default function ButtonAppBar() {
       child: <ClonacionMenu />,
       visibility: true,
       key: 100
-    },{
+    }, {
       child: <PruebasMenu />,
       visibility: true,
       key: 101
@@ -139,13 +138,11 @@ export default function ButtonAppBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography  sx={{
-          
-              display: { xs: 'none', md: 'flex' }
-            }}  variant="h6" component="div">
+          <Typography sx={{ display: { xs: 'none', md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
             {menuState.menu}
           </Typography>
-    david.diaz190799@gmail.com
+
+          david.diaz190799@gmail.com
         </Toolbar>
       </AppBar>
       <Drawer

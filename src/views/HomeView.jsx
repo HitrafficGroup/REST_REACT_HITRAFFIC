@@ -1010,7 +1010,7 @@ export default function PruebasView() {
 
                     <Grid item md={12}>
                         <div className="h-controler-select">
-                            <h5>Gestionar Semaforos: </h5>
+                            <h5>Gestionar Semáforos:</h5>
                         </div>
                     </Grid>
                     <Grid item xs={12} md={3}>
@@ -1066,7 +1066,7 @@ export default function PruebasView() {
                                 <Tr>
                                     <Th className='home-t-th'>#</Th>
                                     <Th className='home-t-th'>Paso</Th>
-                                    <Th className='home-t-th'>Duracion</Th>
+                                    <Th className='home-t-th'>Duración</Th>
                                     <Th className='home-t-th'>Fase</Th>
                                     <Th className='home-t-th'>Grupos</Th>
                                 </Tr>
@@ -1117,7 +1117,7 @@ export default function PruebasView() {
                             <Thead>
                                 <Tr>
                                     <Th className='home-t-th'>#</Th>
-                                    <Th className='home-t-th'>Semaforo</Th>
+                               
                                     <Th className='home-t-th'>Grupo</Th>
                                     <Th className='home-t-th'>Indicador en Segundos</Th>
 
@@ -1130,13 +1130,11 @@ export default function PruebasView() {
                                         <Td>
                                             {index + 1}
                                         </Td>
-                                        <Td >
-                                            {dato.nombre}
-                                        </Td>
+                                
                                         <Td >
                                             {dato.grupo}
                                         </Td>
-                                        <Td >
+                                        <Td style={{marginBottom:10}}>
                                             <CustomProgress red={dato.rojo} yellow={dato.amarillo} green={dato.verde} modo={dato.modo} />
                                         </Td>
 
