@@ -484,13 +484,14 @@ export default function HorariosView() {
             newObject['hora' + (num + 1)] = parseInt(horas, 16).toString()
             newObject['minuto' + (num + 1)] = parseInt(minutos, 16).toString()
             newObject['desfase' + (num + 1)] = data[num].desfase
-            newObject['mod_plan' + (num + 1)] = mod_plan
+            newObject['mod_plan' + (num + 1)] = mod_plan.toString()
         }
         newObject['ip'] = controlerState.ip
+        newObject['mac'] = controlerState.mac
         newObject['num_horario'] = formatearTipoDia(tipoDia)
         console.log(objHorarios)
-        cargarHorariosFirebase(objHorarios)
         await postHorariosFromRestApi(newObject);
+        cargarHorariosFirebase(objHorarios)
         setHabilitar2(false);
     }
     return (
@@ -556,8 +557,11 @@ export default function HorariosView() {
                                                     {dato.desfase}
                                                 </Td>
                                                 <Td >
-                                                    <Button variant="contained" onClick={() => { editarHorarios(dato) }} color='crema'>Editar</Button>
-                                                    <Button variant="contained" onClick={() => { removeHorario(dato) }} sx={{ marginLeft: 2 }} color='rojo'>QUITAR</Button>
+                                                    <div className="horarios-t-buttons">
+                                                        <Button variant="contained" onClick={() => { editarHorarios(dato) }} color='crema'>Editar</Button>
+                                                        <Button variant="contained" onClick={() => { removeHorario(dato) }}  color='rojo'>QUITAR</Button>
+                                                    </div>
+                                            
                                                 </Td>
                                             </Tr>
                                         ))}
@@ -698,7 +702,7 @@ export default function HorariosView() {
                         <Grid item xs={12}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <TimePicker
-                                    label="Escoga Fecha"
+                                    label="Horario"
                                     renderInput={(params) => <TextField {...params} fullWidth />}
                                     value={time1}
                                     onChange={handleTime1}
@@ -732,7 +736,7 @@ export default function HorariosView() {
                                 options={planes2}
                                 onChange={(event, newValue) => { setPlanSemaforo(newValue) }}
                                 id="controllable-states-demo"
-                                renderInput={(params) => <TextField {...params} label="Escoga Un Plan" fullWidth />}
+                                renderInput={(params) => <TextField {...params} label="Plan" fullWidth />}
                             />
                         </Grid>
                         <Grid item xs={12}>

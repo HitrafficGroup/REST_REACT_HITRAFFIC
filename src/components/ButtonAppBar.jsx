@@ -139,7 +139,10 @@ export default function ButtonAppBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography className='titulo-app-bar' variant="h6" component="div">
+          <Typography  sx={{
+          
+              display: { xs: 'none', md: 'flex' }
+            }}  variant="h6" component="div">
             {menuState.menu}
           </Typography>
     david.diaz190799@gmail.com

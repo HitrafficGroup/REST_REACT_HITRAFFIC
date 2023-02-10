@@ -38,3 +38,18 @@
     margin-top: 20px;
     margin-bottom: 30px;
   }
+  .horarios-t-buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
+
+  @media only screen and (max-width: 1260px) {
+    .horarios-t-buttons{
+      display: flex;
+      flex-direction: column;
+      height: 100px;
+      align-content: space-between;
+    }
+  
+}
