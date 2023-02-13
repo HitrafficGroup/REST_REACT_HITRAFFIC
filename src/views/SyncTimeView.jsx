@@ -79,11 +79,13 @@ export default function SyncTimeView() {
                 confirmButtonText: 'Si, actualizar!',
                 showDenyButton: true,
                 denyButtonText: 'Cancelar',
-            }).then((result)=>{
+            }).then(async(result)=>{
                 if(result.isConfirmed){
-                    setTimeControlador(newData);
+                    setDeshabilitar2(true);
+                    await setTimeControlador(newData);
+                    setDeshabilitar2(false);
                     updateHoraControllerFirebase(dataForFirebase);
-                 
+                    
                 }
             })        
         

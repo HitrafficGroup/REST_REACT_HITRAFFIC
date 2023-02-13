@@ -292,12 +292,12 @@ export default function GruposView() {
             confirmButtonText: 'Si, actualizar!',
             showDenyButton: true,
             denyButtonText: 'Cancelar',
-        }).then((result) => {
+        }).then(async(result) => {
             if (result.isConfirmed) {
                 try {
                     setDeshabilitar2(true);
                     const newGruposconf = convertirDatos(grupos)
-                    setGruposControlador(newGruposconf);
+                    await setGruposControlador(newGruposconf);
                     cargarGruposFirebase(grupos);
                     setCambioGrupos(false)
                     setDeshabilitar2(false);
@@ -329,7 +329,7 @@ export default function GruposView() {
             confirmButtonText: 'Si, actualizar!',
             showDenyButton: true,
             denyButtonText: 'Cancelar',
-        }).then((result) => {
+        }).then(async(result) => {
             if (result.isConfirmed) {
                 try {
                     setDeshabilitar4(true);
@@ -381,7 +381,7 @@ export default function GruposView() {
                         fila3: [false,false,false,false],
                     }
                     
-                    setConflictoVerdesControlador(newConflicto);
+                    await setConflictoVerdesControlador(newConflicto);
                     cargarConflictosFirebase(conflictoFirebase);
                     setCambioConflictos(false)
                     setDeshabilitar4(false);

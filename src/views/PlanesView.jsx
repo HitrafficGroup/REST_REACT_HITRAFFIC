@@ -167,13 +167,13 @@ export default function PlanesView() {
             confirmButtonText: 'Si, actualizar!',
             showDenyButton: true,
             denyButtonText: 'Cancelar',
-        }).then((result)=>{
+        }).then(async (result)=>{
             if(result.isConfirmed){
-               
+                setDeshabilitar4(true)
                 setCambio(false);
-                setOtrosParametrosFromRestApi(newParams);
+                await setOtrosParametrosFromRestApi(newParams);
                 cargarOtrosParamFirebase(newParams);
-     
+                setDeshabilitar4(false)
              
             }
         })        
@@ -213,8 +213,9 @@ export default function PlanesView() {
             confirmButtonText: 'Si, actualizar!',
             showDenyButton: true,
             denyButtonText: 'Cancelar',
-        }).then((result)=>{
+        }).then(async(result)=>{
             if(result.isConfirmed){
+                setDeshabilitar2(true)
                 var newData = {}
                 var j = 0
                 for(let i = 0 ;i<12;i++){
@@ -227,9 +228,9 @@ export default function PlanesView() {
                 newData['num_plan'] = returnNumPlan(selectPlan)
                 setCambio(false);
      
-                setPlanesFromRestApi(newData);
+                await setPlanesFromRestApi(newData);
                 cargarPlanesFirebase(planes);
-                
+                setDeshabilitar2(false)
             }
         })        
     }catch(e){
