@@ -12,10 +12,17 @@ import {getAllDataIp} from "../js/apiFunctions";
 import { db } from "../firebase/firebase-config";
 import { getDoc, doc } from "firebase/firestore";
 import { useSelector } from 'react-redux';
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+
 export default function ResumenView() {
     const controlerState = useSelector(state => state.controlers);
     const [horarios,setHorarios] = useState([]);
     const todaInformacion = useRef();
+    const [value, setValue] = useState('1');
     const tiempo_amarillo = useRef();
     const datos_amarillo_aux = useRef();
     const factor2 = 10
@@ -121,6 +128,9 @@ export default function ResumenView() {
     
         
     }
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+      };
 
     return (
         <>
@@ -132,7 +142,16 @@ export default function ResumenView() {
                     <h4>Resumen del Controlador</h4>
                 </div>
                 </Grid>
-                    <Grid item xs={12}>
+                <Grid item xs={12}>
+                <TabContext value={value}>
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <TabList onChange={handleChange} aria-label="lab API tabs example">
+                        <Tab label="Dias Ordinario" value="1" />
+                        <Tab label="Fines de Semana" value="2" />
+                        <Tab label="Dias Festivos" value="3" />
+                    </TabList>
+                    </Box>
+                    <TabPanel value="1">
                     <div className='tabla-resumen'>
                     <h5>Programación semanal</h5>
                     <table id="tabla_resumen" className="table table-bordered">
@@ -146,8 +165,7 @@ export default function ResumenView() {
                             <th id = "columna_3" scope="col">Miercoles</th>
                             <th id = "columna_4" scope="col">Jueves</th>
                             <th id = "columna_5" scope="col">Viernes</th>
-                            <th id = "columna_6" scope="col">Sabado</th>
-                            <th id = "columna_7" scope="col">Domingo</th>
+                         
                         </tr>
                         {horarios.map((item,index)=>(
                                <tr key={index} >
@@ -332,14 +350,216 @@ export default function ResumenView() {
                                 ))}
                                     </div>
                                 </td>
-                                <td></td>
-                                <td></td>
+                           
                             </tr>
                             ))
                         }
                         </thead>
                     </table>
                 </div>
+                    </TabPanel>
+                    <TabPanel value="2">
+                    <div className='tabla-resumen'>
+                    <h5>Fines de Semana</h5>
+                    <table id="tabla_resumen" className="table table-bordered">
+                        <thead id="fecha_dia">
+                        </thead>
+                        <thead>
+                        <tr>
+                            <th id = "columna_0" scope="col">Hora</th>
+                            <th id = "columna_1" scope="col">Sabado</th>
+                            <th id = "columna_2" scope="col">Domingo</th>
+                        
+                         
+                        </tr>
+                        {horarios.map((item,index)=>(
+                               <tr key={index} >
+                                <td><strong>{item.horas+':'+item.minutos}</strong></td>
+                                <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
+                                <div className='container-resumen-fases'>
+                                    <div className='fase-resumen'>
+                                        {'G:'+'  '}
+                                        <div className={`g-resumen r-n`}>
+                                            G1
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G2
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G3
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G4
+                                         </div>
+                                    </div>
+                                {item.fases_grupo.map((item,index)=> (
+                                    <div key={index} className='fase-resumen'>
+                                        F{item.faseNum}
+                                        <div className={`g-resumen  r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[1].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[2].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                    </div>
+                                ))}
+                                    </div>
+                                </td>
+                                <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
+                                <div className='container-resumen-fases'>
+                                <div className='fase-resumen'>
+                                        {'G:'+'  '}
+                                        <div className={`g-resumen r-n`}>
+                                            G1
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G2
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G3
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G4
+                                         </div>
+                                    </div>
+                               {item.fases_grupo.map((item,index)=> (
+                                    <div key={index} className='fase-resumen'>
+                                        F{item.faseNum}
+                                        <div className={`g-resumen  r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[1].colorDescripcion} {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[2].colorDescripcion} {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[3].colorDescripcion} {item.duracion}s
+                                        </div>
+                                    </div>
+                                ))}
+                                    </div>
+                                </td>
+                        
+                           
+                            </tr>
+                            ))
+                        }
+                        </thead>
+                    </table>
+                </div>
+                    </TabPanel>
+                    <TabPanel value="3">
+                    <div className='tabla-resumen'>
+                    <h5>Dias Festivos</h5>
+                    <table id="tabla_resumen" className="table table-bordered">
+                        <thead id="fecha_dia">
+                        </thead>
+                        <thead>
+                        <tr>
+                            <th id = "columna_0" scope="col">Hora</th>
+                            <th id = "columna_1" scope="col">Sabado</th>
+                            <th id = "columna_2" scope="col">Domingo</th>
+                        
+                         
+                        </tr>
+                        {horarios.map((item,index)=>(
+                               <tr key={index} >
+                                <td><strong>{item.horas+':'+item.minutos}</strong></td>
+                                <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
+                                <div className='container-resumen-fases'>
+                                    <div className='fase-resumen'>
+                                        {'G:'+'  '}
+                                        <div className={`g-resumen r-n`}>
+                                            G1
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G2
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G3
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G4
+                                         </div>
+                                    </div>
+                                {item.fases_grupo.map((item,index)=> (
+                                    <div key={index} className='fase-resumen'>
+                                        F{item.faseNum}
+                                        <div className={`g-resumen  r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[1].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[2].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                    </div>
+                                ))}
+                                    </div>
+                                </td>
+                                <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
+                                <div className='container-resumen-fases'>
+                                <div className='fase-resumen'>
+                                        {'G:'+'  '}
+                                        <div className={`g-resumen r-n`}>
+                                            G1
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G2
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G3
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G4
+                                         </div>
+                                    </div>
+                               {item.fases_grupo.map((item,index)=> (
+                                    <div key={index} className='fase-resumen'>
+                                        F{item.faseNum}
+                                        <div className={`g-resumen  r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[1].colorDescripcion} {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[2].colorDescripcion} {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[3].colorDescripcion} {item.duracion}s
+                                        </div>
+                                    </div>
+                                ))}
+                                    </div>
+                                </td>
+                        
+                           
+                            </tr>
+                            ))
+                        }
+                        </thead>
+                    </table>
+                </div>
+
+
+                    </TabPanel>
+                </TabContext>
+                </Grid>
+                    <Grid item xs={12}>
+            
                     </Grid>
                     <Grid item xs={12}>
                         <div className='contenedor-modos'>

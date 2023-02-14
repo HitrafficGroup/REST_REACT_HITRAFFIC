@@ -490,8 +490,8 @@ export default function HorariosView() {
         newObject['mac'] = controlerState.mac
         newObject['num_horario'] = formatearTipoDia(tipoDia)
         console.log(objHorarios)
-        await postHorariosFromRestApi(newObject);
-        cargarHorariosFirebase(objHorarios)
+        //await postHorariosFromRestApi(newObject);
+        //cargarHorariosFirebase(objHorarios)
         setHabilitar2(false);
     }
     return (
