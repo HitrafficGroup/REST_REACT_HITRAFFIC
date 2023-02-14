@@ -229,6 +229,7 @@ export default function PlanesView() {
                 setCambio(false);
      
                 await setPlanesFromRestApi(newData);
+                console.log(planes)
                 cargarPlanesFirebase(planes);
                 setDeshabilitar2(false)
             }
@@ -451,10 +452,10 @@ export default function PlanesView() {
                         value={valorSincronizacion} />
                     </Grid>
                     <Grid item md={3} xs={12}>
-                    <Button variant="contained"  color='verde2' fullWidth sx={{height:'100%'}}   onClick={leerOtrosParametrosApi} >Leer Datos</Button>
+                        <Button variant="contained"  color='verde2' fullWidth sx={{height:'100%'}}   onClick={leerOtrosParametrosApi} >Leer Datos</Button>
                     </Grid>
                     <Grid item md={3} xs={12}>
-                    <Button variant="contained" fullWidth sx={{height:'100%'}} onClick={cargarOtrosParametrosAPI} disabled={deshabilitar3} >Cargar Cambios</Button>
+                        <Button variant="contained" fullWidth sx={{height:'100%'}} onClick={cargarOtrosParametrosAPI} disabled={deshabilitar3} >Cargar Cambios</Button>
                     </Grid>
                   
                     <Grid item xs={12}>

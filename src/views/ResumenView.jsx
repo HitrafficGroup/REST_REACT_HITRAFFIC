@@ -6,8 +6,6 @@ import React, { useState,useEffect, useRef } from 'react';
 import "../css/ResumenView.css";
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import CloudIcon from '@mui/icons-material/Cloud';
-import DeleteIcon from '@mui/icons-material/Delete';
-import CustomProgress from "../components/CustomProgress";
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import {getAllDataIp} from "../js/apiFunctions";
@@ -20,17 +18,20 @@ export default function ResumenView() {
     const todaInformacion = useRef();
     const tiempo_amarillo = useRef();
     const datos_amarillo_aux = useRef();
-    const getDataFromFirebase = async()=>{  
-        console.log("do something")
-    }
+    const factor2 = 10
+    const sf = 8.5
     const datosDePrueba = async() =>{
-        console.log(controlerState.mac)
+        
         let docRef = doc(db, "controladores", `${controlerState.mac}`);
         let document = await getDoc(docRef);
         let datos = document.data()
         let planes = datos.planes
+        let fases = datos.fases
+        let o_parametros = datos.otros_parametros
+        console.log(o_parametros)
+        fase_amarilla.duracion = o_parametros.tiempo_amarillo_vehicular
+
         todaInformacion.current = datos
-        
         let dias_ordenados = JSON.parse(JSON.stringify(datos.horarios.dia_ordinario))
         dias_ordenados.sort(function (a, b) {
             let a_aux = parseInt(a.horas)
@@ -41,224 +42,86 @@ export default function ResumenView() {
             b = b_aux * 100 + b_aux2
             return  a - b
         })
+        let plan_aux = JSON.parse(JSON.stringify(planes))
         let dias_ordenados_filtrados = dias_ordenados.filter(item => item.mod !== 0)
-        let planes_format = []
         for(let i=0; i<planes.length; i++){
-            let aux = planes[i].pasos
+            let aux = plan_aux[i].pasos
             let fases_disponibles = []
             for(let j=0; j<aux.length;j++){
                 let  aux_pasos = aux[j].fase;
+                let aux_duracion = aux[j].duracion
                 if(aux_pasos !== 0){
-                    fases_disponibles.push(aux_pasos)
+                    fases_disponibles.push(
+                        {fase:aux_pasos,
+                        duracion:aux_duracion})
                 }
                 
             }
-           planes[i]["planes_pasos"] = fases_disponibles
+            plan_aux[i]["planes_pasos"] = fases_disponibles
         }
         
-        console.log(planes)
         dias_ordenados_filtrados.map((item) =>{
-            let aux = planes.filter(data=> data.numPlan === `plan${item.plan}`)
-          
+            let aux = plan_aux.filter(data=> data.numPlan === `plan${item.plan}`)
+            
             item['fases'] = aux[0].planes_pasos
         })
-        console.log(dias_ordenados_filtrados)
-        setHorarios(dias_ordenados_filtrados)
+        let aux_5 = JSON.parse(JSON.stringify(dias_ordenados_filtrados))
+        
+        aux_5.map(item =>{
+            let aux_fases = item.fases.map(item =>
+                (fases.filter(fase=> {
+                   if( fase.faseNum === item.fase){
+                    return fase
+                   }
+                    
+                })[0])
+            )
+            
+            
+            item['fases_grupo'] = aux_fases
+            
+        })
+
+        //aqui agregamos la duracion de cada fase
+        for(let i = 0;i<aux_5.length;i++){
+            let fases_temp = aux_5[i].fases // estas son las fases que contienen la duracion
+            //console.log(fases_temp)
+            let data_modified = aux_5[i].fases_grupo.map(element => {
+                let duracion_aux = fases_temp.filter(temp=> temp.fase === element.faseNum)[0].duracion
+             
+                let n_objet = {
+                    duracion: duracion_aux,
+                    faseNum: element.faseNum,
+                    grupos: element.grupos
+                }
+                return n_objet
+            });
+            //console.log(data_modified)
+            aux_5[i].fases_grupo = data_modified
+
+      
+        //  console.log(aux_5[i])
+        }
+        for(let i = 0;i<aux_5.length;i++){
+            let aux_data = []
+            let temp = aux_5[i].fases_grupo
+      
+            for(let j = 0;j<temp.length;j++){
+                let fase_aux = temp[j]
+                aux_data.push(fase_aux)
+                if(j !== temp.length-1){
+                    aux_data.push(fase_amarilla)
+                }
+            }
+            aux_5[i].fases_grupo = aux_data
+        }
+
+        console.log('con fases amarillas: ',aux_5)
+        setHorarios(aux_5)
     
         
     }
-    const returnModo = (data) => {
-        if (data === 1) {
-            return 'Tiempo Fijo'
-        }
-        else if (data === 2) {
-            return 'Pulsante'
-        }
-        else if (data === 3) {
-            return 'Destello'
-        }
-        else if (data === 4) {
-            return 'Todo en Rojo'
-        }
-        else {
-            return 'Apagado'
-        }
-    }
-    const parametrosCorriendo = () => {
-        let datos_controlador = JSON.parse(JSON.stringify(todaInformacion.current))
-        let dia_ordinario = datos_controlador.horarios.dia_ordinario
-        let planes = datos_controlador.planes
-        let parametros_operativos = datos_controlador.otros_parametros
-        tiempo_amarillo.current = parseInt(parametros_operativos.tiempo_amarillo_vehicular)
-        let hora_actual = new Date();
-        let horas = hora_actual.getHours();
-        let minutos = hora_actual.getMinutes();
-        let ultimo_horario = false
-        let aux;
-        let aux2;
-        let temp;
-        let ref;
-        let nro_horario;
-        let dias_ordenados = JSON.parse(JSON.stringify(dia_ordinario))
-        dias_ordenados.sort(function (a, b) {
-            let a_aux = parseInt(a.horas)
-            let a_aux2 = parseInt(a.minutos)
-            let b_aux = parseInt(b.horas)
-            let b_aux2 = parseInt(b.minutos)
-            a = a_aux * 100 + a_aux2
-            b = b_aux * 100 + b_aux2
-            return b - a
-        })
-        let dias_ordenados_filtrados = dias_ordenados.filter(item => item.mod !== 0)
-        let nro_horario_sig = 0
-        for (let i = 0; i < dias_ordenados_filtrados.length; i++) {
-            aux = parseInt(dias_ordenados[i].horas)
-            aux2 = parseInt(dias_ordenados[i].minutos)
-            temp = aux * 100 + aux2
-            ref = horas * 100 + minutos
-            //console.log("ref: ",ref)
-            //console.log("temp: ",temp)
-            if (ref > temp) {
-                if (i === 0) {
-                    nro_horario = dias_ordenados[0].nro
-                    nro_horario_sig = dia_ordinario[0].nro
-                    ultimo_horario = true
-                } else {
-                    nro_horario = dias_ordenados[i].nro
-                    nro_horario_sig = dias_ordenados[i - 1].nro
-                    ultimo_horario = false
-                }
 
-                break
-            }
-            if (i === 0) {
-                nro_horario = dias_ordenados[0].nro
-                nro_horario_sig = dia_ordinario[0].nro
-                ultimo_horario = true
-            } else {
-                nro_horario = dias_ordenados[0].nro
-                nro_horario_sig = dias_ordenados[i].nro
-                ultimo_horario = false
-            }
-
-        }
-
-
-        let horario_activo = dias_ordenados.find(item => item.nro === nro_horario)
-        let modo = returnModo(horario_activo.mod)
-        let plan_activo = horario_activo.plan
-        let planname = `plan${plan_activo}`
-        let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
-        let pasos = plan_filter[0].pasos
-        var pasos_habilitados = pasos.filter((item) => {
-            if (item.duracion > 0) {
-                return item;
-            }
-        })
-
-        let fases = datos_controlador.fases
-        var pasos_temp = pasos_habilitados
-        var fases_pasos = pasos_temp.map((item) => {
-            let aux2 = fases.find(_item => _item.faseNum === item.fase)
-            let obj_mod = {
-                duracion: item.duracion,
-                fase: item.fase,
-                grupos: item.grupos,
-                name: item.name
-            }
-            let grupos_aux = aux2.grupos
-
-
-            if (modo === 'Destello') {
-                grupos_aux = aux2.grupos.map(item => ({
-                    colorDescripcion: "amarillo",
-                    faseNum: item.faseNum,
-                    id: item.id,
-                    grupoNum: item.grupoNum,
-                    color: item.color
-                }))
-                obj_mod['grupos'] = grupos_aux
-
-            } else if (modo === 'Todo en Rojo') {
-                grupos_aux = aux2.grupos.map(item => ({
-                    colorDescripcion: "rojo",
-                    faseNum: item.faseNum,
-                    id: item.id,
-                    grupoNum: item.grupoNum,
-                    color: item.color
-                }))
-                obj_mod['grupos'] = grupos_aux
-            }
-            else {
-
-                obj_mod['grupos'] = grupos_aux
-            }
-            return obj_mod
-
-        })
-        let datos_amarillo = []
-
-        if (tiempo_amarillo.current > 0 && modo === "Tiempo Fijo") {
-            let fases_pasos_aux2 = JSON.parse(JSON.stringify(fases_pasos))
-            let fases_pasos_aux = JSON.parse(JSON.stringify(fases_pasos))
-            let aux_copias = fases_pasos.length * 2
-            let nuevos_pasos = fases_pasos_aux.map((item) => {
-                let grupos_aux = item.grupos.map(item2 => {
-                    let grupo_temp = {}
-                    if (item2.colorDescripcion === "rojo") {
-                        grupo_temp = { faseNum: item2.faseNum, colorDescripcion: item2.colorDescripcion, color: item2.color, grupoNum: item2.grupoNum, id: item2.id }
-                    } else {
-                        grupo_temp = { faseNum: item2.faseNum, colorDescripcion: "amarillo", color: 2, grupoNum: item2.grupoNum, id: item2.id }
-                    }
-                    return grupo_temp
-                })
-                let paso_editado = {
-                    duracion: tiempo_amarillo.current,
-                    fase: item.fase,
-                    grupos: grupos_aux,
-                    name: item.name,
-                }
-                return paso_editado
-            })
-
-            let nuevos_pasos_2 = fases_pasos_aux2.map(item => (
-                {
-                    duracion: item.duracion - tiempo_amarillo.current,
-                    fase: item.fase,
-                    grupos: item.grupos,
-                    name: item.name,
-                }
-            ))
-            let index_aux = 0
-            let index_aux2 = 0
-            for (let i = 0; i < aux_copias; i++) {
-                let aux_resi = i % 2
-                if (aux_resi !== 0) {
-                    datos_amarillo.push(nuevos_pasos[index_aux])
-                    index_aux += 1
-                } else {
-                    datos_amarillo.push(nuevos_pasos_2[index_aux2])
-                    index_aux2 += 1
-                }
-            }
-            datos_amarillo.map((item, index) => (item.name = `Paso ${index + 1}`))
-        }
-        datos_amarillo_aux.current = datos_amarillo
-        let resumen = {
-            horas: horario_activo.horas,
-            minutos: horario_activo.minutos,
-            plan: horario_activo.plan,
-            pasos: fases_pasos,
-            modo: modo,
-        }
-
-    }
-   
-    useEffect(() => {
-        getDataFromFirebase()
-        
-        // eslint-disable-next-line
-    }, []); 
     return (
         <>
             <Container  >
@@ -289,63 +152,193 @@ export default function ResumenView() {
                         {horarios.map((item,index)=>(
                                <tr key={index} >
                                 <td><strong>{item.horas+':'+item.minutos}</strong></td>
-                                <td className={`mod${item.mod}`} >
-                                <strong>Plan {item.plan}</strong>
-                                <div style={{display:"flex"}}>
-                                Fase:{item.fases.map(item=> (
-                                    <p style={{marginLeft:4}}>
-                                        {item}
-                                    </p>
+                                <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
+                                <div className='container-resumen-fases'>
+                                    <div className='fase-resumen'>
+                                        {'G:'+'  '}
+                                        <div className={`g-resumen r-n`}>
+                                            G1
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G2
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G3
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G4
+                                         </div>
+                                    </div>
+                                {item.fases_grupo.map((item,index)=> (
+                                    <div key={index} className='fase-resumen'>
+                                        F{item.faseNum}
+                                        <div className={`g-resumen  r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[1].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[2].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                    </div>
                                 ))}
                                     </div>
                                 </td>
                                 <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
-                                <div style={{display:"flex"}}>
-                                Fase:{item.fases.map(item=> (
-                                    <p style={{marginLeft:4}}>
-                                        {item}
-                                    </p>
+                                <div className='container-resumen-fases'>
+                                <div className='fase-resumen'>
+                                        {'G:'+'  '}
+                                        <div className={`g-resumen r-n`}>
+                                            G1
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G2
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G3
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G4
+                                         </div>
+                                    </div>
+                               {item.fases_grupo.map((item,index)=> (
+                                    <div key={index} className='fase-resumen'>
+                                        F{item.faseNum}
+                                        <div className={`g-resumen  r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[1].colorDescripcion} {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[2].colorDescripcion} {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[3].colorDescripcion} {item.duracion}s
+                                        </div>
+                                    </div>
                                 ))}
                                     </div>
                                 </td>
                                 <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
-                                <div style={{display:"flex"}}>
-                                Fase:{item.fases.map(item=> (
-                                    <p style={{marginLeft:4}}>
-                                        {item}
-                                    </p>
+                                <div className='container-resumen-fases'>
+                                <div className='fase-resumen'>
+                                        {'G:'+'  '}
+                                        <div className={`g-resumen r-n`}>
+                                            G1
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G2
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G3
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G4
+                                         </div>
+                                    </div>
+                               {item.fases_grupo.map((item,index)=> (
+                                    <div key={index} className='fase-resumen'>
+                                        F{item.faseNum}
+                                        <div className={`g-resumen r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                            {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[1].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[2].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                    </div>
                                 ))}
                                     </div>
                                 </td>
                                 <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
-                                <div style={{display:"flex"}}>
-                                Fase:{item.fases.map(item=> (
-                                    <p style={{marginLeft:4}}>
-                                        {item}
-                                    </p>
+                                <div className='container-resumen-fases'>
+                                <div className='fase-resumen'>
+                                        {'G:'+'  '}
+                                        <div className={`g-resumen r-n`}>
+                                            G1
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G2
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G3
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G4
+                                         </div>
+                                    </div>
+                               {item.fases_grupo.map((item,index)=> (
+                                    <div key={index} className='fase-resumen'>
+                                        F{item.faseNum}
+                                        <div className={`g-resumen r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[1].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[2].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                    </div>
                                 ))}
                                     </div>
                                 </td>
                                 <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
-                                <div style={{display:"flex"}}>
-                                Fase:{item.fases.map(item=> (
-                                    <p style={{marginLeft:4}}>
-                                        {item}
-                                    </p>
+                                <div className='container-resumen-fases'>
+                                <div className='fase-resumen'>
+                                        {'G:'+'  '}
+                                        <div className={`g-resumen r-n`}>
+                                            G1
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G2
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G3
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G4
+                                         </div>
+                                    </div>
+                               {item.fases_grupo.map((item,index)=> (
+                                    <div key={index} className='fase-resumen'>
+                                        F{item.faseNum}
+                                        <div className={`g-resumen r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[1].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[2].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                        {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                    </div>
                                 ))}
                                     </div>
                                 </td>
                                 <td></td>
                                 <td></td>
                             </tr>
-
                             ))
                         }
-                 
                         </thead>
-                        
                     </table>
-
                 </div>
                     </Grid>
                     <Grid item xs={12}>
@@ -441,4 +434,14 @@ export default function ResumenView() {
         </>
     );
 
+}
+const fase_amarilla = { 
+duracion: 4,
+faseNum:'A',
+grupos:[
+{id: 'g1_fase_6', grupoNum: 1, color: 0, faseNum: 6, colorDescripcion: ''},
+{id: 'g2_fase_6', grupoNum: 2, color: 1, faseNum: 6, colorDescripcion: ''},
+{id: 'g3_fase_6', grupoNum: 3, color: 0, faseNum: 6, colorDescripcion: ''},
+{id: 'g4_fase_6', grupoNum: 4, color: 1, faseNum: 6, colorDescripcion: ''}
+]
 }

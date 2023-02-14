@@ -73,10 +73,49 @@
 }
 .tabla-resumen{
     overflow-x: scroll;
+    overflow-y: scroll;
+    height: 500px;
     scrollbar-color: rebeccapurple green;
     scrollbar-width: thin;
 }
+.fase-resumen{
+    width: auto;
+    color: black;
+}
+.container-resumen-fases{
+    width: fit-content;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
 
+.r-rojo{
+    background-color: #CD6155;
+}
+.r-verde{
+    background-color: #196F3D;
+}
+.r-destello{
+    background-color: #85C1E9;
+}
+.r-{
+    background-color: #F1C40F;
+    
+}
+.r-n{
+    background-color: #34495E;
+}
+
+.g-resumen{
+   
+    height: 28px;
+    display: flex;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 9px;
+    border: 2px solid black;
+}
 @media only screen and (max-width: 1260px) {
     .contenedor-modos{
         flex-direction: column;

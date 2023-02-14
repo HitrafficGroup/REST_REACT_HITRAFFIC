@@ -89,6 +89,10 @@ function convertToPlanes(respuesta, mac) {
                 fase: plan_lst[(par)],
                 duracion: plan_lst[(impar)],
             }
+            if(paso.duracion === 0 || paso.fase === 0 || paso.fase > 16 || paso.duracion >60) {
+                paso.fase = 0
+                paso.duracion = 0
+            }
             plan_paso.push(paso)
             par = par +2;
             impar = impar+2;
@@ -103,6 +107,7 @@ function convertToPlanes(respuesta, mac) {
         }
         lista_datos.push(plan)
         lista_datos_2.push(plan2)
+
         
 
     }

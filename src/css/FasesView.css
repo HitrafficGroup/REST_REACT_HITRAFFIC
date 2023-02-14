@@ -27,7 +27,12 @@
     margin-top: 20px;
     margin-bottom: 30px;
   }
-
+.container-resumen-fases{
+  width: fit-content;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
   @media only screen and (max-width: 1260px) {
     .b-fases {
       margin-left: 20px;
