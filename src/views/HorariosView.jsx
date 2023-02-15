@@ -31,7 +31,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { Wrapper, Status } from "@googlemaps/react-wrapper";
 export default function HorariosView() {
     const [horarios, setHorarios] = useState(horariosPorDefecto);
     const controlerState = useSelector(state => state.controlers);
@@ -62,9 +61,7 @@ export default function HorariosView() {
     const [currentHorario, setCurrentHorario] = useState(
         { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
     );
-    const editarHorarios = (data) => {
-        console.log(data)
-       
+    const editarHorarios = (data) => {       
         let plan
         let respaldo_data = JSON.parse(JSON.stringify(data));
         setCurrentHorario(respaldo_data)
@@ -80,12 +77,8 @@ export default function HorariosView() {
         let horas = respaldo_data.horas
         let minutos = respaldo_data.minutos
         let tiempo = new Date(`Nov 02 1999 ${horas}:${minutos} GMT-0500 (Ecuador Time)`)
-
         setTime1(tiempo)
-        console.log(respaldo_data)
         setModalHorarios(true);
-        
-
     }
     const ChangeLunes = (event) => {
         setClunes(event.target.checked);
@@ -115,8 +108,6 @@ export default function HorariosView() {
         setCDomingo(event.target.checked);
         setCambioDias(true);
     };
-
-
     const handleTime1 = (newValue) => {
 
         let h = new Date(newValue.$d)
@@ -124,8 +115,6 @@ export default function HorariosView() {
         horas = ("0" + horas).slice(-2);
         let minutos = h.getMinutes()
         minutos = ("0" + minutos).slice(-2);
-        console.log(horas)
-        console.log(minutos)
         setTime1(newValue)
         currentHorario['horas'] = horas
         currentHorario['minutos'] = minutos
@@ -161,16 +150,12 @@ export default function HorariosView() {
             }
 
         })
-        horarios_dias['dia_ordinario'] = datos_actualizados
         setHorarios(datos_actualizados)
-        setObjHorarios(horarios_dias)
-        // console.log(temp);
         setModalHorarios(false);
         setCambiosHorarios(true);
     }
 
     const handleModoSemaforo = (event) => {
-        console.log(event.target.value);
         setModoSemaforo(event.target.value);
 
     }
@@ -187,23 +172,25 @@ export default function HorariosView() {
     }
     const handleTipoDia = (event) => {
         if (objHorarios !== null) {
+            let aux_horarios = JSON.parse(JSON.stringify(objHorarios))
             setTipoDia(event.target.value);
-            console.log(event.target.value);
+           
             if (event.target.value === 'dia_ordinario') {
-                console.log('selecciono dia ordinario');
-                setHorarios(objHorarios[event.target.value])
+                
+                setHorarios(aux_horarios[event.target.value])
+                setCambiosHorarios(false)
             } else if (event.target.value === 'fin_semana') {
-                console.log('selecciono fin de semana');
-                setHorarios(objHorarios[event.target.value])
+               
+                setHorarios(aux_horarios[event.target.value])
+                setCambiosHorarios(false)
             } else if (event.target.value === 'dia_festivo') {
-                console.log('selecciono dia festivo');
-                setHorarios(objHorarios[event.target.value])
+                
+                setHorarios(aux_horarios[event.target.value])
+                setCambiosHorarios(false)
             } else {
-                console.log('no selecciono nada');
+               
                 setHorarios(horariosPorDefecto)
             }
-        } else {
-            console.log("no data")
         }
 
     };
@@ -245,13 +232,13 @@ export default function HorariosView() {
                 await updateHorarioSamplingTime(controlerState.mac)
             }
             setObjHorarios(result)
-            console.log(result);
+          
             chargeHorario(result);
 
             setHabilitar1(false)
             setHabilitar2(false);
         } catch (e) {
-            console.log(e);
+          
             setHabilitar2(false);
         }
     }
@@ -282,8 +269,7 @@ export default function HorariosView() {
     const LeerParamOperativos = async () => {
         try {
             setDeshabilitar4(true);
-            const data = await getDiasEspecialesControlador(controlerState.mac, controlerState.ip);
-            console.log(data);
+            const data = await getDiasEspecialesControlador(controlerState.mac, controlerState.ip);       
             setClunes(data['fines_semana'][1].estado)
             setCmartes(data['fines_semana'][2].estado)
             setCmiercoles(data['fines_semana'][3].estado)
@@ -311,15 +297,8 @@ export default function HorariosView() {
             denyButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed) {
-                try {
-                    setDiafestivoFromrestApi();
-                    setCambioDias(false);
-
-                } catch (e) {
-                    console.log(e);
-
-                }
-
+                setDiafestivoFromrestApi();
+                setCambioDias(false);
             }
         })
 
@@ -356,12 +335,10 @@ export default function HorariosView() {
                 newDiasFest[`mes` + (1 + i)] = "0";
                 newDiasFest[`mod` + (1 + i)] = "0";
             }
-
         }
         newDiasFest['fines_semana'] = dato_entero.toString();
         newDiasFest['ip'] = controlerState.ip;
         newDiasFest['mac'] = controlerState.mac;
-
         let newDiasFirebase = {
             dia_festivo: tablaDias,
             fines_semana: [
@@ -445,13 +422,10 @@ export default function HorariosView() {
         }).then((result) => {
             if (result.isConfirmed) {
                 try {
-
                     cargarHorariosFromRestApi();
-                    
                     setCambiosHorarios(false);
                 } catch (e) {
                     console.log(e);
-
                 }
 
             }
@@ -461,7 +435,8 @@ export default function HorariosView() {
     }
     const cargarHorariosFromRestApi = async () => {
         setHabilitar2(true);
-        const data = JSON.parse(JSON.stringify(horarios))
+        const data = JSON.parse(JSON.stringify(horarios));
+        const aux_ObjHorarios = JSON.parse(JSON.stringify(objHorarios));
         console.log(data)
         var newObject = {}
         for (let num = 0; num < 16; num++) {
@@ -489,9 +464,11 @@ export default function HorariosView() {
         newObject['ip'] = controlerState.ip
         newObject['mac'] = controlerState.mac
         newObject['num_horario'] = formatearTipoDia(tipoDia)
-        console.log(objHorarios)
-        //await postHorariosFromRestApi(newObject);
-        //cargarHorariosFirebase(objHorarios)
+        
+        aux_ObjHorarios[`${tipoDia}`] = horarios
+        setObjHorarios(aux_ObjHorarios)
+        await postHorariosFromRestApi(newObject);
+        cargarHorariosFirebase(aux_ObjHorarios)
         setHabilitar2(false);
     }
     return (
@@ -576,7 +553,7 @@ export default function HorariosView() {
                                 severity="warning"
                                 sx={{ mb: 2 }}
                             >
-                                Se han Generado Cambios en los Días Especiales sin cargar al controlador
+                                Se han Generado Cambios en {tipoDia} sin cargar al controlador
                             </Alert>
                         </Collapse>
                     </Grid>
@@ -795,8 +772,5 @@ const horariosPorDefecto = [
     { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
     { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
     { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
-
 ]
-
-
 const planes2 = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']
