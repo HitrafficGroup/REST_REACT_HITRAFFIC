@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
-import MemoryIcon from '@mui/icons-material/Memory';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import LocationSearchingIcon from '@mui/icons-material/LocationSearching';
-import MenuIcon from '@mui/icons-material/Menu';
 import IconButton from '@mui/material/IconButton';
 import { collection, getDocs} from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
@@ -18,7 +15,7 @@ import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup, Polygon, FeatureGroup} from "react-leaflet";
 
 export default function MapaUniversalView() {
-    const [semaforos, setSemaforos] = useState([]);
+
     const controladores = useRef([]);
     const semaforosCompletos = useRef([]);
     const timer1 = useRef(0);
@@ -89,19 +86,7 @@ export default function MapaUniversalView() {
         }
         return semaforos_aux
     }
-    const devolverColor = (_data) => {
-        if (_data === "verde") {
-            return verde
-        } else if (_data === "rojo") {
-            return rojo
-        } else if (_data === "apagado") {
-            return apagado
-        } else if (_data === "destello") {
-            return destello
-        } else {
-            return amarillo
-        }
-    }
+ 
     const localizarIntereseccion = (_datos) => {
         let aux = JSON.parse(JSON.stringify(_datos))
         let pos = aux.position
@@ -523,9 +508,9 @@ export default function MapaUniversalView() {
 
     return (
         <>
-            {/* <Container maxWidth="lg" > */}
+         <div className='mapa-contenedor'>
             <Grid container spacing={0}>
-                <Grid item xs={12} md={10.5}>
+                <Grid item xs={12} md={10}>
                     <div >
                         <MapContainer center={centerMap} zoom={zoomMap} key={reloadMap} scrollWheelZoom={false} className={"leaflet-container-2"}>
                             <TileLayer
@@ -559,7 +544,7 @@ export default function MapaUniversalView() {
                         </MapContainer>
                     </div>
                 </Grid>
-                <Grid item xs={12} md={1.5}>
+                <Grid item xs={12} md={2}>
                     <div style={{ width: "100%", height: "90vh", overflowY: "scroll", display: "flex", flexDirection: "column", alignItems: "center" }}>
                         <h5 style={{ marginTop: 8, color: "#1976d2", fontSize: 25,textAlign:"center" }}>Controladores Activos</h5>
                         {controlers.map((item, index) => (
@@ -612,7 +597,7 @@ export default function MapaUniversalView() {
                     </div>
                 </Grid>
             </Grid>
-            {/* </Container> */}
+             </div>
 
         </>
     );
@@ -631,64 +616,8 @@ const semaforo = new L.Icon({
 
 });
 
-const destello = new L.Icon({
-    iconUrl: require('../assets/destello.png'),
-    iconRetinaUrl: require('../assets/destello.png'),
-    iconSize: [50,50], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
 
-});
-const rojo = new L.Icon({
-    iconUrl: require('../assets/rojo.png'),
-    iconRetinaUrl: require('../assets/rojo.png'),
-    iconSize: [50, 50], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
-});
 
-const verde = new L.Icon({
-    iconUrl: require('../assets/verde.png'),
-    iconRetinaUrl: require('../assets/verde.png'),
-    iconSize: [50,50], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
-});
-const amarillo = new L.Icon({
-    iconUrl: require('../assets/amarillo.png'),
-    iconRetinaUrl: require('../assets/amarillo.png'),
-    iconSize: [50, 50], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
-});
-const apagado = new L.Icon({
-    iconUrl: require('../assets/apagado.png'),
-    iconRetinaUrl: require('../assets/apagado.png'),
-    iconSize: [50, 50], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
-});
-const controlador_img = new L.Icon({
-    iconUrl: require('../assets/controler.png'),
-    iconRetinaUrl: require('../assets/controler.png'),
-    iconSize: [30, 30], // size of the icon
-    shadowSize: [60, 64], // size of the shadow
-    iconAnchor: [15, 30], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-});
-let semaforos4 = [
-    { nombre: "ricaurte" }, { nombre: "capulispamba" }, { nombre: "miraflores" }, { nombre: "centro historico" }, { nombre: "chordeleg" }, { nombre: "turi" }
-]
 let pasosDestello = [
     {
         duracion: 1,

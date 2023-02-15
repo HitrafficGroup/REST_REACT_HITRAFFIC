@@ -2,13 +2,12 @@ import CardInformation from '../components/CardInformation';
 import CardController from "../components/CardController";
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import React, { useState,useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import "../css/ResumenView.css";
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
+
 import CloudIcon from '@mui/icons-material/Cloud';
 import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
-import {getAllDataIp} from "../js/apiFunctions";
+
 import { db } from "../firebase/firebase-config";
 import { getDoc, doc } from "firebase/firestore";
 import { useSelector } from 'react-redux';
@@ -21,25 +20,34 @@ import TabPanel from '@mui/lab/TabPanel';
 export default function ResumenView() {
     const controlerState = useSelector(state => state.controlers);
     const [horarios,setHorarios] = useState([]);
+    const [horariosFinSemana,setHorariosFinSemana] = useState([]);
+    const [horariosFestivo,setHorariosFestivo] = useState([]);
+
     const todaInformacion = useRef();
     const [value, setValue] = useState('1');
-    const tiempo_amarillo = useRef();
-    const datos_amarillo_aux = useRef();
     const factor2 = 10
     const sf = 8.5
     const datosDePrueba = async() =>{
         
         let docRef = doc(db, "controladores", `${controlerState.mac}`);
         let document = await getDoc(docRef);
-        let datos = document.data()
+        todaInformacion.current =  document.data()
+        let horarios_ordinarios = calcularHorarios(todaInformacion.current.horarios.dia_ordinario)
+        let horarios_fin_semana = calcularHorarios(todaInformacion.current.horarios.fin_semana)
+        let horarios_festivos = calcularHorarios(todaInformacion.current.horarios.dia_festivo)
+        setHorarios(horarios_ordinarios)
+        setHorariosFinSemana(horarios_fin_semana)
+        setHorariosFestivo(horarios_festivos)
+    }
+
+
+    const calcularHorarios = (horario) =>{
+        let datos = todaInformacion.current
         let planes = datos.planes
         let fases = datos.fases
         let o_parametros = datos.otros_parametros
-        console.log(o_parametros)
+        let dias_ordenados = JSON.parse(JSON.stringify(horario))
         fase_amarilla.duracion = o_parametros.tiempo_amarillo_vehicular
-
-        todaInformacion.current = datos
-        let dias_ordenados = JSON.parse(JSON.stringify(datos.horarios.dia_ordinario))
         dias_ordenados.sort(function (a, b) {
             let a_aux = parseInt(a.horas)
             let a_aux2 = parseInt(a.minutos)
@@ -66,11 +74,11 @@ export default function ResumenView() {
             }
             plan_aux[i]["planes_pasos"] = fases_disponibles
         }
-        
         dias_ordenados_filtrados.map((item) =>{
             let aux = plan_aux.filter(data=> data.numPlan === `plan${item.plan}`)
             
             item['fases'] = aux[0].planes_pasos
+            return item
         })
         let aux_5 = JSON.parse(JSON.stringify(dias_ordenados_filtrados))
         
@@ -79,18 +87,22 @@ export default function ResumenView() {
                 (fases.filter(fase=> {
                    if( fase.faseNum === item.fase){
                     return fase
+                   }else{
+                    return null
                    }
                     
                 })[0])
+                
             )
             
             
             item['fases_grupo'] = aux_fases
+
+            return item
             
         })
-
-        //aqui agregamos la duracion de cada fase
-        for(let i = 0;i<aux_5.length;i++){
+          //aqui agregamos la duracion de cada fase
+          for(let i = 0;i<aux_5.length;i++){
             let fases_temp = aux_5[i].fases // estas son las fases que contienen la duracion
             //console.log(fases_temp)
             let data_modified = aux_5[i].fases_grupo.map(element => {
@@ -103,45 +115,44 @@ export default function ResumenView() {
                 }
                 return n_objet
             });
-            //console.log(data_modified)
+
             aux_5[i].fases_grupo = data_modified
-
       
-        //  console.log(aux_5[i])
         }
-        for(let i = 0;i<aux_5.length;i++){
-            let aux_data = []
-            let temp = aux_5[i].fases_grupo
+        // for(let i = 0;i<aux_5.length;i++){
+        //     let aux_data = []
+        //     let temp = aux_5[i].fases_grupo
       
-            for(let j = 0;j<temp.length;j++){
-                let fase_aux = temp[j]
-                aux_data.push(fase_aux)
-                if(j !== temp.length-1){
-                    aux_data.push(fase_amarilla)
-                }
-            }
-            aux_5[i].fases_grupo = aux_data
-        }
+        //     for(let j = 0;j<temp.length;j++){
+        //         let fase_aux = temp[j]
+        //         aux_data.push(fase_aux)
+        //         if(j !== temp.length-1){
+        //             aux_data.push(fase_amarilla)
+        //         }
+        //     }
+        //     aux_5[i].fases_grupo = aux_data
+        // }
 
-        console.log('con fases amarillas: ',aux_5)
-        setHorarios(aux_5)
-    
-        
+        return aux_5;
     }
     const handleChange = (event, newValue) => {
         setValue(newValue);
-      };
-
+    };
+    
     return (
         <>
-            <Container  >
-             
+            <Container maxWidth="md" >
                 <Grid container spacing={1}>
                 <Grid item xs={12}>
                 <div className='titulos-resumen'>
                     <h4>Resumen del Controlador</h4>
                 </div>
                 </Grid>
+                <Grid item xs={12} md={3} >   
+                        <Button variant="contained" color='verde2' fullWidth onClick={datosDePrueba} startIcon={<CloudIcon />}>
+                            LEER DATOS
+                        </Button>
+                    </Grid> 
                 <Grid item xs={12}>
                 <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -160,19 +171,75 @@ export default function ResumenView() {
                         <thead>
                         <tr>
                             <th id = "columna_0" scope="col">Hora</th>
-                            <th id = "columna_1" scope="col">Lunes</th>
-                            <th id = "columna_2" scope="col">Martes</th>
+                            <th id = "columna_1" scope="col">Lunes/Martes/Miercoles/Jueves/Viernes</th>
+                            {/* <th id = "columna_2" scope="col">Martes</th>
                             <th id = "columna_3" scope="col">Miercoles</th>
                             <th id = "columna_4" scope="col">Jueves</th>
-                            <th id = "columna_5" scope="col">Viernes</th>
+                            <th id = "columna_5" scope="col">Viernes</th> */}
                          
                         </tr>
                         {horarios.map((item,index)=>(
-                               <tr key={index} >
+                            <tr key={index} >
                                 <td><strong>{item.horas+':'+item.minutos}</strong></td>
                                 <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
                                 <div className='container-resumen-fases'>
                                     <div className='fase-resumen'>
+                                        {'G:     '}
+                                        <div className={`g-resumen r-n`}>
+                                            G1
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G2
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G3
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G4
+                                         </div>
+                                    </div>
+                                    {item.fases_grupo.map((item,index)=> (
+                                   <div key={index} className='fase-resumen'>
+                                        F{item.faseNum}
+                                        <div style={{display:'flex'}}>
+                                            <div className={`g-resumen r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                                {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                            </div>
+                                            <div className={`g-r-${item.grupos[0].colorDescripcion}`} >
+
+                                            </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
+                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                            {item.grupos[1].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-r-${item.grupos[1].colorDescripcion}`} >
+
+                                        </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
+                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                            {item.grupos[2].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-r-${item.grupos[2].colorDescripcion}`} >
+
+                                            </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
+                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                            {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-r-${item.grupos[1].colorDescripcion}`} >
+                                                    
+                                                </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                    </div>
+                                </td>
+                                {/* <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
+                                <div className='container-resumen-fases'>
+                                <div className='fase-resumen'>
                                         {'G:'+'  '}
                                         <div className={`g-resumen r-n`}>
                                             G1
@@ -187,20 +254,152 @@ export default function ResumenView() {
                                             G4
                                          </div>
                                     </div>
-                                {item.fases_grupo.map((item,index)=> (
-                                    <div key={index} className='fase-resumen'>
+                                    {item.fases_grupo.map((item,index)=> (
+                                   <div key={index} className='fase-resumen'>
                                         F{item.faseNum}
-                                        <div className={`g-resumen  r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                        <div style={{display:'flex'}}>
+                                            <div className={`g-resumen r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                                {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                            </div>
+                                            <div className={`g-r-${item.grupos[0].colorDescripcion}`} >
+
+                                            </div>
                                         </div>
+                                        <div style={{display:'flex'}}>
                                         <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[1].colorDescripcion}  {item.duracion}s
+                                            {item.grupos[1].colorDescripcion}  {item.duracion}s
                                         </div>
+                                        <div className={`g-r-${item.grupos[1].colorDescripcion}`} >
+
+                                        </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
                                         <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[2].colorDescripcion}  {item.duracion}s
+                                            {item.grupos[2].colorDescripcion}  {item.duracion}s
                                         </div>
+                                        <div className={`g-r-${item.grupos[2].colorDescripcion}`} >
+
+                                            </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
                                         <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                            {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-r-${item.grupos[1].colorDescripcion}`} >
+                                                    
+                                                </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                    </div>
+                                </td> */}
+                                {/* <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
+                                <div className='container-resumen-fases'>
+                                <div className='fase-resumen'>
+                                        {'G:'+'  '}
+                                        <div className={`g-resumen r-n`}>
+                                            G1
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G2
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G3
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G4
+                                         </div>
+                                    </div>
+                                    {item.fases_grupo.map((item,index)=> (
+                                   <div key={index} className='fase-resumen'>
+                                        F{item.faseNum}
+                                        <div style={{display:'flex'}}>
+                                            <div className={`g-resumen r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                                {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                            </div>
+                                            <div className={`g-r-${item.grupos[0].colorDescripcion}`} >
+
+                                            </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
+                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                            {item.grupos[1].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-r-${item.grupos[1].colorDescripcion}`} >
+
+                                        </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
+                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                            {item.grupos[2].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-r-${item.grupos[2].colorDescripcion}`} >
+
+                                            </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
+                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                            {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-r-${item.grupos[1].colorDescripcion}`} >
+                                                    
+                                                </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                    </div>
+                                </td> */}
+                                {/* <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
+                                <div className='container-resumen-fases'>
+                                <div className='fase-resumen'>
+                                        {'G:'+'  '}
+                                        <div className={`g-resumen r-n`}>
+                                            G1
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G2
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G3
+                                         </div>
+                                         <div className={`g-resumen r-n`}>
+                                            G4
+                                         </div>
+                                    </div>
+                                    {item.fases_grupo.map((item,index)=> (
+                                   <div key={index} className='fase-resumen'>
+                                        F{item.faseNum}
+                                        <div style={{display:'flex'}}>
+                                            <div className={`g-resumen r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                                {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                            </div>
+                                            <div className={`g-r-${item.grupos[0].colorDescripcion}`} >
+
+                                            </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
+                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                            {item.grupos[1].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-r-${item.grupos[1].colorDescripcion}`} >
+
+                                        </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
+                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                            {item.grupos[2].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-r-${item.grupos[2].colorDescripcion}`} >
+
+                                            </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
+                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                            {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-r-${item.grupos[1].colorDescripcion}`} >
+                                                    
+                                                </div>
                                         </div>
                                     </div>
                                 ))}
@@ -223,139 +422,52 @@ export default function ResumenView() {
                                             G4
                                          </div>
                                     </div>
-                               {item.fases_grupo.map((item,index)=> (
-                                    <div key={index} className='fase-resumen'>
+                                    {item.fases_grupo.map((item,index)=> (
+                                   <div key={index} className='fase-resumen'>
                                         F{item.faseNum}
-                                        <div className={`g-resumen  r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                        <div style={{display:'flex'}}>
+                                            <div className={`g-resumen r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                                {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                            </div>
+                                            <div className={`g-r-${item.grupos[0].colorDescripcion}`} >
+
+                                            </div>
                                         </div>
+                                        <div style={{display:'flex'}}>
                                         <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[1].colorDescripcion} {item.duracion}s
+                                            {item.grupos[1].colorDescripcion}  {item.duracion}s
                                         </div>
+                                        <div className={`g-r-${item.grupos[1].colorDescripcion}`} >
+
+                                        </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
                                         <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[2].colorDescripcion} {item.duracion}s
+                                            {item.grupos[2].colorDescripcion}  {item.duracion}s
                                         </div>
+                                        <div className={`g-r-${item.grupos[2].colorDescripcion}`} >
+
+                                            </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
                                         <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[3].colorDescripcion} {item.duracion}s
+                                            {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-r-${item.grupos[1].colorDescripcion}`} >
+                                                    
+                                                </div>
                                         </div>
                                     </div>
                                 ))}
                                     </div>
-                                </td>
-                                <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
-                                <div className='container-resumen-fases'>
-                                <div className='fase-resumen'>
-                                        {'G:'+'  '}
-                                        <div className={`g-resumen r-n`}>
-                                            G1
-                                         </div>
-                                         <div className={`g-resumen r-n`}>
-                                            G2
-                                         </div>
-                                         <div className={`g-resumen r-n`}>
-                                            G3
-                                         </div>
-                                         <div className={`g-resumen r-n`}>
-                                            G4
-                                         </div>
-                                    </div>
-                               {item.fases_grupo.map((item,index)=> (
-                                    <div key={index} className='fase-resumen'>
-                                        F{item.faseNum}
-                                        <div className={`g-resumen r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                            {item.grupos[0].colorDescripcion}  {item.duracion}s
-                                        </div>
-                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[1].colorDescripcion}  {item.duracion}s
-                                        </div>
-                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[2].colorDescripcion}  {item.duracion}s
-                                        </div>
-                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[3].colorDescripcion}  {item.duracion}s
-                                        </div>
-                                    </div>
-                                ))}
-                                    </div>
-                                </td>
-                                <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
-                                <div className='container-resumen-fases'>
-                                <div className='fase-resumen'>
-                                        {'G:'+'  '}
-                                        <div className={`g-resumen r-n`}>
-                                            G1
-                                         </div>
-                                         <div className={`g-resumen r-n`}>
-                                            G2
-                                         </div>
-                                         <div className={`g-resumen r-n`}>
-                                            G3
-                                         </div>
-                                         <div className={`g-resumen r-n`}>
-                                            G4
-                                         </div>
-                                    </div>
-                               {item.fases_grupo.map((item,index)=> (
-                                    <div key={index} className='fase-resumen'>
-                                        F{item.faseNum}
-                                        <div className={`g-resumen r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
-                                        </div>
-                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[1].colorDescripcion}  {item.duracion}s
-                                        </div>
-                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[2].colorDescripcion}  {item.duracion}s
-                                        </div>
-                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[3].colorDescripcion}  {item.duracion}s
-                                        </div>
-                                    </div>
-                                ))}
-                                    </div>
-                                </td>
-                                <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
-                                <div className='container-resumen-fases'>
-                                <div className='fase-resumen'>
-                                        {'G:'+'  '}
-                                        <div className={`g-resumen r-n`}>
-                                            G1
-                                         </div>
-                                         <div className={`g-resumen r-n`}>
-                                            G2
-                                         </div>
-                                         <div className={`g-resumen r-n`}>
-                                            G3
-                                         </div>
-                                         <div className={`g-resumen r-n`}>
-                                            G4
-                                         </div>
-                                    </div>
-                               {item.fases_grupo.map((item,index)=> (
-                                    <div key={index} className='fase-resumen'>
-                                        F{item.faseNum}
-                                        <div className={`g-resumen r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
-                                        </div>
-                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[1].colorDescripcion}  {item.duracion}s
-                                        </div>
-                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[2].colorDescripcion}  {item.duracion}s
-                                        </div>
-                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[3].colorDescripcion}  {item.duracion}s
-                                        </div>
-                                    </div>
-                                ))}
-                                    </div>
-                                </td>
+                                </td> */}
                            
                             </tr>
                             ))
                         }
                         </thead>
                     </table>
+                     
                 </div>
                     </TabPanel>
                     <TabPanel value="2">
@@ -367,18 +479,18 @@ export default function ResumenView() {
                         <thead>
                         <tr>
                             <th id = "columna_0" scope="col">Hora</th>
-                            <th id = "columna_1" scope="col">Sabado</th>
-                            <th id = "columna_2" scope="col">Domingo</th>
+                            <th id = "columna_1" scope="col">Sabado/Domingo</th>
+                            {/* <th id = "columna_2" scope="col">Domingo</th> */}
                         
                          
                         </tr>
-                        {horarios.map((item,index)=>(
+                        {horariosFinSemana.map((item,index)=>(
                                <tr key={index} >
                                 <td><strong>{item.horas+':'+item.minutos}</strong></td>
                                 <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
                                 <div className='container-resumen-fases'>
                                     <div className='fase-resumen'>
-                                        {'G:'+'  '}
+                                    {'G:     '}
                                         <div className={`g-resumen r-n`}>
                                             G1
                                          </div>
@@ -392,26 +504,46 @@ export default function ResumenView() {
                                             G4
                                          </div>
                                     </div>
-                                {item.fases_grupo.map((item,index)=> (
-                                    <div key={index} className='fase-resumen'>
+                                    {item.fases_grupo.map((item,index)=> (
+                                   <div key={index} className='fase-resumen'>
                                         F{item.faseNum}
-                                        <div className={`g-resumen  r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                        <div style={{display:'flex'}}>
+                                            <div className={`g-resumen r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
+                                                {item.grupos[0].colorDescripcion}  {item.duracion}s
+                                            </div>
+                                            <div className={`g-r-${item.grupos[0].colorDescripcion}`} >
+
+                                            </div>
                                         </div>
+                                        <div style={{display:'flex'}}>
                                         <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[1].colorDescripcion}  {item.duracion}s
+                                            {item.grupos[1].colorDescripcion}  {item.duracion}s
                                         </div>
+                                        <div className={`g-r-${item.grupos[1].colorDescripcion}`} >
+
+                                        </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
                                         <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[2].colorDescripcion}  {item.duracion}s
+                                            {item.grupos[2].colorDescripcion}  {item.duracion}s
                                         </div>
+                                        <div className={`g-r-${item.grupos[2].colorDescripcion}`} >
+
+                                            </div>
+                                        </div>
+                                        <div style={{display:'flex'}}>
                                         <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                            {item.grupos[3].colorDescripcion}  {item.duracion}s
+                                        </div>
+                                        <div className={`g-r-${item.grupos[3].colorDescripcion}`} >
+                                                    
+                                                </div>
                                         </div>
                                     </div>
                                 ))}
                                     </div>
                                 </td>
-                                <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
+                                {/* <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
                                 <div className='container-resumen-fases'>
                                 <div className='fase-resumen'>
                                         {'G:'+'  '}
@@ -446,7 +578,7 @@ export default function ResumenView() {
                                     </div>
                                 ))}
                                     </div>
-                                </td>
+                                </td> */}
                         
                            
                             </tr>
@@ -465,18 +597,15 @@ export default function ResumenView() {
                         <thead>
                         <tr>
                             <th id = "columna_0" scope="col">Hora</th>
-                            <th id = "columna_1" scope="col">Sabado</th>
-                            <th id = "columna_2" scope="col">Domingo</th>
-                        
-                         
+                            <th id = "columna_1" scope="col">Dia Festivo</th>
                         </tr>
-                        {horarios.map((item,index)=>(
+                        {horariosFestivo.map((item,index)=>(
                                <tr key={index} >
                                 <td><strong>{item.horas+':'+item.minutos}</strong></td>
                                 <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
                                 <div className='container-resumen-fases'>
                                     <div className='fase-resumen'>
-                                        {'G:'+'  '}
+                                    {'G:     '}
                                         <div className={`g-resumen r-n`}>
                                             G1
                                          </div>
@@ -509,44 +638,7 @@ export default function ResumenView() {
                                 ))}
                                     </div>
                                 </td>
-                                <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
-                                <div className='container-resumen-fases'>
-                                <div className='fase-resumen'>
-                                        {'G:'+'  '}
-                                        <div className={`g-resumen r-n`}>
-                                            G1
-                                         </div>
-                                         <div className={`g-resumen r-n`}>
-                                            G2
-                                         </div>
-                                         <div className={`g-resumen r-n`}>
-                                            G3
-                                         </div>
-                                         <div className={`g-resumen r-n`}>
-                                            G4
-                                         </div>
-                                    </div>
-                               {item.fases_grupo.map((item,index)=> (
-                                    <div key={index} className='fase-resumen'>
-                                        F{item.faseNum}
-                                        <div className={`g-resumen  r-${item.grupos[0].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[0].colorDescripcion}  {item.duracion}s
-                                        </div>
-                                        <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[1].colorDescripcion} {item.duracion}s
-                                        </div>
-                                        <div className={`g-resumen r-${item.grupos[2].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[2].colorDescripcion} {item.duracion}s
-                                        </div>
-                                        <div className={`g-resumen r-${item.grupos[3].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                        {item.grupos[3].colorDescripcion} {item.duracion}s
-                                        </div>
-                                    </div>
-                                ))}
-                                    </div>
-                                </td>
-                        
-                           
+                              
                             </tr>
                             ))
                         }
@@ -564,16 +656,16 @@ export default function ResumenView() {
                     <Grid item xs={12}>
                         <div className='contenedor-modos'>
                            <div className='disposicion'>
-                                <p style={{margin:0}}>Modo Tiempo Fijo: </p> <div className='fijo-r'></div>
+                                <p style={{margin:0}}>Tiempo Fijo: </p> <div className='fijo-r'></div>
                             </div> 
                             <div className='disposicion'>
-                                <p style={{margin:0}}>Modo Pulsante: </p> <div className='pulsante-r'></div>
+                                <p style={{margin:0}}>Pulsante: </p> <div className='pulsante-r'></div>
                             </div> 
                             <div className='disposicion'>
-                                <p style={{margin:0}}>Modo Destello: </p> <div className='destello-r'></div>
+                                <p style={{margin:0}}>Destello: </p> <div className='destello-r'></div>
                             </div> 
                             <div className='disposicion'>
-                                <p style={{margin:0}}>Modo Todo en Rojo: </p> <div className='rojo-r'></div>
+                                <p style={{margin:0}}>Todo en Rojo: </p> <div className='rojo-r'></div>
                             </div> 
                             <div className='disposicion'>
                                 <p style={{margin:0}}>Apagado: </p> <div className='apagado-r'></div>
@@ -581,7 +673,7 @@ export default function ResumenView() {
                         </div>
                     </Grid>
                     
-                    <Grid item xs={12}>   
+                    {/* <Grid item xs={12}>   
                         <h5> Fases en Ejecucion</h5>
                     </Grid>
                     <Grid item xs={12}> 
@@ -636,12 +728,9 @@ export default function ResumenView() {
                             </Tbody>
                         </Table>
                     </Grid>
-                    <Grid item xs={12} md={4} >   
-                        <Button variant="outlined" color='verde2' fullWidth onClick={datosDePrueba} startIcon={<CloudIcon />}>
-                            LEER DATOS
-                        </Button>
-                    </Grid>
+                    */}
                 
+        
             
                     
                     <Grid item xs={12}>   
@@ -651,6 +740,8 @@ export default function ResumenView() {
                     </Grid>
                 </Grid>
             </Container>
+                <CardController />
+            <CardInformation />
         </>
     );
 
@@ -665,3 +756,4 @@ grupos:[
 {id: 'g4_fase_6', grupoNum: 4, color: 1, faseNum: 6, colorDescripcion: ''}
 ]
 }
+

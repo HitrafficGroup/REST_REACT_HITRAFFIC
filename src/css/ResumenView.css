@@ -114,7 +114,36 @@
     justify-content: center;
     align-items: center;
     margin-bottom: 9px;
-    border: 2px solid black;
+    border-top: 2px solid black;
+    border-left: 2px solid black;
+    border-bottom: 2px solid black;
+}
+.g-r-rojo{
+    height: 28px;
+    display: flex;
+    color: white;
+    background-color: #CD6155;
+    justify-content: center;
+    align-items: center;
+    width: 28px;
+    margin-bottom: 9px;
+    border-top: 2px solid black;
+    border-right: 2px solid black;
+    border-bottom: 2px solid black;
+}
+.g-r-verde{
+    height: 28px;
+    width: 28px;
+    display: flex;
+    color: white;
+    background-color: #F4D03F;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 9px;
+    border-top: 2px solid black;
+    border-right: 2px solid black;
+    border-left: 2px solid black;
+    border-bottom: 2px solid black;
 }
 @media only screen and (max-width: 1260px) {
     .contenedor-modos{
