@@ -17,7 +17,7 @@ export default function PruebasMenu(){
     }
     return(
         <>
-            <ListItemButton onClick={() =>Changeview('/david-diaz/pruebas')}>
+            <ListItemButton onClick={() =>Changeview('/pruebas')}>
                         <ListItemIcon>
                             <BugReportIcon fontSize='large'  />
                         </ListItemIcon>

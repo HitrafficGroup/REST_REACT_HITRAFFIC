@@ -17,7 +17,7 @@ export default function SyncMenu(){
     }
     return(
         <>
-            <ListItemButton onClick={() =>Changeview('/david-diaz/sincronizar-tiempos')}>
+            <ListItemButton onClick={() =>Changeview('/sincronizar-tiempos')}>
                         <ListItemIcon>
                             <SyncIcon fontSize='large' />
                         </ListItemIcon>

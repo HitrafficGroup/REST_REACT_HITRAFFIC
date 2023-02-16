@@ -17,6 +17,8 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import { db } from "../firebase/firebase-config";
+import { getDoc, doc } from "firebase/firestore";
 import Swal from 'sweetalert2';
 
 function not(a, b) {
@@ -61,7 +63,7 @@ export default function ClonacionView() {
       setRight([])
       let ips = await getIpsFromRestApi();
       console.log(ips)
-      let ips_online = ips['Ips_disponibles'].filter(item => item.status === "online")
+      let ips_online = ips['Ips_disponibles']
       let ips_disponibles = ips_online.filter(item => item.mac !== controlerState.mac)
       let ips_formateadas = ips_disponibles.map((item, index) => {
         item["index"] = index
@@ -116,7 +118,15 @@ export default function ClonacionView() {
       console.log(destino_format)
       jasonData["lista_controladores"] = destino_format;
       console.log(jasonData)
-      await setClonarControlador(jasonData)
+      let docRef = doc(db, "controladores", `${controlerState.mac}`);
+      let document = await getDoc(docRef);
+      let planes = document.data().planes
+      let horarios = document.data().horarios
+      let fases = document.data().fases
+      console.log(planes)
+      console.log(fases)
+      console.log(horarios)
+      //await setClonarControlador(jasonData)
       setDeshabilitar2(false);
     }else{
         Swal.fire({

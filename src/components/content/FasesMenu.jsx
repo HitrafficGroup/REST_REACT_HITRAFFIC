@@ -16,7 +16,7 @@ export default function FasesMenu(){
     }
     return(
         <>
-            <ListItemButton onClick={() =>Changeview('/david-diaz/fases')}>
+            <ListItemButton onClick={() =>Changeview('/fases')}>
                         <ListItemIcon>
                             <LayersIcon fontSize='large'  />
                         </ListItemIcon>

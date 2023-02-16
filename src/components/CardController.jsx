@@ -20,7 +20,7 @@ export default function CardController() {
     const controlerState = useSelector(state => state.controlers)
     const navigate = useNavigate();
     const Changeview = () => {
-        navigate('/david-diaz/home');
+        navigate('/home');
     }
 
     return (

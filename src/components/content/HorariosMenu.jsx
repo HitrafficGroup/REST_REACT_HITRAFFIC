@@ -18,7 +18,7 @@ export default function HorariosMenu(){
     }
     return(
         <>
-            <ListItemButton onClick={() =>Changeview('/david-diaz/horarios')}>
+            <ListItemButton onClick={() =>Changeview('/horarios')}>
                         <ListItemIcon>
                             <AccessTimeIcon fontSize='large'  />
                         </ListItemIcon>

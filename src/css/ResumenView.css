@@ -95,6 +95,9 @@
 .r-verde{
     background-color: #196F3D;
 }
+.r-verde1{
+    background-color: #196F3D;
+}
 .r-destello{
     background-color: #85C1E9;
 }
@@ -136,13 +139,27 @@
     width: 28px;
     display: flex;
     color: white;
-    background-color: #F4D03F;
+    background-color:  #196F3D;
     justify-content: center;
     align-items: center;
     margin-bottom: 9px;
     border-top: 2px solid black;
     border-right: 2px solid black;
-    border-left: 2px solid black;
+
+    border-bottom: 2px solid black;
+}
+
+.g-r-verde1{
+    height: 28px;
+    width: 28px;
+    display: flex;
+    color: white;
+    background-color: #196F3D;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 9px;
+    border-top: 2px solid black;
+    border-right: 2px solid black;
     border-bottom: 2px solid black;
 }
 @media only screen and (max-width: 1260px) {

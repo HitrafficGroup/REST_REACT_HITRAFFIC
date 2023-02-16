@@ -25,6 +25,7 @@ export default function ResumenView() {
 
     const todaInformacion = useRef();
     const [value, setValue] = useState('1');
+    const amarillo = useRef(0);
     const factor2 = 10
     const sf = 8.5
     const datosDePrueba = async() =>{
@@ -47,7 +48,8 @@ export default function ResumenView() {
         let fases = datos.fases
         let o_parametros = datos.otros_parametros
         let dias_ordenados = JSON.parse(JSON.stringify(horario))
-        fase_amarilla.duracion = o_parametros.tiempo_amarillo_vehicular
+        let t_amarillo = o_parametros.tiempo_amarillo_vehicular
+        amarillo.current =  t_amarillo
         dias_ordenados.sort(function (a, b) {
             let a_aux = parseInt(a.horas)
             let a_aux2 = parseInt(a.minutos)
@@ -92,9 +94,9 @@ export default function ResumenView() {
                    }
                     
                 })[0])
-                
+                  
             )
-            
+    
             
             item['fases_grupo'] = aux_fases
 
@@ -132,8 +134,40 @@ export default function ResumenView() {
         //     }
         //     aux_5[i].fases_grupo = aux_data
         // }
+        
 
+        // for(let i =0 ;i<aux_5.length;i++){
+        //     let temp ;
+        //     let color ;
+        //     let aux_5_copy = JSON.parse(JSON.stringify(aux_5))
+        //     let aux_fases_grupos = aux_5[i].fases_grupo
+        //     console.log('nuevo horario')
+        //     for(let j = 0;j<aux_fases_grupos.length;j++){
+        //         let fase =  aux_fases_grupos[j]
+        //         for(let g=0; g<4;g++){
+        //             color = fase.grupos[g].colorDescripcion
+        //             if(color === 'verde'){
+        //                 if(color === temp){
+        //                     console.log('se repite fase')
+        //                     console.log(fase.grupos[g])
+        //                     let dato_repetido = aux_fases_grupos[j-1].grupos[g]
+        //                     let temp = JSON.parse(JSON.stringify(dato_repetido))
+        //                     temp.colorDescripcion = 'verde1'
+        //                     aux_fases_grupos[j-1].grupos[g] = temp
+        //                 }
+        //             }
+        //         }
+        //         temp = fase.grupos[1].colorDescripcion
+        //     }
+        // }
+        for(let i = 0;i<aux_5.length;i++){
+            console.log(aux_5[i])
+            let duracion_ciclo = aux_5[i].fases.reduce((a, b) => a + b.duracion, 0);
+            aux_5[i]['duracion_ciclo'] =  duracion_ciclo
+        }
+        console.log(aux_5)
         return aux_5;
+        
     }
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -172,16 +206,13 @@ export default function ResumenView() {
                         <tr>
                             <th id = "columna_0" scope="col">Hora</th>
                             <th id = "columna_1" scope="col">Lunes/Martes/Miercoles/Jueves/Viernes</th>
-                            {/* <th id = "columna_2" scope="col">Martes</th>
-                            <th id = "columna_3" scope="col">Miercoles</th>
-                            <th id = "columna_4" scope="col">Jueves</th>
-                            <th id = "columna_5" scope="col">Viernes</th> */}
+                            
                          
                         </tr>
                         {horarios.map((item,index)=>(
                             <tr key={index} >
                                 <td><strong>{item.horas+':'+item.minutos}</strong></td>
-                                <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
+                                <td className={`mod${item.mod}`}><strong>Plan {item.plan} tiempo-ciclo: 45s</strong>
                                 <div className='container-resumen-fases'>
                                     <div className='fase-resumen'>
                                         {'G:     '}
@@ -487,7 +518,8 @@ export default function ResumenView() {
                         {horariosFinSemana.map((item,index)=>(
                                <tr key={index} >
                                 <td><strong>{item.horas+':'+item.minutos}</strong></td>
-                                <td className={`mod${item.mod}`}><strong>Plan {item.plan}</strong>
+                                <td className={`mod${item.mod}`}>
+                                    <strong>Plan {item.plan}</strong><p> <strong>tiempo total del ciclo:</strong> {item.duracion_ciclo} <strong>tiempo en amarillo:</strong> {amarillo.current}s</p> 
                                 <div className='container-resumen-fases'>
                                     <div className='fase-resumen'>
                                     {'G:     '}
@@ -517,7 +549,10 @@ export default function ResumenView() {
                                         </div>
                                         <div style={{display:'flex'}}>
                                         <div className={`g-resumen r-${item.grupos[1].colorDescripcion}`} style={{width:factor2+(item.duracion*sf)}}>
-                                            {item.grupos[1].colorDescripcion}  {item.duracion}s
+                                            {item.grupos[1].colorDescripcion} 
+                                                <div>
+                                                {item.duracion}s
+                                                </div>
                                         </div>
                                         <div className={`g-r-${item.grupos[1].colorDescripcion}`} >
 
