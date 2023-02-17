@@ -227,7 +227,7 @@ export default function PlanesView() {
                 newData['mac'] = controlerState.mac
                 newData['num_plan'] = returnNumPlan(selectPlan)
                 setCambio(false);
-     
+                console.log(newData)
                 await setPlanesFromRestApi(newData);
                 console.log(planes)
                 cargarPlanesFirebase(planes);
@@ -239,13 +239,13 @@ export default function PlanesView() {
     }
    }
    const returnNumPlan = (data) =>{
+    console.log('nose que hace esta funcion:',data)
     for(let i = 1 ; i<16;i++){
         var condition = 'plan'+i
         if(data === condition){
             return i
         }
     }
-
    }
 
    

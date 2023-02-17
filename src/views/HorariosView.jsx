@@ -464,7 +464,6 @@ export default function HorariosView() {
         newObject['ip'] = controlerState.ip
         newObject['mac'] = controlerState.mac
         newObject['num_horario'] = formatearTipoDia(tipoDia)
-        
         aux_ObjHorarios[`${tipoDia}`] = horarios
         setObjHorarios(aux_ObjHorarios)
         await postHorariosFromRestApi(newObject);
