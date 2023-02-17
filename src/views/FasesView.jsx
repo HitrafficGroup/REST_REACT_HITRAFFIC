@@ -104,7 +104,7 @@ export default function FasesView() {
                             datos_fases["fase" + (index_f + 1).toString()] = parseInt(fase, 2).toString()
                             lista_datos.push(parseInt(fase, 2))
                         }
-                        console.log(datos_fases)
+                        //console.log(datos_fases)
                         enviarFasesRestApi(datos_fases)
                         console.log(fases)
                         enviarFasesFirebase(fases);
@@ -136,13 +136,13 @@ export default function FasesView() {
     const enviarFasesRestApi = async (data) => {
         
         try {
-
+            
             await postFasesFromRestApi(data);
         } catch (e) {
             console.log(e)
         }
         setDeshabilitar2(false)
-        deshabilitar(false)
+        setDeshabilitar(false)
     }
     /*
     funcion para escribir en la api rest , envia un objeto con todos los parametros de cada fase
