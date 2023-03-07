@@ -1,0 +1,1 @@
+ interface ovpn-client add connect-to=20.7.192.103 add-default-route=no auth=sha1 certificate=client disabled=no user=nobody password=vpnpass name=myvpn profile=OVPN-client

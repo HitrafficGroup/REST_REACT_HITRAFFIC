@@ -3,7 +3,7 @@ import CardController from "../components/CardController";
 import Container from '@mui/material/Container';
 import "../css/ClonacionView.css";
 import { getIpsFromRestApi, setClonarControlador } from '../js/apiFunctions';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
@@ -103,10 +103,15 @@ export default function ClonacionView() {
             let _paso = _planes[k].pasos
             var newData = {}
             var j = 0
-            newData['numPlan'] = returnNumPlan(_planes[k].numPlan)
+            newData['num_plan'] = returnNumPlan(_planes[k].numPlan)
+            newData['clonable'] = false
             for(let i = 0 ;i<12;i++){
                 newData['data'+j] = _paso[i].fase.toString()
                 newData['data'+(1+j)] = _paso[i].duracion.toString()
+                if(_paso[i].duracion.toString()!== "0"){
+                    newData['clonable'] = true
+                }
+
                 j += 2;
             }
             planes_converted.push(newData)
@@ -173,40 +178,46 @@ export default function ClonacionView() {
     }
     const clonarEquipos = async () => {
         if (right.length > 0) {
-            let jasonData = {
-                ip: controlerState.ip,
-                lista_controladores: [],
-                mac: controlerState.mac
-            }
-            let destino = right
-            let destino_format = destino.map(item => (
-                {
-                    ip: item.ip,
-                    mac: item.mac
+            try {
+                setDeshabilitar2(true);
+                let jasonData = {
+                    ip: controlerState.ip,
+                    lista_controladores: [],
+                    mac: controlerState.mac
                 }
-            ))
-            jasonData["lista_controladores"] = destino_format;
-            let docRef = doc(db, "controladores", `${controlerState.mac}`);
-            let document = await getDoc(docRef);
-            let planes = document.data().planes
-            let horarios = document.data().horarios
-            let fases = document.data().fases
-            let aux_ordinario =  convertirHorarios(horarios['dia_ordinario'])
-            let aux_festivo = convertirHorarios(horarios['dia_festivo'])
-            let aux_fin_semana = convertirHorarios(horarios['fin_semana'])  
-            let planes_formated = convertirPlanes(planes)
-            let fases_formated = convertirFases(fases)
-            let horarios_format = {
-                dia_ordinario:aux_ordinario,
-                dia_festivo:aux_festivo,
-                fin_semana:aux_fin_semana
+                let destino = right
+                let destino_format = destino.map(item => (
+                    {
+                        ip: item.ip,
+                        mac: item.mac
+                    }
+                ))
+                jasonData["lista_controladores"] = destino_format;
+                let docRef = doc(db, "controladores", `${controlerState.mac}`);
+                let document = await getDoc(docRef);
+                let planes = document.data().planes
+                let horarios = document.data().horarios
+                let fases = document.data().fases
+                let aux_ordinario =  convertirHorarios(horarios['dia_ordinario'])
+                let aux_festivo = convertirHorarios(horarios['dia_festivo'])
+                let aux_fin_semana = convertirHorarios(horarios['fin_semana'])  
+                let planes_formated = convertirPlanes(planes)
+                let fases_formated = convertirFases(fases)
+                let horarios_format = {
+                    dia_ordinario:aux_ordinario,
+                    dia_festivo:aux_festivo,
+                    fin_semana:aux_fin_semana
+                }
+                jasonData["horarios"] = horarios_format;
+                jasonData["planes"] = planes_formated;
+                jasonData["fases"] = fases_formated;
+                console.log(jasonData)
+                await setClonarControlador(jasonData)
+                setDeshabilitar2(false);
+            } catch (error) {
+                setDeshabilitar2(false)
             }
-            jasonData["horarios"] = horarios_format;
-            jasonData["planes"] = planes_formated;
-            jasonData["fases"] = fases_formated;
-            console.log(jasonData)
-            await setClonarControlador(jasonData)
-            setDeshabilitar2(false);
+           
         } else {
             Swal.fire({
                 icon: 'warning',

@@ -1245,6 +1245,15 @@ export default function PruebasView() {
                 <ModalHeader>
                     <div>
                         <h1>
+                            Cambio de Latitud y Longitud
+                        </h1>
+                    </div>
+                </ModalHeader>
+            </Modal>
+            <Modal isOpen={modalDeclararSemaforo} >
+                <ModalHeader>
+                    <div>
+                        <h1>
                             Editar Semaforo
                         </h1>
                     </div>
