@@ -18,8 +18,9 @@ import Divider from '@mui/material/Divider';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { db } from "../firebase/firebase-config";
-import { getDoc, doc } from "firebase/firestore";
+import { getDoc, doc,updateDoc } from "firebase/firestore";
 import Swal from 'sweetalert2';
+
 
 function not(a, b) {
     return a.filter((value) => b.indexOf(value) === -1);
@@ -43,7 +44,6 @@ export default function ClonacionView() {
     const [deshabilitar2, setDeshabilitar2] = React.useState(false);
     const leftChecked = intersection(checked, left);
     const rightChecked = intersection(checked, right);
-
     const handleToggle = (value) => () => {
         const currentIndex = checked.indexOf(value);
         const newChecked = [...checked];
@@ -96,7 +96,7 @@ export default function ClonacionView() {
         setRight(not(right, rightChecked));
         setChecked(not(checked, rightChecked));
     };
-
+   
     const convertirPlanes = (_planes)=>{
         let planes_converted = []
         for (let k =0; k<_planes.length;k++){
@@ -176,10 +176,18 @@ export default function ClonacionView() {
         }
         return datos_fases
     }
+    const actualizarControlador = async(ref,horarios,planes,fases) =>{
+        await updateDoc(ref, {
+            planes: planes,
+            horarios:horarios,
+            fases:fases
+            })
+    }
     const clonarEquipos = async () => {
         if (right.length > 0) {
             try {
                 setDeshabilitar2(true);
+
                 let jasonData = {
                     ip: controlerState.ip,
                     lista_controladores: [],
@@ -211,8 +219,16 @@ export default function ClonacionView() {
                 jasonData["horarios"] = horarios_format;
                 jasonData["planes"] = planes_formated;
                 jasonData["fases"] = fases_formated;
-                console.log(jasonData)
+                //console.log(jasonData)
+                console.log(destino_format)
+               
                 await setClonarControlador(jasonData)
+                destino_format.forEach(item => {
+
+                    let controler_ref = doc(db, "controladores",item.mac);
+                    actualizarControlador(controler_ref,horarios,planes,fases)  
+                })
+ 
                 setDeshabilitar2(false);
             } catch (error) {
                 setDeshabilitar2(false)

@@ -24,6 +24,7 @@ import GruposMenu from './content/GruposMenu.jsx'
 import { useSelector } from 'react-redux';
 import "../css/ButtonAppBar.css"
 import PruebasMenu from './content/PruebasMenu';
+import ControlersMenu from './content/ControlersMenu';
 export default function ButtonAppBar() {
 
   const [state, setState] = React.useState({
@@ -89,7 +90,7 @@ export default function ButtonAppBar() {
       visibility: true,
       key: 100
     }, {
-      child: <PruebasMenu />,
+      child: <ControlersMenu />,
       visibility: true,
       key: 101
     },
