@@ -91,29 +91,27 @@ TablePaginationActions.propTypes = {
     rowsPerPage: PropTypes.number.isRequired,
 };
 
-function createData(name, calories, fat) {
-    return { name, calories, fat };
-}
+
 const dataTest=[
-    {name:'nombre 1',ip:'192.168.1.2',mac:'h3:ft:a2:l2',provincia:'azuay',estado:true},
-    {name:'nombre 2',ip:'192.168.1.3',mac:'f3:f1:a2:t2',provincia:'loja',estado:false},
-    {name:'nombre 3',ip:'192.168.1.4',mac:'gf3:12:fw:36',provincia:'pichincha',estado:false},
-    {name:'nombre 4',ip:'192.168.1.5',mac:'f3:f1:a2:32',provincia:'guayas',estado:false},
-    {name:'nombre 5',ip:'192.168.1.6',mac:'l3:fa1:a2:37',provincia:'cotopaxi',estado:true},
-    {name:'nombre 6',ip:'192.168.1.7',mac:'f3:m1:a2:367',provincia:'el oro',estado:true},
-    {name:'nombre 7',ip:'192.168.1.8',mac:'13:f1:a2:39',provincia:'zamora chinchipe',estado:true},
-    {name:'nombre 8',ip:'192.168.1.9',mac:'f3:f1:a2:32',provincia:'azuay',estado:true},
-    {name:'nombre 9',ip:'192.168.1.10',mac:'m3:f1:a2:88',provincia:'cañar',estado:false},
-    {name:'nombre 10',ip:'192.168.1.11',mac:'n3:f1:s2:32',provincia:'loja',estado:false},
-    {name:'nombre 11',ip:'192.168.1.12',mac:'f3:f1:a2:22',provincia:'azuay',estado:true}
+    {name:'nombre 1',ip:'192.168.1.2',mac:'h3:ft:a2:l2',canton:'cuenca',estado:true},
+    {name:'nombre 2',ip:'192.168.1.3',mac:'f3:f1:a2:t2',canton:'loja',estado:false},
+    {name:'nombre 3',ip:'192.168.1.4',mac:'gf3:12:fw:36',canton:'quito',estado:false},
+    {name:'nombre 4',ip:'192.168.1.5',mac:'f3:f1:a2:32',canton:'guayaquil',estado:false},
+    {name:'nombre 5',ip:'192.168.1.6',mac:'l3:fa1:a2:37',canton:'cotopaxi',estado:true},
+    {name:'nombre 6',ip:'192.168.1.7',mac:'f3:m1:a2:367',canton:'pasaje',estado:true},
+    {name:'nombre 7',ip:'192.168.1.8',mac:'13:f1:a2:39',canton:'zamora chinchipe',estado:true},
+    {name:'nombre 8',ip:'192.168.1.9',mac:'f3:f1:a2:32',canton:'azuay',estado:true},
+    {name:'nombre 9',ip:'192.168.1.10',mac:'m3:f1:a2:88',canton:'cañar',estado:false},
+    {name:'nombre 10',ip:'192.168.1.11',mac:'n3:f1:s2:32',canton:'loja',estado:false},
+    {name:'nombre 11',ip:'192.168.1.12',mac:'f3:f1:a2:22',canton:'azuay',estado:true}
 ]
-const top100Films = [
-    { title: 'The Shawshank Redemption', year: 1994 },
-    { title: 'The Godfather', year: 1972 },
-    { title: 'The Godfather: Part II', year: 1974 },
-    { title: 'The Dark Knight', year: 2008 },
-    { title: '12 Angry Men', year: 1957 },
-    { title: "Schindler's List", year: 1993 }
+const cantones = [
+    { canton: 'Loja', year: 1994 },
+    { canton: 'Pasaje', year: 1972 },
+    { canton: 'Zamora', year: 1974 },
+    { canton: 'Cuenca', year: 2008 },
+    { canton: 'Cañar', year: 1957 },
+    { canton: "La Troncal", year: 1993 }
 ]
 export default function ControlersView() {
     const [page, setPage] = useState(0);
@@ -140,18 +138,18 @@ export default function ControlersView() {
                             <div className="header">
                                 <p className="nombre-card">Filtro</p>
                             </div>
-                            <div className="card-body">
+                            <div className="card-body-controler">
                                    
                                     <Grid container >
                                         <Grid item xs={12} md={6}>
                                             <Autocomplete
                                                 id="size-small-outlined"
                                                 size="small"
-                                                options={top100Films}
-                                                getOptionLabel={(option) => option.title}
-                                                defaultValue={top100Films[13]}
+                                                options={cantones}
+                                                getOptionLabel={(option) => option.canton}
+                                                
                                                 renderInput={(params) => (
-                                                <TextField {...params} label="Provincia" placeholder="Escoga la Provincia" />
+                                                <TextField {...params} label="Canton" placeholder="Escoga el Canton" />
                                                 )}
                                             />
                                         </Grid>
@@ -172,7 +170,7 @@ export default function ControlersView() {
                             <div className="header">
                                 <p className="nombre-card">Activos</p>
                             </div>
-                            <div className="card-body-i">
+                            <div className="card-body-indicador">
                                     <h5 className="number-indicador">10</h5> <PowerIcon fontSize="large" sx={{color:"#A3E4D7"}}/>
                             </div>
                         </div>
@@ -182,7 +180,7 @@ export default function ControlersView() {
                                 <div className="header">
                                     <p className="nombre-card">Inactivos</p>
                                 </div>
-                                <div className="card-body-i">
+                                <div className="card-body-indicador">
                                 <h5 className="number-indicador">2</h5> <PowerOffIcon fontSize="large" sx={{color:"#F5B7B1"}}/>
                                 </div>
                             </div>
@@ -219,7 +217,7 @@ export default function ControlersView() {
                                                     {row.mac}
                                                 </TableCell>
                                                 <TableCell  align="right">
-                                                    {row.provincia}
+                                                    {row.canton}
                                                 </TableCell>
                                                 <TableCell  align="center">
                                                     <Chip color={row.estado?'verde':'anaranjado1'}  size="small" label={row.estado?'conectado':'desconectado'} icon={<CableIcon />} />

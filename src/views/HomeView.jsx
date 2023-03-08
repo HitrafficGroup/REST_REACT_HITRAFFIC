@@ -9,7 +9,7 @@ import Switch from '@mui/material/Switch';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import SaveIcon from '@mui/icons-material/Save';
 import MapIcon from '@mui/icons-material/Map';
-import { collection, updateDoc, doc, getDocs, setDoc, getDoc } from "firebase/firestore";
+import { collection, updateDoc, doc, getDocs, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
@@ -29,11 +29,9 @@ import Fab from '@mui/material/Fab';
 import { setInitialStateController, setResumen, addIpsDisponibles, setPasosActivos, addCurrentControler, createNewController } from "../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
-import Alert from '@mui/material/Alert';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { MapContainer, TileLayer, Marker, Popup, Polygon, FeatureGroup } from "react-leaflet";
-import EditIcon from '@mui/icons-material/Edit';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../css/HomeView.css';
@@ -54,28 +52,20 @@ export default function PruebasView() {
     const calculoEjecucion = useRef([]);
     const tiempo_amarillo = useRef(0)
     const datos_amarillo_aux = useRef(0)
-    const [pasoexec, setPasoexec] = useState();
-    const [modalEditControlador, setModalEditControlador] = useState(false);
-    const [modalDeclararSemaforo, setModalDeclararSemaforo] = useState(false);
+   
+
     const [pointsArea, setPointsArea] = useState([]);
     const [accionesUi, setAccionesUi] = useState(false);
     const center = [-2.898794750323891, -79.00108637169295]
     const [draggable, setDraggable] = useState(false)
     const [position, setPosition] = useState(center)
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
-    const [semaforos, setSemaforos] = useState(initialData.resumen);
-    const [semaforos3, setSemaforos3] = useState(initialData.resumen)
-    const [faseexec, setFaseexec] = useState("");
-    const [horarioexec, setHorarioexec] = useState("");
     const [btnAgregar, setBtnAgregar] = useState(true);
-    const [modoexec, setModoexec] = useState("");
     const [reloadMap, setReloadMap] = useState(true);
     const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers)
-    const [deshabilitar, setDeshabilitar] = useState(true);
-    const [newController, setNewController] = useState({});
     const [indicadorData,setIndicadorData] = useState(initialData.resumen);
-    const puntosArea = useRef([]);
+
 
     //prueba semaforo
     const semaforos2 = useRef();
@@ -112,33 +102,30 @@ export default function PruebasView() {
             }
         )
     }
-    const handleNewController = (event) => {
-        setNewController(
-            {
-                ...newController,
-                [event.target.name]: event.target.value,
-            }
-        )
-    }
+    // const handleNewController = (event) => {
+    //     setNewController(
+    //         {
+    //             ...newController,
+    //             [event.target.name]: event.target.value,
+    //         }
+    //     )
+    // }
     const Changeview = (referencia) => {
         navigate(referencia);
     }
-    const purpleOptions = { color: 'purple' }
-    const abrirModalEditarControlador = () => {
-        setNewController(controlerState)
-        setModalEditControlador(true);
-    }
-    const actualizarDatosControlador = async () => {
-        setModalEditControlador(false);
-        const ref = doc(db, "historial_controladores", `${controlerState.mac}`);
-        await updateDoc(ref, {
-            latitud: newController.latitud,
-            longitud: newController.longitud,
-            nombre: newController.nombre
-        });
-        dispatch(setInitialStateController(newController));
+  
+   
+    // const actualizarDatosControlador = async () => {
+    //     setModalEditControlador(false);
+    //     const ref = doc(db, "historial_controladores", `${controlerState.mac}`);
+    //     await updateDoc(ref, {
+    //         latitud: newController.latitud,
+    //         longitud: newController.longitud,
+    //         nombre: newController.nombre
+    //     });
+    //     dispatch(setInitialStateController(newController));
 
-    }
+    // }
     const toggleDraggable = useCallback(() => {
         setDraggable((d) => !d)
     }, [])
@@ -203,6 +190,7 @@ export default function PruebasView() {
                 areas_temp.map((item) => {
                     let puntos_aux = item.points
                     item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
+                    return null;
                 })
 
                 semaforos2.current = areas_temp
@@ -211,7 +199,7 @@ export default function PruebasView() {
                 console.log(controlerState.pasos_activos)
                 todaInformacion.current = document.data()
                 parametrosCorriendo();
-                setDeshabilitar(false)
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'Controlador Conectado',
@@ -237,10 +225,9 @@ export default function PruebasView() {
                         Changeview("/david-diaz/declarar-controlador")
                     }
                 })
-                setDeshabilitar(false)
+            
             }
         } catch (error) {
-            setDeshabilitar(false)
             setAccionesUi(false)
         }
         setAccionesUi(false)
@@ -383,6 +370,7 @@ export default function PruebasView() {
         areas_temp.map((item) => {
             let puntos_aux = item.points
             item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
+            return null;
         })
         console.log(areas_temp)
         semaforos2.current = areas_temp
@@ -527,13 +515,7 @@ export default function PruebasView() {
         }
         return paso_actual
     }
-    const polyline = [
-        [-2.877686537595122, -78.96498704076764],
-        [-2.8777401141269854, -78.96492266775697],
-        [-2.8778097636146276, -78.9649441254272],
-        [-2.8777401141269854, -78.96501386285543],
-    ]
-    const limeOptions = { color: 'lime' }
+    
     /* 
         funcion encargada de devolver los segundos en los cuales va estar activo cada paso
     */
@@ -661,9 +643,9 @@ export default function PruebasView() {
         let horario_activo = dias_ordenados.find(item => item.nro === nro_horario)
         let horario_siguiente = dias_ordenados.find(item => item.nro === nro_horario_sig)
 
-        setHorarioexec(horario_activo);
+      
         let modo = returnModo(horario_activo.mod)
-        setModoexec(modo)
+       
         modoControlador.current = modo
         let plan_activo = horario_activo.plan
         let planname = `plan${plan_activo}`
@@ -672,6 +654,8 @@ export default function PruebasView() {
         var pasos_habilitados = pasos.filter((item) => {
             if (item.duracion > 0) {
                 return item;
+            }else{
+                return null;
             }
         })
 
@@ -823,11 +807,13 @@ export default function PruebasView() {
                 let areas_temp = JSON.parse(JSON.stringify(semaforosActualizados))
                 areas_temp.map((item) => {
                     let puntos_aux = item.points
+                    
                     item.points = puntos_aux.map((_item) => (
                         {
                             pos: _item
                         }
                     ))
+                    return null;
                 })
 
                 await updateDoc(ref, {
@@ -859,8 +845,6 @@ export default function PruebasView() {
         g3 = devolverColor(faseActual.current[paso_actual].grupos[2].colorDescripcion);
         g4 = devolverColor(faseActual.current[paso_actual].grupos[3].colorDescripcion);
         aux = semaforos2.current
-        setFaseexec(faseActual.current[paso_actual].fase)
-        setPasoexec(faseActual.current[paso_actual].name)
         dataUpdated = aux.map((item) => {
             if (item.grupo === "g1") {
                 item['color'] = g1;
@@ -995,7 +979,20 @@ export default function PruebasView() {
                             <h5>Controlador Seleccionado: </h5>
                         </div>
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    {/* <Grid item xs={12} md={12}>
+                                    <div className="info-controller-home">
+                                        <h5 className="titulos-home-view">
+                                        {controlerState.nombre}
+                                        </h5>
+                                        <h5 className="titulos-home-view">
+                                        LAT {controlerState.latitud}
+                                        </h5>
+                                        <h5 className="titulos-home-view">
+                                        LON {controlerState.longitud}
+                                        </h5>
+                                    </div>
+                    </Grid> */}
+                    <Grid item xs={12} md={6}>
                         <TextField id="outlined" focused value={controlerState.nombre} label="Nombre" variant="outlined" aria-readonly={true} fullWidth />
                     </Grid>
                     <Grid item xs={12} md={3}>
@@ -1004,9 +1001,7 @@ export default function PruebasView() {
                     <Grid item xs={12} md={3}>
                         <TextField id="outlined" focused value={controlerState.longitud} label="Longitud" variant="outlined" aria-readonly fullWidth />
                     </Grid>
-                    <Grid item xs={12} md={2}>
-                        <Button variant="contained" startIcon={<EditIcon />} onClick={abrirModalEditarControlador} disabled={btnAgregar} color="advertencia" fullWidth sx={{ height: "100%" }}>Editar</Button>
-                    </Grid>
+
 
                     <Grid item md={12}>
                         <div className="h-controler-select">
@@ -1206,7 +1201,7 @@ export default function PruebasView() {
                     </Button>
                 </ModalFooter>
             </Modal>
-            <Modal isOpen={modalDeclararSemaforo} >
+            {/* <Modal isOpen={modalDeclararSemaforo} >
                 <ModalHeader>
                     <div>
                         <h1>
@@ -1240,8 +1235,8 @@ export default function PruebasView() {
                         cancelar
                     </Button>
                 </ModalFooter>
-            </Modal>
-            <Modal isOpen={modalDeclararSemaforo} >
+            </Modal> */}
+            {/* <Modal isOpen={modalDeclararSemaforo} >
                 <ModalHeader>
                     <div>
                         <h1>
@@ -1249,8 +1244,8 @@ export default function PruebasView() {
                         </h1>
                     </div>
                 </ModalHeader>
-            </Modal>
-            <Modal isOpen={modalDeclararSemaforo} >
+            </Modal> */}
+            {/* <Modal isOpen={modalDeclararSemaforo} >
                 <ModalHeader>
                     <div>
                         <h1>
@@ -1305,7 +1300,7 @@ export default function PruebasView() {
                         cancelar
                     </Button>
                 </ModalFooter>
-            </Modal>
+            </Modal> */}
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={accionesUi}>
                 <CircularProgress color="inherit" />
             </Backdrop>
@@ -1399,55 +1394,8 @@ const semaforo = new L.Icon({
 
 });
 
-const rojo = new L.Icon({
-    iconUrl: require('../assets/rojo.png'),
-    iconRetinaUrl: require('../assets/rojo.png'),
-    iconSize: [50, 50], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
-});
-
-const verde = new L.Icon({
-    iconUrl: require('../assets/verde.png'),
-    iconRetinaUrl: require('../assets/verde.png'),
-    iconSize: [50, 50], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
-});
-const amarillo = new L.Icon({
-    iconUrl: require('../assets/amarillo.png'),
-    iconRetinaUrl: require('../assets/amarillo.png'),
-    iconSize: [50, 50], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
-});
-const apagado = new L.Icon({
-    iconUrl: require('../assets/apagado.png'),
-    iconRetinaUrl: require('../assets/apagado.png'),
-    iconSize: [50, 50], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
-});
 
 
-const destello = new L.Icon({
-    iconUrl: require('../assets/destello.png'),
-    iconRetinaUrl: require('../assets/destello.png'),
-    iconSize: [50, 50], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
-
-});
 
 
 const initialData = {
@@ -1504,49 +1452,7 @@ const initialData = {
 }
 
 
-const initialResumen = [
-    {
-        nombre: "sin nombre",
-        modo: "Tiempo Fijo",
-        rojo: 10,
-        amarillo: 4,
-        verde: 20,
-        grupo: "g1",
-        position: [-2.8771059724090122, -78.96612703800203],
-        icon: {}
-    },
-    {
-        nombre: "sin nombre",
-        modo: "Tiempo Fijo",
-        rojo: 10,
-        amarillo: 4,
-        verde: 20,
-        grupo: "g2",
-        position: [-2.8773367771587526, -78.96582663059236],
-        icon: {}
-    },
-    {
-        nombre: "sin nombre",
-        modo: "Tiempo Fijo",
-        rojo: 10,
-        amarillo: 4,
-        verde: 20,
-        grupo: "g3",
-        position: [-2.877974763491086, -78.96494686603546],
-        icon: {}
-    },
-    {
-        nombre: "sin nombre",
-        modo: "Tiempo Fijo",
-        rojo: 10,
-        amarillo: 4,
-        verde: 20,
-        grupo: "g4",
-        position: [[-2.876842450523782, -78.9654189348221],
-        []],
-        icon: {}
-    }
-]
+
 
 //pasos modo destello
 let pasosDestello = [
