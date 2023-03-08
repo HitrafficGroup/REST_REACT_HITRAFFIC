@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
+
 .card-admin{
     height: 100px;
     background-color: #FBFCFC;
@@ -5,6 +8,53 @@
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
        
 }
+.card-body{
+    height: 70%;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    
+}
+.card-body-i{
+    height: 70%;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+.number-indicador{
+    font-size: 40px;
+   color: #CACFD2  ;
+}
 .shadow-table{
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
+.header{
+    height: 30%;
+    background-color: #2C3E50;
+    border-radius: 5px 5px 0px 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    align-content: center;
+}
+.nombre-card{
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+    font-family: 'Roboto', sans-serif;
+    color: azure;
+    margin-left: 15px;
+}
+
+@media only screen and (max-width: 600px) {
+    .card-admin{
+        height: 200px;
+           
+    }
+  }

@@ -21,11 +21,16 @@ import LastPageIcon from '@mui/icons-material/LastPage';
 import TableHead from '@mui/material/TableHead';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 //iconos
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import InfoIcon from '@mui/icons-material/Info';
 import CableIcon from '@mui/icons-material/Cable';
+import Autocomplete from '@mui/material/Autocomplete';
+import PowerIcon from '@mui/icons-material/Power';
+import PowerOffIcon from '@mui/icons-material/PowerOff';
 function TablePaginationActions(props) {
     const theme = useTheme();
     const { count, page, rowsPerPage, onPageChange } = props;
@@ -102,11 +107,17 @@ const dataTest=[
     {name:'nombre 10',ip:'192.168.1.11',mac:'n3:f1:s2:32',provincia:'loja',estado:false},
     {name:'nombre 11',ip:'192.168.1.12',mac:'f3:f1:a2:22',provincia:'azuay',estado:true}
 ]
-
+const top100Films = [
+    { title: 'The Shawshank Redemption', year: 1994 },
+    { title: 'The Godfather', year: 1972 },
+    { title: 'The Godfather: Part II', year: 1974 },
+    { title: 'The Dark Knight', year: 2008 },
+    { title: '12 Angry Men', year: 1957 },
+    { title: "Schindler's List", year: 1993 }
+]
 export default function ControlersView() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dataTest.length) : 0;
@@ -119,15 +130,62 @@ export default function ControlersView() {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+
     return (
         <>
             <Container maxWidth="md" sx={{paddingTop:3}}>
                 <Grid container spacing={2}>
-                    <Grid md={8} xs={12}>
-                        <div className="card-admin"></div>
+                    <Grid md={7} xs={12}>
+                        <div className="card-admin">
+                            <div className="header">
+                                <p className="nombre-card">Filtro</p>
+                            </div>
+                            <div className="card-body">
+                                   
+                                    <Grid container >
+                                        <Grid item xs={12} md={6}>
+                                            <Autocomplete
+                                                id="size-small-outlined"
+                                                size="small"
+                                                options={top100Films}
+                                                getOptionLabel={(option) => option.title}
+                                                defaultValue={top100Films[13]}
+                                                renderInput={(params) => (
+                                                <TextField {...params} label="Provincia" placeholder="Escoga la Provincia" />
+                                                )}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6} md={2.5}>
+                                        <Button variant="contained" color="verde" size="medium">filtro</Button>
+                                        </Grid>
+                                        <Grid item xs={6} md={3.5}>
+                                        <Button variant="contained" size="medium">Sin filtro</Button>
+                                        </Grid>
+
+                                    </Grid>
+                                    
+                                </div>
+                        </div>
                     </Grid>
-                    <Grid md={4} xs={12}>
-                        <div className="card-admin"></div>
+                    <Grid md={2.5} xs={6}>
+                        <div className="card-admin">
+                            <div className="header">
+                                <p className="nombre-card">Activos</p>
+                            </div>
+                            <div className="card-body-i">
+                                    <h5 className="number-indicador">10</h5> <PowerIcon fontSize="large" sx={{color:"#A3E4D7"}}/>
+                            </div>
+                        </div>
+                    </Grid>
+                    <Grid md={2.5} xs={6}>
+                            <div className="card-admin">
+                                <div className="header">
+                                    <p className="nombre-card">Inactivos</p>
+                                </div>
+                                <div className="card-body-i">
+                                <h5 className="number-indicador">2</h5> <PowerOffIcon fontSize="large" sx={{color:"#F5B7B1"}}/>
+                                </div>
+                            </div>
                     </Grid>
                     
                     <Grid md={12}>
