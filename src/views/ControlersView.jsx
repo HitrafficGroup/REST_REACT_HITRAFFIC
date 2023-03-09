@@ -1,4 +1,4 @@
-import React ,{useState}from "react";
+import React ,{useEffect, useRef, useState}from "react";
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import '../css/ControlersView.css';
@@ -23,6 +23,16 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import Swal from 'sweetalert2';
+import { collection, getDocs,updateDoc,doc,onSnapshot,query } from "firebase/firestore";
+import { db } from "../firebase/firebase-config";
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import { setCambiarIpControlador } from "../js/apiFunctions";
 //iconos
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -31,6 +41,10 @@ import CableIcon from '@mui/icons-material/Cable';
 import Autocomplete from '@mui/material/Autocomplete';
 import PowerIcon from '@mui/icons-material/Power';
 import PowerOffIcon from '@mui/icons-material/PowerOff';
+import SettingsIcon from '@mui/icons-material/Settings';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+
 function TablePaginationActions(props) {
     const theme = useTheme();
     const { count, page, rowsPerPage, onPageChange } = props;
@@ -93,50 +107,152 @@ TablePaginationActions.propTypes = {
 
 
 const dataTest=[
-    {name:'nombre 1',ip:'192.168.1.2',mac:'h3:ft:a2:l2',canton:'cuenca',estado:true},
-    {name:'nombre 2',ip:'192.168.1.3',mac:'f3:f1:a2:t2',canton:'loja',estado:false},
-    {name:'nombre 3',ip:'192.168.1.4',mac:'gf3:12:fw:36',canton:'quito',estado:false},
-    {name:'nombre 4',ip:'192.168.1.5',mac:'f3:f1:a2:32',canton:'guayaquil',estado:false},
-    {name:'nombre 5',ip:'192.168.1.6',mac:'l3:fa1:a2:37',canton:'cotopaxi',estado:true},
-    {name:'nombre 6',ip:'192.168.1.7',mac:'f3:m1:a2:367',canton:'pasaje',estado:true},
-    {name:'nombre 7',ip:'192.168.1.8',mac:'13:f1:a2:39',canton:'zamora chinchipe',estado:true},
-    {name:'nombre 8',ip:'192.168.1.9',mac:'f3:f1:a2:32',canton:'azuay',estado:true},
-    {name:'nombre 9',ip:'192.168.1.10',mac:'m3:f1:a2:88',canton:'cañar',estado:false},
-    {name:'nombre 10',ip:'192.168.1.11',mac:'n3:f1:s2:32',canton:'loja',estado:false},
-    {name:'nombre 11',ip:'192.168.1.12',mac:'f3:f1:a2:22',canton:'azuay',estado:true}
+    {nombre:'nombre 1',ip:'192.168.1.2',mac:'h3:ft:a2:l2',canton:'cuenca',estado:true},
+    {nombre:'nombre 2',ip:'192.168.1.3',mac:'f3:f1:a2:t2',canton:'loja',estado:false},
+    {nombre:'nombre 3',ip:'192.168.1.4',mac:'gf3:12:fw:36',canton:'quito',estado:false},
+    {nombre:'nombre 4',ip:'192.168.1.5',mac:'f3:f1:a2:32',canton:'guayaquil',estado:false},
+    {nombre:'nombre 5',ip:'192.168.1.6',mac:'l3:fa1:a2:37',canton:'cotopaxi',estado:true},
+    {nombre:'nombre 6',ip:'192.168.1.7',mac:'f3:m1:a2:367',canton:'pasaje',estado:true},
+    {nombre:'nombre 7',ip:'192.168.1.8',mac:'13:f1:a2:39',canton:'zamora chinchipe',estado:true},
+    {nombre:'nombre 8',ip:'192.168.1.9',mac:'f3:f1:a2:32',canton:'azuay',estado:true},
+    {nombre:'nombre 9',ip:'192.168.1.10',mac:'m3:f1:a2:88',canton:'cañar',estado:false},
+    {nombre:'nombre 10',ip:'192.168.1.11',mac:'n3:f1:s2:32',canton:'loja',estado:false},
+    {nombre:'nombre 11',ip:'192.168.1.12',mac:'f3:f1:a2:22',canton:'azuay',estado:true}
 ]
+// CUANDO EL CLIENTE SE CONECTE MEDIANTE LA APP  Y PIDA LAS IPS DELOS CONTROLADORES EN RED
+// AL TRATARSE DE UNA VPN CADA IP DE LA VPN ESTARA ASOCIADA A UNA SUBRED DE CONTROLADORES , ESO
+// SIGNIFICA QUE CUANDO SE QUIERAN OBTENER TODOS LOS CONTROLADORES EN RED VAMOS A OBTENER TALVEZ SOLO 
+// LOS CONTROLADORES DE LA PRIMERA SUBRED QUE SE DETECTE , ME BASO EN EL HECHO DE QUE PROBANDO EL PROGRAMA DE QT
+// CUANDO TENGO DOS INTERFACES DE RED CONECTADAS A DIFERENTES CONTROLADORES , SIMPLEMENTE ME VA A TRAER EL PRIMER
+//CONTROLADOR QUE DETECTE.
+
 const cantones = [
-    { canton: 'Loja', year: 1994 },
-    { canton: 'Pasaje', year: 1972 },
-    { canton: 'Zamora', year: 1974 },
-    { canton: 'Cuenca', year: 2008 },
-    { canton: 'Cañar', year: 1957 },
-    { canton: "La Troncal", year: 1993 }
+    { canton: 'Loja'},
+    { canton: 'Pasaje' },
+    { canton: 'Zamora'},
+    { canton: 'Cuenca'},
+    { canton: 'Cañar'},
+    { canton: "La Troncal" }
 ]
 export default function ControlersView() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dataTest.length) : 0;
+    const [editarModal,setEditarModal]  = useState(false);
+    const [infoModal,setInfoModal] = useState(false);
+    const [controlers,setControlers]= useState(dataTest);
+    const [currentController,setCurrentController] = useState({});
+    const [deshabilitar,setDeshabilitar] = useState(false);
+    const flagFilter = useRef(true);
+    const respaldoData = useRef([])
+    const cantonselected = useRef({})
+    const ipControlador = useRef('')
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dataTest.length) : 0;
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
+    const filtrarLosDatos = ()=>{
+        
+        let aux_data = JSON.parse(JSON.stringify(respaldoData.current))
+       
+        if(Object.keys(cantonselected.current).length !== 0 ){
+            let data_filter = aux_data.filter(item => item.canton === cantonselected.current.canton)
+            flagFilter.current = !flagFilter.current
+            if (flagFilter.current){
+                setControlers(aux_data)         
+            }else{
+                setControlers(data_filter)
+            }
+        }
+    }
+    const sinFiltro = ()=>{
+        setControlers(respaldoData.current)
+    }
+    const abrirModalinformacion = (_data)=>{
+        let aux_data = JSON.parse(JSON.stringify(_data))
+        setCurrentController(aux_data)
+        setInfoModal(true)
+    }
+    const abrirModalEditar=(_data)=>{
+        let aux_data = JSON.parse(JSON.stringify(_data))
+        ipControlador.current = _data.ip
+        setCurrentController(aux_data);
+        setEditarModal(true);
+    }
+    const guardarAjustes = async() =>{
+        setDeshabilitar(true)
+        if(ipControlador.current !== currentController.ip){
+            let jason_data = {
+                ip:ipControlador.current,
+                nueva_ip:currentController.ip,
+                mac:currentController.mac
 
+            }
+            try {
+                await setCambiarIpControlador(jason_data);
+                setDeshabilitar(false)
+            } catch (error) {
+                setDeshabilitar(false)
+            }
+            
+        }
+        const ref = doc(db, "historial_controladores", currentController.mac);
+        await updateDoc(ref, currentController);
+        console.log(currentController)
+        setDeshabilitar(false)
+        setEditarModal(false)      
+    }
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+    const dataFromFirebase = async()=>{
+        const reference = query(collection(db, "historial_controladores"));
+        onSnapshot(reference, (querySnapshot) => {
+            var datos=[];
+            querySnapshot.forEach((doc) => {
+                datos.push(doc.data());
+            });
+            setControlers(
+                datos
+            ); 
+            respaldoData.current = datos   
+        });
+  
+    }
+    const eliminarController = (_data) => {
 
+        Swal.fire({
+            title: 'Estas Seguro de Eliminar el Controlador ?',
+            text: 'EL controlador se eliminara de la base de datos',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, Eliminar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+              console.log('se elimino')
+            }
+        })
+    }
+    // CON RESPECTO A LA DISTANCIA DEL SERVIDOR Y LA INFORMACION TRANSMITIDA HACIA EL DISPOSITIVO DE BORDE DEL CONTROLADOR
+    // LA INFORMACION PODRIA LLEGAR MAL DEBIDO AL GRAN TRAYECTO QUE DEBE REALIZAR PARA LLEGAR AL CONTROLADOR.
+
+    // SEGUNDO SI SE QUISIERA IMPLEMENTAR EL SISTEMA DE CAMARAS VA SER MAS COMPLEJO IMPLEMENTARLO EN UN ROUTER MIKROTIK
+
+ 
+    useEffect(() => {
+        dataFromFirebase();
+    }, []);
     return (
         <>
             <Container maxWidth="md" sx={{paddingTop:3}}>
                 <Grid container spacing={2}>
-                    <Grid md={7} xs={12}>
+                    {/* <Grid md={7} xs={12}>
                         <div className="card-admin">
                             <div className="header">
-                                <p className="nombre-card">Filtro</p>
+                                <p className="nombre-card">Filtros</p>
                             </div>
                             <div className="card-body-controler">
                                    
@@ -147,17 +263,66 @@ export default function ControlersView() {
                                                 size="small"
                                                 options={cantones}
                                                 getOptionLabel={(option) => option.canton}
-                                                
+                                                onChange={(event, newValue) => {
+                                                    cantonselected.current = newValue
+                                                }}
+                                             
                                                 renderInput={(params) => (
                                                 <TextField {...params} label="Canton" placeholder="Escoga el Canton" />
                                                 )}
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={2.5}>
-                                        <Button variant="contained" color="verde" size="medium">filtro</Button>
+                                            <Button variant="contained" color="verde" size="medium" onClick={filtrarLosDatos} >filtro</Button>
+
                                         </Grid>
                                         <Grid item xs={6} md={3.5}>
-                                        <Button variant="contained" size="medium">Sin filtro</Button>
+                                            <Button variant="contained" size="medium" onClick={sinFiltro}  >Sin filtro</Button>
+                                        </Grid>
+
+                                    </Grid>
+                                    
+                                </div>
+                        </div>
+                    </Grid> */}
+                    <Grid md={7} xs={12}>
+                        <div className="card-admin">
+                            <div className="header">
+                                <p className="nombre-card">Filtros</p>
+                            </div>
+                            <div className="card-body-controler">
+                                   
+                                    <Grid container >
+                                        <Grid item xs={12} md={6}>
+                                            <Autocomplete
+                                                id="size-small-outlined"
+                                                size="small"
+                                                options={cantones}
+                                                getOptionLabel={(option) => option.canton}
+                                                onChange={(event, newValue) => {
+                                                    cantonselected.current = newValue
+                                                }}
+                                             
+                                                renderInput={(params) => (
+                                                <TextField {...params} label="Canton" placeholder="Escoga el Canton" />
+                                                )}
+                                            />
+                                        </Grid>
+                                        {/* <Grid item xs={6} md={3.5}>
+                                        <FormControl>
+                                          
+                                            <RadioGroup
+                                                aria-labelledby="demo-controlled-radio-buttons-group"
+                                                name="controlled-radio-buttons-group"
+                                              
+                                            >
+                                                <FormControlLabel value="female" control={<Radio size="small" />} label="Female" />
+                                                <FormControlLabel value="male" control={<Radio size="small" />} label="Male" />
+                                            </RadioGroup>
+                                            </FormControl>
+                                        </Grid> */}
+                                        <Grid item xs={6} md={2.5}>
+                                            <Button variant="contained" size="medium" onClick={filtrarLosDatos}  >Cargar</Button>
                                         </Grid>
 
                                     </Grid>
@@ -165,6 +330,7 @@ export default function ControlersView() {
                                 </div>
                         </div>
                     </Grid>
+                
                     <Grid md={2.5} xs={6}>
                         <div className="card-admin">
                             <div className="header">
@@ -203,12 +369,12 @@ export default function ControlersView() {
                                     </TableHead>
                                     <TableBody>
                                         {(rowsPerPage > 0
-                                            ? dataTest.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                            : dataTest
-                                        ).map((row) => (
-                                            <TableRow key={row.name}>
+                                            ? controlers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                            : controlers
+                                        ).map((row,index) => (
+                                            <TableRow key={index}>
                                                 <TableCell component="th" scope="row">
-                                                    {row.name}
+                                                    {row.nombre}
                                                 </TableCell>
                                                 <TableCell  align="right">
                                                     {row.ip}
@@ -224,13 +390,13 @@ export default function ControlersView() {
                                                 </TableCell>
                                                 <TableCell  align="center">
                                                 <Stack direction="row" spacing={1}>
-                                                    <IconButton color="rojo" aria-label="editar">
+                                                    <IconButton color="rojo" aria-label="eliminar" onClick={()=>{eliminarController()}} >
                                                         <DeleteIcon />
                                                     </IconButton>
-                                                    <IconButton color="crema" aria-label="editar">
-                                                        <EditIcon />
+                                                    <IconButton color="gris" aria-label="editar" onClick={()=>{abrirModalEditar(row)}} >
+                                                        <SettingsIcon />
                                                     </IconButton>
-                                                    <IconButton color="azulm" aria-label="editar">
+                                                    <IconButton color="azulm" aria-label="info" onClick={()=>{abrirModalinformacion(row)}}>
                                                         <InfoIcon />
                                                     </IconButton>
                                                     </Stack>
@@ -250,7 +416,7 @@ export default function ControlersView() {
                                             <TablePagination
                                                 rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                                                 colSpan={6}
-                                                count={dataTest.length}
+                                                count={controlers.length}
                                                 rowsPerPage={rowsPerPage}
                                                 page={page}
                                                 SelectProps={{
@@ -270,7 +436,102 @@ export default function ControlersView() {
                         </div>
                     </Grid>
                 </Grid>
+            {/*          A partir de esta linea son solo modals            */}
+            <Modal isOpen={editarModal} >
+                <ModalHeader>
+                    <div>
+                        <h1>
+                            Ajustes del Controlador
+                        </h1>
+                    </div>
+                </ModalHeader>
+                <ModalBody>
+                    <Grid container spacing={4}>
+                        <Grid item xs={12}>
+                            <TextField id="outlined-basic" label="Nombre:" value={currentController.nombre} onChange={(e) => setCurrentController({...currentController, nombre: e.target.value})} fullWidth helperText="Nombre" variant="outlined" />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField id="outlined-basic" label="Ip:" value={currentController.ip} onChange={(e) => setCurrentController({...currentController, ip: e.target.value})} fullWidth helperText="Ip" variant="outlined" />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField id="outlined-basic" label="Canton:" value={currentController.canton}  onChange={(e) => setCurrentController({...currentController, canton: e.target.value})}  fullWidth helperText="Canton o Ciudad" variant="outlined" />
+                        </Grid>
+                    </Grid>
+                </ModalBody>
+                <ModalFooter >
+                    <Button variant="contained" color='rojo' onClick={guardarAjustes} sx={{ marginLeft: 1 }}>
+                        Guardar
+                    </Button>
+                    <Button variant="contained" color='verde' onClick={()=>{setEditarModal(false)}}  sx={{ marginLeft: 1 }}>
+                        Cancelar
+                    </Button>
+                </ModalFooter>
+            </Modal> 
+
+            <Modal isOpen={infoModal} >
+                <ModalHeader>
+                    <div>
+                        <h1>
+                            Resumen
+                        </h1>
+                    </div>
+                </ModalHeader>
+                <ModalBody>
+                <Grid container spacing={1}>
+                <Grid item xs={6}>
+                    <div>
+                        <strong><h5>Nombre</h5></strong>
+                        <p>{currentController.nombre}</p>
+                    </div>
+                </Grid>
+                <Grid item xs={6}>
+                <div>
+                        <strong><h5>Canton</h5></strong>
+                        <p>{currentController.canton}</p>
+                    </div>
+                </Grid>
+                <Grid item xs={6}>
+                <div>
+                        <strong><h5>Latitud</h5></strong>
+                        <p>{currentController.latitud}</p>
+                    </div>
+                </Grid>
+                <Grid item xs={6}>
+                <div>
+                        <strong><h5>longitud</h5></strong>
+                        <p>{currentController.longitud}</p>
+                    </div>
+                </Grid>
+                <Grid item xs={6}>
+                <div>
+                        <strong><h5>Ip</h5></strong>
+                        <p>{currentController.ip}</p>
+                    </div>
+                </Grid>
+                <Grid item xs={6}>
+                    
+                <div>
+                        <strong><h5>Mac</h5></strong>
+                        <p>{currentController.mac}</p>
+                    </div>
+                </Grid>
+                </Grid>
+                    
+                  
+                </ModalBody>
+                <ModalFooter >
+                    <Button variant="contained" color='anaranjado1' onClick={()=>{setInfoModal(false)}} sx={{ marginLeft: 1 }}>
+                        Aplicar
+                    </Button>
+                    <Button variant="contained" color='rojo' onClick={()=>{setInfoModal(false)}}  sx={{ marginLeft: 1 }}>
+                        cancelar
+                    </Button>
+                </ModalFooter>
+            </Modal> 
             </Container>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
         </>
     )
 }

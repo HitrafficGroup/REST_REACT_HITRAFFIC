@@ -222,7 +222,7 @@ export default function PruebasView() {
                             mac: data.mac,
                             ip: data.ip,
                         }));
-                        Changeview("/david-diaz/declarar-controlador")
+                        Changeview("/declarar-controlador")
                     }
                 })
             

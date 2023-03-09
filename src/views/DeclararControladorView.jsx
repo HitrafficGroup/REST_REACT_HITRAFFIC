@@ -40,9 +40,10 @@ export default function DeclararControladorView() {
     const [areas,setAreas] = useState([]);
     const [draggable, setDraggable] = useState(false)
     const [nombreControlador,setNombreControlador]  = useState("");
+    const [ipControlador,setIpControlador] = useState(controlerState.nuevo_controlador.ip);
     const [semaforos,setSemaforos] = useState(semaforosIniciales);
-    const [newController, setNewController] = useState({});
     const [pointsArea,setPointsArea] = useState([]);
+    const [canton,setCanton] = useState('')
     const [deshabilitar,setDeshabilitar] = useState(false);
     //banderas para los botones 
     const [flagCargando,setFlagCargando] = useState(false);
@@ -164,8 +165,7 @@ export default function DeclararControladorView() {
             confirmButtonText: 'Si'
           }).then(async(result) => {
             if (result.isConfirmed) {
-            let  ip = controlerState.nuevo_controlador.ip 
-            console.log(controlerState.nuevo_controlador.ip)
+            let  ip = ipControlador
             if(ip === "" || ip === undefined ){
                 Swal.fire(
                     'Error No Ip',
@@ -225,6 +225,9 @@ export default function DeclararControladorView() {
                         latitud:parseFloat(latitud),
                         longitud:parseFloat(longitud),
                         mac:controlerState.nuevo_controlador.mac,
+                        ip:ipControlador,
+                        canton:canton,
+                        online:true,
                     }
                     try {
                         setFlagCargando(true);
@@ -303,6 +306,9 @@ export default function DeclararControladorView() {
                 </Marker>
             )
         }
+    useEffect(() => {
+       
+    }, []);
     return (
         <>
             <Container maxWidth="md" >
@@ -314,11 +320,14 @@ export default function DeclararControladorView() {
                     </p>
                 </div>
                 <Grid container spacing={1}>
-                    <Grid item xs={12} md={4}>
-                        <TextField id="outlined" value={controlerState.nuevo_controlador.ip}  fullWidth focused  label="Ip:" variant="outlined" aria-readonly={true}  />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={2.5}>
                         <TextField id="outlined" value={controlerState.nuevo_controlador.mac} fullWidth focused  label="Mac" variant="outlined" aria-readonly={true}  />
+                    </Grid>
+                    <Grid item xs={12} md={2.5}>
+                        <TextField id="outlined" value={ipControlador}  onChange={(e) =>{setIpControlador(e.target.value)}} fullWidth   label="Ip:" variant="outlined"  />
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                        <TextField id="outlined" value={canton} fullWidth  onChange={(e) =>{setCanton(e.target.value)}}  label="Canton" variant="outlined"   />
                     </Grid>
                     <Grid item xs={12} md={4}>
                         <TextField id="outlined"  value={nombreControlador}  label="Nombre del Controlador"variant="outlined" onChange={(e)=>{setNombreControlador(e.target.value)}}  fullWidth   />
@@ -326,6 +335,7 @@ export default function DeclararControladorView() {
                     <Grid item xs={12} md={4.5}>
                         <TextField id="outlined" value={latitud}  label="Latitud" variant="outlined"  onChange={(e)=>{setLatitud(e.target.value)}}   fullWidth />
                     </Grid>
+                    
                     <Grid item xs={12} md={4.5}>
                         <TextField id="outlined"  value={longitud} label="Longitud" variant="outlined"  onChange={(e)=>{setLongitud(e.target.value)}} fullWidth />
                     </Grid>
@@ -367,6 +377,7 @@ export default function DeclararControladorView() {
                     <Grid item xs={12} md={3}>
                         <TextField id="outlined" focused value={position[0]} label="Latitud" variant="outlined" fullWidth />
                     </Grid>
+                  
                     <Grid item xs={12} md={3}>
                         <TextField id="outlined" focused value={position[1]} label="Longitud" variant="outlined" fullWidth />
                     </Grid>

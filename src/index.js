@@ -66,6 +66,10 @@ const theme = createTheme({
     amarillo: {
       main: '#F5B041',
       contrastText: '#fff',
+    },
+    gris:{
+      main: '#566573',
+      contrastText: '#fff',
     }
 
 
