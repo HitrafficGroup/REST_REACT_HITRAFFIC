@@ -202,6 +202,17 @@ export default function PlanesView() {
         setCambio(true)
         setModalEditar(false);
     }
+    const EliminarPlan = (_data) =>{
+        let aux_data = JSON.parse(JSON.stringify(currentPlan))
+        let data_modify = aux_data.map(item => {
+            if(item.name === _data.name){
+                item.duracion = 0
+                item.fase = 0
+            }
+            return item
+        })
+        setCurrentPlan(data_modify)
+    }
    const cargarCambios = () =>{
     try{
 
@@ -229,7 +240,6 @@ export default function PlanesView() {
                 setCambio(false);
                 console.log(newData)
                 await setPlanesFromRestApi(newData);
-                console.log(planes)
                 cargarPlanesFirebase(planes);
                 setDeshabilitar2(false)
             }
@@ -272,6 +282,7 @@ export default function PlanesView() {
                     <Grid item md={3} xs={12}>
                         <Button variant="contained" fullWidth sx={{ height: '100%' }} disabled={deshabilitar} onClick={cargarCambios} color="primary">Cargar Cambios</Button>
                     </Grid>
+                    
                     <Grid item md={6} xs={12}>
 
                     </Grid>
@@ -301,7 +312,8 @@ export default function PlanesView() {
                                                 <Chip label={dato.duracion + 's'} sx={{ width: 100 }} color={'morado1'} variant="outlined" />
                                             </Td>
                                             <Td >
-                                                <Button variant="contained" onClick={() => { abrirModalEditar(dato) }} color="crema">Editar</Button>
+                                                <Button variant="contained" onClick={() => { abrirModalEditar(dato) }} sx={{marginRight:2}} color="crema">Editar</Button>
+                                                <Button variant="contained" onClick={() => { EliminarPlan(dato) }} color="rojo">Eliminar</Button>
                                             </Td>
                                         </Tr>
                                     ))}

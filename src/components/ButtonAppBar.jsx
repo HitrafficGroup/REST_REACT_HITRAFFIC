@@ -50,11 +50,7 @@ export default function ButtonAppBar() {
       visibility: true,
       key: 11
     },
-    {
-      child: <SyncMenu />,
-      visibility: true,
-      key: 20
-    },
+ 
     {
       child: <GruposMenu />,
       visibility: true,

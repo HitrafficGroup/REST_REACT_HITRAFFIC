@@ -1,5 +1,4 @@
-import CardInformation from '../components/CardInformation';
-import CardController from "../components/CardController";
+
 import { React, useEffect, useState } from "react"
 import Container from '@mui/material/Container';
 import { db } from "../firebase/firebase-config";

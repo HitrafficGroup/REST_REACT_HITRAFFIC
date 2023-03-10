@@ -17,9 +17,10 @@ import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import "../css/HomeView.css"
+import "../css/SyncTimeView.css"
 import CustomProgress from "../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { getIpsFromRestApi, getFirmwareVersion } from '../js/apiFunctions'
+import { getIpsFromRestApi, getFirmwareVersion,setTimeControlador,getTimeControlador } from '../js/apiFunctions'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -36,11 +37,38 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../css/HomeView.css';
 import Swal from 'sweetalert2';
+import RelogActual from "../components/RelogActual";
 import { useNavigate } from 'react-router-dom';
+const InitialTime = {
+    dia:"00",
+    horas: "00",
+    indice_dia:"00",
+    mes:"00",
+    minutos: "00",
+    segundos:"00",
+    time_zone:"00",
+    year: "00"
+}
 
-export default function PruebasView() {
+
+const initialFecha = {
+    dia: "-------",
+    mes: "---------",
+    dianum: "--",
+    year: "----"
+}
+export default function HomeView() {
+        
+    const [tiempoController,setTiempoController] = useState(InitialTime)
+    const [fechaController,setFechaController] = useState('Datos de fecha aun no Cargados')
+    const [fechaActual,setFechaActual] = useState(new Date().toLocaleString("es-EC", { dateStyle: 'full' }))
+    
     const [flagsimu, setFlagsimu] = useState(false);
     const todaInformacion = useRef({});
+    
+
+    const [deshabilitar,setDeshabilitar]= useState(false);
+    const [deshabilitar2,setDeshabilitar2] = useState(false);
     const modoControlador = useRef('Tiempo Fijo');
     const [areas, setAreas] = useState([]);
     const navigate = useNavigate();
@@ -52,8 +80,8 @@ export default function PruebasView() {
     const calculoEjecucion = useRef([]);
     const tiempo_amarillo = useRef(0)
     const datos_amarillo_aux = useRef(0)
-   
-
+    
+    
     const [pointsArea, setPointsArea] = useState([]);
     const [accionesUi, setAccionesUi] = useState(false);
     const center = [-2.898794750323891, -79.00108637169295]
@@ -102,30 +130,12 @@ export default function PruebasView() {
             }
         )
     }
-    // const handleNewController = (event) => {
-    //     setNewController(
-    //         {
-    //             ...newController,
-    //             [event.target.name]: event.target.value,
-    //         }
-    //     )
-    // }
+
     const Changeview = (referencia) => {
         navigate(referencia);
     }
   
    
-    // const actualizarDatosControlador = async () => {
-    //     setModalEditControlador(false);
-    //     const ref = doc(db, "historial_controladores", `${controlerState.mac}`);
-    //     await updateDoc(ref, {
-    //         latitud: newController.latitud,
-    //         longitud: newController.longitud,
-    //         nombre: newController.nombre
-    //     });
-    //     dispatch(setInitialStateController(newController));
-
-    // }
     const toggleDraggable = useCallback(() => {
         setDraggable((d) => !d)
     }, [])
@@ -136,57 +146,77 @@ export default function PruebasView() {
     datos nos serviran para poder llamar los planes , fases etc del controlador, la funcion
     se encarga de actualizar el reducer con la informacion del controlador actual */
     const seleccionarControlador = async (data) => {
-        setAccionesUi(true)
+        // empezamos deshabilitando el boton para no presionar dos veces mientras se conecta 
+        // con la api
+        setDeshabilitar(true)
         try {
+            //preguntamos si el controlador ya existe en nuestra base de datos
             if (data.declarado) {
+                // obtenmos del dato de la hora y fecha de la conexion que se realiza
+                let lastConnection = new Date()
+                //ponemos en falso las banderas de la simulacion del mapa
                 simulacion.current = false;
                 setFlagsimu(false);
-
                 setPosition([data.latitud, data.longitud])
+                // actualizamos redux con la informacion del controlador seleccionado
                 dispatch(setInitialStateController(data));
                 dispatch(addCurrentControler(data));
-                
+                // recargamos el mapa con la nueva posicion de longitud y latitud del controlador
                 setReloadMap(!reloadMap)
-                let aux = await getFirmwareVersion(data.mac, data.ip);
-                let firmware = aux[data.mac]
-                let aux5 = controlerState.ips
-
-                let controls = aux5.map(item => {
+                // obtenemos la version de firmware del controlador
+                let aux_firmware = await getFirmwareVersion(data.mac, data.ip);
+                let firmware = aux_firmware[data.mac] // guardamos la version de firmware en una variable
+                let aux_controladores = JSON.parse(JSON.stringify(controlerState.ips)) // utilizamos JSON.parse para que se realice una copia del objeto y no una referencia.
+                // procedemos a encontrar el controlador seleccionado y le damos la propiedad de true , para que se diferencie de los demas que tendran por defecto false.
+                let controladores_formatedos = aux_controladores.map(item => {
                     let dato = {}
                     if (item.mac === data.mac) {
                         dato = {
                             ip: item.ip,
+                            mac: item.mac,
+                            status: item.status,
+                            nombre: item.nombre,
                             latitud: item.latitud,
                             longitud: item.longitud,
-                            mac: item.mac,
-                            nombre: item.nombre,
                             seleccionado: true,
-                            status: item.status,
-                            declarado: item.declarado
+                            declarado: item.declarado,
+                            online:true,
+                            ultima_conexion:lastConnection,
+                            canton:item.canton
                         }
                     } else {
                         dato = {
                             ip: item.ip,
+                            mac: item.mac,
+                            status: item.status,
+                            nombre: item.nombre,
                             latitud: item.latitud,
                             longitud: item.longitud,
-                            mac: item.mac,
-                            nombre: item.nombre,
                             seleccionado: false,
-                            status: item.status,
-                            declarado: item.declarado
+                            declarado: item.declarado,
+                            online:true,
+                            ultima_conexion:item.ultima_conexion,
+                            canton:item.canton
                         }
                     }
                     return dato;
                 })
-
-                dispatch(addIpsDisponibles(controls));
+                // actualizamos redux con las Ips Disponibles
+                dispatch(addIpsDisponibles(controladores_formatedos));
+                // actualizamos la version de firmware del controlador  en firebase 
                 enviarVersionFirebase(data.mac, data.ip, firmware);
-
+                // Y tambien actualizamos la ultima conexion
+                let jsonData = {
+                    ultima_conexion: lastConnection
+                }
+                updateDataFirebase(data.mac,jsonData)
+                // A partir de aqui se solicita toda la informacion del controlador
                 let docRef = doc(db, "controladores", data.mac);
-                console.log("Pedimos los datos de Firebase", docRef);
                 let document = await getDoc(docRef);
                 let gruposController = document.data().semaforos
                 let areas_temp = JSON.parse(JSON.stringify(gruposController))
+                // obtenemos los datos de las areas de los semaforos que se
+                //van a mapear en el mapa
                 areas_temp.map((item) => {
                     let puntos_aux = item.points
                     item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
@@ -228,10 +258,9 @@ export default function PruebasView() {
             
             }
         } catch (error) {
-            setAccionesUi(false)
+            setDeshabilitar(false)
         }
-        setAccionesUi(false)
-
+        setDeshabilitar(false)
     }
 
     /* funcion para actualizar la variable version en firebase, dependiendo del controlador*/
@@ -282,26 +311,34 @@ export default function PruebasView() {
     antes en la base de datos de firebase*/
     const listarIps = async () => {
         try {
-            console.log("entra a esta expresion")
-            setAccionesUi(true);
+            //activamos la animacion del backdrop o loading
+            setDeshabilitar(true);
             let items_db = []
+            //pedimos a firebase nuestra lista de controladores registrados
             const querySnapshot = await getDocs(collection(db, "historial_controladores"));
             querySnapshot.forEach((doc) => {
-
                 items_db.push(doc.data());
             });
-
+            // pedimos a la api los controladores
             const doc = await getIpsFromRestApi();
-            console.log(doc)
+            
             const aux_ips = doc.Ips_disponibles;
+            //creamos un arreglo de objetos ips y le damos un formato a cada elemento del arreglo
             let ips = aux_ips.map(item=>({
                     ip:item.ip,
                     mac:item.mac,
                     status:"online",
+                    online:true,
+
             }))
+            // comparamos la lista de los controladores provenientes de la API y la comparamos
+            // con la de firebase para determinar si existe un nuevo controlador
             var controladores = ips.map(item => {
                 let name = items_db.find(element => element.mac === item.mac)
+                // con find determinamos si existe ese controlador en firebase generalmente
+                //devuelve el objeto si existe o devuelve undefined si no existe
                 if (name === undefined) {
+                    // si no existe le damos un formato por defecto que indica que debe declararse
                     return ({
                         ip: item.ip,
                         mac: item.mac,
@@ -310,9 +347,13 @@ export default function PruebasView() {
                         latitud: -2.876428,
                         longitud: -78.965342,
                         seleccionado: false,
-                        declarado: false
+                        declarado: false,
+                        online:true,
+                        ultima_conexion:'',
+                        canton: '',
                     });
                 } else {
+                   
                     return ({
                         ip: item.ip,
                         mac: item.mac,
@@ -321,19 +362,29 @@ export default function PruebasView() {
                         latitud: name.latitud,
                         longitud: name.longitud,
                         seleccionado: false,
-                        declarado: true
+                        declarado: true,
+                        online:true,
+                        ultima_conexion:name.ultima_conexion,
+                        canton:name.canton,
                     });
                 }
             })
 
             dispatch(addIpsDisponibles(controladores));
-            setAccionesUi(false)
+            setDeshabilitar(false)
 
         } catch (error) {
-            setAccionesUi(false)
+            setDeshabilitar(false)
 
         }
     }
+
+    // funcion para actualizar datos de los controladores en firebase 
+    const updateDataFirebase = async(mac,jsonData) =>{
+        const ref = doc(db, "historial_controladores", mac);
+        await updateDoc(ref, jsonData);
+    }
+
     /*
     esta funcion agrega y actualiza el semaforo que se selecciona en los grupos
     ,nos permite desplazar elsemaforo dentro del mapa actualizando su latitud y longitud
@@ -900,7 +951,82 @@ export default function PruebasView() {
     const limpiarPuntos = () =>{
         setPointsArea([])
     }
+    /* 
+        Logica para la actualizacion del horario
+    */
 
+        const obtenerTiempoFromRestApi = async() =>{
+            try{
+                setDeshabilitar2(true);
+                const response = await getTimeControlador(controlerState.mac,controlerState.ip)
+                setTiempoController(response[controlerState.mac])
+                const temp = response[controlerState.mac]
+                const fechac = `${temp.mes}-${temp.dia}-${temp.year}`
+                const dateObj = new Date(fechac)
+                const formatDate = dateObj.toLocaleString("es-EC", { dateStyle: 'full' });
+                console.log(temp);
+                setFechaController(formatDate);
+                setDeshabilitar(false);
+                setDeshabilitar2(false);
+            }catch(e){
+                console.log(e)
+          
+                setDeshabilitar2(false);
+            }
+    
+        }
+        const updateHoraControllerFirebase = async(data) =>{
+            const ref = doc(db, "controladores", `${controlerState.mac}`);
+            await updateDoc(ref,{
+                hora_controlador:data
+            });
+    
+        }
+        const sincronizarTiempoFromRest = async() =>{
+            const newData = {
+                ip:controlerState.ip,
+                mac:controlerState.mac,
+                time_zone:"-5"
+            }
+            const tiempohoy = new Date();
+            const dataForFirebase = {
+                time_zone:"-5",
+                horas: tiempohoy.getHours().toString(),
+                minutos: tiempohoy.getMinutes().toString(),
+                segundos: tiempohoy.getSeconds().toString(),
+                dia: tiempohoy.getDate().toString(),
+                indice_dia: "2",
+                mes: (tiempohoy.getMonth()+1).toString(),
+                time_zone: "-5",
+                year: tiempohoy.getFullYear().toString(),
+            }
+    
+            console.log(dataForFirebase)
+            try{
+                
+                Swal.fire({
+                    title: 'Deseas Continuar ?',
+                    text:  'Estos Cambios se guardaran en el Controlador',
+                    icon:  'warning',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Si, actualizar!',
+                    showDenyButton: true,
+                    denyButtonText: 'Cancelar',
+                }).then(async(result)=>{
+                    if(result.isConfirmed){
+                        setDeshabilitar2(true);
+                        await setTimeControlador(newData);
+                        setDeshabilitar2(false);
+                        updateHoraControllerFirebase(dataForFirebase);
+                        
+                    }
+                })        
+            
+    
+            }catch(e){
+    
+            }
+        }
     /* use effect es un hook que nos permite ejecutar nuestro temporizador en tiempo real
     como un sub procesos y de este modo generar las animaciones del semaforo
     */
@@ -952,7 +1078,7 @@ export default function PruebasView() {
                                             {index + 1}
                                         </Td>
                                         <Td >
-                                            <Button variant="contained" disabled={accionesUi} color={dato.seleccionado ? 'verde2' : 'seleccion'} onClick={() => { seleccionarControlador(dato) }} >SELECCIONAR</Button>
+                                            <Button variant="contained" disabled={deshabilitar2} color={dato.seleccionado ? 'verde2' : 'seleccion'} onClick={() => { seleccionarControlador(dato) }} >SELECCIONAR</Button>
                                         </Td>
                                         <Td >
                                             {dato.nombre}
@@ -979,19 +1105,7 @@ export default function PruebasView() {
                             <h5>Controlador Seleccionado: </h5>
                         </div>
                     </Grid>
-                    {/* <Grid item xs={12} md={12}>
-                                    <div className="info-controller-home">
-                                        <h5 className="titulos-home-view">
-                                        {controlerState.nombre}
-                                        </h5>
-                                        <h5 className="titulos-home-view">
-                                        LAT {controlerState.latitud}
-                                        </h5>
-                                        <h5 className="titulos-home-view">
-                                        LON {controlerState.longitud}
-                                        </h5>
-                                    </div>
-                    </Grid> */}
+            
                     <Grid item xs={12} md={6}>
                         <TextField id="outlined" focused value={controlerState.nombre} label="Nombre" variant="outlined" aria-readonly={true} fullWidth />
                     </Grid>
@@ -1053,6 +1167,46 @@ export default function PruebasView() {
                             </MapContainer>
                         </div>
                     </Grid>
+
+
+
+                <Grid item xs={12}>
+                    <h5>Datos del Computador</h5>
+                </Grid>
+                <Grid item xs={6}>
+                    <h5>Hora Actual</h5> 
+                    <RelogActual/>
+                </Grid>
+                <Grid item xs={6}>
+                    <h5>Fecha Actual</h5> 
+                    {fechaActual.toUpperCase()}
+                </Grid>
+                <Grid item xs={12}>
+                    <h5>Datos del Controlador</h5>
+                </Grid>
+                <Grid item xs={6}>
+                    <h5>Hora del Controlador</h5> 
+                    <p>{tiempoController.horas+':'+tiempoController.minutos+':'+tiempoController.segundos}</p>
+                </Grid>
+                <Grid item xs={6}>
+                    <h5>Fecha del Controlador</h5> 
+                    {fechaController.toUpperCase()}
+                </Grid>
+                <Grid item xs={12}>
+                    <h5>Funciones del Controlador</h5>
+                </Grid>
+                <Grid item md={3} xs={12}>
+                    <Button variant="contained" onClick={obtenerTiempoFromRestApi} fullWidth disabled={deshabilitar2} color="verde" sx={{height:'100%'}}>
+                     LEER DATOS
+                    </Button>
+                    
+                </Grid>
+                <Grid item md={3} xs={12}>
+                    <Button variant="contained" onClick={sincronizarTiempoFromRest} fullWidth disabled={deshabilitar} sx={{height:'100%'}}>
+                        Actualizar DATOS
+                    </Button>
+                </Grid>
+
 
 
                     <Grid item xs={12} md={12}>
@@ -1147,7 +1301,7 @@ export default function PruebasView() {
                         </div>
                     </Grid>
                 </Grid>
-
+              
             </Container>
 
             <Modal isOpen={modalCrearSemaforo} >
@@ -1201,107 +1355,8 @@ export default function PruebasView() {
                     </Button>
                 </ModalFooter>
             </Modal>
-            {/* <Modal isOpen={modalDeclararSemaforo} >
-                <ModalHeader>
-                    <div>
-                        <h1>
-                            Editar Semaforo
-                        </h1>
-                    </div>
-                </ModalHeader>
-                <ModalBody>
-                    <Grid container spacing={4}>
-                        <Grid item xs={12}>
-                            <TextField
-                                id="outlined"
-                                value={newController.nombre}
-                                name='nombre'
-                                onChange={handleNewController}
-                                label="Nombre del Semaforo"
-                                variant="outlined"
-                                fullWidth
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-
-                        </Grid>
-                    </Grid>
-                </ModalBody>
-                <ModalFooter >
-                    <Button variant="contained" color='anaranjado1' onClick={actualizarDatosControlador} sx={{ marginLeft: 1 }}>
-                        Aplicar
-                    </Button>
-                    <Button variant="contained" color='rojo' onClick={() => { setModalEditControlador(false) }} sx={{ marginLeft: 1 }}>
-                        cancelar
-                    </Button>
-                </ModalFooter>
-            </Modal> */}
-            {/* <Modal isOpen={modalDeclararSemaforo} >
-                <ModalHeader>
-                    <div>
-                        <h1>
-                            Cambio de Latitud y Longitud
-                        </h1>
-                    </div>
-                </ModalHeader>
-            </Modal> */}
-            {/* <Modal isOpen={modalDeclararSemaforo} >
-                <ModalHeader>
-                    <div>
-                        <h1>
-                            Editar Semaforo
-                        </h1>
-                    </div>
-                </ModalHeader>
-                <ModalBody>
-                    <Grid container spacing={4}>
-                        <Grid item xs={12}>
-                            <TextField
-                                id="outlined"
-                                value={newController.nombre}
-                                name='nombre'
-                                onChange={handleNewController}
-                                label="Nombre del Semaforo"
-                                variant="outlined"
-                                fullWidth
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                id="outlined"
-                                value={newController.latitud}
-                                name='latitud'
-                                type="number"
-                                onChange={handleNewController}
-                                label="Latitud"
-                                variant="outlined"
-                                fullWidth
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                id="outlined"
-                                value={newController.longitud}
-                                name='longitud'
-                                type="number"
-                                onChange={handleNewController}
-                                label="Longitud"
-                                variant="outlined"
-                                fullWidth
-                            />
-                        </Grid>
-                    </Grid>
-                </ModalBody>
-                <ModalFooter >
-                    <Button variant="contained" color='anaranjado1' onClick={actualizarDatosControlador} sx={{ marginLeft: 1 }}>
-                        Aplicar
-                    </Button>
-                    <Button variant="contained" color='rojo' onClick={() => { setModalEditControlador(false) }} sx={{ marginLeft: 1 }}>
-                        cancelar
-                    </Button>
-                </ModalFooter>
-            </Modal> */}
-            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={accionesUi}>
+        
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar}>
                 <CircularProgress color="inherit" />
             </Backdrop>
             <CardController />
