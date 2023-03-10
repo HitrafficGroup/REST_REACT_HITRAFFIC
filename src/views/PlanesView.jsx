@@ -559,14 +559,10 @@ const planInicial = [
     { name: 'Paso 11', fase: 0, duracion: 0 },
     { name: 'Paso 12', fase: 0, duracion: 0 },
 ]
-const selectorPlan =  { name: 'Paso 6', fase: 0, duracion: 0 }
+
 const planes2 = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']
-const planes3 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+
 const planes4 = ["plan1","plan2","plan3","plan4","plan5","plan6","plan7","plan8","plan9","plan10","plan11","plan12"]
-const selectPlanInicial ={
-        numPlan: "plan1",
-        pasos:  [5, 23, 6, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-}
 
 const otrosParametros = {
     destellar_verde_peatonal:"0",

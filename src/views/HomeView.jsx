@@ -39,6 +39,7 @@ import '../css/HomeView.css';
 import Swal from 'sweetalert2';
 import RelogActual from "../components/RelogActual";
 import { useNavigate } from 'react-router-dom';
+
 const InitialTime = {
     dia:"00",
     horas: "00",
@@ -97,8 +98,6 @@ export default function HomeView() {
 
     //prueba semaforo
     const semaforos2 = useRef();
-
-
     const [newSemaforo, setNewSemaforo] = useState({
         nombre: "",
         position: [],
@@ -153,7 +152,7 @@ export default function HomeView() {
             //preguntamos si el controlador ya existe en nuestra base de datos
             if (data.declarado) {
                 // obtenmos del dato de la hora y fecha de la conexion que se realiza
-                let lastConnection = new Date()
+                let lastConnection = new Date().toLocaleString('es-US',{dateStyle	:"full",timeStyle:"full"})
                 //ponemos en falso las banderas de la simulacion del mapa
                 simulacion.current = false;
                 setFlagsimu(false);
@@ -226,7 +225,7 @@ export default function HomeView() {
                 semaforos2.current = areas_temp
                 setAreas(areas_temp)
                 allInfo.current = document.data()
-                console.log(controlerState.pasos_activos)
+
                 todaInformacion.current = document.data()
                 parametrosCorriendo();
                 
@@ -390,49 +389,61 @@ export default function HomeView() {
     ,nos permite desplazar elsemaforo dentro del mapa actualizando su latitud y longitud
     */
     const agregarSemaforo = async () => {
-        setAccionesUi(true)
+        setDeshabilitar(true)
         const docRef = doc(db, "controladores", controlerState.mac);
         let docsanp = await getDoc(docRef);
         let areas_aux = docsanp.data().semaforos
-
-        let newpositions = pointsArea.map((item) => (
-            {
-                pos: item.position
+        
+        if(pointsArea.length === 4){
+            let newpositions = pointsArea.map((item) => (
+                {
+                    pos: item.position
+                }
+            ))
+ 
+    
+            let newPolilyneFirebase = {
+                rojo: 10,
+                amarillo: 4,
+                verde: 20,
+                nombre: newSemaforo.nombre,
+                grupo: newSemaforo.grupo,
+                points: newpositions,
+                color: devolverColor2(newSemaforo.grupo),
             }
-        ))
-        console.log(newpositions)
-
-        let newPolilyneFirebase = {
-            rojo: 10,
-            amarillo: 4,
-            verde: 20,
-            nombre: newSemaforo.nombre,
-            grupo: newSemaforo.grupo,
-            points: newpositions,
-            color: devolverColor2(newSemaforo.grupo),
+    
+            areas_aux.push(newPolilyneFirebase);
+            const ref = doc(db, "controladores", controlerState.mac);
+            await updateDoc(ref, {
+                semaforos: areas_aux
+            });
+            let areas_temp = JSON.parse(JSON.stringify(areas_aux))
+            areas_temp.map((item) => {
+                let puntos_aux = item.points
+                item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
+                return null;
+            })
+           
+            semaforos2.current = areas_temp
+            setAreas(areas_temp)
+            setPointsArea([])
+            setModalCrearSemaforo(false)
+       
+            setNewSemaforo({
+                nombre:"",
+                grupo:"",
+            })
+            setDeshabilitar(false)
+        }else{
+            setDeshabilitar(false)
+            Swal.fire({
+                icon: 'error',
+                title: 'Punos de Area Incompletos',
+                showConfirmButton: false,
+                timer: 900
+            })
         }
-
-        areas_aux.push(newPolilyneFirebase);
-        const ref = doc(db, "controladores", controlerState.mac);
-        await updateDoc(ref, {
-            semaforos: areas_aux
-        });
-        let areas_temp = JSON.parse(JSON.stringify(areas_aux))
-        areas_temp.map((item) => {
-            let puntos_aux = item.points
-            item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
-            return null;
-        })
-        console.log(areas_temp)
-        semaforos2.current = areas_temp
-        setAreas(areas_temp)
-        setPointsArea([])
-        setModalCrearSemaforo(false)
-        setAccionesUi(false)
-        setNewSemaforo({
-            nombre:"",
-            grupo:"",
-        })
+       
 
     }
     const devolverColor2 = (_grupo) => {
@@ -850,33 +861,31 @@ export default function HomeView() {
             confirmButtonText: 'Si'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                setAccionesUi(true)
+                setDeshabilitar(true)
                 let aux = JSON.parse(JSON.stringify(semaforos2.current))
                 let semaforosActualizados = aux.filter(item => item.nombre !== _data.nombre)
-
                 const ref = doc(db, "controladores", controlerState.mac);
                 let areas_temp = JSON.parse(JSON.stringify(semaforosActualizados))
                 areas_temp.map((item) => {
                     let puntos_aux = item.points
-                    
                     item.points = puntos_aux.map((_item) => (
-                        {
-                            pos: _item
-                        }
-                    ))
+                        {pos: _item}
+                        ))
                     return null;
                 })
-
-                await updateDoc(ref, {
-                    semaforos: areas_temp
-                });
+                try {
+                    await updateDoc(ref, {
+                        semaforos: areas_temp
+                    });
+                } catch (error) {
+                    setDeshabilitar(false)
+                }
+             
                 semaforos2.current = semaforosActualizados
                 setAreas(semaforosActualizados)
-                setAccionesUi(false)
+                setDeshabilitar(false)
             }
         })
-
-
     }
     /* esta  funcion se encarga de animar el mapa segun el paso en el que se encuentre*/
 
@@ -887,7 +896,7 @@ export default function HomeView() {
         let g4;
         let dataUpdated;
         let aux = semaforos2.current;
-        console.log(aux)
+
         // console.log("hasta aqui llega el programa");
 
         let paso_actual = devolverPaso()
@@ -908,7 +917,7 @@ export default function HomeView() {
             }
             return item
         })
-        console.log(dataUpdated)
+    
         setAreas(dataUpdated);
 
     }
@@ -957,14 +966,14 @@ export default function HomeView() {
 
         const obtenerTiempoFromRestApi = async() =>{
             try{
-                setDeshabilitar2(true);
+                setDeshabilitar(true);
                 const response = await getTimeControlador(controlerState.mac,controlerState.ip)
                 setTiempoController(response[controlerState.mac])
                 const temp = response[controlerState.mac]
                 const fechac = `${temp.mes}-${temp.dia}-${temp.year}`
                 const dateObj = new Date(fechac)
                 const formatDate = dateObj.toLocaleString("es-EC", { dateStyle: 'full' });
-                console.log(temp);
+               
                 setFechaController(formatDate);
                 setDeshabilitar(false);
                 setDeshabilitar2(false);
@@ -997,7 +1006,6 @@ export default function HomeView() {
                 dia: tiempohoy.getDate().toString(),
                 indice_dia: "2",
                 mes: (tiempohoy.getMonth()+1).toString(),
-                time_zone: "-5",
                 year: tiempohoy.getFullYear().toString(),
             }
     
@@ -1014,9 +1022,9 @@ export default function HomeView() {
                     denyButtonText: 'Cancelar',
                 }).then(async(result)=>{
                     if(result.isConfirmed){
-                        setDeshabilitar2(true);
+                        setDeshabilitar(true);
                         await setTimeControlador(newData);
-                        setDeshabilitar2(false);
+                        setDeshabilitar(false);
                         updateHoraControllerFirebase(dataForFirebase);
                         
                     }
@@ -1148,11 +1156,11 @@ export default function HomeView() {
                                 />
                                 <DraggableMarker />
                                 {pointsArea.map((item, index) => (
-                                    <Marker position={item.position} icon={item.icon}>
+                                    <Marker key={index} position={item.position} icon={item.icon}>
                                     </Marker>
                                 ))}
                                 {areas.map((item, index) => (
-                                    <FeatureGroup pathOptions={item.color}>
+                                    <FeatureGroup key={index} pathOptions={item.color}>
                                         <Popup>
                                             <p style={{ margin: 0, fontStyle: "italic" }}><strong>Area: </strong>{item.nombre} <strong>Grupo: </strong>{item.grupo}</p>
                                             <Button color='rojo' sx={{ marginTop: 2 }} onClick={() => { eliminarArea(item) }} variant="contained">Eliminar</Button>
@@ -1347,10 +1355,10 @@ export default function HomeView() {
                     </Grid>
                 </ModalBody>
                 <ModalFooter >
-                    <Button variant="contained" onClick={agregarSemaforo} sx={{ backgroundColor: "#F0B27A", marginLeft: 1 }}>
+                    <Button variant="contained" onClick={agregarSemaforo}  color="rojo" sx={{ marginLeft: 1 }}>
                         Aplicar
                     </Button>
-                    <Button variant="contained" onClick={() => { setModalCrearSemaforo(false) }} sx={{ backgroundColor: "red", marginLeft: 1 }}>
+                    <Button variant="contained" onClick={() => { setModalCrearSemaforo(false) }} color="azulm" sx={{ marginLeft: 1 }}>
                         cancelar
                     </Button>
                 </ModalFooter>

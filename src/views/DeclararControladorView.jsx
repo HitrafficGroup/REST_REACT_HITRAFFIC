@@ -29,10 +29,8 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { setCambiarIpControlador } from '../js/apiFunctions';
 export default function DeclararControladorView() {
     const controlerState = useSelector(state => state.controlers)
-    const [grupo,setGrupo] = useState("");
     const center = [-2.876428, -78.965342];
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
-    const [modalDeclararSemaforo, setModalDeclararSemaforo] = useState(false);
     const [position, setPosition] = useState(center);
     const [reloadMap,setReloadMap] = useState(false);
     const [latitud,setLatitud] = useState(-2.876428);
@@ -45,7 +43,6 @@ export default function DeclararControladorView() {
     const [semaforos,setSemaforos] = useState(semaforosIniciales);
     const [pointsArea,setPointsArea] = useState([]);
     const [canton,setCanton] = useState('')
-    const [deshabilitar,setDeshabilitar] = useState(false);
     //banderas para los botones 
     const [flagCargando,setFlagCargando] = useState(false);
     const [botonCrear,setBotonCrear] = useState(true);
@@ -229,6 +226,7 @@ export default function DeclararControladorView() {
                         ip:ipControlador,
                         canton:canton,
                         online:true,
+                        ultima_conexion:''
                     }
                     try {
                         setFlagCargando(true);
