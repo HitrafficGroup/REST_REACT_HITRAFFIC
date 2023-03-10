@@ -12,13 +12,13 @@ import { MapContainer, TileLayer, Marker, Popup,FeatureGroup,Polygon } from "rea
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+
 import SaveIcon from '@mui/icons-material/Save';
 import MapIcon from '@mui/icons-material/Map';
 import { useNavigate } from 'react-router-dom';
 import { setNameMenu } from '../features/menu/menuSlice';
 import { reloadIps } from '../features/controlers/controlerSlice';
-import AddIcon from '@mui/icons-material/Add';
+
 import Swal from 'sweetalert2';
 import { doc, setDoc } from "firebase/firestore"; 
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
@@ -26,6 +26,7 @@ import Backdrop from '@mui/material/Backdrop';
 import { useDispatch  } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { setCambiarIpControlador } from '../js/apiFunctions';
 export default function DeclararControladorView() {
     const controlerState = useSelector(state => state.controlers)
     const [grupo,setGrupo] = useState("");
@@ -198,7 +199,7 @@ export default function DeclararControladorView() {
                         t_horarios: 1667372400000,
                         t_peticion: 1667372400000,
                         t_planes: 1667372400000,
-                        ip:ip,
+                        ip:ipControlador,
                         mac:controlerState.nuevo_controlador.mac,
                         informacion:{
                             nombre:nombreControlador,
@@ -233,13 +234,21 @@ export default function DeclararControladorView() {
                         setFlagCargando(true);
                         await setDoc(doc(db, "controladores",controlerState.nuevo_controlador.mac ), parametrosIniciales);
                         await setDoc(doc(db, "historial_controladores",controlerState.nuevo_controlador.mac ), historialControladorData);
+                        if(controlerState.nuevo_controlador.ip !== ipControlador){
+                            let jason_data = {
+                                ip:controlerState.nuevo_controlador.ip,
+                                nueva_ip:ipControlador,
+                                mac:controlerState.nuevo_controlador.mac,
+                            }
+                            await setCambiarIpControlador(jason_data);
+                        }
                         Swal.fire(
                             'Exito',
                             'Controlador Declarado! ',
                             'success'
                             )
                         setFlagCargando(false);
-                        Changeview('/david-diaz/home')
+                        Changeview('/home')
                     } catch (error) {
                         Swal.fire(
                             'Error',
