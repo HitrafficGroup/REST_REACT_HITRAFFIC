@@ -39,7 +39,8 @@ export default function DeclararControladorView() {
     const [areas,setAreas] = useState([]);
     const [draggable, setDraggable] = useState(false)
     const [nombreControlador,setNombreControlador]  = useState("");
-    const [ipControlador,setIpControlador] = useState(controlerState.nuevo_controlador.ip);
+    const [ipControlador,setIpControlador] = useState("");
+    const [macControlador,setMacControlador] = useState("");
     const [semaforos,setSemaforos] = useState(semaforosIniciales);
     const [pointsArea,setPointsArea] = useState([]);
     const [canton,setCanton] = useState('')
@@ -167,7 +168,7 @@ export default function DeclararControladorView() {
             if(ip === "" || ip === undefined ){
                 Swal.fire(
                     'Error No Ip',
-                    'Salga de la ventana y vuelva a entrar ! ',
+                    'Asigne la ip ',
                     'error'
                     )
             }else{
@@ -188,7 +189,7 @@ export default function DeclararControladorView() {
                         ))
                     })
                     console.log(areas_aux)
-                  
+                    
                     let parametrosIniciales = {
                         // parametros inicializados por defecto
                         resumen:aux_1,
@@ -197,7 +198,7 @@ export default function DeclararControladorView() {
                         t_peticion: 1667372400000,
                         t_planes: 1667372400000,
                         ip:ipControlador,
-                        mac:controlerState.nuevo_controlador.mac,
+                        mac:macControlador,
                         informacion:{
                             nombre:nombreControlador,
                             ubicacion:[latitud,longitud]
@@ -228,33 +229,33 @@ export default function DeclararControladorView() {
                         online:true,
                         ultima_conexion:''
                     }
-                    try {
-                        setFlagCargando(true);
-                        await setDoc(doc(db, "controladores",controlerState.nuevo_controlador.mac ), parametrosIniciales);
-                        await setDoc(doc(db, "historial_controladores",controlerState.nuevo_controlador.mac ), historialControladorData);
-                        if(controlerState.nuevo_controlador.ip !== ipControlador){
-                            let jason_data = {
-                                ip:controlerState.nuevo_controlador.ip,
-                                nueva_ip:ipControlador,
-                                mac:controlerState.nuevo_controlador.mac,
-                            }
-                            await setCambiarIpControlador(jason_data);
-                        }
-                        Swal.fire(
-                            'Exito',
-                            'Controlador Declarado! ',
-                            'success'
-                            )
-                        setFlagCargando(false);
-                        Changeview('/home')
-                    } catch (error) {
-                        Swal.fire(
-                            'Error',
-                            `Error: ${error}`,
-                            'error'
-                            )
-                            setFlagCargando(false);
-                    }
+                    // try {
+                    //     setFlagCargando(true);
+                    //     await setDoc(doc(db, "controladores",controlerState.nuevo_controlador.mac ), parametrosIniciales);
+                    //     await setDoc(doc(db, "historial_controladores",controlerState.nuevo_controlador.mac ), historialControladorData);
+                    //     if(controlerState.nuevo_controlador.ip !== ipControlador){
+                    //         let jason_data = {
+                    //             ip:controlerState.nuevo_controlador.ip,
+                    //             nueva_ip:ipControlador,
+                    //             mac:controlerState.nuevo_controlador.mac,
+                    //         }
+                    //         await setCambiarIpControlador(jason_data);
+                    //     }
+                    //     Swal.fire(
+                    //         'Exito',
+                    //         'Controlador Declarado! ',
+                    //         'success'
+                    //         )
+                    //     setFlagCargando(false);
+                    //     Changeview('/home')
+                    // } catch (error) {
+                    //     Swal.fire(
+                    //         'Error',
+                    //         `Error: ${error}`,
+                    //         'error'
+                    //         )
+                    //         setFlagCargando(false);
+                    // }
                 }else{
                       Swal.fire(
                         'Falta el Nombre',
@@ -328,7 +329,7 @@ export default function DeclararControladorView() {
                 </div>
                 <Grid container spacing={1}>
                     <Grid item xs={12} md={2.5}>
-                        <TextField id="outlined" value={controlerState.nuevo_controlador.mac} fullWidth focused  label="Mac" variant="outlined" aria-readonly={true}  />
+                        <TextField id="outlined"  fullWidth onChange={(e) =>{setMacControlador(e.target.value)}} label="Mac" variant="outlined"  />
                     </Grid>
                     <Grid item xs={12} md={2.5}>
                         <TextField id="outlined" value={ipControlador}  onChange={(e) =>{setIpControlador(e.target.value)}} fullWidth   label="Ip:" variant="outlined"  />

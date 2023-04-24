@@ -7,6 +7,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
 import MapIcon from '@mui/icons-material/Map';
 import { collection, updateDoc, doc, getDocs, getDoc } from "firebase/firestore";
@@ -140,126 +141,61 @@ export default function HomeView() {
     }, [])
     const markerRef = useRef(null)
 
-
+    const agregarControlador =()=>{
+        Changeview("/declarar-controlador")
+    }
     /* funcion encargada  de cargar los datos del controlador seleccionado , estos
     datos nos serviran para poder llamar los planes , fases etc del controlador, la funcion
     se encarga de actualizar el reducer con la informacion del controlador actual */
     const seleccionarControlador = async (data) => {
-        // empezamos deshabilitando el boton para no presionar dos veces mientras se conecta 
-        // con la api
-        setDeshabilitar(true)
-        try {
-            //preguntamos si el controlador ya existe en nuestra base de datos
-            if (data.declarado) {
-                // obtenmos del dato de la hora y fecha de la conexion que se realiza
-                let lastConnection = new Date().toLocaleString('es-US',{dateStyle	:"full",timeStyle:"full"})
-                //ponemos en falso las banderas de la simulacion del mapa
-                simulacion.current = false;
-                setFlagsimu(false);
-                setPosition([data.latitud, data.longitud])
-                // actualizamos redux con la informacion del controlador seleccionado
-                dispatch(setInitialStateController(data));
-                dispatch(addCurrentControler(data));
-                // recargamos el mapa con la nueva posicion de longitud y latitud del controlador
-                setReloadMap(!reloadMap)
-                // obtenemos la version de firmware del controlador
-                let aux_firmware = await getFirmwareVersion(data.mac, data.ip);
-                let firmware = aux_firmware[data.mac] // guardamos la version de firmware en una variable
-                let aux_controladores = JSON.parse(JSON.stringify(controlerState.ips)) // utilizamos JSON.parse para que se realice una copia del objeto y no una referencia.
-                // procedemos a encontrar el controlador seleccionado y le damos la propiedad de true , para que se diferencie de los demas que tendran por defecto false.
-                let controladores_formatedos = aux_controladores.map(item => {
-                    let dato = {}
-                    if (item.mac === data.mac) {
-                        dato = {
-                            ip: item.ip,
-                            mac: item.mac,
-                            status: item.status,
-                            nombre: item.nombre,
-                            latitud: item.latitud,
-                            longitud: item.longitud,
-                            seleccionado: true,
-                            declarado: item.declarado,
-                            online:true,
-                            ultima_conexion:lastConnection,
-                            canton:item.canton
+        // empezamos deshabilitando el boton para no presionar dos veces mientras se conecta
+        
+                try {
+                    console.log(data)
+                    setDeshabilitar(true);
+     
+                    let auxs_ips = JSON.parse(JSON.stringify(controlerState.ips))
+                    auxs_ips.map(item=>{
+                        if(item.ip === data.ip){
+                            item.seleccionado = true;
                         }
-                    } else {
-                        dato = {
-                            ip: item.ip,
-                            mac: item.mac,
-                            status: item.status,
-                            nombre: item.nombre,
-                            latitud: item.latitud,
-                            longitud: item.longitud,
-                            seleccionado: false,
-                            declarado: item.declarado,
-                            online:true,
-                            ultima_conexion:item.ultima_conexion,
-                            canton:item.canton
-                        }
-                    }
-                    return dato;
-                })
-                // actualizamos redux con las Ips Disponibles
-                dispatch(addIpsDisponibles(controladores_formatedos));
-                // actualizamos la version de firmware del controlador  en firebase 
-                enviarVersionFirebase(data.mac, data.ip, firmware);
-                // Y tambien actualizamos la ultima conexion
-                let jsonData = {
-                    ultima_conexion: lastConnection
+                    })
+                   
+                    let version = await getFirmwareVersion(data.mac,data.ip) 
+                    console.log(version)
+                    
+                    dispatch(addIpsDisponibles(auxs_ips));
+                    dispatch(setInitialStateController(data));
+                    dispatch(addCurrentControler(data));
+                    let docRef = doc(db, "controladores", data.mac);
+                    let document = await getDoc(docRef);
+                    let gruposController = document.data().semaforos
+                    let areas_temp = JSON.parse(JSON.stringify(gruposController))
+                    // obtenemos los datos de las areas de los semaforos que se
+                    //van a mapear en el mapa
+                    areas_temp.map((item) => {
+                        let puntos_aux = item.points
+                        item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
+                        return null;
+                    })
+    
+                    semaforos2.current = areas_temp
+                    setAreas(areas_temp)
+                    allInfo.current = document.data()
+    
+                    todaInformacion.current = document.data()
+                    parametrosCorriendo();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Controlador Conectado',
+                        showConfirmButton: false,
+                        timer: 900
+                    })
+                } catch (error) {
+                    setDeshabilitar(false)
                 }
-                updateDataFirebase(data.mac,jsonData)
-                // A partir de aqui se solicita toda la informacion del controlador
-                let docRef = doc(db, "controladores", data.mac);
-                let document = await getDoc(docRef);
-                let gruposController = document.data().semaforos
-                let areas_temp = JSON.parse(JSON.stringify(gruposController))
-                // obtenemos los datos de las areas de los semaforos que se
-                //van a mapear en el mapa
-                areas_temp.map((item) => {
-                    let puntos_aux = item.points
-                    item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
-                    return null;
-                })
-
-                semaforos2.current = areas_temp
-                setAreas(areas_temp)
-                allInfo.current = document.data()
-
-                todaInformacion.current = document.data()
-                parametrosCorriendo();
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Controlador Conectado',
-                    showConfirmButton: false,
-                    timer: 900
-                })
-            } else {
-                Swal.fire({
-                    title: 'Controlador Nuevo',
-                    text: "Deseas declarar este nuevo controlador?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        console.log(data)
-                        dispatch(createNewController({
-                            mac: data.mac,
-                            ip: data.ip,
-                        }));
-                        Changeview("/declarar-controlador")
-                    }
-                })
-            
-            }
-        } catch (error) {
-            setDeshabilitar(false)
-        }
-        setDeshabilitar(false)
+               
+       
     }
 
     /* funcion para actualizar la variable version en firebase, dependiendo del controlador*/
@@ -319,55 +255,29 @@ export default function HomeView() {
                 items_db.push(doc.data());
             });
             // pedimos a la api los controladores
-            const doc = await getIpsFromRestApi();
-            
-            const aux_ips = doc.Ips_disponibles;
-            //creamos un arreglo de objetos ips y le damos un formato a cada elemento del arreglo
-            let ips = aux_ips.map(item=>({
-                    ip:item.ip,
-                    mac:item.mac,
-                    status:"online",
-                    online:true,
-
-            }))
+      
+          
             // comparamos la lista de los controladores provenientes de la API y la comparamos
             // con la de firebase para determinar si existe un nuevo controlador
-            var controladores = ips.map(item => {
-                let name = items_db.find(element => element.mac === item.mac)
-                // con find determinamos si existe ese controlador en firebase generalmente
-                //devuelve el objeto si existe o devuelve undefined si no existe
-                if (name === undefined) {
+            var controladores = items_db.map(item => {
+               
                     // si no existe le damos un formato por defecto que indica que debe declararse
                     return ({
                         ip: item.ip,
                         mac: item.mac,
-                        status: item.status,
-                        nombre: "sin declararse aun",
+                        nombre: item.nombre,
                         latitud: -2.876428,
                         longitud: -78.965342,
                         seleccionado: false,
                         declarado: false,
                         online:true,
+                        estado:false,
                         ultima_conexion:'',
                         canton: '',
                     });
-                } else {
-                   
-                    return ({
-                        ip: item.ip,
-                        mac: item.mac,
-                        status: item.status,
-                        nombre: name.nombre,
-                        latitud: name.latitud,
-                        longitud: name.longitud,
-                        seleccionado: false,
-                        declarado: true,
-                        online:true,
-                        ultima_conexion:name.ultima_conexion,
-                        canton:name.canton,
-                    });
-                }
-            })
+              
+                })
+            
 
             dispatch(addIpsDisponibles(controladores));
             setDeshabilitar(false)
@@ -1064,6 +974,9 @@ export default function HomeView() {
                 </div>
                 <Button variant="contained" disabled={accionesUi} endIcon={<CloudDownloadIcon />} onClick={listarIps} sx={{ marginBottom: 2 }}>
                     Listar Controladores
+                </Button>
+                <Button variant='contained' endIcon={<AddIcon/>} onClick={agregarControlador} color='gris' sx={{ marginBottom: 2,marginLeft:3 }}>
+                    Agregar Controlador
                 </Button>
                 <Grid container spacing={1}>
 
