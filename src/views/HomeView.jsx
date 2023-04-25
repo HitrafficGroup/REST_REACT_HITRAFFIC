@@ -185,12 +185,14 @@ export default function HomeView() {
     
                     todaInformacion.current = document.data()
                     parametrosCorriendo();
+                    setDeshabilitar(false)
                     Swal.fire({
                         icon: 'success',
                         title: 'Controlador Conectado',
                         showConfirmButton: false,
                         timer: 900
                     })
+                  
                 } catch (error) {
                     setDeshabilitar(false)
                 }
@@ -999,7 +1001,7 @@ export default function HomeView() {
                                             {index + 1}
                                         </Td>
                                         <Td >
-                                            <Button variant="contained" disabled={deshabilitar2} color={dato.seleccionado ? 'verde2' : 'seleccion'} onClick={() => { seleccionarControlador(dato) }} >SELECCIONAR</Button>
+                                            <Button variant="contained" disabled={deshabilitar2} color={dato.seleccionado ? 'verde2' : 'seleccion'} onClick={() => { seleccionarControlador(dato) }} >CONECTAR</Button>
                                         </Td>
                                         <Td >
                                             {dato.nombre}

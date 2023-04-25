@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { convertToFases, convertToPlanes,createHorariosObject,convertToGrupos,convertirDiasEspeciales } from './manageData'
 import Swal from 'sweetalert2';
-const BASE_PATH_WS = 'http://18.118.121.60:4000';
+const BASE_PATH_WS = 'http://18.224.65.32:4000';
 async function getIpsFromRestApi() {
 	var res;
 	await axios.get(`${BASE_PATH_WS}/rest/listarIps`).then(response => {
