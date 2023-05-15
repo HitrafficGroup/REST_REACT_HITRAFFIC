@@ -149,50 +149,94 @@ export default function HomeView() {
     se encarga de actualizar el reducer con la informacion del controlador actual */
     const seleccionarControlador = async (data) => {
         // empezamos deshabilitando el boton para no presionar dos veces mientras se conecta
-        
+                setDeshabilitar(true);
                 try {
-                    console.log(data)
-                    setDeshabilitar(true);
-     
-                    let auxs_ips = JSON.parse(JSON.stringify(controlerState.ips))
-                    auxs_ips.map(item=>{
-                        if(item.ip === data.ip){
-                            item.seleccionado = true;
-                        }
-                    })
-                   
-                    let version = await getFirmwareVersion(data.mac,data.ip) 
-                    console.log(version)
-                    
-                    dispatch(addIpsDisponibles(auxs_ips));
-                    dispatch(setInitialStateController(data));
-                    dispatch(addCurrentControler(data));
-                    let docRef = doc(db, "controladores", data.mac);
-                    let document = await getDoc(docRef);
-                    let gruposController = document.data().semaforos
-                    let areas_temp = JSON.parse(JSON.stringify(gruposController))
-                    // obtenemos los datos de las areas de los semaforos que se
-                    //van a mapear en el mapa
-                    areas_temp.map((item) => {
-                        let puntos_aux = item.points
-                        item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
-                        return null;
-                    })
-    
-                    semaforos2.current = areas_temp
-                    setAreas(areas_temp)
-                    allInfo.current = document.data()
-    
-                    todaInformacion.current = document.data()
-                    parametrosCorriendo();
-                    setDeshabilitar(false)
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Controlador Conectado',
-                        showConfirmButton: false,
-                        timer: 900
-                    })
-                  
+                        // obtenmos del dato de la hora y fecha de la conexion que se realiza
+                        let lastConnection = new Date().toLocaleString('es-US',{dateStyle	:"full",timeStyle:"full"})
+                        //ponemos en falso las banderas de la simulacion del mapa
+                        simulacion.current = false;
+                        setFlagsimu(false);
+                        setPosition([data.latitud, data.longitud])
+                        // actualizamos redux con la informacion del controlador seleccionado
+                        dispatch(setInitialStateController(data));
+                        dispatch(addCurrentControler(data));
+                        // recargamos el mapa con la nueva posicion de longitud y latitud del controlador
+                        setReloadMap(!reloadMap)
+                        // obtenemos la version de firmware del controlador
+                        let aux_firmware = await getFirmwareVersion(data.mac, data.ip);
+                        let aux_controladores = JSON.parse(JSON.stringify(controlerState.ips)) 
+                        let firmware = aux_firmware[data.mac] // guardamos la version de firmware en una variable
+
+                        let controladores_formatedos = aux_controladores.map(item => {
+                            let dato = {}
+                            if (item.mac === data.mac) {
+                                dato = {
+                                    ip: item.ip,
+                                    mac: item.mac,
+                                    status: item.status,
+                                    nombre: item.nombre,
+                                    latitud: item.latitud,
+                                    longitud: item.longitud,
+                                    seleccionado: true,
+                                    declarado: item.declarado,
+                                    online:true,
+                                    ultima_conexion:lastConnection,
+                                    canton:item.canton
+                                }
+                            } else {
+                                dato = {
+                                    ip: item.ip,
+                                    mac: item.mac,
+                                    status: item.status,
+                                    nombre: item.nombre,
+                                    latitud: item.latitud,
+                                    longitud: item.longitud,
+                                    seleccionado: false,
+                                    declarado: item.declarado,
+                                    online:true,
+                                    ultima_conexion:item.ultima_conexion,
+                                    canton:item.canton
+                                }
+                            }
+                            return dato;
+                        })
+                          // actualizamos redux con las Ips Disponibles
+                dispatch(addIpsDisponibles(controladores_formatedos));
+                // actualizamos la version de firmware del controlador  en firebase 
+                enviarVersionFirebase(data.mac, data.ip, firmware);
+                // Y tambien actualizamos la ultima conexion
+                let jsonData = {
+                    ultima_conexion: lastConnection
+                }
+                updateDataFirebase(data.mac,jsonData)
+                // A partir de aqui se solicita toda la informacion del controlador
+                let docRef = doc(db, "controladores", data.mac);
+                let document = await getDoc(docRef);
+                let gruposController = document.data().semaforos
+                let areas_temp = JSON.parse(JSON.stringify(gruposController))
+                // obtenemos los datos de las areas de los semaforos que se
+                //van a mapear en el mapa
+                areas_temp.map((item) => {
+                    let puntos_aux = item.points
+                    item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
+                    return null;
+                })
+
+                semaforos2.current = areas_temp
+                setAreas(areas_temp)
+                allInfo.current = document.data()
+
+                todaInformacion.current = document.data()
+           
+                parametrosCorriendo();
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Controlador Conectado',
+                    showConfirmButton: false,
+                    timer: 900
+                })
+                setDeshabilitar(false)
                 } catch (error) {
                     setDeshabilitar(false)
                 }
@@ -257,7 +301,7 @@ export default function HomeView() {
                 items_db.push(doc.data());
             });
             // pedimos a la api los controladores
-      
+            
           
             // comparamos la lista de los controladores provenientes de la API y la comparamos
             // con la de firebase para determinar si existe un nuevo controlador
@@ -267,15 +311,15 @@ export default function HomeView() {
                     return ({
                         ip: item.ip,
                         mac: item.mac,
+                        status: item.status,
                         nombre: item.nombre,
-                        latitud: -2.876428,
-                        longitud: -78.965342,
+                        latitud: item.latitud,
+                        longitud: item.longitud,
                         seleccionado: false,
-                        declarado: false,
+                        declarado: true,
                         online:true,
-                        estado:false,
-                        ultima_conexion:'',
-                        canton: '',
+                        ultima_conexion:item.ultima_conexion,
+                        canton:item.canton,
                     });
               
                 })
@@ -556,10 +600,12 @@ export default function HomeView() {
      */
     const parametrosCorriendo = () => {
         let datos_controlador = JSON.parse(JSON.stringify(todaInformacion.current))
+    
         let dia_ordinario = datos_controlador.horarios.dia_ordinario
         let planes = datos_controlador.planes
         let parametros_operativos = datos_controlador.otros_parametros
         tiempo_amarillo.current = parseInt(parametros_operativos.tiempo_amarillo_vehicular)
+       
         let hora_actual = new Date();
         let horas = hora_actual.getHours();
         let minutos = hora_actual.getMinutes();
@@ -570,6 +616,7 @@ export default function HomeView() {
         let ref;
         let nro_horario;
         let dias_ordenados = JSON.parse(JSON.stringify(dia_ordinario))
+       
         dias_ordenados.sort(function (a, b) {
             let a_aux = parseInt(a.horas)
             let a_aux2 = parseInt(a.minutos)
@@ -625,6 +672,7 @@ export default function HomeView() {
         let planname = `plan${plan_activo}`
         let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
         let pasos = plan_filter[0].pasos
+
         var pasos_habilitados = pasos.filter((item) => {
             if (item.duracion > 0) {
                 return item;
@@ -634,6 +682,7 @@ export default function HomeView() {
         })
 
         let fases = datos_controlador.fases
+  
         var pasos_temp = pasos_habilitados
         var fases_pasos = pasos_temp.map((item) => {
             let aux2 = fases.find(_item => _item.faseNum === item.fase)
@@ -675,6 +724,7 @@ export default function HomeView() {
         })
         let datos_amarillo = []
         fases_pasos_aux.current = fases_pasos
+        console.log("todo bien hasta aca",fases_pasos)
         // esta parte del codigo se encarga de animar los ciclos en amarillo
 
 

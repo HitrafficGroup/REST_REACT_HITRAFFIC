@@ -13,7 +13,6 @@ import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
@@ -33,6 +32,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { setCambiarIpControlador } from "../js/apiFunctions";
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import { useNavigate } from 'react-router-dom';
 //iconos
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -148,6 +153,12 @@ export default function ControlersView() {
     const ipControlador = useRef('')
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dataTest.length) : 0;
 
+
+
+    const navigate = useNavigate();
+    const Changeview = (referencia) => {
+        navigate(referencia);
+    }
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -168,6 +179,7 @@ export default function ControlersView() {
     const sinFiltro = ()=>{
         setControlers(respaldoData.current)
     }
+
     const abrirModalinformacion = (_data)=>{
         let aux_data = JSON.parse(JSON.stringify(_data))
         setCurrentController(aux_data)
@@ -247,82 +259,29 @@ export default function ControlersView() {
     }, []);
     return (
         <>
+              <AppBar position="static" sx={{ backgroundColor: "#34495E" }}>
+
+                <Toolbar>
+                <Typography sx={{ display: { xs: 'none', md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
+                   
+                </Typography>
+
+                david.diaz190799@gmail.com
+                </Toolbar>
+                </AppBar>
             <Container maxWidth="md" sx={{paddingTop:3}}>
                 <Grid container spacing={2}>
-                    {/* <Grid md={7} xs={12}>
+                <Grid md={7} xs={12}>
                         <div className="card-admin">
                             <div className="header">
-                                <p className="nombre-card">Filtros</p>
+                                <p className="nombre-card">Acciones</p>
                             </div>
                             <div className="card-body-controler">
                                    
                                     <Grid container >
-                                        <Grid item xs={12} md={6}>
-                                            <Autocomplete
-                                                id="size-small-outlined"
-                                                size="small"
-                                                options={cantones}
-                                                getOptionLabel={(option) => option.canton}
-                                                onChange={(event, newValue) => {
-                                                    cantonselected.current = newValue
-                                                }}
-                                             
-                                                renderInput={(params) => (
-                                                <TextField {...params} label="Canton" placeholder="Escoga el Canton" />
-                                                )}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6} md={2.5}>
-                                            <Button variant="contained" color="verde" size="medium" onClick={filtrarLosDatos} >filtro</Button>
-
-                                        </Grid>
-                                        <Grid item xs={6} md={3.5}>
-                                            <Button variant="contained" size="medium" onClick={sinFiltro}  >Sin filtro</Button>
-                                        </Grid>
-
-                                    </Grid>
                                     
-                                </div>
-                        </div>
-                    </Grid> */}
-                    <Grid md={7} xs={12}>
-                        <div className="card-admin">
-                            <div className="header">
-                                <p className="nombre-card">Filtros</p>
-                            </div>
-                            <div className="card-body-controler">
-                                   
-                                    <Grid container >
-                                        <Grid item xs={12} md={6}>
-                                            <Autocomplete
-                                                id="size-small-outlined"
-                                                size="small"
-                                                options={cantones}
-                                                getOptionLabel={(option) => option.canton}
-                                                onChange={(event, newValue) => {
-                                                    cantonselected.current = newValue
-                                                }}
-                                             
-                                                renderInput={(params) => (
-                                                <TextField {...params} label="Canton" placeholder="Escoga el Canton" />
-                                                )}
-                                            />
-                                        </Grid>
-                                        {/* <Grid item xs={6} md={3.5}>
-                                        <FormControl>
-                                          
-                                            <RadioGroup
-                                                aria-labelledby="demo-controlled-radio-buttons-group"
-                                                name="controlled-radio-buttons-group"
-                                              
-                                            >
-                                                <FormControlLabel value="female" control={<Radio size="small" />} label="Female" />
-                                                <FormControlLabel value="male" control={<Radio size="small" />} label="Male" />
-                                            </RadioGroup>
-                                            </FormControl>
-                                        </Grid> */}
-                                        <Grid item xs={6} md={2.5}>
-                                            <Button variant="contained" size="medium" onClick={filtrarLosDatos}  >Cargar</Button>
+                                        <Grid item xs={12} md={12}>
+                                            <Button variant="contained" size="medium" onClick={()=>{Changeview('/crear_equipo')}}  >DECLARAR NUEVO CONTROLADOR</Button>
                                         </Grid>
 
                                     </Grid>
@@ -330,7 +289,6 @@ export default function ControlersView() {
                                 </div>
                         </div>
                     </Grid>
-                
                     <Grid md={2.5} xs={6}>
                         <div className="card-admin">
                             <div className="header">
@@ -351,6 +309,67 @@ export default function ControlersView() {
                                 </div>
                             </div>
                     </Grid>
+                    <Grid md={12} xs={12}>
+                        <div className="card-admin">
+                            <div className="header">
+                                <p className="nombre-card">Filtros</p>
+                            </div>
+                            <div className="card-body-controler">
+                                   
+                                    <Grid container >
+                                        <Grid item xs={12} md={3}>
+                                            <Autocomplete
+                                                id="size-small-outlined"
+                                                size="small"
+                                                options={cantones}
+                                                getOptionLabel={(option) => option.canton}
+                                                onChange={(event, newValue) => {
+                                                    cantonselected.current = newValue
+                                                }}
+                                             
+                                                renderInput={(params) => (
+                                                <TextField {...params} label="Canton" placeholder="Escoga el Canton" />
+                                                )}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} md={3}>
+                                            <Autocomplete
+                                                id="size-small-outlined"
+                                                size="small"
+                                                options={cantones}
+                                                getOptionLabel={(option) => option.canton}
+                                                onChange={(event, newValue) => {
+                                                    cantonselected.current = newValue
+                                                }}
+                                             
+                                                renderInput={(params) => (
+                                                <TextField {...params} label="Modelo" placeholder="Escoga el Modelo" />
+                                                )}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} md={3.5}>
+                                        <RadioGroup
+                                                row
+                                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                                name="row-radio-buttons-group"
+                                            >
+                                                <FormControlLabel value="female" control={<Radio />} label="activo" />
+                                                <FormControlLabel value="male" control={<Radio />} label="Inactivo" />
+                            
+                                    
+                                            </RadioGroup>
+                                        </Grid>
+                                        <Grid item xs={6} md={2}>
+                                            <Button variant="contained" size="medium" onClick={filtrarLosDatos}  >FILTRAR</Button>
+                                        </Grid>
+
+                                    </Grid>
+                                    
+                                </div>
+                        </div>
+                    </Grid>
+                
+                  
                     
                     <Grid md={12}>
                         <div className="shadow-table">
@@ -361,7 +380,7 @@ export default function ControlersView() {
                                         <TableRow>
                                             <TableCell>Name</TableCell>
                                             <TableCell align="right">Ip</TableCell>
-                                            <TableCell align="right">Mac</TableCell>
+                                            <TableCell align="right">Modelo</TableCell>
                                             <TableCell align="right">Canton</TableCell>
                                             <TableCell align="center">Estado</TableCell>
                                             <TableCell align="center">Acciones</TableCell>
@@ -380,7 +399,7 @@ export default function ControlersView() {
                                                     {row.ip}
                                                 </TableCell>
                                                 <TableCell  align="right">
-                                                    {row.mac}
+                                                    {row.modelo}
                                                 </TableCell>
                                                 <TableCell  align="right">
                                                     {row.canton}
@@ -399,6 +418,7 @@ export default function ControlersView() {
                                                     <IconButton color="azulm" aria-label="info" onClick={()=>{abrirModalinformacion(row)}}>
                                                         <InfoIcon />
                                                     </IconButton>
+                                                    <Button variant="contained" color="oscuro" onClick={()=>{Changeview('/controlador/home')}} >Programar</Button>
                                                     </Stack>
                                                 </TableCell>
                                                 
@@ -441,7 +461,7 @@ export default function ControlersView() {
                 <ModalHeader>
                     <div>
                         <h1>
-                            Ajustes del Controlador
+                            Ajustes Basicos
                         </h1>
                     </div>
                 </ModalHeader>
@@ -472,7 +492,7 @@ export default function ControlersView() {
                 <ModalHeader>
                     <div>
                         <h1>
-                            Resumen
+                            Informacion
                         </h1>
                     </div>
                 </ModalHeader>

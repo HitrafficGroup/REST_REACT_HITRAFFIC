@@ -27,6 +27,13 @@ import { useDispatch  } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { setCambiarIpControlador } from '../js/apiFunctions';
+
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+
 export default function DeclararControladorView() {
     const controlerState = useSelector(state => state.controlers)
     const center = [-2.876428, -78.965342];
@@ -319,6 +326,16 @@ export default function DeclararControladorView() {
     }, []);
     return (
         <>
+            <AppBar position="static" sx={{ backgroundColor: "#34495E" }}>
+
+            <Toolbar>
+            <Typography sx={{ display: { xs: 'none', md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
+            
+            </Typography>
+
+            david.diaz190799@gmail.com
+            </Toolbar>
+            </AppBar>
             <Container maxWidth="md" >
                 <div style={{marginBottom:10,marginTop:20}}>
                     <h4>Formulario de Declaracion de Nuevo Controlador</h4>
