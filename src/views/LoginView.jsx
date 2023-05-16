@@ -56,7 +56,7 @@ export default function LoginView() {
     // Signed in
     const user = userCredential.user;
     console.log(user);
-    navigate("/home")
+    navigate("/equipos")
   })
   .catch((error) => {
     const errorCode = error.code;

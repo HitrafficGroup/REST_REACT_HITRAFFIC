@@ -19,8 +19,10 @@ import RegistroErrores from '../components/content/RegistroErrores';
 import ResumenMenu from '../components/content/ResumenMenu';
 import SalirMenu from '../components/content/SalirMenu';
 import HomeMenu from './content/HomeMenu';
-import SyncMenu from './content/SyncMenu.jsx'
+import { useNavigate } from 'react-router-dom';
+import LogoutIcon from '@mui/icons-material/Logout';
 import GruposMenu from './content/GruposMenu.jsx'
+import Button from '@mui/material/Button';
 import { useSelector } from 'react-redux';
 import "../css/ButtonAppBar.css"
 import PruebasMenu from './content/PruebasMenu';
@@ -30,6 +32,7 @@ export default function ButtonAppBar() {
   const [state, setState] = React.useState({
     left: false,
   });
+  const navigate = useNavigate(); // hook para navegar entre urls o vistas
 
   const menuState = useSelector(state => state.menu);
 
@@ -105,6 +108,10 @@ export default function ButtonAppBar() {
 
     setState({ ...state, [anchor]: open });
   };
+  const cerrarSesion = ()=>{
+    navigate('/');
+}
+  
 
   //drawer a mostrar
   const list = (anchor) => (
@@ -139,7 +146,7 @@ export default function ButtonAppBar() {
             {menuState.menu}
           </Typography>
 
-          david.diaz190799@gmail.com
+          <Button variant="text" sx={{color:"white"}} onClick={cerrarSesion} endIcon={<LogoutIcon />} >Cerrar Sesion</Button>
         </Toolbar>
       </AppBar>
       <Drawer

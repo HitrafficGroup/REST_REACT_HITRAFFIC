@@ -1021,7 +1021,7 @@ export default function HomeView() {
     return (
         <div>
             <Container maxWidth="md">
-                <div className='titulos-home'>
+                {/* <div className='titulos-home'>
                     <h4>Lista De Controladores</h4>
                 </div>
                 <Button variant="contained" disabled={accionesUi} endIcon={<CloudDownloadIcon />} onClick={listarIps} sx={{ marginBottom: 2 }}>
@@ -1029,52 +1029,11 @@ export default function HomeView() {
                 </Button>
                 <Button variant='contained' endIcon={<AddIcon/>} onClick={agregarControlador} color='gris' sx={{ marginBottom: 2,marginLeft:3 }}>
                     Agregar Controlador
-                </Button>
+                </Button> */}
                 <Grid container spacing={1}>
 
-                    <Grid item xs={12}>
-                        <Table className='home-t'>
-                            <Thead>
-                                <Tr>
-                                    <Th className='home-t-th'>#</Th>
-                                    <Th className='home-t-th'>Acciones</Th>
-                                    <Th className='home-t-th'>Nombre</Th>
-                                    <Th className='home-t-th'>Ip</Th>
-                                    <Th className='home-t-th'>Mac</Th>
-                                    <Th className='home-t-th'>status</Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {controlerState.ips.map((dato, index) => (
-                                    <Tr className="tablas-focus" key={index} >
-                                        <Td>
-                                            {index + 1}
-                                        </Td>
-                                        <Td >
-                                            <Button variant="contained" disabled={deshabilitar2} color={dato.seleccionado ? 'verde2' : 'seleccion'} onClick={() => { seleccionarControlador(dato) }} >CONECTAR</Button>
-                                        </Td>
-                                        <Td >
-                                            {dato.nombre}
-                                        </Td>
-                                        <Td >
-                                            {dato.ip}
-                                        </Td>
-                                        <Td >
-                                            {dato.mac}
-                                        </Td>
-                                        <Td >
-                                            <FormControlLabel
-                                                control={<IOSSwitch sx={{ m: 1 }} estado={dato.status} />}
-                                                label={dato.status}
-                                            />
-                                        </Td>
-                                    </Tr>
-                                ))}
-                            </Tbody>
-                        </Table>
-                    </Grid>
                     <Grid item md={12}>
-                        <div className="h-controler-select">
+                        <div className="h-controler-select" >
                             <h5>Controlador Seleccionado: </h5>
                         </div>
                     </Grid>

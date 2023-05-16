@@ -23,24 +23,21 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+
 import Swal from 'sweetalert2';
-import { collection, getDocs,updateDoc,doc,onSnapshot,query } from "firebase/firestore";
+import { collection,updateDoc,doc,onSnapshot,query,deleteDoc  } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 import { setCambiarIpControlador } from "../js/apiFunctions";
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
 //iconos
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import InfoIcon from '@mui/icons-material/Info';
 import CableIcon from '@mui/icons-material/Cable';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -48,6 +45,7 @@ import PowerIcon from '@mui/icons-material/Power';
 import PowerOffIcon from '@mui/icons-material/PowerOff';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Backdrop from '@mui/material/Backdrop';
+import LogoutIcon from '@mui/icons-material/Logout';
 import CircularProgress from '@mui/material/CircularProgress';
 
 function TablePaginationActions(props) {
@@ -152,10 +150,9 @@ export default function ControlersView() {
     const cantonselected = useRef({})
     const ipControlador = useRef('')
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dataTest.length) : 0;
+    const navigate = useNavigate(); // hook para navegar entre urls o vistas
 
 
-
-    const navigate = useNavigate();
     const Changeview = (referencia) => {
         navigate(referencia);
     }
@@ -214,6 +211,20 @@ export default function ControlersView() {
         setDeshabilitar(false)
         setEditarModal(false)      
     }
+    //mostrar la interfaz de acuerdo al controlador
+    const programarControlador = (_equipo)=>{
+        console.log(_equipo)
+        if(_equipo.modelo === "HT-200"){
+            navigate('/controlador_HT200/home')
+        }else if(_equipo.modelo === "SW-12"){
+            navigate('/controlador_SW12/home')
+        }
+    }
+    //Funciones de los botones
+    const cerrarSesion = ()=>{
+        navigate('/');
+    }
+    //funciones de la tabla
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
@@ -242,18 +253,18 @@ export default function ControlersView() {
             confirmButtonText: 'Si, Eliminar!',
             showDenyButton: true,
             denyButtonText: 'Cancelar',
-        }).then((result) => {
+        }).then(async(result) => {
             if (result.isConfirmed) {
-              console.log('se elimino')
+                console.log(_data)
+              console.log('se elimino');
+              await deleteDoc(doc(db, "historial_controladores", _data.mac));
+              await deleteDoc(doc(db, "controladores", _data.mac));
             }
         })
     }
     // CON RESPECTO A LA DISTANCIA DEL SERVIDOR Y LA INFORMACION TRANSMITIDA HACIA EL DISPOSITIVO DE BORDE DEL CONTROLADOR
     // LA INFORMACION PODRIA LLEGAR MAL DEBIDO AL GRAN TRAYECTO QUE DEBE REALIZAR PARA LLEGAR AL CONTROLADOR.
-
     // SEGUNDO SI SE QUISIERA IMPLEMENTAR EL SISTEMA DE CAMARAS VA SER MAS COMPLEJO IMPLEMENTARLO EN UN ROUTER MIKROTIK
-
- 
     useEffect(() => {
         dataFromFirebase();
     }, []);
@@ -263,10 +274,11 @@ export default function ControlersView() {
 
                 <Toolbar>
                 <Typography sx={{ display: { xs: 'none', md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
-                   
+                   Listado de Dispositivos
                 </Typography>
 
-                david.diaz190799@gmail.com
+
+                <Button variant="text" sx={{color:"white"}} onClick={cerrarSesion} endIcon={<LogoutIcon />} >Cerrar Sesion</Button>
                 </Toolbar>
                 </AppBar>
             <Container maxWidth="md" sx={{paddingTop:3}}>
@@ -409,7 +421,7 @@ export default function ControlersView() {
                                                 </TableCell>
                                                 <TableCell  align="center">
                                                 <Stack direction="row" spacing={1}>
-                                                    <IconButton color="rojo" aria-label="eliminar" onClick={()=>{eliminarController()}} >
+                                                    <IconButton color="rojo" aria-label="eliminar" onClick={()=>{eliminarController(row)}} >
                                                         <DeleteIcon />
                                                     </IconButton>
                                                     <IconButton color="gris" aria-label="editar" onClick={()=>{abrirModalEditar(row)}} >
@@ -418,7 +430,7 @@ export default function ControlersView() {
                                                     <IconButton color="azulm" aria-label="info" onClick={()=>{abrirModalinformacion(row)}}>
                                                         <InfoIcon />
                                                     </IconButton>
-                                                    <Button variant="contained" color="oscuro" onClick={()=>{Changeview('/controlador/home')}} >Programar</Button>
+                                                    <Button variant="contained" color="oscuro" onClick={()=>{programarControlador(row)}} >Programar</Button>
                                                     </Stack>
                                                 </TableCell>
                                                 

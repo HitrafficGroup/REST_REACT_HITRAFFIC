@@ -43,7 +43,7 @@ const theme = createTheme({
       contrastText: '#fff',
     },
     rojo: {
-      main: '#E74C3C ',
+      main: '#CD5C5C',
       contrastText: '#fff',
 
     },

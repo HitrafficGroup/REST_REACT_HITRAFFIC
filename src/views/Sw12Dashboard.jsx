@@ -14,7 +14,7 @@ import MapaUniversalView from "./MapaUniversalView";
 import DeclararControladorView from "./DeclararControladorView";
 import PruebasView from "./PruebasView";
 import ControlersView from "./ControlersView";
-export default function MultiView() {
+export default function Sw12Dashboard() {
 
     return (
         <>
