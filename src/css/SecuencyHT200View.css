@@ -1,0 +1,37 @@
+
+
+.seq-div{
+
+    display: flex;
+    flex-direction: row;
+}
+.seq-container{
+    margin-right: 13%;
+}
+
+.seq-list{
+    list-style: none;
+}
+.list-container-seq{
+    width: 100%;
+    padding: 2%;
+    background-color: #F0F3F4 ;
+    overflow-y: scroll;
+    height: 300px;
+    border-radius: 4px;
+}
+.list-items-seq{
+    width: 100%;
+    padding: 1%;
+    background-color: #FBFCFC ;
+    list-style: none;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.fase-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}

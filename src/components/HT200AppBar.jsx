@@ -18,10 +18,11 @@ import { Routes, Route } from "react-router-dom";
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+
 //iconos
 import FlagIcon from '@mui/icons-material/Flag';
 import SsidChartIcon from '@mui/icons-material/SsidChart';
+import AnimationIcon from '@mui/icons-material/Animation';
 export default  function HT200AppBar(){
     const [state, setState] =  useState({left: false,});
     const [drawerHT,setDrawerHT] = useState({left:false});
@@ -81,7 +82,7 @@ export default  function HT200AppBar(){
           aria-labelledby="nested-list-subheader"
           subheader={
             <ListSubheader component="div" id="nested-list-subheader">
-              <h3>HiTraffic Menu</h3>
+              <h3>Menu</h3>
             </ListSubheader> }
         >
             <ListItemButton onClick={()=>{navigate('unit')}} >
@@ -95,6 +96,12 @@ export default  function HT200AppBar(){
                             <SsidChartIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Fases"/>
+            </ListItemButton>
+            <ListItemButton onClick={()=>{navigate('sequency')}} >
+                        <ListItemIcon>
+                            <AnimationIcon fontSize='large' />
+                        </ListItemIcon>
+                        <ListItemText primary="Secuencias"/>
             </ListItemButton>
         </List>
       </Drawer>
