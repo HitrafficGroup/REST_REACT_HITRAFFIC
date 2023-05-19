@@ -19,9 +19,12 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+//iconos
+import FlagIcon from '@mui/icons-material/Flag';
+import SsidChartIcon from '@mui/icons-material/SsidChart';
 export default  function HT200AppBar(){
     const [state, setState] =  useState({left: false,});
-    const [drawerHT,setDrawerHT] = useState({left:false})
+    const [drawerHT,setDrawerHT] = useState({left:false});
     const navigate = useNavigate(); // hook para navegar entre urls o vistas
       // funcion para hacer funcionar el drawer
       const toggleDrawer = (anchor, open) => (event) => {
@@ -79,14 +82,19 @@ export default  function HT200AppBar(){
           subheader={
             <ListSubheader component="div" id="nested-list-subheader">
               <h3>HiTraffic Menu</h3>
-            </ListSubheader>
-          }
+            </ListSubheader> }
         >
-            <ListItemButton >
+            <ListItemButton onClick={()=>{navigate('unit')}} >
                         <ListItemIcon>
-                            <AdminPanelSettingsIcon fontSize='large' />
+                            <FlagIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Excel" />
+                        <ListItemText primary="Unit"/>
+            </ListItemButton>
+            <ListItemButton onClick={()=>{navigate('fases')}} >
+                        <ListItemIcon>
+                            <SsidChartIcon fontSize='large' />
+                        </ListItemIcon>
+                        <ListItemText primary="Fases"/>
             </ListItemButton>
         </List>
       </Drawer>

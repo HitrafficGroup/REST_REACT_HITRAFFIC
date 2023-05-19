@@ -2,6 +2,7 @@ import axios from 'axios';
 import { convertToFases, convertToPlanes,createHorariosObject,convertToGrupos,convertirDiasEspeciales } from './manageData'
 import Swal from 'sweetalert2';
 const BASE_PATH_WS = 'https://hitraffic-group.com';
+
 async function getIpsFromRestApi() {
 	var res;
 	await axios.get(`${BASE_PATH_WS}/rest/listarIps`).then(response => {
