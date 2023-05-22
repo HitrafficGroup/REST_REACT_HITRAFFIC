@@ -133,4 +133,36 @@ async function PostSecuenciasHT200(jsonData) {
 }
 
 
-export { getUnitHT200,PostUnitHT200,getFasesHT200,PostFasesHT200,getSecuencyHT200,PostSecuenciasHT200}
+
+
+
+async function getSplitHT200(mac,ip) {
+	var res;
+	await axios.get(`${BASE_HT200}/rest/getSplitHT200?mac=${mac}&ip=${ip}`).then(response => {
+		res = response.data
+		Swal.fire({
+			title: "Completado!",
+			text: "Datos Leidos Con Éxito",
+			icon: "success",
+		});
+		
+	}).catch(function (error) {
+		console.log(res);
+		Swal.fire({
+			icon: 'error',
+			title: 'Error de Conexión',
+			text: `${error}`,
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+		  })
+	})
+	return res
+}
+
+
+
+
+
+
+
+
+export { getUnitHT200,PostUnitHT200,getFasesHT200,PostFasesHT200,getSecuencyHT200,PostSecuenciasHT200,getSplitHT200}

@@ -23,6 +23,7 @@ import ListItemText from '@mui/material/ListItemText';
 import FlagIcon from '@mui/icons-material/Flag';
 import SsidChartIcon from '@mui/icons-material/SsidChart';
 import AnimationIcon from '@mui/icons-material/Animation';
+import LoopIcon from '@mui/icons-material/Loop';
 export default  function HT200AppBar(){
     const [state, setState] =  useState({left: false,});
     const [drawerHT,setDrawerHT] = useState({left:false});
@@ -102,6 +103,13 @@ export default  function HT200AppBar(){
                             <AnimationIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Secuencias"/>
+            </ListItemButton>
+
+            <ListItemButton onClick={()=>{navigate('split')}} >
+                        <ListItemIcon>
+                            <LoopIcon fontSize='large' />
+                        </ListItemIcon>
+                        <ListItemText primary="Ciclo"/>
             </ListItemButton>
         </List>
       </Drawer>
