@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-const BASE_HT200 = ' http://127.0.0.1:8000';
+const BASE_HT200 = 'http://127.0.0.1:8000';
 
 
 async function getUnitHT200(mac,ip) {
@@ -111,7 +111,26 @@ async function getSecuencyHT200(mac,ip) {
 	return res
 }
 
+async function PostSecuenciasHT200(jsonData) {
+	await axios.post(`${BASE_HT200}/rest/setSecuenciasHT200?mac=${jsonData['mac']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
+		});
+}
 
 
-
-export { getUnitHT200,PostUnitHT200,getFasesHT200,PostFasesHT200,getSecuencyHT200}
+export { getUnitHT200,PostUnitHT200,getFasesHT200,PostFasesHT200,getSecuencyHT200,PostSecuenciasHT200}

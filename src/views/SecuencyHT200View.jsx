@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import { getSecuencyHT200 } from "../js/apiFunctionsHT200";
+import { getSecuencyHT200,PostSecuenciasHT200 } from "../js/apiFunctionsHT200";
 import Button from '@mui/material/Button';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import "../css/SecuencyHT200View.css";
 import SettingsIcon from '@mui/icons-material/Settings';
 import IconButton from '@mui/material/IconButton';
@@ -15,14 +11,15 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 //iconos
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
-const options = ['Option 1', 'Option 2'];
+
 export default function SecuencyHT200View() {
 
     const [secuencias, setSecuencias] = useState([{ data: [], id: '' }]);
     const [modalConfig, setModalConfig] = useState(false)
-    const [value, setValue] = useState(options[0]);
+    const [value, setValue] = useState('');
     const [inputValue, setInputValue] = useState('');
     const [currentSeq,setCurrentSeq]= useState([{}]);
+    const [idSeq,setIdSeq] = useState();
 
     const readData = async () => {
         let data = await getSecuencyHT200("23:45:15:56", "192.168.1.122");
@@ -35,22 +32,109 @@ export default function SecuencyHT200View() {
             }
             data_formated.push(dictionario)
         });
-        console.log(data_formated)
+
         setSecuencias(data_formated)
     }
 
     const configurarSecuencia = (__data) => {
 
-        console.log(__data)
 
         let seq_formated = __data.data.filter(item => item.value !== 0)
-
-        console.log(seq_formated)
+        setIdSeq(__data.id)
         setCurrentSeq(seq_formated)
         setModalConfig(true)
     }
+    
+    const agregarFasesSeq = ()=>{
+        let aux_seq = JSON.parse(JSON.stringify(currentSeq))
+        let newSeq = {
+            id: 'paso-'+(currentSeq.length +1),
+            value: parseInt(value)
+        }
+        
+        aux_seq.push(newSeq)
+        setCurrentSeq(aux_seq)
+        
+    }
 
+    const guardarFase =()=>{
+        let aux_seq = JSON.parse(JSON.stringify(secuencias))
+        let formated_seq = JSON.parse(JSON.stringify(currentSeq))
+        for(let i = 0; i<=16;i++){
+            if(formated_seq.length < i){
+                let custom_data = {
+                    id:'paso-'+i,
+                    value:0
+                }
+                formated_seq.push(custom_data)
+            }
+        }
 
+        aux_seq.map((item)=>{
+            if(item.id === idSeq){
+                item.data = formated_seq
+            }
+        })
+        setSecuencias(aux_seq)
+        setModalConfig(false)
+    }
+    const eliminarFase = (__data)=>{
+ 
+        let aux_seq = JSON.parse(JSON.stringify(currentSeq))
+        let data_filter = aux_seq.filter(item=> item.id !== __data.id)
+        if(data_filter.length >0){
+            data_filter.map((item,index) =>{
+                item.id = 'paso-'+(index+1)
+            })
+        }
+      
+        setCurrentSeq(data_filter)
+      
+    }
+
+    const uploadData = async() =>{
+        let data_formated = []
+       
+        let seq_target
+        let aux_secuencias = JSON.parse(JSON.stringify(secuencias))
+       
+        for(let i = 0; i<16;i++){
+            
+            if(aux_secuencias.length > i){
+                data_formated.push(i+1)
+                seq_target = aux_secuencias[i].data
+                console.log(seq_target)
+                for(let x = 0; x<4;x++){
+                    
+                    if(x === 0){
+                        data_formated.push(1)
+                        for(let y = 0; y<16;y++){
+                            data_formated.push(seq_target[y].value)
+                        }
+                    }else{
+                        data_formated.push(0)
+                        for(let y = 0; y<16;y++){
+                            data_formated.push(0)
+                        }
+                    }
+                }
+            }else{
+                data_formated.push(0)
+                for(let x = 0; x<4;x++){
+                    data_formated.push(0)
+                    for(let y = 0; y<16;y++){
+                        data_formated.push(0)
+                        }
+                }
+                    
+                }
+
+            }
+            console.log(data_formated.length)
+            let data_send = {trama:data_formated}
+            await PostSecuenciasHT200(data_send)
+
+    }
     return (
 
         <>
@@ -63,7 +147,7 @@ export default function SecuencyHT200View() {
                         <Button color='verde' variant="contained" onClick={readData}  >leer datos</Button>
                     </Grid>
                     <Grid item xs={12} md={6} >
-                        <Button color='oscuro' variant="contained"   >Cargar datos</Button>
+                        <Button color='oscuro' variant="contained"  onClick={uploadData} >Cargar datos</Button>
                     </Grid>
                     <Grid item xs={4} md={12}>
                         {/* <FormControl fullWidth>
@@ -93,7 +177,7 @@ export default function SecuencyHT200View() {
                                     <p key={index}>{seq.id}</p>
                                     <ul className="seq-list">
                                         <li className="list" >
-                                            <IconButton aria-label="delete" color="oscuro" onClick={() => { configurarSecuencia(seq) }} >
+                                            <IconButton aria-label="delete" color="oscuro"  onClick={()=>{configurarSecuencia(seq)}}  >
                                                 <SettingsIcon />
                                             </IconButton>
                                         </li>
@@ -125,23 +209,21 @@ export default function SecuencyHT200View() {
 
                         <Grid item xs={12} md={8}>
                             <Autocomplete
-                                value={value}
+                                disableClearable
+                
                                 onChange={(event, newValue) => {
                                     setValue(newValue);
                                 }}
-                                inputValue={inputValue}
-                                onInputChange={(event, newInputValue) => {
-                                    setInputValue(newInputValue);
-                                }}
+                               
                                 fullWidth
                                 id="controllable-states-demo"
                                 options={options}
-
-                                renderInput={(params) => <TextField {...params} label="Controllable" />}
+                                
+                                renderInput={(params) => <TextField {...params} label="Seleccionar Fase" />}
                             />
                         </Grid>
                         <Grid item xs={12} md={4}>
-                            <Button variant="contained" fullWidth color="primary" sx={{ height: "100%" }} >
+                            <Button variant="contained" fullWidth color="primary" onClick={()=>{agregarFasesSeq()}} sx={{ height: "100%" }} >
                                 agregar
                             </Button>
                         </Grid>
@@ -154,7 +236,7 @@ export default function SecuencyHT200View() {
                                     <li key={index} className="list-items-seq">
                                         <div className="fase-container">
                                         <p style={{margin:0}}>fase - {item.value}</p>
-                                            <IconButton aria-label="delete" color="oscuro"  >
+                                            <IconButton aria-label="delete" color="oscuro" onClick={()=>{eliminarFase(item)}}  >
                                                 <CloseSharpIcon />
                                             </IconButton>
                                         </div>
@@ -169,8 +251,8 @@ export default function SecuencyHT200View() {
                     </Grid>
                 </ModalBody>
                 <ModalFooter >
-                    <Button variant="contained" color="rojo" sx={{ marginLeft: 1 }}>
-                        guardar cambios
+                    <Button variant="contained" color="rojo" sx={{ marginLeft: 1 }} onClick={guardarFase}>
+                        GUARDAR CAMBIOS
                     </Button>
                     <Button variant="contained" onClick={() => { setModalConfig(false) }} color="oscuro" sx={{ marginLeft: 1 }}>
                         cancelar
@@ -210,3 +292,4 @@ const columns = [
     { id: 'weq1', label: 'seq7', minWidth: 100 },
     { id: 'qww', label: 'seq8', minWidth: 100 },
 ];
+const options = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16'];
