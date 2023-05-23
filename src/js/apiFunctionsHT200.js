@@ -159,10 +159,35 @@ async function getSplitHT200(mac,ip) {
 }
 
 
+async function PostSplitHT200(jsonData) {
+	await axios.post(`${BASE_HT200}/rest/setSplitHT200?mac=${jsonData['mac']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
+		});
+}
 
 
 
 
 
 
-export { getUnitHT200,PostUnitHT200,getFasesHT200,PostFasesHT200,getSecuencyHT200,PostSecuenciasHT200,getSplitHT200}
+
+
+
+export { getUnitHT200,PostUnitHT200,getFasesHT200,PostFasesHT200,
+	getSecuencyHT200,PostSecuenciasHT200,
+	getSplitHT200,PostSplitHT200}
