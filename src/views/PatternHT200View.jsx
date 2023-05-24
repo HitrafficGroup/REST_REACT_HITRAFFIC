@@ -46,28 +46,6 @@ export default function PatternHT200View() {
     const readData = async () => {
         let data = await getPatternHT200("23:45:15:56", "192.168.1.122");
         console.log(data)
-            for (let j = 0; j < 16; j++) {
-
-                let target = data[j].workmode
-                if (target === 1) {
-                    data[j].workmode = "Fixed Time"
-                } else if (target === 2) {
-                    data[j].workmode = "Green Wave"
-                } else if (target === 3) {
-                    data[j].workmode = "Sense Control"
-                } else if (target === 4) {
-                    data[j].workmode = "Flash Control"
-                } else if (target === 5) {
-                    data[j].workmode = "All red Control"
-                } else if (target === 6) {
-                    data[j].workmode = "Lamp Off Control"
-                } else {
-                    data[j].workmode = "Ninguno"
-                }
-
-            }
-        
-
         setData(data)
 
     }
@@ -97,26 +75,7 @@ export default function PatternHT200View() {
     const uploadData = async() =>{
         let array_data = []
         let aux_data = JSON.parse(JSON.stringify(data))
-        for (let j = 0; j < 16; j++) {
-
-            let target = aux_data[j].workmode
-            if (target === "Fixed Time") {
-                aux_data[j].workmode = 1
-            } else if (target === "Green Wave") {
-                aux_data[j].workmode = 2
-            } else if (target === "Sense Control") {
-                aux_data[j].workmode = 3
-            } else if (target === "Flash Control") {
-                aux_data[j].workmode = 4
-            } else if (target === "All red Control") {
-                aux_data[j].workmode = 5
-            } else if (target === "Lamp Off Control") {
-                aux_data[j].workmode = 6
-            } else {
-                aux_data[j].workmode = 0
-            }
-
-        }
+    
 
         for(let i = 0;i<100;i++){
             if(i <16){
@@ -136,8 +95,27 @@ export default function PatternHT200View() {
                 array_data.push(0)
                 array_data.push(0)
             }
+        
         }
+        console.log(array_data)
         await PostPatternHT200({trama:array_data,mac:"12:32:12:23"})
+    }
+    const convertWorkmode = (__data)=>{
+        if (__data === 1) {
+            return "Fixed Time"
+        } else if (__data === 2 ) {
+            return "Green Wave"
+        } else if (__data === 3) {
+            return "Sense Control"
+        } else if (__data === 4) {
+           return "Flash Control"
+        } else if (__data === 5) {
+            return "All red Control"
+        } else if (__data === 6 ) {
+            return "Lamp Off Control"
+        } else {
+           return 0
+        }
     }
 
     return (
@@ -167,6 +145,13 @@ export default function PatternHT200View() {
                                             </TableCell>
                                         ))}
                                          <TableCell
+                                                key={"workmode"}
+                                                align={"center"}
+                                                style={{ minWidth: 100 }}
+                                            >
+                                                Workmode
+                                            </TableCell>
+                                         <TableCell
                                                 key={"Acciones"}
                                                 align={"center"}
                                                 style={{ minWidth: 100 }}
@@ -191,7 +176,10 @@ export default function PatternHT200View() {
                                                             </TableCell>
                                                         );
                                                     })}
-                                                         <TableCell key={index} align={"center"}>
+                                                        <TableCell  align={"center"}>
+                                                            {convertWorkmode(row.workmode)}
+                                                            </TableCell>
+                                                         <TableCell  align={"center"}>
                                                          <IconButton color="oscuro" aria-label="add an alarm" onClick={()=>{modificarPatron(row)}} >
                                                             <EditIcon />
                                                         </IconButton>
@@ -263,13 +251,13 @@ export default function PatternHT200View() {
                                     name="workmode"
                                     onChange={handleChange}
                                 >
-                                    <MenuItem value={"Fixed Time"}>Fixed Time</MenuItem>
-                                    <MenuItem value={"Green Wave"}>Green Wave</MenuItem>
-                                    <MenuItem value={"Sense Control"}>Sense Control</MenuItem>
-                                    <MenuItem value={"Flash Control"}>Flash Control</MenuItem>
-                                    <MenuItem value={"All red Control"}>All red Control</MenuItem>
-                                    <MenuItem value={"Lamp Off Control"}>Lamp Off Control</MenuItem>
-                                    <MenuItem value={"Ninguno"}>Ninguno</MenuItem>
+                                    <MenuItem value={1}>Fixed Time</MenuItem>
+                                    <MenuItem value={2}>Green Wave</MenuItem>
+                                    <MenuItem value={3}>Sense Control</MenuItem>
+                                    <MenuItem value={4}>Flash Control</MenuItem>
+                                    <MenuItem value={5}>All red Control</MenuItem>
+                                    <MenuItem value={6}>Lamp Off Control</MenuItem>
+                                    <MenuItem value={7}>Ninguno</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -302,5 +290,5 @@ const columns = [
     { id: 'sequencenumber', label: 'Sequence Number', minWidth: 100 },
     { id: 'splitnumber', label: 'Split Number', minWidth: 100 },
     { id: 'offsettime', label: 'OffsetTime', minWidth: 100 },
-    { id: 'workmode', label: 'Workmode', minWidth: 100 },
+    // { id: 'workmode', label: 'Workmode', minWidth: 100 },
 ];
