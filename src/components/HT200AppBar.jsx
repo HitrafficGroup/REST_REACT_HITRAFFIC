@@ -24,6 +24,8 @@ import FlagIcon from '@mui/icons-material/Flag';
 import SsidChartIcon from '@mui/icons-material/SsidChart';
 import AnimationIcon from '@mui/icons-material/Animation';
 import LoopIcon from '@mui/icons-material/Loop';
+import PatternIcon from '@mui/icons-material/Pattern';
+import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
 export default  function HT200AppBar(){
     const [state, setState] =  useState({left: false,});
     const [drawerHT,setDrawerHT] = useState({left:false});
@@ -110,6 +112,18 @@ export default  function HT200AppBar(){
                             <LoopIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Ciclo"/>
+            </ListItemButton>
+            <ListItemButton onClick={()=>{navigate('pattern')}} >
+                        <ListItemIcon>
+                            <PatternIcon fontSize='large' />
+                        </ListItemIcon>
+                        <ListItemText primary="Pattern"/>
+            </ListItemButton>
+            <ListItemButton onClick={()=>{navigate('action')}} >
+                        <ListItemIcon>
+                            <SportsMartialArtsIcon fontSize='large' />
+                        </ListItemIcon>
+                        <ListItemText primary="Action"/>
             </ListItemButton>
         </List>
       </Drawer>

@@ -180,8 +180,49 @@ async function PostSplitHT200(jsonData) {
 		});
 }
 
+async function getPatternHT200(mac,ip) {
+	var res;
+	await axios.get(`${BASE_HT200}/rest/getPatternHT200?mac=${mac}&ip=${ip}`).then(response => {
+		res = response.data
+		Swal.fire({
+			title: "Completado!",
+			text: "Datos Leidos Con Éxito",
+			icon: "success",
+		});
+		
+	}).catch(function (error) {
+		console.log(res);
+		Swal.fire({
+			icon: 'error',
+			title: 'Error de Conexión',
+			text: `${error}`,
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+		  })
+	})
+	return res
+}
 
 
+async function PostPatternHT200(jsonData) {
+	await axios.post(`${BASE_HT200}/rest/setPatternHT200?mac=${jsonData['mac']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
+		});
+}
 
 
 
@@ -190,4 +231,4 @@ async function PostSplitHT200(jsonData) {
 
 export { getUnitHT200,PostUnitHT200,getFasesHT200,PostFasesHT200,
 	getSecuencyHT200,PostSecuenciasHT200,
-	getSplitHT200,PostSplitHT200}
+	getSplitHT200,PostSplitHT200,getPatternHT200,PostPatternHT200}
