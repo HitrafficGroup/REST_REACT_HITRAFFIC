@@ -312,7 +312,27 @@ async function PostPlanHT200(jsonData) {
 		});
 }
 
-
+async function getHorarioHT200(mac,ip) {
+	var res;
+	await axios.get(`${BASE_HT200}/rest/getScneduleHT200?mac=${mac}&ip=${ip}`).then(response => {
+		res = response.data
+		Swal.fire({
+			title: "Completado!",
+			text: "Datos Leidos Con Éxito",
+			icon: "success",
+		});
+		
+	}).catch(function (error) {
+		console.log(res);
+		Swal.fire({
+			icon: 'error',
+			title: 'Error de Conexión',
+			text: `${error}`,
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+		  })
+	})
+	return res
+}
 
 export { 
 	getUnitHT200,PostUnitHT200,
@@ -321,5 +341,6 @@ export {
 	getSplitHT200,PostSplitHT200,
 	getPatternHT200,PostPatternHT200,
 	getAccionHT200,PostActionHT200,
-	getPlanHT200,PostPlanHT200
+	getPlanHT200,PostPlanHT200,
+	getHorarioHT200
 }
