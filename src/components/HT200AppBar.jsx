@@ -26,6 +26,7 @@ import AnimationIcon from '@mui/icons-material/Animation';
 import LoopIcon from '@mui/icons-material/Loop';
 import PatternIcon from '@mui/icons-material/Pattern';
 import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
+import BallotIcon from '@mui/icons-material/Ballot';
 export default  function HT200AppBar(){
     const [state, setState] =  useState({left: false,});
     const [drawerHT,setDrawerHT] = useState({left:false});
@@ -124,6 +125,12 @@ export default  function HT200AppBar(){
                             <SportsMartialArtsIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Action"/>
+            </ListItemButton>
+            <ListItemButton onClick={()=>{navigate('plan')}} >
+                        <ListItemIcon>
+                            <BallotIcon fontSize='large' />
+                        </ListItemIcon>
+                        <ListItemText primary="Plan"/>
             </ListItemButton>
         </List>
       </Drawer>

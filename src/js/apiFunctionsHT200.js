@@ -270,7 +270,56 @@ async function PostActionHT200(jsonData) {
 }
 
 
+async function getPlanHT200(mac,ip) {
+	var res;
+	await axios.get(`${BASE_HT200}/rest/getPlanesHT200?mac=${mac}&ip=${ip}`).then(response => {
+		res = response.data
+		Swal.fire({
+			title: "Completado!",
+			text: "Datos Leidos Con Éxito",
+			icon: "success",
+		});
+		
+	}).catch(function (error) {
+		console.log(res);
+		Swal.fire({
+			icon: 'error',
+			title: 'Error de Conexión',
+			text: `${error}`,
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+		  })
+	})
+	return res
+}
+async function PostPlanHT200(jsonData) {
+	await axios.post(`${BASE_HT200}/rest/setPlanHT200?mac=${jsonData['mac']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
+		});
+}
 
-export { getUnitHT200,PostUnitHT200,getFasesHT200,PostFasesHT200,
+
+
+export { 
+	getUnitHT200,PostUnitHT200,
+	getFasesHT200,PostFasesHT200,
 	getSecuencyHT200,PostSecuenciasHT200,
-	getSplitHT200,PostSplitHT200,getPatternHT200,PostPatternHT200,getAccionHT200,PostActionHT200}
+	getSplitHT200,PostSplitHT200,
+	getPatternHT200,PostPatternHT200,
+	getAccionHT200,PostActionHT200,
+	getPlanHT200,PostPlanHT200
+}

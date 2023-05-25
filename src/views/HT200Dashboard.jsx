@@ -8,6 +8,7 @@ import SecuencyHT200View from "./SecuencyHT200View";
 import SplitHT200View from "./SplitHT200View";
 import PatternHT200View from "./PatternHT200View";
 import AccionesHT200View from "./AccionesHT200View";
+import PlanHT200View from "./PlanHT200View";
 export default function HT200Dashboard(){
     return (
         <>
@@ -20,6 +21,7 @@ export default function HT200Dashboard(){
                 <Route path="split" element={<SplitHT200View />} />
                 <Route path="pattern" element={<PatternHT200View />} />
                 <Route path="action" element={<AccionesHT200View />} />
+                <Route path="plan" element={<PlanHT200View />} />
             </Routes>   
         </>
       );

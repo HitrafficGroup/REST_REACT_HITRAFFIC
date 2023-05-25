@@ -25,7 +25,6 @@ export default function SplitHT200View() {
     const [splitTab, setSplitTab] = useState("split-1");
     const [splits, setSplits] = useState([{}]);
     const [currentTab, setCurrentTab] = useState([{}]);
-
     const [modalConfig, setModalConfig] = useState(false);
     const [currentSplit, setCurrentSplit] = useState({ tiempo: 0 });
     const readData = async () => {
