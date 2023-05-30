@@ -333,6 +333,26 @@ async function getHorarioHT200(mac,ip) {
 	})
 	return res
 }
+async function PostHorariosHT200(jsonData) {
+	await axios.post(`${BASE_HT200}/rest/setHorariosHT200?mac=${jsonData['mac']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
+		});
+}
 
 export { 
 	getUnitHT200,PostUnitHT200,
@@ -342,5 +362,5 @@ export {
 	getPatternHT200,PostPatternHT200,
 	getAccionHT200,PostActionHT200,
 	getPlanHT200,PostPlanHT200,
-	getHorarioHT200
+	getHorarioHT200,PostHorariosHT200
 }
