@@ -28,7 +28,7 @@ export default function PlanHT200View(){
     const [currentTab, setCurrentTab] = useState([{}]);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
-    const [data,setData] = useState([{}])
+    const [data,setData] = useState([{}]);
     const [modalConfig,setModalConfig] = useState(false);
     const [currentPlan,setCurrentPlan] = useState({});
     const handlePlan = (event)=>{

@@ -333,6 +333,9 @@ async function getHorarioHT200(mac,ip) {
 	})
 	return res
 }
+
+
+
 async function PostHorariosHT200(jsonData) {
 	await axios.post(`${BASE_HT200}/rest/setHorariosHT200?mac=${jsonData['mac']}`,jsonData)
 		.then(response => {
@@ -354,6 +357,32 @@ async function PostHorariosHT200(jsonData) {
 		});
 }
 
+async function getChannelHT200(mac,ip) {
+	var res;
+	await axios.get(`${BASE_HT200}/rest/getChannelHT200?mac=${mac}&ip=${ip}`).then(response => {
+		res = response.data
+		Swal.fire({
+			title: "Completado!",
+			text: "Datos Leidos Con Éxito",
+			icon: "success",
+		});
+		
+	}).catch(function (error) {
+		console.log(res);
+		Swal.fire({
+			icon: 'error',
+			title: 'Error de Conexión',
+			text: `${error}`,
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+		  })
+	})
+	return res
+}
+
+
+
+
+
 export { 
 	getUnitHT200,PostUnitHT200,
 	getFasesHT200,PostFasesHT200,
@@ -362,5 +391,7 @@ export {
 	getPatternHT200,PostPatternHT200,
 	getAccionHT200,PostActionHT200,
 	getPlanHT200,PostPlanHT200,
-	getHorarioHT200,PostHorariosHT200
+	getHorarioHT200,PostHorariosHT200,
+	getChannelHT200
+
 }
