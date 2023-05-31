@@ -378,6 +378,27 @@ async function getChannelHT200(mac,ip) {
 	})
 	return res
 }
+async function PostChannelHT200(jsonData) {
+	await axios.post(`${BASE_HT200}/rest/setChannelHT200?mac=${jsonData['mac']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
+		});
+}
+
 
 
 
@@ -392,6 +413,6 @@ export {
 	getAccionHT200,PostActionHT200,
 	getPlanHT200,PostPlanHT200,
 	getHorarioHT200,PostHorariosHT200,
-	getChannelHT200
+	getChannelHT200,PostChannelHT200
 
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-import { getChannelHT200 } from '../js/apiFunctionsHT200';
+import { getChannelHT200,PostChannelHT200 } from '../js/apiFunctionsHT200';
 // tabla
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -58,7 +58,7 @@ export default function ChannelView(){
         }else if(__data === 2){
             return "Yellow"
         }else if(__data === 1){
-            return "Vehicle"
+            return "Other"
         }else{
             return "Alternate"
         }
@@ -71,21 +71,31 @@ export default function ChannelView(){
             return "South"
         }else if(__data === 3){
             return "West"
-        }else{
+        }else if(__data === 4){
             return "North"
+        }else if(__data === 5){
+            return "North East"
+        }else if(__data === 6){
+            return "South East"
+        }else if(__data === 7){
+            return "South West"
+        }else if(__data === 8){
+            return "North West"
+        }else{
+            return "Other"
         }
     }
 
 
     const DimParameter =(__data)=>{
         if(__data ===1){
-            return "Verde"
+            return " Dim Verde"
         }else if(__data === 2){
-            return "Yellow"
+            return "Dim Yellow"
         }else if(__data === 8){
-            return "Alternate"
+            return "Dim Alternate"
         }else{
-            return "Red"
+            return "Dim Red"
         }
     }
 
@@ -98,12 +108,17 @@ export default function ChannelView(){
             return "Right"
         }else if(__data === 4){
             return "Pedestrian"
+        }else if(__data === 5){
+            return "Turn"
+        }else if(__data === 6){
+            return "No Vehicle"
         }else{
             return "Other"
         }
     }
     
     const modificarChannel =(__data)=>{
+        console.log(__data)
         setModalConfig(true)
         setCurrentChannel(__data)
     }
@@ -113,12 +128,35 @@ export default function ChannelView(){
         console.log(data)
         setData(data)
     }
-    const uploadData =()=>{
-        //
+    const uploadData = async()=>{
+        let aux_data = JSON.parse(JSON.stringify(data))
+        let data_array = []
+        for( let i =0; i<16;i++){
+            data_array.push(aux_data[i].number)
+            data_array.push(aux_data[i].source)
+            data_array.push(aux_data[i].type)
+            data_array.push(aux_data[i].flash)
+            data_array.push(aux_data[i].dim)
+            data_array.push(aux_data[i].position)
+            data_array.push(aux_data[i].direction)
+            data_array.push(aux_data[i].countdown)
+        }
+        await PostChannelHT200({trama:data_array,mac:"12:32:12:23"})
     }
 
     const AplicarCambios =()=>{
+        let aux_data = JSON.parse(JSON.stringify(data))
+        let data_modify = aux_data.map(item =>{
+            if(item.number === currentChannel.number){
+                return currentChannel;
+            }
+            else{
+                return item;
+            }
+        })
         console.log(currentChannel)
+        setData(data_modify)
+        setModalConfig(false)
     }
     const handleChange = (event) => {
         setCurrentChannel({
@@ -271,7 +309,7 @@ export default function ChannelView(){
                 <ModalHeader>
                     <div>
                         <h1>
-                            Editar Planes
+                            Editar Channel
                         </h1>
                     </div>
                 </ModalHeader>
@@ -288,10 +326,10 @@ export default function ChannelView(){
                                 onChange={handleChange}
                                 row
                             >
-                                <FormControlLabel value={1} control={<Radio />} name='type' label="Vehiculo" />
-                                <FormControlLabel value={2} control={<Radio />} name='type' label="Peatonal" />
-                                <FormControlLabel value={3} control={<Radio />} name='type' label="Overlap" />
-                                <FormControlLabel value={4} control={<Radio />} name='type' label="Other" />
+                                <FormControlLabel value={2} control={<Radio />} name='type' label="Vehiculo" />
+                                <FormControlLabel value={3} control={<Radio />} name='type' label="Peatonal" />
+                                <FormControlLabel value={4} control={<Radio />} name='type' label="Overlap" />
+                                <FormControlLabel value={1} control={<Radio />} name='type' label="Other" />
                             </RadioGroup>
                         </FormControl>
                         </Grid>
@@ -305,10 +343,10 @@ export default function ChannelView(){
                                 onChange={handleChange}
                                 row
                             >
-                                <FormControlLabel value={1} control={<Radio />} name='flash' label="Alternate" />
-                                <FormControlLabel value={2} control={<Radio />} name='flash' label="Red" />
-                                <FormControlLabel value={3} control={<Radio />} name='flash' label="Yellow" />
-                                <FormControlLabel value={4} control={<Radio />} name='flash' label="Other" />
+                                <FormControlLabel value={8} control={<Radio />} name='flash' label="Alternate" />
+                                <FormControlLabel value={4} control={<Radio />} name='flash' label="Red" />
+                                <FormControlLabel value={2} control={<Radio />} name='flash' label="Yellow" />
+                                <FormControlLabel value={1} control={<Radio />} name='flash' label="Other" />
                             </RadioGroup>
                         </FormControl>
                         </Grid>
@@ -322,10 +360,10 @@ export default function ChannelView(){
                                 onChange={handleChange}
                                 row
                             >
-                                <FormControlLabel value={1} control={<Radio />} name='dim' label="Alternate" />
-                                <FormControlLabel value={2} control={<Radio />} name='dim' label="Red" />
-                                <FormControlLabel value={3} control={<Radio />} name='dim' label="Yellow" />
-                                <FormControlLabel value={4} control={<Radio />} name='dim' label="Green" />
+                                <FormControlLabel value={8} control={<Radio />} name='dim' label="Dim Alternate" />
+                                <FormControlLabel value={4} control={<Radio />} name='dim' label="Dim Red" />
+                                <FormControlLabel value={2} control={<Radio />} name='dim' label="Dim Yellow" />
+                                <FormControlLabel value={1} control={<Radio />} name='dim' label="Dim Green" />
                             </RadioGroup>
                         </FormControl>
                         </Grid>
@@ -336,19 +374,19 @@ export default function ChannelView(){
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
                                         value={currentChannel.position}
-                                        label="Split"
+                                        label="Orientation"
                                         name="splitnumber"
                                         onChange={handleChange}
                                     >
-                                        <MenuItem value={1}>Other</MenuItem>
-                                        <MenuItem value={2}>East</MenuItem>
-                                        <MenuItem value={3}>South</MenuItem>
-                                        <MenuItem value={4}>West</MenuItem>
-                                        <MenuItem value={5}>North</MenuItem>
-                                        <MenuItem value={6}>North East</MenuItem>
-                                        <MenuItem value={7}>South East</MenuItem>
-                                        <MenuItem value={8}>North East</MenuItem>
-                                        <MenuItem value={7}>South west</MenuItem>
+                                        <MenuItem value={1}>East</MenuItem>
+                                        <MenuItem value={2}>South</MenuItem>
+                                        <MenuItem value={3}>West</MenuItem>
+                                        <MenuItem value={4}>North</MenuItem>
+                                        <MenuItem value={5}>North East</MenuItem>
+                                        <MenuItem value={6}>South East</MenuItem>
+                                        <MenuItem value={7}>South West</MenuItem>
+                                        <MenuItem value={8}>North West</MenuItem>
+                                        <MenuItem value={0}>Other</MenuItem>
                                         
                                     </Select>
                                 </FormControl>
@@ -360,17 +398,17 @@ export default function ChannelView(){
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
                                         value={currentChannel.direction}
-                                        label="Split"
+                                        label="Direction"
                                         name="splitnumber"
                                         onChange={handleChange}
                                     >
-                                        <MenuItem value={1}>Other</MenuItem>
-                                        <MenuItem value={2}>Left</MenuItem>
-                                        <MenuItem value={3}>Straight</MenuItem>
-                                        <MenuItem value={4}>Right</MenuItem>
-                                        <MenuItem value={5}>Pedestrian</MenuItem>
-                                        <MenuItem value={6}>Turn</MenuItem>
-                                        <MenuItem value={7}>Non Vehicle</MenuItem>
+                                        <MenuItem value={1}>Left</MenuItem>
+                                        <MenuItem value={2}>Straight</MenuItem>
+                                        <MenuItem value={3}>Right</MenuItem>
+                                        <MenuItem value={4}>Pedestrian</MenuItem>
+                                        <MenuItem value={5}>Turn</MenuItem>
+                                        <MenuItem value={6}>No Vehicle</MenuItem>
+                                        <MenuItem value={0}>Other</MenuItem>
                                     </Select>
                                 </FormControl>
                         </Grid>
