@@ -82,8 +82,6 @@ export default function HomeView() {
     const calculoEjecucion = useRef([]);
     const tiempo_amarillo = useRef(0)
     const datos_amarillo_aux = useRef(0)
-    
-    
     const [pointsArea, setPointsArea] = useState([]);
     const [accionesUi, setAccionesUi] = useState(false);
     const center = [-2.898794750323891, -79.00108637169295]

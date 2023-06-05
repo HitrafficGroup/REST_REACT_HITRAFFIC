@@ -17,7 +17,7 @@ export default function HomeMenu(){
     }
     return(
         <>
-            <ListItemButton onClick={() =>Changeview('/home')}>
+            <ListItemButton onClick={() =>Changeview('home')}>
                         <ListItemIcon>
                             <HomeIcon fontSize='large'  />
                         </ListItemIcon>

@@ -19,7 +19,7 @@ export default function ClonacionMenu(){
     }
     return(
         <>
-            <ListItemButton onClick={() =>Changeview('/clonacion')}>
+            <ListItemButton onClick={() =>Changeview('clonacion')}>
                         <ListItemIcon>
                             <RouterIcon fontSize='large' />
                         </ListItemIcon>

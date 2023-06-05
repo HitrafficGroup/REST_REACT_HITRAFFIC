@@ -30,7 +30,6 @@ import { db } from "../firebase/firebase-config";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { setCambiarIpControlador } from "../js/apiFunctions";
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -173,9 +172,7 @@ export default function ControlersView() {
             }
         }
     }
-    const sinFiltro = ()=>{
-        setControlers(respaldoData.current)
-    }
+
 
     const abrirModalinformacion = (_data)=>{
         let aux_data = JSON.parse(JSON.stringify(_data))
@@ -191,25 +188,13 @@ export default function ControlersView() {
     const guardarAjustes = async() =>{
         setDeshabilitar(true)
         if(ipControlador.current !== currentController.ip){
-            let jason_data = {
-                ip:ipControlador.current,
-                nueva_ip:currentController.ip,
-                mac:currentController.mac
-
-            }
-            try {
-                await setCambiarIpControlador(jason_data);
-                setDeshabilitar(false)
-            } catch (error) {
-                setDeshabilitar(false)
-            }
-            
+            const ref = doc(db, "historial_controladores", currentController.mac);
+            await updateDoc(ref, currentController);
+            console.log(currentController)
+            setDeshabilitar(false)
+            setEditarModal(false)  
         }
-        const ref = doc(db, "historial_controladores", currentController.mac);
-        await updateDoc(ref, currentController);
-        console.log(currentController)
-        setDeshabilitar(false)
-        setEditarModal(false)      
+           
     }
     //mostrar la interfaz de acuerdo al controlador
     const programarControlador = (_equipo)=>{
@@ -322,8 +307,8 @@ export default function ControlersView() {
                             </div>
                     </Grid>
                     <Grid md={12} xs={12}>
-                        <div className="card-admin">
-                            <div className="header">
+                        <div className="card-controller-filter">
+                            <div className="header-controller-filter">
                                 <p className="nombre-card">Filtros</p>
                             </div>
                             <div className="card-body-controler">
@@ -371,7 +356,7 @@ export default function ControlersView() {
                                     
                                             </RadioGroup>
                                         </Grid>
-                                        <Grid item xs={6} md={2}>
+                                        <Grid item xs={12} md={2}>
                                             <Button variant="contained" size="medium" onClick={filtrarLosDatos}  >FILTRAR</Button>
                                         </Grid>
 

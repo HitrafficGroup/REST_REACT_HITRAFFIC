@@ -1,12 +1,8 @@
 import CardInformation from '../components/CardInformation';
 import CardController from "../components/CardController";
 import React, { useState } from 'react';
-import Select from '@mui/material/Select';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { db } from "../firebase/firebase-config";
@@ -21,6 +17,7 @@ import FormGroup from '@mui/material/FormGroup';
 import { getHorariosFromRestApi, postHorariosFromRestApi, getDiasEspecialesControlador, setDiasEspecialesControlador } from '../js/apiFunctions'
 import Checkbox from '@mui/material/Checkbox';
 import { getCheckDataHorarios, updateHorarioSamplingTime } from '../js/gestionSolicitudes';
+import { getOrdinaryScheduleSW12,getWeekendScheduleSW12,getFestivalScheduleSW12 } from '../js/apiFunctionsSW12';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useSelector } from 'react-redux';
@@ -31,11 +28,18 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+// select
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+
+
 export default function HorariosView() {
     const [horarios, setHorarios] = useState(horariosPorDefecto);
     const controlerState = useSelector(state => state.controlers);
     const [modalHorarios, setModalHorarios] = useState(false);
-    const [tipoDia, setTipoDia] = useState('');
+    const [tipoDia, setTipoDia] = useState(1);
     const [planSemaforo, setPlanSemaforo] = useState('1');
     const [modoSemaforo, setModoSemaforo] = useState(1);
     const [desfaseSemaforo, setDesfaseSemaforo] = useState('0');
@@ -166,32 +170,14 @@ export default function HorariosView() {
 
         setClaseDia(event.target.value);
     }
-    const chargeHorario = (data) => {
-        setTipoDia('dia_ordinario')
-        setHorarios(data['dia_ordinario'])
-    }
+    // const chargeHorario = (data) => {
+    //     setTipoDia('dia_ordinario')
+    //     setHorarios(data['dia_ordinario'])
+    // }
     const handleTipoDia = (event) => {
-        if (objHorarios !== null) {
-            let aux_horarios = JSON.parse(JSON.stringify(objHorarios))
-            setTipoDia(event.target.value);
-           
-            if (event.target.value === 'dia_ordinario') {
-                
-                setHorarios(aux_horarios[event.target.value])
-                setCambiosHorarios(false)
-            } else if (event.target.value === 'fin_semana') {
-               
-                setHorarios(aux_horarios[event.target.value])
-                setCambiosHorarios(false)
-            } else if (event.target.value === 'dia_festivo') {
-                
-                setHorarios(aux_horarios[event.target.value])
-                setCambiosHorarios(false)
-            } else {
-               
-                setHorarios(horariosPorDefecto)
-            }
-        }
+        setHabilitar1(true)
+        setTipoDia(event.target.value);
+        
 
     };
     const crearDiaEspecial = () => {
@@ -218,22 +204,71 @@ export default function HorariosView() {
             return 'Dia Festivo'
         }
     }
-    const leerHorariosFromRestApi = async () => {
+    const readData = async () => {
+        let formated_data = [{}]
+        let result = []
+        setHabilitar2(true);
         try {
-            let result;
-            setHabilitar2(true);
-            let flag = await getCheckDataHorarios(controlerState.mac, "horarios",50)
-            if (flag !== false) {
-                result = flag
-
-            } else {
-                result = await getHorariosFromRestApi(controlerState.mac, controlerState.ip)
-                cargarHorariosFirebase(result)
-                await updateHorarioSamplingTime(controlerState.mac)
+            if(tipoDia === 1){
+                result = await getOrdinaryScheduleSW12('192.168.2.97')
+                formated_data = result.map(item =>{
+                    let mod = formatMod(item.modo)
+                    let horario_formated = {
+                        horas:formatHour(item.hora),
+                        minutos:formatMinute(item.minuto),
+                        mod:mod[0],
+                        mod_descriptor:mod[1],
+                        plan:mod[2]
+                    }
+    
+                    return horario_formated
+                })
+            }else if(tipoDia ===2){
+                result = await getWeekendScheduleSW12('192.168.2.97')
+                formated_data = result.map(item =>{
+                    let mod = formatMod(item.modo)
+                    let horario_formated = {
+                        horas:formatHour(item.hora),
+                        minutos:formatMinute(item.minuto),
+                        mod:mod[0],
+                        mod_descriptor:mod[1],
+                        plan:mod[2]
+                    }
+    
+                    return horario_formated
+                })
+            }else if(tipoDia ===3){
+                result = await getFestivalScheduleSW12('192.168.2.97')
+        
+                formated_data = result.map(item =>{
+                    let mod = formatMod(item.modo)
+                    let horario_formated = {
+                        horas:formatHour(item.hora),
+                        minutos:formatMinute(item.minuto),
+                        mod:mod[0],
+                        mod_descriptor:mod[1],
+                        plan:mod[2]
+                    }
+    
+                    return horario_formated
+                })
             }
-            setObjHorarios(result)
+        
+            console.log(formated_data)
+            setHorarios(formated_data)
           
-            chargeHorario(result);
+            // let flag = await getCheckDataHorarios(controlerState.mac, "horarios",50)
+            // if (flag !== false) {
+            //     result = flag
+
+            // } else {
+            //     result = await getHorariosFromRestApi(controlerState.mac, controlerState.ip)
+            //     cargarHorariosFirebase(result)
+            //     await updateHorarioSamplingTime(controlerState.mac)
+            // }
+            // setObjHorarios(result)
+          
+            // chargeHorario(result);
 
             setHabilitar1(false)
             setHabilitar2(false);
@@ -242,6 +277,37 @@ export default function HorariosView() {
             setHabilitar2(false);
         }
     }
+    const formatMod = (_data)=>{
+        let nombres = ["", "Tiempo Fijo", "Pulsante", "Destello", "Todo en Rojo", "Apagado"]
+        let mod_plan = _data
+        mod_plan = mod_plan.toString(2)
+        let bits_faltantes = 8 - mod_plan.length
+        for (let bit = 0; bit < bits_faltantes; bit++) {
+            mod_plan = "0" + mod_plan
+        }
+        let mod = mod_plan.substring(0, 3)
+        let plan = mod_plan.substring(3, 8)
+        let mod_int = parseInt(mod, 2)
+        let plan_int = parseInt(plan, 2)
+        return [mod_int,nombres[mod_int],plan_int]
+    }
+    const formatHour =(hora)=>{
+        hora = hora.toString(16)
+        if (hora.length < 2) {
+            hora = "0" + hora
+        }
+        return hora
+    }
+    const formatMinute =(_data)=>{
+        let minutos = _data.toString(16)
+        if (minutos.length < 2) {
+            minutos = "0" + minutos
+        }
+        return minutos
+    }
+
+
+
     const modoFormat = (tipo) => {
         if (tipo === 1) {
             return 'tiempo Fijo'
@@ -487,15 +553,14 @@ export default function HorariosView() {
                                 label="Tipo"
                                 onChange={handleTipoDia}
                             >
-                                <MenuItem value={''}>Escoja Una Opción</MenuItem>
-                                <MenuItem value={'dia_ordinario'}>Día Ordinario</MenuItem>
-                                <MenuItem value={'fin_semana'}>Fin De Semana</MenuItem>
-                                <MenuItem value={'dia_festivo'}>Día Festivo</MenuItem>
+                                <MenuItem value={1}>Día Ordinario</MenuItem>
+                                <MenuItem value={2}>Fin De Semana</MenuItem>
+                                <MenuItem value={3}>Día Festivo</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
                     <Grid item md={3} xs={12}>
-                        <Button variant="contained" color='verde2' onClick={leerHorariosFromRestApi} sx={{ height: '100%' }} disabled={habilitar2} fullWidth>Leer Datos</Button>
+                        <Button variant="contained" color='verde2' onClick={readData} sx={{ height: '100%' }} disabled={habilitar2} fullWidth>Leer Datos</Button>
                     </Grid>
                     <Grid item md={3} xs={12}>
                         <Button variant="contained" sx={{ height: '100%' }} fullWidth onClick={cargarDatos} disabled={habilitar1} >Cargar Datos</Button>
@@ -600,7 +665,6 @@ export default function HorariosView() {
                                 label="Tipo de Dia"
                                 onChange={handleClaseDia}
                             >
-                                <MenuItem value={0}></MenuItem>
                                 <MenuItem value={1}>Día Ordinario</MenuItem>
                                 <MenuItem value={2}>Fin de Semana</MenuItem>
                                 <MenuItem value={3}>Día Festivo</MenuItem>

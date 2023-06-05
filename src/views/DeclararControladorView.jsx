@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef,useMemo,useCallback } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import L from 'leaflet';
 import { db } from "../firebase/firebase-config";
@@ -11,7 +11,6 @@ import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { MapContainer, TileLayer, Marker, Popup,FeatureGroup,Polygon } from "react-leaflet";
@@ -43,15 +42,12 @@ import { useDispatch  } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
-import { setCambiarIpControlador } from '../js/apiFunctions';
-
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
 
 export default function DeclararControladorView() {
-    const controlerState = useSelector(state => state.controlers)
     const center = [-2.876428, -78.965342];
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
     const [position, setPosition] = useState(center);
@@ -64,7 +60,7 @@ export default function DeclararControladorView() {
     const [nombreControlador,setNombreControlador]  = useState("");
     const [ipControlador,setIpControlador] = useState("");
     const [macControlador,setMacControlador] = useState("");
-    const [semaforos,setSemaforos] = useState(semaforosIniciales);
+
     const [pointsArea,setPointsArea] = useState([]);
     const [canton,setCanton] = useState('')
     //banderas para los botones 
@@ -203,13 +199,9 @@ export default function DeclararControladorView() {
             }else{
                 if(nombreControlador !== ""){
 
-                    let resumen_aux =  JSON.parse(JSON.stringify(semaforos))   
-                    let aux_1 = resumen_aux.map(function(element){
-                        element.icon = {}
-                        return element ;
-                    }) 
+        
                     let areas_aux = JSON.parse(JSON.stringify(areas)) 
-                    areas_aux.map((item) => {
+                    areas_aux.foreach((item) => {
                         let puntos_aux = item.points
                         item.points = puntos_aux.map((_item) => (
                             {
@@ -218,10 +210,10 @@ export default function DeclararControladorView() {
                         ))
                     })
                     console.log(areas_aux)
-                    
+                    let id_controller = uuidv4()
                     let parametrosIniciales = {
                         // parametros inicializados por defecto
-                        resumen:aux_1,
+                        id:id_controller,
                         t_fases:1667372400000,
                         t_horarios: 1667372400000,
                         t_peticion: 1667372400000,
@@ -249,6 +241,7 @@ export default function DeclararControladorView() {
     
                     }
                     let historialControladorData = {
+                        id:id_controller,
                         nombre:nombreControlador,
                         latitud:parseFloat(latitud),
                         longitud:parseFloat(longitud),
@@ -262,8 +255,8 @@ export default function DeclararControladorView() {
                     console.log(historialControladorData)
                     try {
                         setFlagCargando(true);
-                        await setDoc(doc(db, "controladores",macControlador ), parametrosIniciales);
-                        await setDoc(doc(db, "historial_controladores",macControlador ), historialControladorData);
+                        await setDoc(doc(db, "controladores",id_controller, ), parametrosIniciales);
+                        await setDoc(doc(db, "historial_controladores",id_controller, ), historialControladorData);
                         // if(controlerState.nuevo_controlador.ip !== ipControlador){
                         //     let jason_data = {
                         //         ip:controlerState.nuevo_controlador.ip,
@@ -369,7 +362,7 @@ export default function DeclararControladorView() {
                     <h4>Formulario de Registro</h4>
             
                 </div>
-                <Grid container spacing={1}>
+                <Grid container spacing={2}>
 
                     <Grid item xs={12} md={12}>
                         
@@ -463,7 +456,7 @@ export default function DeclararControladorView() {
                     <Grid item xs={12} md={12}>
           
                          
-                            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                            <Table  aria-label="customized table">
                                 <TableHead>
                                 <TableRow>
                                  
@@ -551,59 +544,8 @@ export default function DeclararControladorView() {
 
 }
 
-const semaforo = new L.Icon({
-    iconUrl: require('../assets/semaforo3.png'),
-    iconRetinaUrl: require('../assets/semaforo3.png'),
-    iconSize: [50, 50], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
 
-});
-const semaforosIniciales = [
-    {
-        nombre: "sin nombre",
-        modo: "Tiempo Fijo",
-        rojo: 10,
-        amarillo: 4,
-        verde: 20,
-        grupo: "g1",
-        position:  [-2.877331224126658,-78.96603009964582],
-        icon: semaforo
-    },
-    {
-        nombre: "sin nombre",
-        modo: "Tiempo Fijo",
-        rojo: 10,
-        amarillo: 4,
-        verde: 20,
-        grupo: "g2",
-        position:  [-2.877872982757359, -78.96525268979977],
-        icon: semaforo
-    },
-    {
-        nombre: "sin nombre",
-        modo: "Tiempo Fijo",
-        rojo: 10,
-        amarillo: 4,
-        verde: 20,
-        grupo: "g3",
-        position: [-2.876865269460137,-78.96537600114729],
-        icon: semaforo
-    },
-    {
-        nombre: "sin nombre",
-        modo: "Tiempo Fijo",
-        rojo: 10,
-        amarillo: 4,
-        verde: 20,
-        grupo: "g4",
-        position:  [-2.8775672459352046, -78.9645128400452],
-        icon: semaforo
-    }
 
-]
 const point = new L.Icon({
     iconUrl: require('../assets/point2.png'),
     iconRetinaUrl: require('../assets/point2.png'),
@@ -653,4 +595,3 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   }));
   
-  let initial_areas = [{nombre:'',grupo:''},{nombre:'',grupo:''},{nombre:'',grupo:''},{nombre:'',grupo:''}]

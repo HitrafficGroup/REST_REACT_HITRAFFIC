@@ -18,7 +18,7 @@ export default function ControlersMenu(){
     }
     return(
         <>
-            <ListItemButton onClick={() =>Changeview('/admin')}>
+            <ListItemButton onClick={() =>Changeview('admin')}>
                         <ListItemIcon>
                             <AdminPanelSettingsIcon fontSize='large' />
                         </ListItemIcon>

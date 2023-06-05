@@ -17,7 +17,7 @@ export default function RegistroErrores(){
     }
     return(
         <>
-            <ListItemButton onClick={() =>Changeview('/errores')}>
+            <ListItemButton onClick={() =>Changeview('errores')}>
                             <ListItemIcon>
                                 <SdCardAlertIcon fontSize='large' />
                             </ListItemIcon>

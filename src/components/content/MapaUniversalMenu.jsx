@@ -17,7 +17,7 @@ export default function MapaUniversalMenu(){
     }
     return(
         <>
-            <ListItemButton onClick={() =>Changeview('/mapa-universal')}>
+            <ListItemButton onClick={() =>Changeview('mapa-universal')}>
                         <ListItemIcon>
                             <MapIcon fontSize='large'  />
                         </ListItemIcon>

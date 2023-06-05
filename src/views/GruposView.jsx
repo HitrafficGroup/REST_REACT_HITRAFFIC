@@ -18,6 +18,7 @@ import '../css/GruposView.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import { getGruposControlador, getConflictoVerdesControlador,setGruposControlador,setConflictoVerdesControlador } from '../js/apiFunctions'
+import { getGruposSW12,getGreenConflictSW12 } from '../js/apiFunctionsSW12';
 import Collapse from '@mui/material/Collapse';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -109,7 +110,7 @@ export default function GruposView() {
         try {
             setDeshabilitar2(true);
         setCambioGrupos(false);
-        const response = await getGruposControlador(controlerState.mac, controlerState.ip)
+        const response = await getGruposSW12("192.168.1.2")
         const responseFormat = []
         for (let i = 1; i < 5; i++) {
             let temp = response['grupo' + i]
@@ -131,9 +132,10 @@ export default function GruposView() {
         
     }
     const mapConflicts = (respuesta) => {
-        const ch1 = respuesta[controlerState.mac]['check1']
-        const ch2 = respuesta[controlerState.mac]['check2']
-        const ch3 = respuesta[controlerState.mac]['check3']
+
+        const ch1 = respuesta["ch1"]
+        const ch2 = respuesta["ch2"]
+        const ch3 = respuesta["ch3"]
         if (ch1 === "1") {
             setChecked1(true)
         } else {
@@ -153,13 +155,14 @@ export default function GruposView() {
         }
 
         for (let fila = 0; fila < 3; fila++) {
-            let binario = respuesta[controlerState.mac][`fila${fila + 1}`]
+            let binario = respuesta[`fila-${fila + 1}`]
+            console.log(binario)
             let grupo_fila = fila + 1
 
             for (let index_b = 0; index_b < binario.length; index_b++) {
                 if (binario[index_b] == "1") {
                     caseVerify(grupo_fila, index_b, true)
-                    console.log(index_b)
+                    
                 } else {
                     caseVerify(grupo_fila, index_b, false)
                 }
@@ -195,7 +198,8 @@ export default function GruposView() {
         try {
             setDeshabilitar4(true)
             setCambioConflictos(false)
-            const response = await getConflictoVerdesControlador(controlerState.mac, controlerState.ip)
+            let response = await getGreenConflictSW12("192.168.2.97")
+            console.log(response)
             mapConflicts(response)
             setDeshabilitar3(false)
             setDeshabilitar4(false)
@@ -259,7 +263,7 @@ export default function GruposView() {
         });
     }
     const convertirDatos=(data)=>{
-       
+       // sami si lees esto eres una guapa //6 de junio hay muchos easter eggs  como este en el codigo
         let lista_elementos = []
         for (let sami = 0; sami < 4; sami++) {
             let dir = data[sami]['direccion']

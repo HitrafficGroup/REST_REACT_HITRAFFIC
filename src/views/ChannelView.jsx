@@ -176,7 +176,7 @@ export default function ChannelView(){
                     <Grid item md={3} xs={12}>
                         <Button variant="contained" color='oscuro' sx={{ height: '100%' }}  fullWidth onClick={uploadData}>Cargar Datos</Button>
                     </Grid>
-                    <Grid item md={12}>
+                    <Grid item xs={12} md={12}>
                     <TableContainer sx={{ maxHeight: 440 }}>
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
@@ -185,7 +185,7 @@ export default function ChannelView(){
                                             <TableCell
                                                 key={"channel"}
                                                 align={"left"}
-                                                style={{ minWidth: 100 }}
+                                           
                                             >
                                                 Canal
                                             </TableCell>
@@ -193,56 +193,56 @@ export default function ChannelView(){
                                             <TableCell
                                                 key={"source"}
                                                 align={"left"}
-                                                style={{ minWidth: 100 }}
+                                              
                                             >
                                                 control source
                                             </TableCell>
                                             <TableCell
                                                 key={"type"}
                                                 align={"left"}
-                                                style={{ minWidth: 100 }}
+                                    
                                             >
                                                 control type
                                             </TableCell>
                                             <TableCell
                                                 key={"flash"}
                                                 align={"left"}
-                                                style={{ minWidth: 100 }}
+                                             
                                             >
                                                 Flash Parameter
                                             </TableCell>
                                             <TableCell
                                                 key={"dim"}
                                                 align={"left"}
-                                                style={{ minWidth: 100 }}
+                                            
                                             >
                                                 Dim Parameter
                                             </TableCell>
                                             <TableCell
                                                 key={"orientation"}
                                                 align={"left"}
-                                                style={{ minWidth: 100 }}
+                                          
                                             >
                                                 Orientation
                                             </TableCell>
                                             <TableCell
                                                 key={"direction"}
                                                 align={"left"}
-                                                style={{ minWidth: 100 }}
+                                      
                                             >
                                                 Direction
                                             </TableCell>
                                             <TableCell
                                                 key={"countdown"}
                                                 align={"left"}
-                                                style={{ minWidth: 100 }}
+                                          
                                             >
                                                 Countdown timmer ID
                                             </TableCell>
                                             <TableCell
                                                 key={"acciones"}
                                                 align={"center"}
-                                                style={{ minWidth: 150 }}
+                                        
                                             >
                                                 Acciones
                                             </TableCell>

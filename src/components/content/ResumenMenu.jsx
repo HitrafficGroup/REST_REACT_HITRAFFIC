@@ -17,7 +17,7 @@ export default function ResumenMenu(){
     }
     return(
         <>
-            <ListItemButton onClick={() =>Changeview('/resumen')}>
+            <ListItemButton onClick={() =>Changeview('resumen')}>
                         <ListItemIcon>
                             <DescriptionIcon fontSize='large' />
                         </ListItemIcon>

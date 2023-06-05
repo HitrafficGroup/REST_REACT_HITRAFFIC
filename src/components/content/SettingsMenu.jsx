@@ -14,7 +14,7 @@ export default function SettingsMenu(){
     }
     return(
         <>
-            <ListItemButton onClick={() =>Changeview('/ajustes')}>
+            <ListItemButton onClick={() =>Changeview('ajustes')}>
                         <ListItemIcon>
                             <ExitToAppIcon fontSize='large' />
                         </ListItemIcon>

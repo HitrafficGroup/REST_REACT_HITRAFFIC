@@ -55,6 +55,7 @@ export default function UnidadHT200View() {
 
     const readData=async()=>{
         let data = await getUnitHT200("23:45:15:56","192.168.1.122");
+        console.log(data)
         data["GreenConflictDetectFlag"] =  data["GreenConflictDetectFlag"] === 1 ? true:false;
         data["RedGreenConflictDetectFlag"] =  data["RedGreenConflictDetectFlag"] === 1 ? true:false;
         data["RedFailedDetectFlag"] =  data["RedFailedDetectFlag"] === 1 ? true:false;

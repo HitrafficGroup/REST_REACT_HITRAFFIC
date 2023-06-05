@@ -19,7 +19,7 @@ export default function GruposMenu(){
     }
     return(
         <>
-            <ListItemButton onClick={() =>Changeview('/grupos')}>
+            <ListItemButton onClick={() =>Changeview('grupos')}>
                         <ListItemIcon>
                             <LanIcon fontSize='large'  />
                         </ListItemIcon>

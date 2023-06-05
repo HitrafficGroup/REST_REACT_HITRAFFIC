@@ -14,7 +14,7 @@ import { updateDoc,doc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
-import { getFasesFromRestApi, postFasesFromRestApi } from '../js/apiFunctions'
+import { getFasesSW12 } from '../js/apiFunctionsSW12';
 import { updateFasesSamplingTime,getCheckDataFases } from '../js/gestionSolicitudes';
 import { useSelector } from 'react-redux';
 import Backdrop from '@mui/material/Backdrop';
@@ -137,7 +137,7 @@ export default function FasesView() {
         
         try {
             
-            await postFasesFromRestApi(data);
+            //await postFasesFromRestApi(data);
         } catch (e) {
             console.log(e)
         }
@@ -221,37 +221,56 @@ export default function FasesView() {
     la funcion definirAtributoColor evaluara el valor seleccionado por el select para establecer 
     el atributo color que tiene el objeto de la fase
     */
-    const leerDatosFases = async () => {
-        try {
-            let result = []
+    const readData = async () => {
+        try{
             setDeshabilitar2(true);
-            let flag = await getCheckDataFases(controlerState.mac, "fases",50)
-            if (flag !== false) {
-                result = flag
-                setFases(result);
-            } else {
-                result = await getFasesFromRestApi(controlerState.mac, controlerState.ip)
-                var arregloFases = []
-                for (let index_plan = 1; index_plan < 17; index_plan++) {
-                    var faseT = result["fase" + index_plan]
-                    arregloFases.push(faseT)
-    
-                }
-                setFases(arregloFases);
-                enviarFasesFirebase(arregloFases);
-                await updateFasesSamplingTime(controlerState.mac)
-            }
-            
-            
-            setDeshabilitar(false);
-            setDeshabilitar2(false);
-            //dispatch(addFases(ndatos));
-        }
-        catch (e) {
+            let result = await getFasesSW12("192.168.1.97");
+            var arregloFases = []
+                    for (let index_plan = 1; index_plan < 17; index_plan++) {
+                        var faseT = result["fase" + index_plan]
+                        arregloFases.push(faseT)
+        
+                    }
+                    setFases(arregloFases);
+                    setDeshabilitar(false);
+                    setDeshabilitar2(false);
+        }    catch (e) {
             console.log(e);
             setDeshabilitar2(false);
         }
+      
     }
+    // const leerDatosFases = async () => {
+    //     try {
+    //         let result = []
+    //         setDeshabilitar2(true);
+    //         let flag = await getCheckDataFases(controlerState.mac, "fases",50)
+    //         if (flag !== false) {
+    //             result = flag
+    //             setFases(result);
+    //         } else {
+    //             result = await getFasesFromRestApi(controlerState.mac, controlerState.ip)
+    //             var arregloFases = []
+    //             for (let index_plan = 1; index_plan < 17; index_plan++) {
+    //                 var faseT = result["fase" + index_plan]
+    //                 arregloFases.push(faseT)
+    
+    //             }
+    //             setFases(arregloFases);
+    //             enviarFasesFirebase(arregloFases);
+    //             await updateFasesSamplingTime(controlerState.mac)
+    //         }
+            
+            
+    //         setDeshabilitar(false);
+    //         setDeshabilitar2(false);
+    //         //dispatch(addFases(ndatos));
+    //     }
+    //     catch (e) {
+    //         console.log(e);
+    //         setDeshabilitar2(false);
+    //     }
+    // }
     /*
         la funcion leer datos fases nos trae la informacion de la api para posteriormente
         tratar la informacion y formatearla adecuadamente con la finalidad de poder mapear
@@ -309,7 +328,7 @@ export default function FasesView() {
                         </div>
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <Button variant="contained" color='verde2'   sx={{height:40}} fullWidth onClick={leerDatosFases}>Leer Datos</Button>
+                        <Button variant="contained" color='verde2'   sx={{height:40}} fullWidth onClick={readData}>Leer Datos</Button>
                     </Grid>
                     <Grid item xs={12} md={4}>
                         <Button variant="contained" sx={{height:40}} fullWidth onClick={cargarDatosController} disabled={deshabilitar} >Cargar Datos</Button>

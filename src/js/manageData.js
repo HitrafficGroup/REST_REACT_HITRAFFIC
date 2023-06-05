@@ -7,13 +7,15 @@ function parseToArray(value) {
 }
 
 
-function convertToFases(respuesta, mac, num_grupos = 4) { //Concatenacion de colores de 2 Bits por grupo a una variable de 8 bits para los 4 grupos 
+function convertToFases(respuesta) { //Concatenacion de colores de 2 Bits por grupo a una variable de 8 bits para los 4 grupos 
+    //let respuesta = __data
 
+    let num_grupos =4
     let fasesConverted = []
 
     for (let index_f = 0; index_f < 16; index_f++) {
         let faseOb = { "faseNum": index_f + 1, "grupos": [] }
-        let dato = respuesta[mac]["fase" + (index_f + 1).toString()]
+        let dato = respuesta[index_f].value.toString()
         //Normalmente antes se esperaria que llegara en binario directamente
         dato = parseInt(dato)
         dato = dato.toString(2);
@@ -239,11 +241,11 @@ function CheckAndSplitBits(listag, num_bits = 8){
     }
     return datos
 }
-function convertToGrupos(respuesta,mac) {
-    let g1 = respuesta[mac]["G1"]
-    let g2 = respuesta[mac]["G2"]
-    let g3 = respuesta[mac]["G3"]
-    let g4 = respuesta[mac]["G4"]
+function convertToGrupos(respuesta) {
+    let g1 = respuesta[0].value
+    let g2 = respuesta[1].value
+    let g3 = respuesta[2].value
+    let g4 = respuesta[3].value
     let lista_nombres = ["direccion", "sentido", "destello"]
     let listag = [parseInt(g1).toString(2), parseInt(g2).toString(2), parseInt(g3).toString(2), parseInt(g4).toString(2)]
     let datos = CheckAndSplitBits(listag)

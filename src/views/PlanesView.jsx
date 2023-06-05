@@ -16,6 +16,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { db } from "../firebase/firebase-config";
 import { collection, updateDoc, onSnapshot, doc,getDoc } from "firebase/firestore";
+import { getPlan1SW12,getPlan2SW12,getPlan3SW12,getPlan4SW12,getPlan5SW12,getPlan6SW12,getPlan7SW12,getPlan8SW12,getOperativeParamsSW12 } from '../js/apiFunctionsSW12';
 import '../css/PlanesView.css'
 import { useSelector, useDispatch } from 'react-redux';
 import { addPlanes } from "../features/controlers/controlerSlice";
@@ -32,6 +33,7 @@ export default function PlanesView() {
     const [currentPlan, setCurrentPlan] = useState(planInicial)
     const [selectPlan, setSelectPlan] = useState("plan1");
     const [planes, setPlanes] = useState([])
+    const [numPlan,setNumPlan] = useState(1)
     const [modalEditar, setModalEditar] = useState(false);
     const [faseSemaforo, setFaseSemaforo] = useState('1');
     const [tiempoSemaforo, setTiempoSemaforo] = useState(0);
@@ -57,41 +59,39 @@ export default function PlanesView() {
     const [dis,setDis] = useState('disabled')
     //esta variable de planes2 debe actualizarse con este formato que es mas adecuado
     
-    const leerPlanesFromRestApis = async () => {
-        let planesControlador
-        let plan_actual
+    const readData = async () => {
+        let result = []
         try {
-            setDis('disabled')
             setDeshabilitar(true)
             setDeshabilitar2(true)
-            let flag =  await getCheckDataPlanes(controlerState.mac,"planes",50)
-            //eusart
-            //usart
-            if(flag !== false){
-                planesControlador = flag
-                
-            }else{
-                let result = await getPlanesFromRestApi(controlerState.mac, controlerState.ip)
-                planesControlador = result[controlerState.mac].slice()
-                console.log(planesControlador)
-                await updatePlanesSamplingTime(controlerState.mac)
-                await cargarPlanesFirebase(planesControlador)
+            setDis('disabled')
+            if(numPlan === 1){
+                result = await getPlan1SW12()
+            }else if(numPlan === 2){
+                result = await getPlan2SW12()
+            }else if(numPlan === 3){
+                result = await getPlan3SW12()
+            }else if(numPlan === 4){
+                result = await getPlan4SW12()
+            }else if(numPlan === 5){
+                result = await getPlan5SW12()
+            }else if(numPlan === 6){
+                result = await getPlan6SW12()
+            }else if(numPlan === 7){
+                result = await getPlan7SW12()
+            }else if(numPlan === 8){
+                result = await getPlan8SW12()
             }
-            plan_actual = planesControlador[0].pasos.slice()
-            setPlanes(planesControlador)
-            setCurrentPlan(plan_actual)
-
-    
-            //dispatch(addPlanes(planesControlador))
-
-            setDis('habilited')
+          
+            
+            setCurrentPlan(result)
             setDeshabilitar2(false)
             setDeshabilitar(false)
-        }
-        catch (e) {
-            console.log(e);
+            setDis('habilited')
+        } catch (error) {
             setDeshabilitar2(false)
         }
+       
     }
 
     const abrirModalEditar = (data) => {
@@ -118,19 +118,16 @@ export default function PlanesView() {
     const leerOtrosParametrosApi = async () =>{
         try{
             setDeshabilitar4(true)
-            
-            var datosObtenidos = await getOtrosParametrosFromRestApi(controlerState.mac,controlerState.ip);
-            var datosformateados = datosObtenidos[`${controlerState.mac}`];
-            console.log(datosformateados)
-            setDestellarVerdePeatonal(parseInt(datosformateados.destellar_verde_peatonal));
-            setDestellarVerdeVehicular(parseInt(datosformateados.destellar_verde_vehicular));
-            setTiempoAmarilloVehicular(parseInt(datosformateados.tiempo_amarillo_vehicular));
-            setTiempoDestelloPrender(parseInt(datosformateados.tiempo_destello_prender));
-            setTiempoMinimoVerde1(parseInt(datosformateados.tiempo_minimo_verde_1));
-            setTiempoMinimoVerde2(parseInt(datosformateados.tiempo_minimo_verde_2));
-            setTiempoRojoPrender(parseInt(datosformateados.tiempo_rojo_prender));
-            setTiempoTodoRojo(parseInt(datosformateados.tiempo_todo_rojo));
-            setValorSincronizacion(parseInt(datosformateados.valor_sincronizacion));
+            var datosObtenidos = await getOperativeParamsSW12();
+            //var datosformateados = datosObtenidos[`${controlerState.mac}`];
+            console.log(datosObtenidos)
+            setTiempoDestelloPrender(parseInt(datosObtenidos.destello_al_encender));
+            setDestellarVerdePeatonal(parseInt(datosObtenidos.destello_verde_peatonal));
+            setDestellarVerdeVehicular(parseInt(datosObtenidos.destello_verde_vehicular));
+            setTiempoMinimoVerde1(parseInt(datosObtenidos.min_verde));
+            setTiempoAmarilloVehicular(parseInt(datosObtenidos.tiempo_amarillo_vehicular));
+            setTiempoRojoPrender(parseInt(datosObtenidos.tiempo_en_rojo_al_encender));
+            setTiempoTodoRojo(parseInt(datosObtenidos.tiempo_todo_rojo));
             setDeshabilitar3(false)
             setDeshabilitar4(false)
         }catch(e){
@@ -213,6 +210,13 @@ export default function PlanesView() {
         })
         setCurrentPlan(data_modify)
     }
+
+
+const handleNumPlan = (event) => {
+        setDis('disabled')
+        setDeshabilitar(true)
+        setNumPlan(event.target.value);
+    };
    const cargarCambios = () =>{
     try{
 
@@ -267,17 +271,36 @@ export default function PlanesView() {
                 </div>
                 <Grid container spacing={2}>
                     <Grid item md={6} xs={12} >
-                        <Autocomplete
+                        {/* <Autocomplete
                             onChange={(event, newValue) => { planSelectManager(newValue) }}
                             options={planes4}
                             value = {selectPlan}
                             id="controllable-states-demo"
                             renderInput={(params) => <TextField {...params} label="Escoga Un Plan" fullWidth />}
                             disabled={deshabilitar}
-                        />
+                        /> */}
+                            <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={numPlan}
+                                label="Tipo"
+                                onChange={handleNumPlan}
+                            >
+                                <MenuItem value={1}>Plan 1</MenuItem>
+                                <MenuItem value={2}>Plan 2</MenuItem>
+                                <MenuItem value={7}>Plan 3</MenuItem>
+                                <MenuItem value={3}>Plan 4</MenuItem>
+                                <MenuItem value={4}>Plan 5</MenuItem>
+                                <MenuItem value={5}>Plan 6</MenuItem>
+                                <MenuItem value={6}>Plan 7</MenuItem>
+                                <MenuItem value={8}>Plan 8</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Grid>
                     <Grid item md={3} xs={12}>
-                        <Button variant="contained" fullWidth color='verde2' disabled={deshabilitar2} onClick={leerPlanesFromRestApis} sx={{ height: '100%' }} >Leer Datos</Button>
+                        <Button variant="contained" fullWidth color='verde2' disabled={deshabilitar2} onClick={readData} sx={{ height: '100%' }} >Leer Datos</Button>
                     </Grid>
                     <Grid item md={3} xs={12}>
                         <Button variant="contained" fullWidth sx={{ height: '100%' }} disabled={deshabilitar} onClick={cargarCambios} color="primary">Cargar Cambios</Button>
@@ -303,7 +326,7 @@ export default function PlanesView() {
                                     {currentPlan.map((dato, index) => (
                                         <Tr  key={index} >
                                             <Td>
-                                                {dato.name}
+                                                {dato.id}
                                             </Td>
                                             <Td >
                                                 <Chip label={'fase - ' + dato.fase} sx={{ width: 100 }} color={'anaranjado1'} variant="outlined" />
@@ -435,25 +458,7 @@ export default function PlanesView() {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={12}>
-                        <h4>Sincronización</h4>
-                    </Grid>
-                    <Grid item md={3} xs={12}>
-                        <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                label="Direccion"
-                                value={sincronizacionSemaforo}
-                                disabled={deshabilitar3}
-                                onChange={(event) => {setSincronizacionSemaforo(event.target.value) }}
-                            >
-                                <MenuItem value={0}>Hitraffic</MenuItem>
-                                <MenuItem value={1}>Goia</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
+                    
                     <Grid item md={3} xs={12}>
                         <TextField id="outlined-basic" label="Retardo requerido para otros (s)" 
                         variant="outlined" 
