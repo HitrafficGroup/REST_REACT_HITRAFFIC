@@ -17,7 +17,7 @@ import FormGroup from '@mui/material/FormGroup';
 import { getHorariosFromRestApi, postHorariosFromRestApi, getDiasEspecialesControlador, setDiasEspecialesControlador } from '../js/apiFunctions'
 import Checkbox from '@mui/material/Checkbox';
 import { getCheckDataHorarios, updateHorarioSamplingTime } from '../js/gestionSolicitudes';
-import { getOrdinaryScheduleSW12,getWeekendScheduleSW12,getFestivalScheduleSW12 } from '../js/apiFunctionsSW12';
+import { getOrdinaryScheduleSW12,getWeekendScheduleSW12,getFestivalScheduleSW12 ,getSpecialDaysSW12} from '../js/apiFunctionsSW12';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useSelector } from 'react-redux';
@@ -335,15 +335,16 @@ export default function HorariosView() {
     const LeerParamOperativos = async () => {
         try {
             setDeshabilitar4(true);
-            const data = await getDiasEspecialesControlador(controlerState.mac, controlerState.ip);       
-            setClunes(data['fines_semana'][1].estado)
-            setCmartes(data['fines_semana'][2].estado)
-            setCmiercoles(data['fines_semana'][3].estado)
-            setCjueves(data['fines_semana'][4].estado)
-            setCviernes(data['fines_semana'][5].estado)
-            setCsabado(data['fines_semana'][6].estado)
-            setCDomingo(data['fines_semana'][0].estado)
-            setTablaDias(data['dia_festivo'])
+            const data = await getSpecialDaysSW12('192.168.1.74');       
+            console.log(data)
+            setClunes(data['fines_semana'].lunes)
+            setCmartes(data['fines_semana'].martes)
+            setCmiercoles(data['fines_semana'].miercoles)
+            setCjueves(data['fines_semana'].jueves)
+            setCviernes(data['fines_semana'].viernes)
+            setCsabado(data['fines_semana'].sabado)
+            setCDomingo(data['fines_semana'].domingo)
+            setTablaDias(data['dias'])
             setDeshabilitar3(false)
             setDeshabilitar4(false);
         } catch (error) {
@@ -681,7 +682,7 @@ export default function HorariosView() {
                             <Thead>
                                 <Tr>
                                     <Th className='home-t-th'>Fecha</Th>
-                                    <Th className='home-t-th'>Tiempo de Ejecución</Th>
+                                    <Th className='home-t-th'>Modo</Th>
                                     <></>
                                 </Tr>
                             </Thead>
@@ -689,10 +690,10 @@ export default function HorariosView() {
                                 {tablaDias.map((dato, index) => (
                                     <Tr key={index} >
                                         <Td >
-                                            {dato.mes}-{dato.dia}-{2022}
+                                            {dato.mes}-{dato.dia}-{2023}
                                         </Td>
                                         <Td >
-                                            {dato.descriptor_modo}
+                                            {dato.tipo}
                                         </Td>
                                         <Td>
                                             <Button variant="contained" sx={{ height: '100%' }} disabled={deshabilitar3} onClick={() => { borrarDiaFestivo(dato) }} color='rojo'>Borrar</Button>

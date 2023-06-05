@@ -13,6 +13,7 @@ import { updateDoc, doc } from "firebase/firestore";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import {getEntradasControlador,setEntradasControlador} from "../js/apiFunctions";
+import { getEntradasSW12 } from '../js/apiFunctionsSW12';
 import "../css/EntradasView.css";
 import { useSelector} from 'react-redux';
 import Swal from 'sweetalert2';
@@ -35,48 +36,26 @@ export default function EntradasView() {
     const [deshabilitar2,setDeshabilitar2] = useState(false);
     const traerEntradasFromRestApi = async() =>{
         try {
-            const mac = controlerState.mac;
             setDeshabilitar2(true);
-            let data = await getEntradasControlador(controlerState.mac,controlerState.ip);
-            let informacion = data[`${mac}`];
-            console.log(informacion);
-            setEntradas(informacion);
-            if(informacion.entrada1.checkbox ==='1'){
-                setEnt1(true);
-            }else{
-                setEnt1(false);
-            }
-            if(informacion.entrada2.checkbox ==='1'){
-                setEnt2(true);
-            }else{
-                setEnt2(false);
-            }
-            if(informacion.entrada3.checkbox ==='1'){
-                setEnt3(true);
-            }else{
-                setEnt3(false);
-            }
-            if(informacion.entrada4.checkbox === '1'){
-                setEnt4(true);
-            }else{
-                setEnt4(false);
-            }
-            setFase1(parseInt(informacion.entrada1.fase));
-            setFase2(parseInt(informacion.entrada2.fase));
-            setFase3(parseInt(informacion.entrada3.fase));
-            setFase4(parseInt(informacion.entrada4.fase));
-    
-            setT1(parseInt(informacion.entrada1.tiempo));
-            setT2(parseInt(informacion.entrada2.tiempo));
-            setT3(parseInt(informacion.entrada3.tiempo));
-            setT4(parseInt(informacion.entrada4.tiempo));
-    
+            let data = await getEntradasSW12();
+            setEnt1(data[0].check);
+            setEnt2(data[1].check);
+            setEnt3(data[2].check);
+            setEnt4(data[3].check);
+            setFase1(data[0].paso);
+            setFase2(data[1].paso);
+            setFase3(data[2].paso);
+            setFase4(data[3].paso);
+            setT1(data[0].duracion);
+            setT2(data[1].duracion);
+            setT3(data[2].duracion);
+            setT4(data[3].duracion);
             setDeshabilitar2(false);
             setDeshabilitar(false);
     
     
     
-            console.log(informacion);
+            //console.log(informacion);
         } catch (error) {
             setDeshabilitar2(false);
         }

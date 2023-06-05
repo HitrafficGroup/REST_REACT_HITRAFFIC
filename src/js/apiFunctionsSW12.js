@@ -346,11 +346,80 @@ async function getGreenConflictSW12(ip) {
 	return res;
 }
 
+async function getTimeControllerSW12(ip) {
+	var res;
+	await axios.get(`${BASE_HT200}/rest/getTimeControllerSW12?ip=${ip}`).then(response => {
+		res = response.data
+		Swal.fire({
+			title: "Completado!",
+			text: "Datos Leidos Con Éxito",
+			icon: "success",
+		});
+		
+	}).catch(function (error) {
+		console.log(res);
+		Swal.fire({
+			icon: 'error',
+			title: 'Error de Conexión',
+			text: `${error}`,
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+		  })
+	})
+	return res;
+}
+
+
+async function getSpecialDaysSW12(ip) {
+	var res;
+	await axios.get(`${BASE_HT200}/rest/getSpecialDaysSW12?ip=${ip}`).then(response => {
+		res = response.data
+		Swal.fire({
+			title: "Completado!",
+			text: "Datos Leidos Con Éxito",
+			icon: "success",
+		});
+		
+	}).catch(function (error) {
+		console.log(res);
+		Swal.fire({
+			icon: 'error',
+			title: 'Error de Conexión',
+			text: `${error}`,
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+		  })
+	})
+	return res;
+}
+
+
+async function getEntradasSW12(ip) {
+	var res;
+	await axios.get(`${BASE_HT200}/rest/getEntradasSW12?ip=${ip}`).then(response => {
+		res = response.data
+		Swal.fire({
+			title: "Completado!",
+			text: "Datos Leidos Con Éxito",
+			icon: "success",
+		});
+		
+	}).catch(function (error) {
+		console.log(res);
+		Swal.fire({
+			icon: 'error',
+			title: 'Error de Conexión',
+			text: `${error}`,
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+		  })
+	})
+	return res;
+}
+
+
 
 
 
 export { 
 	getFasesSW12,getOrdinaryScheduleSW12,getWeekendScheduleSW12,getFestivalScheduleSW12,getPlan1SW12,
 	getPlan2SW12,getPlan3SW12,getPlan4SW12,getPlan5SW12,getPlan6SW12,getPlan7SW12,getPlan8SW12,getOperativeParamsSW12,
-	getGruposSW12,getGreenConflictSW12
+	getGruposSW12,getGreenConflictSW12,getTimeControllerSW12,getSpecialDaysSW12,getEntradasSW12
 }
