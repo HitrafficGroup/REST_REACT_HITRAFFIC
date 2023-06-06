@@ -16,7 +16,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { db } from "../firebase/firebase-config";
 import { collection, updateDoc, onSnapshot, doc,getDoc } from "firebase/firestore";
-import { getPlan1SW12,getPlan2SW12,getPlan3SW12,getPlan4SW12,getPlan5SW12,getPlan6SW12,getPlan7SW12,getPlan8SW12,getOperativeParamsSW12 } from '../js/apiFunctionsSW12';
+import { getPlan1SW12,getPlan2SW12,getPlan3SW12,getPlan4SW12,getPlan5SW12,getPlan6SW12,getPlan7SW12,getPlan8SW12,getOperativeParamsSW12,postPlanesSW12 } from '../js/apiFunctionsSW12';
 import '../css/PlanesView.css'
 import { useSelector, useDispatch } from 'react-redux';
 import { addPlanes } from "../features/controlers/controlerSlice";
@@ -231,9 +231,12 @@ const handleNumPlan = (event) => {
         }).then(async(result)=>{
             if(result.isConfirmed){
                 setDeshabilitar2(true)
+                let data_plan = [numPlan]
                 var newData = {}
                 var j = 0
                 for(let i = 0 ;i<12;i++){
+                    data_plan.push(parseInt(currentPlan[i].fase))
+                    data_plan.push(parseInt(currentPlan[i].duracion))
                     newData['data'+j] = currentPlan[i].fase.toString()
                     newData['data'+(1+j)] = currentPlan[i].duracion.toString()
                     j += 2;
@@ -242,9 +245,9 @@ const handleNumPlan = (event) => {
                 newData['mac'] = controlerState.mac
                 newData['num_plan'] = returnNumPlan(selectPlan)
                 setCambio(false);
-                console.log(newData)
-                await setPlanesFromRestApi(newData);
-                cargarPlanesFirebase(planes);
+                console.log(data_plan)
+                await postPlanesSW12({'trama':data_plan});
+                //cargarPlanesFirebase(planes);
                 setDeshabilitar2(false)
             }
         })        
@@ -290,11 +293,11 @@ const handleNumPlan = (event) => {
                             >
                                 <MenuItem value={1}>Plan 1</MenuItem>
                                 <MenuItem value={2}>Plan 2</MenuItem>
-                                <MenuItem value={7}>Plan 3</MenuItem>
-                                <MenuItem value={3}>Plan 4</MenuItem>
-                                <MenuItem value={4}>Plan 5</MenuItem>
-                                <MenuItem value={5}>Plan 6</MenuItem>
-                                <MenuItem value={6}>Plan 7</MenuItem>
+                                <MenuItem value={3}>Plan 3</MenuItem>
+                                <MenuItem value={4}>Plan 4</MenuItem>
+                                <MenuItem value={5}>Plan 5</MenuItem>
+                                <MenuItem value={6}>Plan 6</MenuItem>
+                                <MenuItem value={7}>Plan 7</MenuItem>
                                 <MenuItem value={8}>Plan 8</MenuItem>
                             </Select>
                         </FormControl>

@@ -436,6 +436,91 @@ async function getErroresSW12(ip) {
 	return res;
 }
 
+async function postFasesSW12(jsonData) {
+	await axios.post(`${BASE_HT200}/rest/postFasesSW12?mac=${jsonData['mac']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
+		});
+}
+
+async function postGruposSW12(jsonData) {
+	await axios.post(`${BASE_HT200}/rest/postGruposSW12?mac=${jsonData['mac']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
+		});
+}
+
+async function postGreenConflictSW12(jsonData) {
+	await axios.post(`${BASE_HT200}/rest/postGreenConflictSW12?mac=${jsonData['mac']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
+		});
+}
+
+async function postPlanesSW12(jsonData) {
+	await axios.post(`${BASE_HT200}/rest/postPlanesSW12?mac=${jsonData['mac']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+			  })
+		});
+}
+
+
 
 
 
@@ -444,5 +529,6 @@ async function getErroresSW12(ip) {
 export { 
 	getFasesSW12,getOrdinaryScheduleSW12,getWeekendScheduleSW12,getFestivalScheduleSW12,getPlan1SW12,
 	getPlan2SW12,getPlan3SW12,getPlan4SW12,getPlan5SW12,getPlan6SW12,getPlan7SW12,getPlan8SW12,getOperativeParamsSW12,
-	getGruposSW12,getGreenConflictSW12,getTimeControllerSW12,getSpecialDaysSW12,getEntradasSW12,getErroresSW12
+	getGruposSW12,getGreenConflictSW12,getTimeControllerSW12,getSpecialDaysSW12,getEntradasSW12,getErroresSW12,postFasesSW12,
+	postGruposSW12,postGreenConflictSW12,postPlanesSW12
 }

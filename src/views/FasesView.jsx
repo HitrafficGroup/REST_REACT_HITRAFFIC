@@ -14,8 +14,7 @@ import { updateDoc,doc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
-import { getFasesSW12 } from '../js/apiFunctionsSW12';
-import { updateFasesSamplingTime,getCheckDataFases } from '../js/gestionSolicitudes';
+import { getFasesSW12,postFasesSW12 } from '../js/apiFunctionsSW12';
 import { useSelector } from 'react-redux';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -75,10 +74,10 @@ export default function FasesView() {
                 confirmButtonText: 'Si, actualizar!',
                 showDenyButton: true,
                 denyButtonText: 'Cancelar',
-            }).then((result) => {
+            }).then(async(result) => {
                 if (result.isConfirmed) {
                     setDeshabilitar2(true);
-                  
+                   let data_update = []
                     try {
                         let lista_datos = []
                         let datos_fases = {
@@ -101,15 +100,15 @@ export default function FasesView() {
                             for (let falta = 0; falta < bits_faltantes; falta++) {
                                 fase = "0" + fase
                             }
-                            datos_fases["fase" + (index_f + 1).toString()] = parseInt(fase, 2).toString()
+                            
+                            datos_fases["fase" + (index_f + 1).toString()] = parseInt(fase, 2)
                             lista_datos.push(parseInt(fase, 2))
                         }
-                        //console.log(datos_fases)
-                        enviarFasesRestApi(datos_fases)
-                        console.log(fases)
-                        enviarFasesFirebase(fases);
+                        await postFasesSW12({'trama':lista_datos})
+                        //console.log(fases)
+                        //enviarFasesFirebase(fases);
                        
-
+                        setDeshabilitar2(false);
     
                     } catch (e) {
                         console.log(e);

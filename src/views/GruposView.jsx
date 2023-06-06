@@ -17,13 +17,10 @@ import Button from '@mui/material/Button';
 import '../css/GruposView.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useSelector } from 'react-redux';
-import { getGruposControlador, getConflictoVerdesControlador,setGruposControlador,setConflictoVerdesControlador } from '../js/apiFunctions'
-import { getGruposSW12,getGreenConflictSW12 } from '../js/apiFunctionsSW12';
+import { getGruposSW12,getGreenConflictSW12,postGruposSW12,postGreenConflictSW12 } from '../js/apiFunctionsSW12';
 import Collapse from '@mui/material/Collapse';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-
-
 import Swal from 'sweetalert2';
 import Alert from '@mui/material/Alert';
 import { CheckAndLinkBits } from '../js/manageData';
@@ -276,16 +273,9 @@ export default function GruposView() {
            let sentido = getValueSentido(sen)
            lista_elementos.push(sentido)
         }
-
         let datos = CheckAndLinkBits(lista_elementos)
-        let data_grupos = {
-            "ip": controlerState.ip,
-            "g1": datos[0],
-            "g2": datos[1],
-            "g3": datos[2],
-            "g4": datos[3],
-        }
-        return(data_grupos)
+        let data_int = datos.map(item=>(parseInt(item)))
+        return(data_int)
     }
     const cargarDatosGrupos = () => {
         Swal.fire({
@@ -301,8 +291,10 @@ export default function GruposView() {
                 try {
                     setDeshabilitar2(true);
                     const newGruposconf = convertirDatos(grupos)
-                    await setGruposControlador(newGruposconf);
-                    cargarGruposFirebase(grupos);
+                    console.log(newGruposconf)
+
+                    await postGruposSW12({'trama':newGruposconf});
+                    //cargarGruposFirebase(grupos);
                     setCambioGrupos(false)
                     setDeshabilitar2(false);
                 } catch (e) {
@@ -366,16 +358,15 @@ export default function GruposView() {
                     }
 
        
-                    const newConflicto = {
-                        check1: checked1 ? "1":"0",
-                        check2: checked2 ? "1":"0",
-                        check3: checked3 ? "1":"0",
-                        fila1: parseInt(binario1, 2).toString(),
-                        fila2: parseInt(binario2, 2).toString(),
-                        fila3: parseInt(binario3, 2).toString(),
-                        ip: controlerState.ip,
-                        mac:controlerState.mac
-                    }
+                    const newConflicto = [
+                        parseInt(binario1, 2),
+                        parseInt(binario2, 2),
+                        parseInt(binario3, 2),
+                        checked1 ? "1":"0",
+                        checked2 ? "1":"0",
+                        checked3 ? "1":"0"
+                    ]
+               
                     let  conflictoFirebase = {
                         check1: checked1,
                         check2: checked2,
@@ -384,10 +375,13 @@ export default function GruposView() {
                         fila2: [false,false,false,false],
                         fila3: [false,false,false,false],
                     }
-                    
-                    await setConflictoVerdesControlador(newConflicto);
-                    cargarConflictosFirebase(conflictoFirebase);
-                    setCambioConflictos(false)
+                    let data_X = "00"+newConflicto[5]+newConflicto[4]+"000"+newConflicto[3]
+                    let chec = parseInt(data_X, 2)
+                    let data_formated = [newConflicto[0],newConflicto[1],newConflicto[2],chec]
+                    //console.log(data_formated)
+                    await postGreenConflictSW12({'trama':data_formated});
+                    //cargarConflictosFirebase(conflictoFirebase);
+                    //setCambioConflictos(false)
                     setDeshabilitar4(false);
 
                 } catch (e) {
