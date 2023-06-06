@@ -414,6 +414,29 @@ async function getEntradasSW12(ip) {
 	return res;
 }
 
+async function getErroresSW12(ip) {
+	var res;
+	await axios.get(`${BASE_HT200}/rest/getErroresSW12?ip=${ip}`).then(response => {
+		res = response.data
+		Swal.fire({
+			title: "Completado!",
+			text: "Datos Leidos Con Éxito",
+			icon: "success",
+		});
+		
+	}).catch(function (error) {
+		console.log(res);
+		Swal.fire({
+			icon: 'error',
+			title: 'Error de Conexión',
+			text: `${error}`,
+			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+		  })
+	})
+	return res;
+}
+
+
 
 
 
@@ -421,5 +444,5 @@ async function getEntradasSW12(ip) {
 export { 
 	getFasesSW12,getOrdinaryScheduleSW12,getWeekendScheduleSW12,getFestivalScheduleSW12,getPlan1SW12,
 	getPlan2SW12,getPlan3SW12,getPlan4SW12,getPlan5SW12,getPlan6SW12,getPlan7SW12,getPlan8SW12,getOperativeParamsSW12,
-	getGruposSW12,getGreenConflictSW12,getTimeControllerSW12,getSpecialDaysSW12,getEntradasSW12
+	getGruposSW12,getGreenConflictSW12,getTimeControllerSW12,getSpecialDaysSW12,getEntradasSW12,getErroresSW12
 }
