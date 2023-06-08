@@ -16,7 +16,9 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { db } from "../firebase/firebase-config";
 import { collection, updateDoc, onSnapshot, doc,getDoc } from "firebase/firestore";
-import { getPlan1SW12,getPlan2SW12,getPlan3SW12,getPlan4SW12,getPlan5SW12,getPlan6SW12,getPlan7SW12,getPlan8SW12,getOperativeParamsSW12,postPlanesSW12 } from '../js/apiFunctionsSW12';
+import { getPlan1SW12,getPlan2SW12,getPlan3SW12,getPlan4SW12,getPlan5SW12,
+    getPlan6SW12,getPlan7SW12,getPlan8SW12,getOperativeParamsSW12,
+    postPlanesSW12,postOtrosParametrosSW12 } from '../js/apiFunctionsSW12';
 import '../css/PlanesView.css'
 import { useSelector, useDispatch } from 'react-redux';
 import { addPlanes } from "../features/controlers/controlerSlice";
@@ -38,7 +40,7 @@ export default function PlanesView() {
     const [faseSemaforo, setFaseSemaforo] = useState('1');
     const [tiempoSemaforo, setTiempoSemaforo] = useState(0);
     const [sincronizacionSemaforo, setSincronizacionSemaforo] = useState(0)
-    const [currentPaso, setCurrentPaso] = useState(0);
+    const [currentPaso, setCurrentPaso] = useState({duracion:0,fase:0,id:''});
     //Variables de parametros Operativos del controlador
     const [otrosParam,setOtrosParam] = useState(otrosParametros)
     const [destellarVerdePeatonal,setDestellarVerdePeatonal]= useState(0);
@@ -95,6 +97,7 @@ export default function PlanesView() {
     }
 
     const abrirModalEditar = (data) => {
+ 
         setFaseSemaforo(data.fase.toString());
         setTiempoSemaforo(data.duracion);
         setCurrentPaso(data);
@@ -106,7 +109,7 @@ export default function PlanesView() {
        let planselect = planes.filter(data => data.numPlan === name)
        setSelectPlan(name);
        setCurrentPlan(planselect[0].pasos);
-       console.log(planselect);
+      
     }
     const cargarPlanesFirebase = async(_planes) =>{
         const ref = doc(db, "controladores", `${controlerState.mac}`);
@@ -120,7 +123,6 @@ export default function PlanesView() {
             setDeshabilitar4(true)
             var datosObtenidos = await getOperativeParamsSW12();
             //var datosformateados = datosObtenidos[`${controlerState.mac}`];
-            console.log(datosObtenidos)
             setTiempoDestelloPrender(parseInt(datosObtenidos.destello_al_encender));
             setDestellarVerdePeatonal(parseInt(datosObtenidos.destello_verde_peatonal));
             setDestellarVerdeVehicular(parseInt(datosObtenidos.destello_verde_vehicular));
@@ -154,7 +156,20 @@ export default function PlanesView() {
             time_min_green:tiempoMinimoVerde1.toString(),
             valor_sincronizacion:valorSincronizacion.toString()
         }
-
+        let min_verde =  parseInt(tiempoMinimoVerde1)
+        let min1 = min_verde & 0xff
+        let min2 = (min_verde>>8)&0xff
+        let params_data = [
+            parseInt(tiempoDestelloPrender),
+            parseInt(tiempoRojoPrender),
+            parseInt(destellarVerdePeatonal),
+            parseInt(destellarVerdeVehicular),
+            parseInt(tiempoAmarilloVehicular),
+            parseInt(tiempoTodoRojo),
+            min1,
+            min2,
+            0
+        ]
 
         Swal.fire({
             title: 'Deseas Continuar ?',
@@ -168,37 +183,45 @@ export default function PlanesView() {
             if(result.isConfirmed){
                 setDeshabilitar4(true)
                 setCambio(false);
-                await setOtrosParametrosFromRestApi(newParams);
-                cargarOtrosParamFirebase(newParams);
+                console.log(params_data)
+                await postOtrosParametrosSW12({'trama':params_data});
+                //cargarOtrosParamFirebase(newParams);
                 setDeshabilitar4(false)
              
             }
         })        
-
-
-        
-       
+      
     }
     const actualizarPaso = () => {
-        const temp = currentPlan.map((item)=>{
-            if(item.name ===  currentPaso.name){
-                item['fase'] = parseInt(faseSemaforo);
-                item['duracion'] = parseInt(tiempoSemaforo);
+        let  data_paso = JSON.parse(JSON.stringify(currentPaso))
+        let plan = JSON.parse(JSON.stringify(currentPlan))
+        data_paso.duracion = parseInt(data_paso.duracion)
+        let plan_modify = plan.map((item)=>{
+
+            if(item.id === data_paso.id){
+                return data_paso;
+            }else{
+                return item;
             }
-            return item
 
         })
-        const temp2 = planes.map((item)=>{
-            if(item.numPlan === selectPlan){
-                item.pasos = temp
-            }
-            return item
-        })
-        console.log(temp2)
-        setCurrentPlan(temp);
-        setCambio(true)
+
+        console.log(plan_modify)
         setModalEditar(false);
+        setCurrentPlan(plan_modify);
+        setCambio(true)
     }
+
+    const handlePaso = (event) => {
+        setCurrentPaso({
+            ...currentPaso,
+            [event.target.name]: event.target.value,
+        });
+    };
+
+
+
+
     const EliminarPlan = (_data) =>{
         let aux_data = JSON.parse(JSON.stringify(currentPlan))
         let data_modify = aux_data.map(item => {
@@ -231,7 +254,7 @@ const handleNumPlan = (event) => {
         }).then(async(result)=>{
             if(result.isConfirmed){
                 setDeshabilitar2(true)
-                let data_plan = [numPlan]
+                let data_plan = [numPlan-1]
                 var newData = {}
                 var j = 0
                 for(let i = 0 ;i<12;i++){
@@ -274,21 +297,14 @@ const handleNumPlan = (event) => {
                 </div>
                 <Grid container spacing={2}>
                     <Grid item md={6} xs={12} >
-                        {/* <Autocomplete
-                            onChange={(event, newValue) => { planSelectManager(newValue) }}
-                            options={planes4}
-                            value = {selectPlan}
-                            id="controllable-states-demo"
-                            renderInput={(params) => <TextField {...params} label="Escoga Un Plan" fullWidth />}
-                            disabled={deshabilitar}
-                        /> */}
+                    
                             <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
+                            <InputLabel id="demo-simple-select-label">Plan</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 value={numPlan}
-                                label="Tipo"
+                                label="Plan"
                                 onChange={handleNumPlan}
                             >
                                 <MenuItem value={1}>Plan 1</MenuItem>
@@ -471,15 +487,15 @@ const handleNumPlan = (event) => {
                         onChange={(event) => {setValorSincronizacion(event.target.value) }}
                         value={valorSincronizacion} />
                     </Grid>
-                    <Grid item md={3} xs={12}>
-                        <Button variant="contained"  color='verde2' fullWidth sx={{height:'100%'}}   onClick={leerOtrosParametrosApi} >Leer Datos</Button>
+                    <Grid item md={6} xs={12}>
+                        <Button variant="contained"  color='verde2'  sx={{height:'100%'}}   onClick={leerOtrosParametrosApi} >Leer Datos</Button>
                     </Grid>
-                    <Grid item md={3} xs={12}>
-                        <Button variant="contained" fullWidth sx={{height:'100%'}} onClick={cargarOtrosParametrosAPI} disabled={deshabilitar3} >Cargar Cambios</Button>
+                    <Grid item md={6} xs={12}>
+                        <Button variant="contained"  sx={{height:'100%'}} onClick={cargarOtrosParametrosAPI} disabled={deshabilitar3} >Cargar Cambios</Button>
                     </Grid>
                   
                     <Grid item xs={12}>
-                        <div style={{height:8}}>
+                        <div style={{height:40}}>
 
                         </div>
                     </Grid>
@@ -490,22 +506,43 @@ const handleNumPlan = (event) => {
             <Modal isOpen={modalEditar} >
                 <ModalHeader>
                     <div>
-                        <h1>
-                            Ajustes del Plan
-                        </h1>
+                        <h5>
+                            Ajustes del {currentPaso.id}
+                        </h5>
                     </div>
                 </ModalHeader>
                 <ModalBody>
                     <Grid container spacing={4}>
                         <Grid item xs={12}>
-                            <Autocomplete
-                                name='plan'
-                                options={planes2}
-                                value={faseSemaforo}
-                                onChange={(event, newValue) => { setFaseSemaforo(newValue) }}
-                                id="controllable-states-demo"
-                                renderInput={(params) => <TextField {...params} label="Escoga una Fase" fullWidth />}
-                            />
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Fase</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={currentPaso.fase}
+                                label="Fase"
+                                onChange={handlePaso}
+                                name='fase'
+                            >
+                                <MenuItem value={0}></MenuItem>
+                                <MenuItem value={1}>Fase 1</MenuItem>
+                                <MenuItem value={2}>Fase 2</MenuItem>
+                                <MenuItem value={3}>Fase 3</MenuItem>
+                                <MenuItem value={4}>Fase 4</MenuItem>
+                                <MenuItem value={5}>Fase 5</MenuItem>
+                                <MenuItem value={6}>Fase 6</MenuItem>
+                                <MenuItem value={7}>Fase 7</MenuItem>
+                                <MenuItem value={8}>Fase 8</MenuItem>
+                                <MenuItem value={9}>Fase 9</MenuItem>
+                                <MenuItem value={10}>Fase 10</MenuItem>
+                                <MenuItem value={11}>Fase 11</MenuItem>
+                                <MenuItem value={12}>Fase 12</MenuItem>
+                                <MenuItem value={13}>Fase 13</MenuItem>
+                                <MenuItem value={14}>Fase 14</MenuItem>
+                                <MenuItem value={15}>Fase 15</MenuItem>
+                                <MenuItem value={16}>Fase 16</MenuItem>
+                            </Select>
+                        </FormControl>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
@@ -513,8 +550,9 @@ const handleNumPlan = (event) => {
                                 id="outlined-number"
                                 label="Duracion en Segundos"
                                 type="number"
-                                value={tiempoSemaforo}
-                                onChange={(event) => { setTiempoSemaforo(event.target.value) }}
+                                value={currentPaso.duracion}
+                                name='duracion'
+                                onChange={handlePaso}
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
