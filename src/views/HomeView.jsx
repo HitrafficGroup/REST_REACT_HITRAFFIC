@@ -40,7 +40,7 @@ import '../css/HomeView.css';
 import Swal from 'sweetalert2';
 import RelogActual from "../components/RelogActual";
 import { useNavigate } from 'react-router-dom';
-import { getTimeControllerSW12 } from '../js/apiFunctionsSW12';
+import { getTimeControllerSW12,postTimeSW12 } from '../js/apiFunctionsSW12';
 
 const InitialTime = {
     day:"00",
@@ -968,24 +968,20 @@ export default function HomeView() {
     
         }
         const sincronizarTiempoFromRest = async() =>{
-            const newData = {
-                ip:controlerState.ip,
-                mac:controlerState.mac,
-                time_zone:"-5"
-            }
-            const tiempohoy = new Date();
-            const dataForFirebase = {
-                time_zone:"-5",
-                horas: tiempohoy.getHours().toString(),
-                minutos: tiempohoy.getMinutes().toString(),
-                segundos: tiempohoy.getSeconds().toString(),
-                dia: tiempohoy.getDate().toString(),
-                indice_dia: "2",
-                mes: (tiempohoy.getMonth()+1).toString(),
-                year: tiempohoy.getFullYear().toString(),
-            }
+         
+            // const tiempohoy = new Date();
+            // const dataForFirebase = {
+            //     time_zone:"-5",
+            //     horas: tiempohoy.getHours().toString(),
+            //     minutos: tiempohoy.getMinutes().toString(),
+            //     segundos: tiempohoy.getSeconds().toString(),
+            //     dia: tiempohoy.getDate().toString(),
+            //     indice_dia: "2",
+            //     mes: (tiempohoy.getMonth()+1).toString(),
+            //     year: tiempohoy.getFullYear().toString(),
+            // }
     
-            console.log(dataForFirebase)
+
             try{
                 
                 Swal.fire({
@@ -999,9 +995,9 @@ export default function HomeView() {
                 }).then(async(result)=>{
                     if(result.isConfirmed){
                         setDeshabilitar(true);
-                        await setTimeControlador(newData);
+                        await postTimeSW12({mac:'12:f:3',trama:['2']});
                         setDeshabilitar(false);
-                        updateHoraControllerFirebase(dataForFirebase);
+                        //updateHoraControllerFirebase(dataForFirebase);
                         
                     }
                 })        
