@@ -106,23 +106,23 @@ export default function GruposView() {
     const leerGruposFromRestApi = async () => {
         try {
             setDeshabilitar2(true);
-        setCambioGrupos(false);
-        const response = await getGruposSW12("192.168.1.2")
-        const responseFormat = []
-        for (let i = 1; i < 5; i++) {
-            let temp = response['grupo' + i]
-            let newObject = {
-                grupo: temp.grupoNum,
-                direccion: temp.direccionDescripcion,
-                sentido: temp.sentidoDescripcion,
-                destello: temp.destelloDescripcion,
+            setCambioGrupos(false);
+            const response = await getGruposSW12("192.168.1.2")
+            const responseFormat = []
+            for (let i = 1; i < 5; i++) {
+                let temp = response['grupo' + i]
+                let newObject = {
+                    grupo: temp.grupoNum,
+                    direccion: temp.direccionDescripcion,
+                    sentido: temp.sentidoDescripcion,
+                    destello: temp.destelloDescripcion,
+                }
+                responseFormat.push(newObject);
             }
-            responseFormat.push(newObject);
-        }
-      
-        setGrupos(responseFormat)
-        setDeshabilitar(false)
-        setDeshabilitar2(false);
+        
+            setGrupos(responseFormat)
+            setDeshabilitar(false)
+            setDeshabilitar2(false);
         } catch (error) {
             setDeshabilitar2(false);
         }

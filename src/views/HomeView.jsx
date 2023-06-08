@@ -21,7 +21,7 @@ import "../css/HomeView.css"
 import "../css/SyncTimeView.css"
 import CustomProgress from "../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { getIpsFromRestApi, getFirmwareVersion,setTimeControlador,getTimeControlador } from '../js/apiFunctions'
+import { getIpsFromRestApi, getFirmwareVersion,setTimeControlador } from '../js/apiFunctions'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -40,15 +40,16 @@ import '../css/HomeView.css';
 import Swal from 'sweetalert2';
 import RelogActual from "../components/RelogActual";
 import { useNavigate } from 'react-router-dom';
+import { getTimeControllerSW12 } from '../js/apiFunctionsSW12';
 
 const InitialTime = {
-    dia:"00",
-    horas: "00",
-    indice_dia:"00",
-    mes:"00",
-    minutos: "00",
-    segundos:"00",
-    time_zone:"00",
+    day:"00",
+    hours: "00",
+    date:"00",
+    month:"00",
+    minutes: "00",
+    seconds:"00",
+    zone:"00",
     year: "00"
 }
 
@@ -920,6 +921,14 @@ export default function HomeView() {
     const limpiarPuntos = () =>{
         setPointsArea([])
     }
+    const formatData = (_data)=>{
+        let data = _data.toString(16)
+        if (data.length < 2) {
+            data = "0" + data
+        }
+        return data
+    }
+
     /* 
         Logica para la actualizacion del horario
     */
@@ -927,13 +936,20 @@ export default function HomeView() {
         const obtenerTiempoFromRestApi = async() =>{
             try{
                 setDeshabilitar(true);
-                const response = await getTimeControlador(controlerState.mac,controlerState.ip)
-                setTiempoController(response[controlerState.mac])
-                const temp = response[controlerState.mac]
-                const fechac = `${temp.mes}-${temp.dia}-${temp.year}`
+                const response = await getTimeControllerSW12()
+     
+                response['seconds'] =  formatData(response['seconds'])
+                response['minutes'] =  formatData(response['minutes'])
+                response['hours'] =  formatData(response['hours'])
+                response['month'] =  formatData(response['month'])
+                response['date'] =  formatData(response['date'])
+                response['year'] =  formatData(response['year'])
+                //let data_formated = response.map(item=>(formatData(item)))
+                console.log(response)
+                setTiempoController(response)
+                const fechac = `${response.month}-${response.date}-${response.year}`
                 const dateObj = new Date(fechac)
                 const formatDate = dateObj.toLocaleString("es-EC", { dateStyle: 'full' });
-               
                 setFechaController(formatDate);
                 setDeshabilitar(false);
                 setDeshabilitar2(false);
@@ -1116,7 +1132,7 @@ export default function HomeView() {
                 </Grid>
                 <Grid item xs={6}>
                     <h5>Hora del Controlador</h5> 
-                    <p>{tiempoController.horas+':'+tiempoController.minutos+':'+tiempoController.segundos}</p>
+                    <p>{tiempoController.hours+':'+tiempoController.minutes+':'+tiempoController.seconds}</p>
                 </Grid>
                 <Grid item xs={6}>
                     <h5>Fecha del Controlador</h5> 

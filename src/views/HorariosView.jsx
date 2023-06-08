@@ -337,11 +337,7 @@ export default function HorariosView() {
         }
         return data
     }
-    const formatdDia =(__data)=>{
-        let day = __data 
-        day = parseInt(day/16*10 + day%16,10)
-        return day
-    }
+
     const cargarDiaFestivo = () => {
         Swal.fire({
             title: 'Deseas Continuar ?',

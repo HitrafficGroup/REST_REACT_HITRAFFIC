@@ -13,7 +13,7 @@ import { updateDoc, doc } from "firebase/firestore";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import {getEntradasControlador,setEntradasControlador} from "../js/apiFunctions";
-import { getEntradasSW12 } from '../js/apiFunctionsSW12';
+import { getEntradasSW12,postEntradasSW12 } from '../js/apiFunctionsSW12';
 import "../css/EntradasView.css";
 import { useSelector} from 'react-redux';
 import Swal from 'sweetalert2';
@@ -73,7 +73,7 @@ export default function EntradasView() {
     const handleEnt4 = (event) =>{
         setEnt4(event.target.checked);
     }
-    const cargarDatosRest =() =>{
+    const cargarDatosRest = async() =>{
         Swal.fire({
             title: 'Deseas Continuar ?',
             text: 'Estos Cambios se guardaran en el Controlador',
@@ -82,36 +82,36 @@ export default function EntradasView() {
             confirmButtonText: 'Si, actualizar!',
             showDenyButton: true,
             denyButtonText: 'Cancelar',
-        }).then((result) => {
+        }).then(async(result) => {
             if (result.isConfirmed) {
                 setDeshabilitar2(true)
                 setDeshabilitar(true)
-                let newObject = {
-                    tiempo1:t1.toString(),
-                    tiempo2:t2.toString(),
-                    tiempo3:t3.toString(),
-                    tiempo4:t4.toString(),
-                    fase1:fase1.toString(),
-                    fase2:fase2.toString(),
-                    fase3:fase3.toString(),
-                    fase4:fase4.toString(),
-                    box1:ent1 ? '1':'0',
-                    box2:ent2 ? '1':'0',
-                    box3:ent3 ? '1':'0',
-                    box4:ent4 ? '1':'0',
-                    ip:controlerState.ip,
-                    mac:controlerState.mac
-                }
-                let newEntradasFirebase = {
-                    entrada1:{checkbox: ent1, fase: fase1.toString(), tiempo: t1.toString()},
-                    entrada2:{checkbox: ent2, fase: fase2.toString(), tiempo: t2.toString()},
-                    entrada3:{checkbox: ent3, fase: fase3.toString(), tiempo: t3.toString()},
-                    entrada4:{checkbox: ent4, fase: fase4.toString(), tiempo: t4.toString()},
-
-                }
-                cargarEntradasFirebase(newEntradasFirebase);
-                cargarDatosEnetradasRest(newObject);
-                console.log(newObject)
+                let data_entradas = [0]
+                //cargarEntradasFirebase(newEntradasFirebase);
+                let check1 = ent1 ? '0010':'0000'
+                let f1 = check1 + ("0000"+fase1.toString(2)).substr(-4) 
+                let binary1 = parseInt(f1,2)-1
+                data_entradas.push(binary1)
+                data_entradas.push(t1)
+                let check2 = ent2 ? '0010':'0000'
+                let f2 = check2+("0000"+fase2.toString(2)).substr(-4)
+                let binary2 = parseInt(f2,2)-1
+                data_entradas.push(binary2)
+                data_entradas.push(t2)
+                let check3 = ent3 ? '0010':'0000'
+                let f3 = check3+ ("0000"+fase3.toString(2)).substr(-4)
+                let binary3 = parseInt(f3,2)-1
+                data_entradas.push(binary3)
+                data_entradas.push(t3)
+                let check4 = ent4 ? '0010':'0000'
+                let f4 = check4 + ("0000"+fase4.toString(2)).substr(-4)
+                let binary4 = parseInt(f4,2)-1
+                data_entradas.push(binary4)
+                data_entradas.push(t4)
+                console.log(data_entradas)
+                await postEntradasSW12({'trama':data_entradas});
+                setDeshabilitar(false);
+                setDeshabilitar2(false);
                
             }
         })
@@ -125,7 +125,8 @@ export default function EntradasView() {
     }
 
     const cargarDatosEnetradasRest = async(data) =>{
-        await setEntradasControlador(data);
+        console.log(data)
+        //await setEntradasControlador(data);
         setDeshabilitar(false);
         setDeshabilitar2(false);
     }
@@ -142,11 +143,11 @@ export default function EntradasView() {
                 <Grid item md={4.5} xs={7}>
                     <TextField
                         fullWidth
-                        id="outlined-number"
+                        id="outlined-controlled"
                         label="Fase a Ejecutar"
                         type="number"
                         value={fase1}
-                        onChange={(event,value)=>{setFase1(value)}}
+                        onChange={(event)=>{setFase1(parseInt(event.target.value))}}
                         disabled={deshabilitar}
                         placeholder="1 al 16"
                         InputLabelProps={{
@@ -157,11 +158,11 @@ export default function EntradasView() {
                 <Grid item md={4.5} xs={12}>
                     <TextField
                         fullWidth
-                        id="outlined-number"
+                        id="outlined-controlled"
                         label="Tiempo de Espera"
                         type="number"
                         value={t1}
-                        onChange={(event,value)=>{setT1(value)}}
+                        onChange={(event)=>{setT1(parseInt(event.target.value))}}
                         placeholder="1 al 255"
                         disabled={deshabilitar}
                         InputLabelProps={{
@@ -175,12 +176,12 @@ export default function EntradasView() {
                 <Grid item md={4.5} xs={7}>
                     <TextField
                         fullWidth
-                        id="outlined-number"
+                        id="outlined-controlled"
                         label="Fase a Ejecutar"
                         type="number"
                         disabled={deshabilitar}
                         value={fase2}
-                        onChange={(event,value)=>{setFase2(value)}}
+                        onChange={(event)=>{setFase2(parseInt(event.target.value))}}
                         placeholder="1 al 16"
                         InputLabelProps={{
                             shrink: true,
@@ -190,12 +191,12 @@ export default function EntradasView() {
                 <Grid item md={4.5} xs={12}>
                     <TextField
                         fullWidth
-                        id="outlined-number"
+                        id="outlined-controlled"
                         label="Tiempo de Espera"
                         type="number"
                         disabled={deshabilitar}
                         value={t2}
-                        onChange={(event,value)=>{setT2(value)}}
+                        onChange={(event)=>{setT2(parseInt(event.target.value))}}
                         placeholder="1 al 255"
                         InputLabelProps={{
                             shrink: true,
@@ -208,12 +209,12 @@ export default function EntradasView() {
                 <Grid item md={4.5} xs={7}>
                     <TextField
                         fullWidth
-                        id="outlined-number"
+                        id="outlined-controlled"
                         label="Fase a Ejecutar"
                         type="number"
                         value={fase3}
                         disabled={deshabilitar}
-                        onChange={(event,value)=>{setFase3(value)}}
+                        onChange={(event)=>{setFase3(parseInt(event.target.value))}}
                         
                         placeholder="1 al 16"
                         InputLabelProps={{
@@ -228,7 +229,7 @@ export default function EntradasView() {
                         label="Tiempo de Espera"
                         type="number"
                         value={t3}
-                        onChange={(event,value)=>{setT3(value)}}
+                        onChange={(event)=>{setT3(parseInt(event.target.value))}}
                         disabled={deshabilitar}
                         placeholder="1 al 255"
                         InputLabelProps={{
@@ -242,12 +243,12 @@ export default function EntradasView() {
                 <Grid item md={4.5} xs={7}>
                     <TextField
                         fullWidth
-                        id="outlined-number"
+                        id="outlined-controlled"
                         label="Fase a Ejecutar"
                         type="number"
                         value={fase4}
                         disabled={deshabilitar}
-                        onChange={(event,value)=>{setFase4(value)}}
+                        onChange={(event)=>{setFase4(parseInt(event.target.value))}}
                         placeholder="1 al 16"
                         InputLabelProps={{
                             shrink: true,
@@ -257,11 +258,11 @@ export default function EntradasView() {
                 <Grid item md={4.5} xs={12}>
                     <TextField
                         fullWidth
-                        id="outlined-number"
+                        id="outlined-controlled"
                         label="Tiempo de Espera"
                         type="number"
                         value={t4}
-                        onChange={(event,value)=>{setT4(value)}}
+                        onChange={(event)=>{setT4(parseInt(event.target.value))}}
                         disabled={deshabilitar}
                         placeholder="1 al 255"
                         InputLabelProps={{
