@@ -105,6 +105,20 @@
     background-color: #b4bcbfb9  !important ;
     margin-top: 5px I !important;
 }
+.h-controler-info{
+    border-radius: 10px 10px 10px 10px;
+    background-color: #F0F3F4;
+    width: 100%;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.h-title{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-radius: 10px 10px 0px 0px;
+    background-color: #34495E;
+    color: white;
+}
 
 @media only screen and (max-width: 1260px) {
     .card-controller{

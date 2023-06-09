@@ -68,23 +68,31 @@ export default function PlanesView() {
             setDis('disabled')
             if(numPlan === 1){
                 result = await getPlan1SW12()
+                cargarPlanesFirebase(result,'plan_1')
             }else if(numPlan === 2){
                 result = await getPlan2SW12()
+                cargarPlanesFirebase(result,'plan_2')
             }else if(numPlan === 3){
                 result = await getPlan3SW12()
+                cargarPlanesFirebase(result,'plan_3')
             }else if(numPlan === 4){
                 result = await getPlan4SW12()
+                cargarPlanesFirebase(result,'plan_4')
             }else if(numPlan === 5){
                 result = await getPlan5SW12()
+                cargarPlanesFirebase(result,'plan_5')
             }else if(numPlan === 6){
                 result = await getPlan6SW12()
+                cargarPlanesFirebase(result,'plan_6')
             }else if(numPlan === 7){
                 result = await getPlan7SW12()
+                cargarPlanesFirebase(result,'plan_7')
             }else if(numPlan === 8){
                 result = await getPlan8SW12()
+                cargarPlanesFirebase(result,'plan_8')
             }
-          
             
+            console.log(result)
             setCurrentPlan(result)
             setDeshabilitar2(false)
             setDeshabilitar(false)
@@ -103,19 +111,16 @@ export default function PlanesView() {
         setModalEditar(true);
     }
 
-    const planSelectManager = (name) => {
-        
-       let planselect = planes.filter(data => data.numPlan === name)
-       setSelectPlan(name);
-       setCurrentPlan(planselect[0].pasos);
-      
-    }
-    const cargarPlanesFirebase = async(_planes) =>{
+  
+    const cargarPlanesFirebase = async(_planes,n_plan) =>{
         const ref = doc(db, "controladores", `${controlerState.mac}`);
         console.log(_planes)
-        await updateDoc(ref,{
-            planes:_planes
-        });
+        let aux_data = {}
+        [`${n_plan}`] = _planes
+        console.log(aux_data)
+        // await updateDoc(ref,{
+        //     planes:_planes
+        // });
     }
     const leerOtrosParametrosApi = async () =>{
         try{
@@ -578,7 +583,7 @@ const handleNumPlan = (event) => {
             <CircularProgress color="inherit" />
         </Backdrop>
         <CardController/>
-        <CardInformation/>
+
         </>
     );
 

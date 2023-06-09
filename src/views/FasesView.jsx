@@ -126,7 +126,7 @@ export default function FasesView() {
     }
     const enviarFasesFirebase = async(data) =>{
         setDeshabilitar2(true)
-    const ref = doc(db, "controladores", `${controlerState.mac}`);
+    const ref = doc(db, "controladores", `${controlerState.id}`);
         await updateDoc(ref,{
             fases:data
         });
@@ -230,6 +230,7 @@ export default function FasesView() {
                         arregloFases.push(faseT)
         
                     }
+                    enviarFasesFirebase(arregloFases);
                     setFases(arregloFases);
                     setDeshabilitar(false);
                     setDeshabilitar2(false);
@@ -440,7 +441,6 @@ export default function FasesView() {
             <CircularProgress color="inherit" />
         </Backdrop>
       
-        <CardController/>
         <CardInformation/>
         </>
     );

@@ -27,7 +27,7 @@ import { useSelector } from 'react-redux';
 import "../css/ButtonAppBar.css"
 import PruebasMenu from './content/PruebasMenu';
 import ControlersMenu from './content/ControlersMenu';
-export default function ButtonAppBar() {
+export default function ButtonAppBar(props) {
 
   const [state, setState] = React.useState({
     left: false,
@@ -125,7 +125,7 @@ export default function ButtonAppBar() {
 
   return (
     <>
-      <AppBar position="static" sx={{ backgroundColor: "#34495E" }}>
+      <AppBar  style={{height:"10vh"}} position="static" sx={{ backgroundColor: "#34495E" }}>
 
         <Toolbar>
 
@@ -139,7 +139,7 @@ export default function ButtonAppBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography sx={{ display: { xs: 'none', md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
+          <Typography sx={{ display: { md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
             {menuState.menu}
           </Typography>
           <Typography  sx={{ display: { xs: 'none', md: 'flex' } }}variant="h6" component="div">
@@ -148,6 +148,9 @@ export default function ButtonAppBar() {
           <Button sx={{marginLeft:2}} variant="contained" color='error' onClick={cerrarSesion} endIcon={<LogoutIcon />} >SALIR</Button>
         </Toolbar>
       </AppBar>
+      <div style={{height:"90vh",overflowY:"scroll" }}>
+        {props.children}
+      </div>
       <Drawer
         anchor={'left'}
         open={state['left']}

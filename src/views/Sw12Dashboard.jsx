@@ -18,7 +18,7 @@ export default function Sw12Dashboard() {
 
     return (
         <>
-            <ButtonAppBar />
+            <ButtonAppBar>
             <Routes>
                 <Route path="home" element={<HomeView />} />
                 <Route path="clonacion" element={<ClonacionView />} />
@@ -35,6 +35,7 @@ export default function Sw12Dashboard() {
                 <Route path="admin" element={<ControlersView />} />
                 <Route path="declarar-controlador" element={<DeclararControladorView />} />
             </Routes>
+            </ButtonAppBar>
             {/* <CardInformation/>
                 <CardController/> */}
         </>

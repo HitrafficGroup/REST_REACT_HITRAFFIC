@@ -36,21 +36,21 @@ export default function CardInformation() {
                     <h6 style={{ marginBottom: 0, marginRight: 5 }}>Fases:</h6>  
                 </div>
                 <ul>
-                    {controlerState.resumen.pasos.map((item,index)=>(
+                    {/* {controlerState.resumen.pasos.map((item,index)=>(
                         <li key={index}>Fases-{item.fase}</li>
-                    ))}
+                    ))} */}
                     </ul>
                 <div className='card-text-i'>
                     <AccessTimeIcon sx={{marginRight:1}}/>
-                    <h6 style={{ marginBottom: 0, marginRight: 5 }}>Horario:</h6>  <p style={{ marginBottom: 0 }}>{controlerState.resumen.horas}:{controlerState.resumen.minutos}</p>
+                    <h6 style={{ marginBottom: 0, marginRight: 5 }}>Horario:</h6>  <p style={{ marginBottom: 0 }}></p>
                 </div>
                 <div className='card-text-i'>
                     <AssignmentTurnedInIcon sx={{marginRight:1}} />
-                    <h6 style={{ marginBottom: 0, marginRight: 5 }} >Plan: </h6> <p style={{ marginBottom: 0 }}>{controlerState.resumen.plan}</p>
+                    <h6 style={{ marginBottom: 0, marginRight: 5 }} >Plan: </h6> <p style={{ marginBottom: 0 }}></p>
                 </div>
                 <div className='card-text-i'>
                     <PlayCircleIcon sx={{marginRight:1}} />
-                    <h6 style={{ marginBottom: 0, marginRight: 5 }} >Modo: </h6> <p style={{ marginBottom: 0 }}>{controlerState.resumen.modo}</p>
+                    <h6 style={{ marginBottom: 0, marginRight: 5 }} >Modo: </h6> <p style={{ marginBottom: 0 }}></p>
                 </div>
             </div>
         </div>

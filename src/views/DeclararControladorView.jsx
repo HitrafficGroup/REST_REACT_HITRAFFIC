@@ -440,7 +440,7 @@ export default function DeclararControladorView() {
                                 </Fab>
 
                                
-                            <div  style={{ zIndex:1070 ,position: "absolute", top: 30, left: 70}}>
+                                <div  style={{ zIndex:1070 ,position: "absolute", top: 30, left: 70}}>
                                     <p>
                                         <strong style={{marginLeft:5,marginRight:5}}>Longitud del semaforo:</strong>{position[0]} <strong style={{marginLeft:5,marginRight:5}}>Latitud del semaforo:</strong>{position[1]}
                                     </p>
