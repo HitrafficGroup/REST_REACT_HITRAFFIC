@@ -14,7 +14,6 @@ import Collapse from '@mui/material/Collapse';
 import Alert from '@mui/material/Alert';
 import Swal from 'sweetalert2';
 import FormGroup from '@mui/material/FormGroup';
-import { getHorariosFromRestApi, postHorariosFromRestApi, getDiasEspecialesControlador, setDiasEspecialesControlador } from '../js/apiFunctions'
 import Checkbox from '@mui/material/Checkbox';
 import { getCheckDataHorarios, updateHorarioSamplingTime } from '../js/gestionSolicitudes';
 import { getOrdinaryScheduleSW12,getWeekendScheduleSW12,getFestivalScheduleSW12 ,getSpecialDaysSW12,postHorariosSW12 ,postDiasEspecialesSW12} from '../js/apiFunctionsSW12';

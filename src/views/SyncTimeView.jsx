@@ -7,7 +7,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Button from '@mui/material/Button';
 import RelogActual from "../components/RelogActual";
 import Swal from 'sweetalert2';
-import {getTimeControlador,setTimeControlador} from '../js/apiFunctions'
+
 import { useSelector, useDispatch } from 'react-redux';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -24,7 +24,7 @@ export default function SyncTimeView() {
     const obtenerTiempoFromRestApi = async() =>{
         try{
             setDeshabilitar2(true);
-            const response = await getTimeControlador(controlerState.mac,controlerState.ip)
+            const response = {}
             setTiempoController(response[controlerState.mac])
             const temp = response[controlerState.mac]
             const fechac = `${temp.mes}-${temp.dia}-${temp.year}`
@@ -81,7 +81,7 @@ export default function SyncTimeView() {
             }).then(async(result)=>{
                 if(result.isConfirmed){
                     setDeshabilitar2(true);
-                    await setTimeControlador(newData);
+           
                     setDeshabilitar2(false);
                     updateHoraControllerFirebase(dataForFirebase);
                     

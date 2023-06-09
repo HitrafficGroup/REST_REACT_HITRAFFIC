@@ -12,7 +12,6 @@ import { updateDoc, doc } from "firebase/firestore";
 
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import {getEntradasControlador,setEntradasControlador} from "../js/apiFunctions";
 import { getEntradasSW12,postEntradasSW12 } from '../js/apiFunctionsSW12';
 import "../css/EntradasView.css";
 import { useSelector} from 'react-redux';

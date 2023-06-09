@@ -35,6 +35,7 @@ export default function ButtonAppBar() {
   const navigate = useNavigate(); // hook para navegar entre urls o vistas
 
   const menuState = useSelector(state => state.menu);
+  const userState = useSelector(state => state.auth);
 
   const menuData = [
 
@@ -88,10 +89,6 @@ export default function ButtonAppBar() {
       child: <ClonacionMenu />,
       visibility: true,
       key: 100
-    }, {
-      child: <ControlersMenu />,
-      visibility: true,
-      key: 101
     },
     {
       child: <SalirMenu />,
@@ -145,8 +142,10 @@ export default function ButtonAppBar() {
           <Typography sx={{ display: { xs: 'none', md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
             {menuState.menu}
           </Typography>
-
-          <Button variant="text" sx={{color:"white"}} onClick={cerrarSesion} endIcon={<LogoutIcon />} >Cerrar Sesion</Button>
+          <Typography  sx={{ display: { xs: 'none', md: 'flex' } }}variant="h6" component="div">
+                   Bienvenido {userState.name} {userState.lastname} !
+                </Typography>
+          <Button sx={{marginLeft:2}} variant="contained" color='error' onClick={cerrarSesion} endIcon={<LogoutIcon />} >SALIR</Button>
         </Toolbar>
       </AppBar>
       <Drawer

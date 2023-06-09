@@ -1,5 +1,5 @@
-import CardInformation from '../components/CardInformation';
-import CardController from "../components/CardController";
+
+import { useDispatch } from 'react-redux';
 import "../css/LoginView.css"
 import {React,useState,forwardRef} from 'react';
 import Button from '@mui/material/Button';
@@ -16,16 +16,20 @@ import fondo from '../assets/fondo_semaforo_2.jpg'
 import logo from '../assets/logo.png';
 import { useNavigate } from 'react-router-dom'
 import { auth } from "../firebase/firebase-config";
+import { db } from '../firebase/firebase-config';
+import { doc, getDoc } from "firebase/firestore";
 import {signInWithEmailAndPassword } from "firebase/auth";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-
+import { setUser } from '../features/auth/userSlice';
 
 export default function LoginView() {
 
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [validacion,setValidacion] =useState(false);
+  const dispatch = useDispatch();
+
 
   const handleClick = () => {
     setOpen(true);
@@ -52,11 +56,19 @@ export default function LoginView() {
     });
   
   signInWithEmailAndPassword(auth, data.get('email'), data.get('password'))
-  .then((userCredential) => {
+  .then(async(userCredential) => {
     // Signed in
     const user = userCredential.user;
-    console.log(user);
-    navigate("/equipos")
+    const ref = doc(db, "usuarios",user.uid);
+    const docSnap = await getDoc(ref);
+
+    if (docSnap.exists()) {
+      let data = docSnap.data();
+      dispatch(setUser(data));
+      navigate("/equipos")
+    }
+   
+
   })
   .catch((error) => {
     const errorCode = error.code;
@@ -68,29 +80,29 @@ export default function LoginView() {
   });
 
   };
-  const authWithGoogle = () => {
-    console.log("aun no esta esta funcionalidad");
-    // signInWithPopup(auth, provider)
-    // .then((result) => {
-    //   // This gives you a Google Access Token. You can use it to access the Google API.
-    //   const credential = GoogleAuthProvider.credentialFromResult(result);
-    //   const token = credential.accessToken;
-    //   // The signed-in user info.
-    //   const user = result.user;
-    //   console.log("usuario autenticado en con exito")
-    //   console.log(user)
-    // }).catch((error) => {
-    //   // Handle Errors here.
-    //   const errorCode = error.code;
-    //   const errorMessage = error.message;
-    //   // The email of the user's account used.
-    //   const email = error.customData.email;
-    //   // The AuthCredential type that was used.
-    //   const credential = GoogleAuthProvider.credentialFromError(error);
-    //   // ...
-    // });
+  // const authWithGoogle = () => {
+  //   console.log("aun no esta esta funcionalidad");
+  //   // signInWithPopup(auth, provider)
+  //   // .then((result) => {
+  //   //   // This gives you a Google Access Token. You can use it to access the Google API.
+  //   //   const credential = GoogleAuthProvider.credentialFromResult(result);
+  //   //   const token = credential.accessToken;
+  //   //   // The signed-in user info.
+  //   //   const user = result.user;
+  //   //   console.log("usuario autenticado en con exito")
+  //   //   console.log(user)
+  //   // }).catch((error) => {
+  //   //   // Handle Errors here.
+  //   //   const errorCode = error.code;
+  //   //   const errorMessage = error.message;
+  //   //   // The email of the user's account used.
+  //   //   const email = error.customData.email;
+  //   //   // The AuthCredential type that was used.
+  //   //   const credential = GoogleAuthProvider.credentialFromError(error);
+  //   //   // ...
+  //   // });
 
-  }
+  // }
 
   return (
 
@@ -164,9 +176,7 @@ export default function LoginView() {
             >
               Ingresar
             </Button>
-            {/* <Button variant="contained" color="secondary" onClick={authWithGoogle} endIcon={<GoogleIcon />} fullWidth>
-              Google
-            </Button> */}
+     
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">

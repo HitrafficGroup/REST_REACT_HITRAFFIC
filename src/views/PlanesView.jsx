@@ -24,7 +24,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addPlanes } from "../features/controlers/controlerSlice";
 //mitze rodriguez
 import { updatePlanesSamplingTime,getCheckDataPlanes } from '../js/gestionSolicitudes';
-import { getPlanesFromRestApi,setPlanesFromRestApi,getOtrosParametrosFromRestApi,setOtrosParametrosFromRestApi } from '../js/apiFunctions';
 import Swal from 'sweetalert2';
 import Chip from '@mui/material/Chip';
 import Alert from '@mui/material/Alert';

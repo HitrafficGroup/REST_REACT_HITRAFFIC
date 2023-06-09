@@ -23,7 +23,8 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { setInitialStateController} from "../features/controlers/controlerSlice";
 import Swal from 'sweetalert2';
 import { collection,updateDoc,doc,onSnapshot,query,deleteDoc  } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
@@ -143,6 +144,7 @@ export default function ControlersView() {
     const [infoModal,setInfoModal] = useState(false);
     const [controlers,setControlers]= useState(dataTest);
     const [currentController,setCurrentController] = useState({});
+    const userState = useSelector(state => state.auth);
     const [deshabilitar,setDeshabilitar] = useState(false);
     const flagFilter = useRef(true);
     const respaldoData = useRef([])
@@ -150,6 +152,7 @@ export default function ControlersView() {
     const ipControlador = useRef('')
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dataTest.length) : 0;
     const navigate = useNavigate(); // hook para navegar entre urls o vistas
+    const dispatch = useDispatch();
 
 
     const Changeview = (referencia) => {
@@ -197,11 +200,35 @@ export default function ControlersView() {
            
     }
     //mostrar la interfaz de acuerdo al controlador
-    const programarControlador = (_equipo)=>{
-        console.log(_equipo)
+    const programarControlador = async(_equipo)=>{
+   
+        let aux_equipo = JSON.parse(JSON.stringify(_equipo))
+        let conexiones = aux_equipo.historial_conexiones;
+        let fecha =  new Date().toLocaleString('es-CO',{dateStyle:'full',timeStyle:'medium'})
+        conexiones.push({
+            id: userState.id,
+            name:userState.name,
+            email:userState.email,
+            lastname:userState.lastname,
+            fecha: fecha
+        })
+        aux_equipo['historial_conexiones'] = conexiones
+        console.log(conexiones)
         if(_equipo.modelo === "HT-200"){
+            const ref = doc(db, "historial_controladores",_equipo.id);
+            await updateDoc(ref, {
+            ultima_conexion: fecha,
+            historial_conexiones:conexiones,
+            });
             navigate('/controlador_HT200/home')
+            dispatch(setInitialStateController(aux_equipo));
         }else if(_equipo.modelo === "SW-12"){
+            const ref = doc(db, "historial_controladores",_equipo.id);
+            dispatch(setInitialStateController(aux_equipo));
+            await updateDoc(ref, {
+            ultima_conexion: fecha,
+            historial_conexiones:conexiones,
+            });
             navigate('/controlador_SW12/home')
         }
     }
@@ -258,12 +285,13 @@ export default function ControlersView() {
               <AppBar position="static" sx={{ backgroundColor: "#34495E" }}>
 
                 <Toolbar>
-                <Typography sx={{ display: { xs: 'none', md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
+                <Typography sx={{ display: { md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
                    Listado de Dispositivos
                 </Typography>
-
-
-                <Button variant="text" sx={{color:"white"}} onClick={cerrarSesion} endIcon={<LogoutIcon />} >Cerrar Sesion</Button>
+                <Typography  sx={{ display: { xs: 'none', md: 'flex' } }}variant="h6" component="div">
+                   Bienvenido {userState.name} {userState.lastname} !
+                </Typography>
+                <Button sx={{marginLeft:2}} variant="contained" color='error' onClick={cerrarSesion} endIcon={<LogoutIcon />} >SALIR</Button>
                 </Toolbar>
                 </AppBar>
             <Container maxWidth="md" sx={{paddingTop:3}}>

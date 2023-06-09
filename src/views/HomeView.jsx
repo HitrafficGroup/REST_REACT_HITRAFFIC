@@ -3,11 +3,8 @@ import CardController from "../components/CardController";
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
 import MapIcon from '@mui/icons-material/Map';
 import { collection, updateDoc, doc, getDocs, getDoc } from "firebase/firestore";
@@ -21,7 +18,6 @@ import "../css/HomeView.css"
 import "../css/SyncTimeView.css"
 import CustomProgress from "../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { getIpsFromRestApi, getFirmwareVersion,setTimeControlador } from '../js/apiFunctions'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -84,7 +80,6 @@ export default function HomeView() {
     const tiempo_amarillo = useRef(0)
     const datos_amarillo_aux = useRef(0)
     const [pointsArea, setPointsArea] = useState([]);
-    const [accionesUi, setAccionesUi] = useState(false);
     const center = [-2.898794750323891, -79.00108637169295]
     const [draggable, setDraggable] = useState(false)
     const [position, setPosition] = useState(center)
@@ -162,7 +157,7 @@ export default function HomeView() {
                         // recargamos el mapa con la nueva posicion de longitud y latitud del controlador
                         setReloadMap(!reloadMap)
                         // obtenemos la version de firmware del controlador
-                        let aux_firmware = await getFirmwareVersion(data.mac, data.ip);
+                        let aux_firmware = "SW-12";
                         let aux_controladores = JSON.parse(JSON.stringify(controlerState.ips)) 
                         let firmware = aux_firmware[data.mac] // guardamos la version de firmware en una variable
 
@@ -1049,13 +1044,13 @@ export default function HomeView() {
                     </Grid>
             
                     <Grid item xs={12} md={6}>
-                        <TextField id="outlined" focused value={controlerState.nombre} label="Nombre" variant="outlined" aria-readonly={true} fullWidth />
+                        {/* <TextField id="outlined" focused value={controlerState.nombre} label="Nombre" variant="outlined" aria-readonly={true} fullWidth /> */}
                     </Grid>
                     <Grid item xs={12} md={3}>
-                        <TextField id="outlined" focused value={controlerState.latitud} label="Latitud" variant="outlined" aria-readonly fullWidth />
+                        {/* <TextField id="outlined" focused value={controlerState.latitud} label="Latitud" variant="outlined" aria-readonly fullWidth /> */}
                     </Grid>
                     <Grid item xs={12} md={3}>
-                        <TextField id="outlined" focused value={controlerState.longitud} label="Longitud" variant="outlined" aria-readonly fullWidth />
+                        {/* <TextField id="outlined" focused value={controlerState.longitud} label="Longitud" variant="outlined" aria-readonly fullWidth /> */}
                     </Grid>
 
 
@@ -1152,7 +1147,7 @@ export default function HomeView() {
 
 
                     <Grid item xs={12} md={12}>
-                        <Table className='home-t'>
+                        {/* <Table className='home-t'>
                             <Thead>
                                 <Tr>
                                     <Th className='home-t-th'>#</Th>
@@ -1201,7 +1196,7 @@ export default function HomeView() {
                                     </Tr>
                                 ))}
                             </Tbody>
-                        </Table>
+                        </Table> */}
                     </Grid>
                     <Grid item xs={12}>
                         <Table className='home-t'>
@@ -1301,8 +1296,8 @@ export default function HomeView() {
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar}>
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <CardController />
-            <CardInformation />
+            {/* <CardController />
+            <CardInformation /> */}
         </div>
     );
 

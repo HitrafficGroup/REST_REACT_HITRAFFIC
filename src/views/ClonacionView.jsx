@@ -2,7 +2,7 @@ import CardInformation from '../components/CardInformation';
 import CardController from "../components/CardController";
 import Container from '@mui/material/Container';
 import "../css/ClonacionView.css";
-import { getIpsFromRestApi, setClonarControlador } from '../js/apiFunctions';
+
 import { useSelector } from 'react-redux';
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
@@ -59,7 +59,7 @@ export default function ClonacionView() {
         try {
             setDeshabilitar2(true);
             setRight([])
-            let ips = await getIpsFromRestApi();
+            let ips = [];
             console.log(ips)
             let ips_online = ips['Ips_disponibles']
             let ips_disponibles = ips_online.filter(item => item.mac !== controlerState.mac)
@@ -222,7 +222,7 @@ export default function ClonacionView() {
                 //console.log(jasonData)
                 console.log(destino_format)
                
-                await setClonarControlador(jasonData)
+               
                 destino_format.forEach(item => {
 
                     let controler_ref = doc(db, "controladores",item.mac);
