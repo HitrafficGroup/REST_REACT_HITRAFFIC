@@ -26,7 +26,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
 import Fab from '@mui/material/Fab';
-import { setInitialStateController, setResumen, addIpsDisponibles, setPasosActivos, addCurrentControler, createNewController } from "../features/controlers/controlerSlice";
+import { setSemaforos, setResumen, addIpsDisponibles, setPasosActivos, addCurrentControler, createNewController } from "../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Backdrop from '@mui/material/Backdrop';
@@ -54,26 +54,18 @@ const InitialTime = {
 }
 
 
-const initialFecha = {
-    dia: "-------",
-    mes: "---------",
-    dianum: "--",
-    year: "----"
-}
 export default function HomeView() {
 
+    const controlerState = useSelector(state => state.controlers)
     const [tiempoController, setTiempoController] = useState(InitialTime)
     const [fechaController, setFechaController] = useState('Datos de fecha aun no Cargados')
     const [fechaActual, setFechaActual] = useState(new Date().toLocaleString("es-EC", { dateStyle: 'full' }))
-
     const [flagsimu, setFlagsimu] = useState(false);
     const todaInformacion = useRef({});
-
-
     const [deshabilitar, setDeshabilitar] = useState(false);
     const [deshabilitar2, setDeshabilitar2] = useState(false);
     const modoControlador = useRef('Tiempo Fijo');
-    const [areas, setAreas] = useState([]);
+    const [areas, setAreas] = useState(controlerState.semaforos);
     const navigate = useNavigate();
     const simulacion = useRef(false);
     const timer1 = useRef(0);
@@ -86,14 +78,15 @@ export default function HomeView() {
     const [pointsArea, setPointsArea] = useState([]);
     const center = [-2.898794750323891, -79.00108637169295]
     const [draggable, setDraggable] = useState(false)
-    const [position, setPosition] = useState(center)
+    const [position, setPosition] = useState([controlerState.latitud, controlerState.longitud])
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
     const [btnAgregar, setBtnAgregar] = useState(true);
     const [reloadMap, setReloadMap] = useState(true);
     const dispatch = useDispatch();
-    const controlerState = useSelector(state => state.controlers)
     const [indicadorData, setIndicadorData] = useState(initialData.resumen);
-
+    //banderas para los botones 
+    const [flagCargando, setFlagCargando] = useState(false);
+    const [botonCrear, setBotonCrear] = useState(true);
 
     //prueba semaforo
     const semaforos2 = useRef();
@@ -142,98 +135,44 @@ export default function HomeView() {
     const agregarControlador = () => {
         Changeview("/declarar-controlador")
     }
-    /* funcion encargada  de cargar los datos del controlador seleccionado , estos
-    datos nos serviran para poder llamar los planes , fases etc del controlador, la funcion
-    se encarga de actualizar el reducer con la informacion del controlador actual */
-    const seleccionarControlador = async (data) => {
-        // empezamos deshabilitando el boton para no presionar dos veces mientras se conecta
+
+    const getData = async (data) => {
+
         setDeshabilitar(true);
         try {
-            // obtenmos del dato de la hora y fecha de la conexion que se realiza
-            let lastConnection = new Date().toLocaleString('es-US', { dateStyle: "full", timeStyle: "full" })
-            //ponemos en falso las banderas de la simulacion del mapa
-            simulacion.current = false;
-            setFlagsimu(false);
-            setPosition([data.latitud, data.longitud])
-            // actualizamos redux con la informacion del controlador seleccionado
-            dispatch(setInitialStateController(data));
-            dispatch(addCurrentControler(data));
-            // recargamos el mapa con la nueva posicion de longitud y latitud del controlador
-            setReloadMap(!reloadMap)
-            // obtenemos la version de firmware del controlador
-            let aux_firmware = "SW-12";
-            let aux_controladores = JSON.parse(JSON.stringify(controlerState.ips))
-            let firmware = aux_firmware[data.mac] // guardamos la version de firmware en una variable
-
-            let controladores_formatedos = aux_controladores.map(item => {
-                let dato = {}
-                if (item.mac === data.mac) {
-                    dato = {
-                        ip: item.ip,
-                        mac: item.mac,
-                        status: item.status,
-                        nombre: item.nombre,
-                        latitud: item.latitud,
-                        longitud: item.longitud,
-                        seleccionado: true,
-                        declarado: item.declarado,
-                        online: true,
-                        ultima_conexion: lastConnection,
-                        canton: item.canton
-                    }
-                } else {
-                    dato = {
-                        ip: item.ip,
-                        mac: item.mac,
-                        status: item.status,
-                        nombre: item.nombre,
-                        latitud: item.latitud,
-                        longitud: item.longitud,
-                        seleccionado: false,
-                        declarado: item.declarado,
-                        online: true,
-                        ultima_conexion: item.ultima_conexion,
-                        canton: item.canton
-                    }
-                }
-                return dato;
-            })
-            // actualizamos redux con las Ips Disponibles
-            dispatch(addIpsDisponibles(controladores_formatedos));
-            // actualizamos la version de firmware del controlador  en firebase 
-            enviarVersionFirebase(data.mac, data.ip, firmware);
-            // Y tambien actualizamos la ultima conexion
-            let jsonData = {
-                ultima_conexion: lastConnection
-            }
-            updateDataFirebase(data.mac, jsonData)
-            // A partir de aqui se solicita toda la informacion del controlador
-            let docRef = doc(db, "controladores", data.mac);
+            console.log(controlerState)
+            let docRef = doc(db, "controladores", controlerState.id);
             let document = await getDoc(docRef);
-            let gruposController = document.data().semaforos
+            let controlador = document.data()
+            let gruposController = controlador.semaforos
             let areas_temp = JSON.parse(JSON.stringify(gruposController))
-            // obtenemos los datos de las areas de los semaforos que se
-            //van a mapear en el mapa
-            areas_temp.map((item) => {
-                let puntos_aux = item.points
-                item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
-                return null;
-            })
+            console.log(controlador)
+            simulacion.current = false;
+            // setFlagsimu(false);
+            // setPosition([document.latitud, document.longitud])
 
-            semaforos2.current = areas_temp
-            setAreas(areas_temp)
-            allInfo.current = document.data()
+            // setReloadMap(!reloadMap)
 
-            todaInformacion.current = document.data()
+            // let aux_firmware = "SW-12";
+            // areas_temp.map((item) => {
+            //     let puntos_aux = item.points
+            //     item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
+            //     return null;
+            // })
 
-            parametrosCorriendo();
+            // semaforos2.current = areas_temp
+            // setAreas(areas_temp)
+            // allInfo.current = document.data()
+            // todaInformacion.current = document.data()
 
-            Swal.fire({
-                icon: 'success',
-                title: 'Controlador Conectado',
-                showConfirmButton: false,
-                timer: 900
-            })
+            // parametrosCorriendo();
+
+            // Swal.fire({
+            //     icon: 'success',
+            //     title: 'Controlador Conectado',
+            //     showConfirmButton: false,
+            //     timer: 900
+            // })
             setDeshabilitar(false)
         } catch (error) {
             setDeshabilitar(false)
@@ -286,51 +225,7 @@ export default function HomeView() {
             </Marker>
         )
     }
-    /*funcion Encargada de obtener los datos de las ips de los controladores y comparar si ya fueron delcarados
-    antes en la base de datos de firebase*/
-    const listarIps = async () => {
-        try {
-            //activamos la animacion del backdrop o loading
-            setDeshabilitar(true);
-            let items_db = []
-            //pedimos a firebase nuestra lista de controladores registrados
-            const querySnapshot = await getDocs(collection(db, "historial_controladores"));
-            querySnapshot.forEach((doc) => {
-                items_db.push(doc.data());
-            });
-            // pedimos a la api los controladores
 
-
-            // comparamos la lista de los controladores provenientes de la API y la comparamos
-            // con la de firebase para determinar si existe un nuevo controlador
-            var controladores = items_db.map(item => {
-
-                // si no existe le damos un formato por defecto que indica que debe declararse
-                return ({
-                    ip: item.ip,
-                    mac: item.mac,
-                    status: item.status,
-                    nombre: item.nombre,
-                    latitud: item.latitud,
-                    longitud: item.longitud,
-                    seleccionado: false,
-                    declarado: true,
-                    online: true,
-                    ultima_conexion: item.ultima_conexion,
-                    canton: item.canton,
-                });
-
-            })
-
-
-            dispatch(addIpsDisponibles(controladores));
-            setDeshabilitar(false)
-
-        } catch (error) {
-            setDeshabilitar(false)
-
-        }
-    }
 
     // funcion para actualizar datos de los controladores en firebase 
     const updateDataFirebase = async (mac, jsonData) => {
@@ -344,10 +239,8 @@ export default function HomeView() {
     */
     const agregarSemaforo = async () => {
         setDeshabilitar(true)
-        const docRef = doc(db, "controladores", controlerState.mac);
-        let docsanp = await getDoc(docRef);
-        let areas_aux = docsanp.data().semaforos
-
+        let areas_temp = JSON.parse(JSON.stringify(areas))
+        console.log(areas_temp)
         if (pointsArea.length === 4) {
             let newpositions = pointsArea.map((item) => (
                 {
@@ -356,7 +249,7 @@ export default function HomeView() {
             ))
 
 
-            let newPolilyneFirebase = {
+            let newArea = {
                 rojo: 10,
                 amarillo: 4,
                 verde: 20,
@@ -366,19 +259,12 @@ export default function HomeView() {
                 color: devolverColor2(newSemaforo.grupo),
             }
 
-            areas_aux.push(newPolilyneFirebase);
-            const ref = doc(db, "controladores", controlerState.mac);
+            areas_temp.push(newArea);
+            dispatch(setSemaforos(areas_temp));
+            const ref = doc(db, "controladores", controlerState.id);
             await updateDoc(ref, {
-                semaforos: areas_aux
+                semaforos: areas_temp
             });
-            let areas_temp = JSON.parse(JSON.stringify(areas_aux))
-            areas_temp.map((item) => {
-                let puntos_aux = item.points
-                item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
-                return null;
-            })
-
-            semaforos2.current = areas_temp
             setAreas(areas_temp)
             setPointsArea([])
             setModalCrearSemaforo(false)
@@ -397,7 +283,7 @@ export default function HomeView() {
                 timer: 900
             })
         }
-
+        setDeshabilitar(false)
 
     }
     const devolverColor2 = (_grupo) => {
@@ -725,8 +611,6 @@ export default function HomeView() {
         console.log("todo bien hasta aca", fases_pasos)
         // esta parte del codigo se encarga de animar los ciclos en amarillo
 
-
-
         if (tiempo_amarillo.current > 0 && modo === "Tiempo Fijo") {
 
             let fases_pasos_aux2 = JSON.parse(JSON.stringify(fases_pasos))
@@ -887,8 +771,9 @@ export default function HomeView() {
     }
     const obtenerCoordenadas = () => {
         let puntos = JSON.parse(JSON.stringify(pointsArea))
-        let data
-        console.log(position)
+       
+        let data;
+
         let newPoint = {
             icon: point,
             position: [position.lat, position.lng]
@@ -904,6 +789,7 @@ export default function HomeView() {
                     position: item.position
                 }
             ))
+            setBotonCrear(true)
         } else {
             puntos.pop()
             puntos.push(newPoint)
@@ -912,12 +798,18 @@ export default function HomeView() {
                     icon: point,
                     position: item.position
                 }))
+
+        }
+        if (puntos.length === 4) {
+            setBotonCrear(false)
         }
         setPointsArea(data)
 
     }
 
+
     const limpiarPuntos = () => {
+        setBotonCrear(true);
         setPointsArea([])
     }
     const formatData = (_data) => {
@@ -1075,20 +967,18 @@ export default function HomeView() {
                         <article className="information [ card ]">
                             <h2 className="title">Tiempo del Controlador</h2>
                             <div className='h-buttons'>
-
-                                <Button variant="outlined" sx={{margin:0}} onClick={obtenerTiempoFromRestApi} disabled={deshabilitar2} color='verde' >
+                                <Button variant="outlined" sx={{ margin: 0 }} onClick={obtenerTiempoFromRestApi} disabled={deshabilitar2} color='verde' >
                                     LEER
                                 </Button>
-                                <Button variant="outlined"  sx={{margin:0}} onClick={sincronizarTiempoFromRest} disabled={deshabilitar} colo >
+                                <Button variant="outlined" sx={{ margin: 0 }} onClick={sincronizarTiempoFromRest} disabled={deshabilitar} colo >
                                     CARGAR
                                 </Button>
-
                             </div>
 
                             <dl className="details">
                                 <div>
                                     <dt>Hora Actual</dt>
-                                    <dd> <RelogActual/></dd>
+                                    <dd> <RelogActual /></dd>
                                 </div>
                                 <div>
                                     <dt>Fecha Actual</dt>
@@ -1099,7 +989,7 @@ export default function HomeView() {
                             <dl className="details">
                                 <div>
                                     <dt>Hora Controlador</dt>
-                                    <dd>{tiempoController.hours+':'+tiempoController.minutes+':'+tiempoController.seconds}</dd>
+                                    <dd>{tiempoController.hours + ':' + tiempoController.minutes + ':' + tiempoController.seconds}</dd>
                                 </div>
                                 <div>
                                     <dt>Fecha Controlador</dt>
@@ -1148,7 +1038,7 @@ export default function HomeView() {
                             </Grid> */}
 
                     </Grid>
-        
+
 
 
                     {/* <Grid item md={12}>
@@ -1173,47 +1063,51 @@ export default function HomeView() {
                     </Grid>*/}
 
                     <Grid item xs={12} md={12}>
-                    <article className="information [ card ]">
-                    <h2 className="title">Map de los semaforos</h2>
-                        <div className="map">
-                            <MapContainer center={[controlerState.latitud, controlerState.longitud]} zoom={19} key={reloadMap} scrollWheelZoom={false} className='map-container leaflet-container-2'>
-                                <TileLayer
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                    url="https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=b08eb869c89646fa8accf539b81e80de"
-                                />
-                                <DraggableMarker />
-                                {pointsArea.map((item, index) => (
-                                    <Marker key={index} position={item.position} icon={item.icon}>
-                                    </Marker>
-                                ))}
-                                {areas.map((item, index) => (
-                                    <FeatureGroup key={index} pathOptions={item.color}>
-                                        <Popup>
-                                            <p style={{ margin: 0, fontStyle: "italic" }}><strong>Area: </strong>{item.nombre} <strong>Grupo: </strong>{item.grupo}</p>
-                                            <Button color='rojo' sx={{ marginTop: 2 }} onClick={() => { eliminarArea(item) }} variant="contained">Eliminar</Button>
-                                        </Popup>
-                                        <Polygon positions={item.points} />
-                                    </FeatureGroup>
-                                ))}
-                                <Fab color={simulacion.current ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={iniciarSimulacion}>
-                                    {simulacion.current ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
-                                </Fab>
-                                <Fab color='verde2'  disabled={btnAgregar} sx={{ position: "absolute", bottom: 150, right: 30 }} onClick={() => { setModalCrearSemaforo(true) }}>
-                                  <CheckSharpIcon />
-                                </Fab>
-                                <Fab disabled={btnAgregar} onClick={() => { obtenerCoordenadas() }} color="azulm" sx={{ position: "absolute", bottom: 250, right: 30 }} >
-                                  <SaveIcon /> 
-                                </Fab>
-                                <Fab variant="contained" color='anaranjado1' disabled={btnAgregar} sx={{ position: "absolute", bottom: 350, right: 30 }}  onClick={limpiarPuntos}>
-                                   <CleaningServicesSharpIcon /> 
-                                   </Fab>
-                                   <div  style={{ zIndex:1070 ,position: "absolute", top: 30, left: 70}}>
-                                    <p>
-                                        <strong style={{marginLeft:5,marginRight:5}}>Longitud del semaforo:</strong>{position.lat} <strong style={{marginLeft:5,marginRight:5}}>Latitud del semaforo:</strong>{position.lng}
-                                    </p>
-                                </div>
-                            </MapContainer>
-                        </div>
+                        <Button variant="outlined" sx={{ margin: 0 }} onClick={getData} disabled={deshabilitar2} color='verde' >
+                            LEER
+                        </Button>
+                        <article className="information [ card ]">
+                            <h2 className="title">Map de los semaforos</h2>
+
+                            <div className="map">
+                                <MapContainer center={[controlerState.latitud, controlerState.longitud]} zoom={19} key={reloadMap} scrollWheelZoom={false} className='map-container leaflet-container-2'>
+                                    <TileLayer
+                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                        url="https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=b08eb869c89646fa8accf539b81e80de"
+                                    />
+                                    <DraggableMarker />
+                                    {pointsArea.map((item, index) => (
+                                        <Marker key={index} position={item.position} icon={item.icon}>
+                                        </Marker>
+                                    ))}
+                                    {areas.map((item, index) => (
+                                        <FeatureGroup key={index} pathOptions={item.color}>
+                                            <Popup>
+                                                <p style={{ margin: 0, fontStyle: "italic" }}><strong>Area: </strong>{item.nombre} <strong>Grupo: </strong>{item.grupo}</p>
+                                                <Button color='rojo' sx={{ marginTop: 2 }} onClick={() => { eliminarArea(item) }} variant="contained">Eliminar</Button>
+                                            </Popup>
+                                            <Polygon positions={[item.points[0].pos, item.points[1].pos, item.points[2].pos, item.points[3].pos]} />
+                                        </FeatureGroup>
+                                    ))}
+                                    <Fab color={simulacion.current ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={iniciarSimulacion}>
+                                        {simulacion.current ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
+                                    </Fab>
+                                    <Fab color='verde2' disabled={btnAgregar} sx={{ position: "absolute", bottom: 150, right: 30 }} onClick={() => { obtenerCoordenadas() }} >
+                                        <CheckSharpIcon />
+                                    </Fab>
+                                    <Fab variant="contained" color='anaranjado1' disabled={btnAgregar} sx={{ position: "absolute", bottom: 250, right: 30 }} onClick={limpiarPuntos}>
+                                        <CleaningServicesSharpIcon />
+                                    </Fab>
+                                    <Fab disabled={botonCrear} color="azulm" sx={{ position: "absolute", bottom: 350, right: 30 }} onClick={() => { setModalCrearSemaforo(true) }} >
+                                        <SaveIcon />
+                                    </Fab>
+                                    <div  style={{ zIndex: 1070, position: "absolute", top: 30, left: 70,display: modalCrearSemaforo? 'none':'flex' }}>
+                                        <p>
+                                            <strong style={{ marginLeft: 5, marginRight: 5 }}>Longitud del semaforo:</strong>{position.lat} <strong style={{ marginLeft: 5, marginRight: 5 }}>Latitud del semaforo:</strong>{position.lng}
+                                        </p>
+                                    </div>
+                                </MapContainer>
+                            </div>
                         </article>
                     </Grid>
 
@@ -1275,38 +1169,38 @@ export default function HomeView() {
                         </Table> */}
                     </Grid>
                     <Grid item xs={12}>
-                    <article className="information [ card ]">
-                        <Table className='home-t'>
-                            <Thead>
-                                <Tr>
-                                    <Th className='home-t-th'>#</Th>
+                        <article className="information [ card ]">
+                            <Table className='home-t'>
+                                <Thead>
+                                    <Tr>
+                                        <Th className='home-t-th'>#</Th>
 
-                                    <Th className='home-t-th'>Grupo</Th>
-                                    <Th className='home-t-th'>Indicador en Segundos</Th>
-
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-
-                                {indicadorData.map((dato, index) => (
-                                    <Tr className="tablas-focus" key={index} >
-                                        <Td>
-                                            {index + 1}
-                                        </Td>
-
-                                        <Td >
-                                            {dato.grupo}
-                                        </Td>
-                                        <Td style={{ marginBottom: 10 }}>
-                                            <CustomProgress red={dato.rojo} yellow={dato.amarillo} green={dato.verde} modo={dato.modo} />
-                                        </Td>
-
-
+                                        <Th className='home-t-th'>Grupo</Th>
+                                        <Th className='home-t-th'>Indicador en Segundos</Th>
 
                                     </Tr>
-                                ))}
-                            </Tbody>
-                        </Table>
+                                </Thead>
+                                <Tbody>
+
+                                    {indicadorData.map((dato, index) => (
+                                        <Tr className="tablas-focus" key={index} >
+                                            <Td>
+                                                {index + 1}
+                                            </Td>
+
+                                            <Td >
+                                                {dato.grupo}
+                                            </Td>
+                                            <Td style={{ marginBottom: 10 }}>
+                                                <CustomProgress red={dato.rojo} yellow={dato.amarillo} green={dato.verde} modo={dato.modo} />
+                                            </Td>
+
+
+
+                                        </Tr>
+                                    ))}
+                                </Tbody>
+                            </Table>
                         </article>
                     </Grid>
 

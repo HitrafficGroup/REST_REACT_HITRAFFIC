@@ -13,7 +13,8 @@ export const controlerSlice = createSlice({
         nombre:'',
         online:false,
         ultima_conexion:'',
-        historial_conexiones:[]
+        historial_conexiones:[],
+        semaforos:[]
        
     },
     reducers: {
@@ -37,6 +38,9 @@ export const controlerSlice = createSlice({
             state.historial_conexiones = action.payload.historial_conexiones;
 
         },
+        setControllerData:(state,action)=>{
+            state.semaforos = action.payload.semaforos;
+        },
         setResumen:(state,action)=>{
             state.resumen = action.payload;
         },
@@ -46,7 +50,7 @@ export const controlerSlice = createSlice({
         setPasosActivos:(state,action)=>{
             state.pasos_activos = action.payload
         },
-        setSemaforosActivos:(state,action)=>{
+        setSemaforos:(state,action)=>{
             state.semaforos = action.payload
         },
         addCurrentControler:(state,action)=>{
@@ -63,7 +67,7 @@ export const controlerSlice = createSlice({
 })
 export const {addFases, addPlanes,setInitialStateController,
     setResumen,addIpsDisponibles,
-    setPasosActivos,setSemaforosActivos,
-    createNewController,addCurrentControler,reloadIps} = controlerSlice.actions
+    setPasosActivos,setSemaforos,
+    createNewController,addCurrentControler,reloadIps,setControllerData} = controlerSlice.actions
 export default controlerSlice.reducer
 

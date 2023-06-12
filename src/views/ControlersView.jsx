@@ -24,9 +24,9 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useSelector, useDispatch } from 'react-redux';
-import { setInitialStateController} from "../features/controlers/controlerSlice";
+import { setInitialStateController,setControllerData} from "../features/controlers/controlerSlice";
 import Swal from 'sweetalert2';
-import { collection,updateDoc,doc,onSnapshot,query,deleteDoc  } from "firebase/firestore";
+import { collection,updateDoc,doc,onSnapshot,query,deleteDoc,getDoc} from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -201,8 +201,13 @@ export default function ControlersView() {
     }
     //mostrar la interfaz de acuerdo al controlador
     const programarControlador = async(_equipo)=>{
-   
-        let aux_equipo = JSON.parse(JSON.stringify(_equipo))
+        const docRef = doc(db, "controladores", _equipo.id);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          console.log("Document data:", docSnap.data());
+          let aux_equipo = JSON.parse(JSON.stringify(_equipo))
+
         let conexiones = aux_equipo.historial_conexiones;
         let fecha =  new Date().toLocaleString('es-CO',{dateStyle:'full',timeStyle:'medium'})
         conexiones.push({
@@ -222,15 +227,22 @@ export default function ControlersView() {
             });
             navigate('/controlador_HT200/home')
             dispatch(setInitialStateController(aux_equipo));
+            dispatch(setControllerData(docSnap.data()));
         }else if(_equipo.modelo === "SW-12"){
             const ref = doc(db, "historial_controladores",_equipo.id);
             dispatch(setInitialStateController(aux_equipo));
+            dispatch(setControllerData(docSnap.data()));
             await updateDoc(ref, {
             ultima_conexion: fecha,
             historial_conexiones:conexiones,
             });
             navigate('/controlador_SW12/home')
         }
+        } else {
+          // docSnap.data() will be undefined in this case
+          console.log("No such document!");
+        }
+        
     }
     //Funciones de los botones
     const cerrarSesion = ()=>{

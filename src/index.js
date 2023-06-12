@@ -14,8 +14,7 @@ const theme = createTheme({
     verde2: {
       main: '#52BE80',
       contrastText: '#fff',
-      light: '#1E8449',
-      darker: '#1E8449',
+      dark: '#1E8449',
     },
     oscuro: {
       main: '#2E4053',
@@ -25,6 +24,8 @@ const theme = createTheme({
     anaranjado1:{
       main: '#EB984E',
       contrastText: '#fff',
+      dark: '#CA6F1E',
+
     },
     morado1:{
       main: '#A569BD',
@@ -62,6 +63,7 @@ const theme = createTheme({
     azulm: {
       main: '#2471A3',
       contrastText: '#fff',
+      dark: '#1A5276',
     },
     amarillo: {
       main: '#F5B041',

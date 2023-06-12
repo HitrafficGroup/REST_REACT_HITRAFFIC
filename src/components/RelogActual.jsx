@@ -1,8 +1,8 @@
 import { React, useEffect, useState } from "react";
 export default function RelogActual(){
-    const [tiempoActual, setTiempoActual] = useState(new Date().toLocaleTimeString())
+    const [tiempoActual, setTiempoActual] = useState(new Date().toLocaleTimeString("es-EC"))
     const horaActual = () => {
-        let tiempo = new Date().toLocaleTimeString();
+        let tiempo = new Date().toLocaleTimeString("es-EC");
         setTiempoActual(tiempo);
     }
 

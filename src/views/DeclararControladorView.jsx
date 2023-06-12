@@ -156,7 +156,9 @@ export default function DeclararControladorView() {
     const agregarSemaforo = async () => {
         setAreas([])
         let areas_temp = JSON.parse(JSON.stringify(areas))
-        let posiciones = pointsArea.map(item=> (item.position))
+        console.log(pointsArea)
+        let posiciones = pointsArea.map(item=> ( {pos:item.position}))
+        console.log(posiciones)
         let newArea = {
             rojo: 10,
             amarillo: 4,
@@ -201,15 +203,9 @@ export default function DeclararControladorView() {
 
         
                     let areas_aux = JSON.parse(JSON.stringify(areas)) 
-                    areas_aux.foreach((item) => {
-                        let puntos_aux = item.points
-                        item.points = puntos_aux.map((_item) => (
-                            {
-                                pos: _item
-                            }
-                        ))
-                    })
                     console.log(areas_aux)
+                    
+
                     let id_controller = uuidv4()
                     let parametrosIniciales = {
                         // parametros inicializados por defecto
@@ -243,6 +239,8 @@ export default function DeclararControladorView() {
                     let historialControladorData = {
                         id:id_controller,
                         nombre:nombreControlador,
+                        historial_conexiones:[],
+                        ultima_conexion:'',
                         latitud:parseFloat(latitud),
                         longitud:parseFloat(longitud),
                         ip:ipControlador,
@@ -252,7 +250,7 @@ export default function DeclararControladorView() {
                         ultima_conexion:'',
                         modelo:model,
                     }
-                    console.log(historialControladorData)
+                    console.log(parametrosIniciales)
                     try {
                         setFlagCargando(true);
                         await setDoc(doc(db, "controladores",id_controller, ), parametrosIniciales);
@@ -423,7 +421,7 @@ export default function DeclararControladorView() {
                                             <p style={{ margin: 0, fontStyle: "italic" }}><strong>Area: </strong>{item.nombre} <strong>Grupo: </strong>{item.grupo}</p>
                                             <Button color='rojo' sx={{ marginTop: 2 }} onClick={() => { eliminarArea(item) }} variant="contained">Eliminar</Button>
                                         </Popup>
-                                        <Polygon positions={item.points} />
+                                        <Polygon positions={[item.points[0].pos,item.points[1].pos,item.points[2].pos,item.points[3].pos]} />
                                     </FeatureGroup>
                                 ))}
                                 <Fab onClick={encontrarUbicacion} color="oscuro" aria-label="add" sx={{ position: "absolute", top: 50, right: 30 }}>
