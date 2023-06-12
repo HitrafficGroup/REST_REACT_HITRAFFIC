@@ -188,9 +188,10 @@ export default function HorariosView() {
                         plan:mod[2],
                         desfase:item.desfase
                     }
-    
+                  
                     return horario_formated
                 })
+                updateFirebase('horario_ordinario',formated_data);
             }else if(tipoDia ===1){
                 result = await getWeekendScheduleSW12('192.168.2.97')
                 formated_data = result.map(item =>{
@@ -204,9 +205,11 @@ export default function HorariosView() {
                         plan:mod[2],
                         desfase:item.desfase
                     }
-    
+                
                     return horario_formated
                 })
+               
+                updateFirebase('horario_finsemana',formated_data);
             }else if(tipoDia ===2){
                 result = await getFestivalScheduleSW12('192.168.2.97')
         
@@ -221,9 +224,10 @@ export default function HorariosView() {
                         plan:mod[2],
                         desfase:item.desfase
                     }
-    
+                   
                     return horario_formated
                 })
+                updateFirebase('horario_festivo',formated_data);
             }
             setHorarios(formated_data)
             
@@ -246,6 +250,12 @@ export default function HorariosView() {
           
             setHabilitar2(false);
         }
+    }
+    const updateFirebase = async (param,__data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${param}`] = __data
+        await updateDoc(ref,aux_data);
     }
     const formatMod = (_data)=>{
         let nombres = ["", "Tiempo Fijo", "Pulsante", "Destello", "Todo en Rojo", "Apagado"]
@@ -305,7 +315,8 @@ export default function HorariosView() {
     const LeerParamOperativos = async () => {
         try {
             setDeshabilitar4(true);
-            const data = await getSpecialDaysSW12('192.168.1.74');       
+            const data = await getSpecialDaysSW12('192.168.1.74'); 
+            updateFirebase('dias_especiales',data)     
             setClunes(data['fines_semana'].lunes)
             setCmartes(data['fines_semana'].martes)
             setCmiercoles(data['fines_semana'].miercoles)
@@ -433,11 +444,11 @@ export default function HorariosView() {
         setCambioDias(true);
     }
 
-    const cargarHorariosFirebase = async (data) => {
-        const ref = doc(db, "controladores", `${controlerState.mac}`);
-        await updateDoc(ref, {
-            horarios: data
-        });
+    const cargarHorariosFirebase = async (horario,__data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${horario}`] = __data
+        await updateDoc(ref,aux_data);
     }
 
     const cargarDatos = async () => {
@@ -509,6 +520,7 @@ export default function HorariosView() {
         //setObjHorarios(aux_ObjHorarios)
         //console.log(datos_enviar)
         await postHorariosSW12({'trama':datos_enviar});
+
         //cargarHorariosFirebase(aux_ObjHorarios)
         setHabilitar2(false);
     }

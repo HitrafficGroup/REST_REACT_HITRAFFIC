@@ -121,12 +121,19 @@ export default function GruposView() {
             }
         
             setGrupos(responseFormat)
+            updateFirebase('grupos',responseFormat)
             setDeshabilitar(false)
             setDeshabilitar2(false);
         } catch (error) {
             setDeshabilitar2(false);
         }
         
+    }
+    const updateFirebase = async (param,__data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${param}`] = __data
+        await updateDoc(ref,aux_data);
     }
     const mapConflicts = (respuesta) => {
 
@@ -193,15 +200,15 @@ export default function GruposView() {
     }
     const leerConflictosApi = async () => {
         try {
-            setDeshabilitar4(true)
-            setCambioConflictos(false)
-            let response = await getGreenConflictSW12("192.168.2.97")
-            console.log(response)
-            mapConflicts(response)
-            setDeshabilitar3(false)
-            setDeshabilitar4(false)
+            setDeshabilitar4(true);
+            setCambioConflictos(false);
+            let response = await getGreenConflictSW12("192.168.2.97");
+            updateFirebase('conflictos_verdes',response);
+            mapConflicts(response);
+            setDeshabilitar3(false);
+            setDeshabilitar4(false);
         } catch (error) {
-            setDeshabilitar4(false)
+            setDeshabilitar4(false);
         }
   
     }

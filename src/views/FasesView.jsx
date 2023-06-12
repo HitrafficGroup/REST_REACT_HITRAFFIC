@@ -13,7 +13,7 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import { updateDoc,doc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
+// import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import { getFasesSW12,postFasesSW12 } from '../js/apiFunctionsSW12';
 import { useSelector } from 'react-redux';
 import Backdrop from '@mui/material/Backdrop';
@@ -21,7 +21,14 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Swal from 'sweetalert2';
 import '../css/FasesView.css';
 
-
+//fases 
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
 
 export default function FasesView() {
 
@@ -35,6 +42,8 @@ export default function FasesView() {
     const [deshabilitar,setDeshabilitar] = useState(true);
     const [deshabilitar2,setDeshabilitar2] = useState(false);
     const [deshabilitar3,setDeshabilitar3] = useState(false);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [page, setPage] = useState(0);
     const controlerState = useSelector(state => state.controlers)
     const abrirModalFase = (data) => {
 
@@ -64,6 +73,15 @@ export default function FasesView() {
         }
     
     */
+    const handleChangePage = (event, newPage) => {
+            setPage(newPage);
+        };
+    
+    const handleChangeRowsPerPage = (event) => {
+            setRowsPerPage(+event.target.value);
+            setPage(0);
+        };
+    
     const cargarDatosController = async () => {
       
             Swal.fire({
@@ -105,8 +123,7 @@ export default function FasesView() {
                             lista_datos.push(parseInt(fase, 2))
                         }
                         await postFasesSW12({'trama':lista_datos})
-                        //console.log(fases)
-                        //enviarFasesFirebase(fases);
+                        enviarFasesFirebase(fases);
                        
                         setDeshabilitar2(false);
     
@@ -285,7 +302,7 @@ export default function FasesView() {
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                     <div className={deshabilitar ? 'disabled-fases' : 'habilited-fases'}>
-                        <div className='f-scroller'>
+                        {/* <div className='f-scroller'>
                             <Table>
                                 <Thead>
                                     <Tr>
@@ -324,7 +341,87 @@ export default function FasesView() {
                                     ))}
                                 </Tbody>
                             </Table>
-                        </div>
+                        </div> */}
+                            <TableContainer sx={{ maxHeight: 430 }}>
+                            <Table stickyHeader aria-label="sticky table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell
+                                                key={"num"}
+                                                align={"left"}
+                                           
+                                            >
+                                                #
+                                            </TableCell>
+                                            <TableCell
+                                                key={"grupo1"}
+                                                align={"center"}
+                                           
+                                            >
+                                                Grupo 1
+                                            </TableCell>
+                                            
+                                            <TableCell
+                                                key={"grupo2"}
+                                                align={"center"}
+                                              
+                                            >
+                                                Grupo 2
+                                            </TableCell>
+                                            <TableCell
+                                                key={"grupo3"}
+                                                align={"center"}
+                                    
+                                            >
+                                                Grupo 3
+                                            </TableCell>
+                                            <TableCell
+                                                key={"grupo4"}
+                                                align={"center"}
+                                            >
+                                                Grupo 4
+                                            </TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {fases
+                                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                        .map((dato,index) => {
+                                            return (
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                                     <TableCell  align={"left"}>
+                                                        {index+1}
+                                                     </TableCell>
+                                                    <TableCell  align={"center"}>
+                                                    <Chip label={dato.grupos[0].colorDescripcion} color={dato.grupos[0].colorDescripcion} icon={<LightModeIcon />} sx={{ width: '90%' }} />
+                                                    </TableCell>
+                                                    <TableCell  align={"center"}>
+                                                    <Chip label={dato.grupos[1].colorDescripcion} color={dato.grupos[1].colorDescripcion} icon={<LightModeIcon />} sx={{ width: '90%' }} />
+                                                    </TableCell>
+                                                    <TableCell  align={"center"}>
+                                                    <Chip label={dato.grupos[2].colorDescripcion} color={dato.grupos[2].colorDescripcion} icon={<LightModeIcon />} sx={{ width: '90%' }} />
+                                                    </TableCell>
+                                                    <TableCell  align={"center"}>
+                                                    <Chip label={dato.grupos[3].colorDescripcion} color={dato.grupos[3].colorDescripcion} icon={<LightModeIcon />} sx={{ width: '90%' }} />
+                                                    </TableCell>
+                                                    <TableCell  align={"center"}>
+                                                    <Button variant="contained" color='advertencia' onClick={() => { abrirModalFase(dato) }} >Modificar</Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <TablePagination
+                            rowsPerPageOptions={[10, 25, 100]}
+                            component="div"
+                            count={fases.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
                         </div>
                     </Grid>
                     <Grid item xs={12} md={4}>
@@ -441,7 +538,7 @@ export default function FasesView() {
             <CircularProgress color="inherit" />
         </Backdrop>
       
-        <CardInformation/>
+        {/* <CardInformation/> */}
         </>
     );
 

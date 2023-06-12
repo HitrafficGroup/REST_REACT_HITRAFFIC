@@ -68,31 +68,30 @@ export default function PlanesView() {
             setDis('disabled')
             if(numPlan === 1){
                 result = await getPlan1SW12()
-                cargarPlanesFirebase(result,'plan_1')
+                updateFirebase(result,'plan_1')
             }else if(numPlan === 2){
                 result = await getPlan2SW12()
-                cargarPlanesFirebase(result,'plan_2')
+                updateFirebase(result,'plan_2')
             }else if(numPlan === 3){
                 result = await getPlan3SW12()
-                cargarPlanesFirebase(result,'plan_3')
+                updateFirebase(result,'plan_3')
             }else if(numPlan === 4){
                 result = await getPlan4SW12()
-                cargarPlanesFirebase(result,'plan_4')
+                updateFirebase(result,'plan_4')
             }else if(numPlan === 5){
                 result = await getPlan5SW12()
-                cargarPlanesFirebase(result,'plan_5')
+                updateFirebase(result,'plan_5')
             }else if(numPlan === 6){
                 result = await getPlan6SW12()
-                cargarPlanesFirebase(result,'plan_6')
+                updateFirebase(result,'plan_6')
             }else if(numPlan === 7){
                 result = await getPlan7SW12()
-                cargarPlanesFirebase(result,'plan_7')
+                updateFirebase(result,'plan_7')
             }else if(numPlan === 8){
                 result = await getPlan8SW12()
-                cargarPlanesFirebase(result,'plan_8')
+                updateFirebase(result,'plan_8')
             }
             
-            console.log(result)
             setCurrentPlan(result)
             setDeshabilitar2(false)
             setDeshabilitar(false)
@@ -111,22 +110,23 @@ export default function PlanesView() {
         setModalEditar(true);
     }
 
-  
-    const cargarPlanesFirebase = async(_planes,n_plan) =>{
-        const ref = doc(db, "controladores", `${controlerState.mac}`);
-        console.log(_planes)
+    const updateFirebase = async (param,__data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
         let aux_data = {}
-        [`${n_plan}`] = _planes
-        console.log(aux_data)
-        // await updateDoc(ref,{
-        //     planes:_planes
-        // });
+        aux_data[`${param}`] = __data
+        await updateDoc(ref,aux_data);
+    }
+    const cargarPlanesFirebase = async(_planes,n_plan) =>{
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${n_plan}`] = _planes
+        await updateDoc(ref,aux_data);
     }
     const leerOtrosParametrosApi = async () =>{
         try{
             setDeshabilitar4(true)
-            var datosObtenidos = await getOperativeParamsSW12();
-            //var datosformateados = datosObtenidos[`${controlerState.mac}`];
+            let datosObtenidos = await getOperativeParamsSW12();
+            updateFirebase("otros_parametros",datosObtenidos);
             setTiempoDestelloPrender(parseInt(datosObtenidos.destello_al_encender));
             setDestellarVerdePeatonal(parseInt(datosObtenidos.destello_verde_peatonal));
             setDestellarVerdeVehicular(parseInt(datosObtenidos.destello_verde_vehicular));

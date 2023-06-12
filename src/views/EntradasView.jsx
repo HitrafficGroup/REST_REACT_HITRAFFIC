@@ -37,6 +37,8 @@ export default function EntradasView() {
         try {
             setDeshabilitar2(true);
             let data = await getEntradasSW12();
+            updateFirebase('entradas',data)
+            console.log(data)
             setEnt1(data[0].check);
             setEnt2(data[1].check);
             setEnt3(data[2].check);
@@ -71,6 +73,12 @@ export default function EntradasView() {
     }
     const handleEnt4 = (event) =>{
         setEnt4(event.target.checked);
+    }
+    const updateFirebase = async (param,__data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${param}`] = __data
+        await updateDoc(ref,aux_data);
     }
     const cargarDatosRest = async() =>{
         Swal.fire({
