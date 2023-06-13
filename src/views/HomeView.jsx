@@ -89,7 +89,7 @@ export default function HomeView() {
     const [botonCrear, setBotonCrear] = useState(true);
 
     //prueba semaforo
-    const semaforos2 = useRef();
+    const semaforos2 = useRef(controlerState.semaforos);
     const [newSemaforo, setNewSemaforo] = useState({
         nombre: "",
         position: [],
@@ -587,8 +587,8 @@ export default function HomeView() {
             }
             datos_amarillo.map((item, index) => (item.name = `Paso ${index + 1}`))
         }
-        console.log(datos_amarillo)
-        // datos_amarillo_aux.current = datos_amarillo
+
+        datos_amarillo_aux.current = datos_amarillo
         // let resumen = {
         //     horas: horario_activo.horas,
         //     minutos: horario_activo.minutos,
@@ -598,32 +598,27 @@ export default function HomeView() {
         // }
         // dispatch(setResumen(resumen));
 
-
-
-        // timer1.current = 0
+        timer1.current = 0
 
         // dispatch(setPasosActivos(fases_pasos));
         // // aqui haremos el calculo para los indicadores 
 
         // //setPasosActivos(fases_pasos)
 
-        // let segundos_pasos = []
-        // if (ultimo_horario) {
-        //     const fecha = new Date()
-        //     let horas_1 = parseInt(horario_siguiente.horas)
-        //     if (fecha.getHours() >= horas_1) {
-        //         segundos_pasos = devolverSegundosPaso(horario_activo, { minutos: 0, horas: 24 })
-        //     } else {
-        //         segundos_pasos = devolverSegundosPaso({ minutos: 0, horas: 0, horario_siguiente })
-        //     }
-        // } else {
-        //     segundos_pasos = devolverSegundosPaso(horario_activo, horario_siguiente)
-        // }
-        // informacionDelIndicador()
-        // calculoEjecucion.current = segundos_pasos
-        // //setSemaforo()
-
-
+        let segundos_pasos = []
+        if (true) {
+            const fecha = new Date()
+            let horas_1 = parseInt(horario_siguiente.horas)
+            if (fecha.getHours() >= horas_1) {
+                segundos_pasos = devolverSegundosPaso(horario_activo, { minutos: 0, horas: 24 })
+            } else {
+                segundos_pasos = devolverSegundosPaso({ minutos: 0, horas: 0, horario_siguiente })
+            }
+        } else {
+            segundos_pasos = devolverSegundosPaso(horario_activo, horario_siguiente)
+        }
+        informacionDelIndicador()
+        calculoEjecucion.current = segundos_pasos
     }
     const eliminarArea = async (_data) => {
         Swal.fire({
@@ -670,13 +665,13 @@ export default function HomeView() {
         let g3;
         let g4;
         let dataUpdated;
-        let aux = semaforos2.current;
+        let aux ;
         let paso_actual = devolverPaso()
         g1 = devolverColor(faseActual.current[paso_actual].grupos[0].colorDescripcion);
         g2 = devolverColor(faseActual.current[paso_actual].grupos[1].colorDescripcion);
         g3 = devolverColor(faseActual.current[paso_actual].grupos[2].colorDescripcion);
         g4 = devolverColor(faseActual.current[paso_actual].grupos[3].colorDescripcion);
-        aux = semaforos2.current
+        aux =  JSON.parse(JSON.stringify(semaforos2.current))
         dataUpdated = aux.map((item) => {
             if (item.grupo === "g1") {
                 item['color'] = g1;
@@ -1015,7 +1010,7 @@ export default function HomeView() {
                                             <Polygon positions={[item.points[0].pos, item.points[1].pos, item.points[2].pos, item.points[3].pos]} />
                                         </FeatureGroup>
                                     ))}
-                                    <Fab color={simulacion.current ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={parametrosCorriendo}>
+                                    <Fab color={simulacion.current ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={iniciarSimulacion}>
                                         {simulacion.current ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
                                     </Fab>
                                     <Fab color='verde2' disabled={btnAgregar} sx={{ position: "absolute", bottom: 150, right: 30 }} onClick={() => { obtenerCoordenadas() }} >
