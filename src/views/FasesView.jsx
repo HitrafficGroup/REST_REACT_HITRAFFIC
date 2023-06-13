@@ -1,4 +1,3 @@
-import CardInformation from '../components/CardInformation';
 import CardController from "../components/CardController";
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
@@ -41,7 +40,6 @@ export default function FasesView() {
     const [faseg4, setFaseg4] = useState({ color: 0, colorDescripcion: 'rojo' })
     const [deshabilitar,setDeshabilitar] = useState(true);
     const [deshabilitar2,setDeshabilitar2] = useState(false);
-    const [deshabilitar3,setDeshabilitar3] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
     const dispatch = useDispatch();
@@ -96,7 +94,7 @@ export default function FasesView() {
             }).then(async(result) => {
                 if (result.isConfirmed) {
                     setDeshabilitar2(true);
-                   let data_update = []
+            
                     try {
                         let lista_datos = []
                         let datos_fases = {
@@ -124,6 +122,7 @@ export default function FasesView() {
                             lista_datos.push(parseInt(fase, 2))
                         }
                         await postFasesSW12({'trama':lista_datos})
+                        dispatch(addFases(fases));
                         enviarFasesFirebase(fases);
                        
                         setDeshabilitar2(false);
@@ -150,17 +149,7 @@ export default function FasesView() {
         });
 
     }
-    const enviarFasesRestApi = async (data) => {
-        
-        try {
-            
-            //await postFasesFromRestApi(data);
-        } catch (e) {
-            console.log(e)
-        }
-        setDeshabilitar2(false)
-        setDeshabilitar(false)
-    }
+
     /*
     funcion para escribir en la api rest , envia un objeto con todos los parametros de cada fase
     editada , el parametro que recibe proviene de  la funcion CargarDatosController
@@ -169,8 +158,8 @@ export default function FasesView() {
 
 
     const actualizarFase = () => {
-        let data2 = currentFase
-        let temp = fases
+        let data2 = JSON.parse(JSON.stringify(currentFase)) 
+        let temp = JSON.parse(JSON.stringify(fases)) 
         data2.grupos[0]['colorDescripcion'] = faseg1.colorDescripcion
         data2.grupos[0]['color'] = faseg1.color
         data2.grupos[1]['colorDescripcion'] = faseg2.colorDescripcion
@@ -179,19 +168,18 @@ export default function FasesView() {
         data2.grupos[2]['color'] = faseg3.color
         data2.grupos[3]['colorDescripcion'] = faseg4.colorDescripcion
         data2.grupos[3]['color'] = faseg4.color
-        setCurrentFase(data2)
-        let fasesUpdated = temp.filter(filterbyIdfaseNum)
-        setFases(fasesUpdated)
+        let data_modify = temp.map((item)=>{
+            if(item.faseNum === data2.faseNum){
+                return data2;
+            }else{
+                return item;
+            }
+        })
+        setFases(data_modify);
         setModalFase(false);
 
     }
-    const filterbyIdfaseNum = (_fase) => {
-        if (_fase.faseNum === currentFase.faseNum) {
-            return currentFase
-        } else {
-            return _fase
-        }
-    }
+
     const ModificarGrupos = (e) => {
 
         let newDataFase = {
@@ -248,6 +236,7 @@ export default function FasesView() {
                         arregloFases.push(faseT)
         
                     }
+                    
                     enviarFasesFirebase(arregloFases);
                     dispatch(addFases(arregloFases));
                     setFases(arregloFases);
@@ -259,37 +248,7 @@ export default function FasesView() {
         }
       
     }
-    // const leerDatosFases = async () => {
-    //     try {
-    //         let result = []
-    //         setDeshabilitar2(true);
-    //         let flag = await getCheckDataFases(controlerState.mac, "fases",50)
-    //         if (flag !== false) {
-    //             result = flag
-    //             setFases(result);
-    //         } else {
-    //             result = await getFasesFromRestApi(controlerState.mac, controlerState.ip)
-    //             var arregloFases = []
-    //             for (let index_plan = 1; index_plan < 17; index_plan++) {
-    //                 var faseT = result["fase" + index_plan]
-    //                 arregloFases.push(faseT)
-    
-    //             }
-    //             setFases(arregloFases);
-    //             enviarFasesFirebase(arregloFases);
-    //             await updateFasesSamplingTime(controlerState.mac)
-    //         }
-            
-            
-    //         setDeshabilitar(false);
-    //         setDeshabilitar2(false);
-    //         //dispatch(addFases(ndatos));
-    //     }
-    //     catch (e) {
-    //         console.log(e);
-    //         setDeshabilitar2(false);
-    //     }
-    // }
+ 
     /*
         la funcion leer datos fases nos trae la informacion de la api para posteriormente
         tratar la informacion y formatearla adecuadamente con la finalidad de poder mapear
@@ -304,54 +263,13 @@ export default function FasesView() {
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                     <div className={deshabilitar ? 'disabled-fases' : 'habilited-fases'}>
-                        {/* <div className='f-scroller'>
-                            <Table>
-                                <Thead>
-                                    <Tr>
-
-                                        <Th className='home-t-th'>Fases</Th>
-                                        <Th className='home-t-th'>Grupo 1</Th>
-                                        <Th className='home-t-th'>Grupo 2</Th>
-                                        <Th className='home-t-th'>Grupo 3</Th>
-                                        <Th className='home-t-th'>Grupo 4</Th>
-                                    </Tr>
-                                </Thead>
-
-                                <Tbody>
-                                    {fases.map((dato, index) => (
-                                        <Tr className="tablas-focus" key={index} >
-                                            <Td>
-                                                <b>{`Fase-${index + 1}`}</b>
-                                            </Td>
-                                            <Td >
-                                                <Chip label={dato.grupos[0].colorDescripcion} color={dato.grupos[0].colorDescripcion} icon={<LightModeIcon />} sx={{ width: '90%' }} />
-                                            </Td>
-                                            <Td >
-                                                <Chip label={dato.grupos[1].colorDescripcion} color={dato.grupos[1].colorDescripcion} icon={<LightModeIcon />} sx={{ width: '90%' }} />
-                                            </Td>
-                                            <Td >
-                                                <Chip label={dato.grupos[2].colorDescripcion} color={dato.grupos[2].colorDescripcion} icon={<LightModeIcon />} sx={{ width: '90%' }} />
-                                            </Td>
-                                            <Td >
-                                                <Chip label={dato.grupos[3].colorDescripcion} color={dato.grupos[3].colorDescripcion} icon={<LightModeIcon />} sx={{ width: '90%' }} />
-                                            </Td>
-                                            <Td className="b-fases">
-                                                <Button variant="contained" color='advertencia' onClick={() => { abrirModalFase(dato) }} >Modificar</Button>
-                                            </Td>
-
-                                        </Tr>
-                                    ))}
-                                </Tbody>
-                            </Table>
-                        </div> */}
                             <TableContainer sx={{ maxHeight: 430 }}>
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell
                                                 key={"num"}
-                                                align={"left"}
-                                           
+                                                align={"left"}S
                                             >
                                                 #
                                             </TableCell>
@@ -382,6 +300,12 @@ export default function FasesView() {
                                                 align={"center"}
                                             >
                                                 Grupo 4
+                                            </TableCell>
+                                            <TableCell
+                                                key={"Acciones"}
+                                                align={"center"}
+                                            >
+                                                Acciones
                                             </TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -539,7 +463,7 @@ export default function FasesView() {
         <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
             <CircularProgress color="inherit" />
         </Backdrop>
-      
+        <CardController/>
         {/* <CardInformation/> */}
         </>
     );
@@ -707,27 +631,6 @@ var faseInicial = {
     ]
 }
 
-const ejemploFase = {
-    fase1: "1",
-    fase2: "4",
-    fase3: "16",
-    fase4: "64",
-    fase5: "17",
-    fase6: "68",
-    fase7: "17",
-    fase8: "0",
-    fase9: "0",
-    fase10: "0",
-    fase11: "0",
-    fase12: "0",
-    fase13: "0",
-    fase14: "0",
-    fase15: "0",
-    fase16: "0",
-    ip: "192.168.0.178",
-    mac: "00:14:97:F2:D1:39"
-
-}
 
 
 /*codigo escrito  y testeado por David Diaz*/

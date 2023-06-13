@@ -1,4 +1,3 @@
-import CardInformation from '../components/CardInformation';
 import CardController from "../components/CardController";
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
@@ -15,7 +14,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { db } from "../firebase/firebase-config";
-import { collection, updateDoc, onSnapshot, doc,getDoc } from "firebase/firestore";
+import { updateDoc, doc } from "firebase/firestore";
 import { getPlan1SW12,getPlan2SW12,getPlan3SW12,getPlan4SW12,getPlan5SW12,
     getPlan6SW12,getPlan7SW12,getPlan8SW12,getOperativeParamsSW12,
     postPlanesSW12,postOtrosParametrosSW12 } from '../js/apiFunctionsSW12';
@@ -39,7 +38,6 @@ export default function PlanesView() {
     const [modalEditar, setModalEditar] = useState(false);
     const [faseSemaforo, setFaseSemaforo] = useState('1');
     const [tiempoSemaforo, setTiempoSemaforo] = useState(0);
-    const [sincronizacionSemaforo, setSincronizacionSemaforo] = useState(0)
     const [currentPaso, setCurrentPaso] = useState({duracion:0,fase:0,id:''});
     //Variables de parametros Operativos del controlador
     const [otrosParam,setOtrosParam] = useState(otrosParametros)
@@ -48,7 +46,7 @@ export default function PlanesView() {
     const [tiempoAmarilloVehicular,setTiempoAmarilloVehicular] = useState(0);
     const [tiempoDestelloPrender,setTiempoDestelloPrender] = useState(0);
     const [tiempoMinimoVerde1,setTiempoMinimoVerde1] = useState(0);
-    const [tiempoMinimoVerde2,setTiempoMinimoVerde2] = useState(0);
+
     const [tiempoRojoPrender,setTiempoRojoPrender] = useState(0);
     const [tiempoTodoRojo,setTiempoTodoRojo] = useState(0);
     const [valorSincronizacion,setValorSincronizacion]= useState(1);
