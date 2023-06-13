@@ -411,11 +411,11 @@ export default function ControlersView() {
                                 <Table aria-label="custom pagination table">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Name</TableCell>
-                                            <TableCell align="right">Ip</TableCell>
-                                            <TableCell align="right">Modelo</TableCell>
-                                            <TableCell align="right">Canton</TableCell>
-                                            <TableCell align="center">Estado</TableCell>
+                                            <TableCell align="left">Name</TableCell>
+                                            <TableCell align="left">Ip</TableCell>
+                                            <TableCell align="left">Modelo</TableCell>
+                                            <TableCell align="left">Canton</TableCell>
+                                            {/* <TableCell align="center">Estado</TableCell> */}
                                             <TableCell align="center">Acciones</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -425,21 +425,21 @@ export default function ControlersView() {
                                             : controlers
                                         ).map((row, index) => (
                                             <TableRow key={index}>
-                                                <TableCell component="th" scope="row">
+                                                <TableCell align="left">
                                                     {row.nombre}
                                                 </TableCell>
-                                                <TableCell align="right">
+                                                <TableCell align="left">
                                                     {row.ip}
                                                 </TableCell>
-                                                <TableCell align="right">
+                                                <TableCell align="left">
                                                     {row.modelo}
                                                 </TableCell>
-                                                <TableCell align="right">
+                                                <TableCell align="left">
                                                     {row.canton}
                                                 </TableCell>
-                                                <TableCell align="center">
+                                                {/* <TableCell align="center">
                                                     <Chip color={row.estado ? 'verde' : 'anaranjado1'} size="small" label={row.estado ? 'conectado' : 'desconectado'} icon={<CableIcon />} />
-                                                </TableCell>
+                                                </TableCell> */}
                                                 <TableCell align="center">
                                                     <Stack direction="row" spacing={1}>
                                                         <IconButton color="rojo" aria-label="eliminar" onClick={() => { eliminarController(row) }} >

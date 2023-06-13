@@ -19,7 +19,7 @@ async function getUnitHT200(mac,ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -40,7 +40,6 @@ async function PostUnitHT200(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
@@ -61,7 +60,7 @@ async function getFasesHT200(mac,ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -84,7 +83,7 @@ async function PostFasesHT200(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 			  })
 		});
 }
@@ -105,7 +104,7 @@ async function getSecuencyHT200(mac,ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -127,7 +126,7 @@ async function PostSecuenciasHT200(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 			  })
 		});
 }
@@ -152,7 +151,6 @@ async function getSplitHT200(mac,ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	})
 	return res
@@ -175,7 +173,6 @@ async function PostSplitHT200(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
@@ -196,7 +193,6 @@ async function getPatternHT200(mac,ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	})
 	return res
@@ -219,7 +215,6 @@ async function PostPatternHT200(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
@@ -242,7 +237,6 @@ async function getAccionHT200(mac,ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	})
 	return res
@@ -264,7 +258,6 @@ async function PostActionHT200(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
@@ -286,7 +279,7 @@ async function getPlanHT200(mac,ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -307,7 +300,6 @@ async function PostPlanHT200(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
@@ -328,7 +320,6 @@ async function getHorarioHT200(mac,ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	})
 	return res
@@ -352,7 +343,7 @@ async function PostHorariosHT200(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 			  })
 		});
 }
@@ -373,7 +364,7 @@ async function getChannelHT200(mac,ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -394,7 +385,6 @@ async function PostChannelHT200(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }

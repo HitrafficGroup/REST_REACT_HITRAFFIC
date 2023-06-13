@@ -20,7 +20,7 @@ async function getFasesSW12(ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -41,7 +41,7 @@ async function getOrdinaryScheduleSW12(ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -62,7 +62,7 @@ async function getWeekendScheduleSW12(ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -84,7 +84,7 @@ async function getFestivalScheduleSW12(ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -106,7 +106,7 @@ async function getPlan1SW12() {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -128,7 +128,7 @@ async function getPlan2SW12() {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -152,7 +152,7 @@ async function getPlan3SW12() {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -176,7 +176,7 @@ async function getPlan4SW12() {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+	
 		  })
 	})
 	return res
@@ -199,7 +199,7 @@ async function getPlan5SW12() {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -223,7 +223,7 @@ async function getPlan6SW12() {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -247,7 +247,7 @@ async function getPlan7SW12() {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -271,7 +271,7 @@ async function getPlan8SW12() {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -293,7 +293,7 @@ async function getOperativeParamsSW12() {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
+
 		  })
 	})
 	return res
@@ -318,7 +318,6 @@ async function getGruposSW12(ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	})
 	return res
@@ -340,7 +339,6 @@ async function getGreenConflictSW12(ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	})
 	return res;
@@ -362,7 +360,6 @@ async function getTimeControllerSW12(ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	})
 	return res;
@@ -385,7 +382,6 @@ async function getSpecialDaysSW12(ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	})
 	return res;
@@ -408,7 +404,6 @@ async function getEntradasSW12(ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	})
 	return res;
@@ -430,7 +425,6 @@ async function getErroresSW12(ip) {
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
-			footer: '<a href="">Click Aquí Para Notificar el error</a>'
 		  })
 	})
 	return res;
@@ -452,7 +446,6 @@ async function postFasesSW12(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
@@ -473,7 +466,6 @@ async function postGruposSW12(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
@@ -494,7 +486,6 @@ async function postGreenConflictSW12(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
@@ -515,7 +506,6 @@ async function postPlanesSW12(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
@@ -536,7 +526,6 @@ async function postOtrosParametrosSW12(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
@@ -557,7 +546,6 @@ async function postHorariosSW12(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
@@ -577,7 +565,6 @@ async function postDiasEspecialesSW12(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
@@ -598,7 +585,6 @@ async function postEntradasSW12(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
@@ -619,7 +605,6 @@ async function postTimeSW12(jsonData) {
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
-				footer: '<a href="">Click Aquí Para Notificar el error</a>'
 			  })
 		});
 }
