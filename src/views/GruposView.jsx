@@ -16,7 +16,8 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import '../css/GruposView.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { useSelector } from 'react-redux';
+import { setGruposControllers } from "../features/controlers/controlerSlice";
+import { useSelector,useDispatch } from 'react-redux';
 import { getGruposSW12,getGreenConflictSW12,postGruposSW12,postGreenConflictSW12 } from '../js/apiFunctionsSW12';
 import Collapse from '@mui/material/Collapse';
 import Backdrop from '@mui/material/Backdrop';
@@ -48,6 +49,7 @@ export default function GruposView() {
     const [checked3, setChecked3] = useState(false);
     const [cambioConflictos, setCambioConflictos] = useState(false);
     const [currentGrupo, setCurrentGrupo] = useState(gruposDefault[0]);
+    const dispatch = useDispatch();
     const abrirModalGrupo = (data) => {
         setCurrentGrupo(data);
         setDireccion(data.direccion)
@@ -122,6 +124,7 @@ export default function GruposView() {
         
             setGrupos(responseFormat)
             updateFirebase('grupos',responseFormat)
+            dispatch(setGruposControllers(responseFormat))
             setDeshabilitar(false)
             setDeshabilitar2(false);
         } catch (error) {

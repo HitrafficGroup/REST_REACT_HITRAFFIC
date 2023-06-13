@@ -15,12 +15,12 @@ import { db } from "../firebase/firebase-config";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 // import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import { getFasesSW12,postFasesSW12 } from '../js/apiFunctionsSW12';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Swal from 'sweetalert2';
 import '../css/FasesView.css';
-
+import { addFases } from "../features/controlers/controlerSlice";
 //fases 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -44,6 +44,7 @@ export default function FasesView() {
     const [deshabilitar3,setDeshabilitar3] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
+    const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers)
     const abrirModalFase = (data) => {
 
@@ -248,6 +249,7 @@ export default function FasesView() {
         
                     }
                     enviarFasesFirebase(arregloFases);
+                    dispatch(addFases(arregloFases));
                     setFases(arregloFases);
                     setDeshabilitar(false);
                     setDeshabilitar2(false);

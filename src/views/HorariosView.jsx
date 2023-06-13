@@ -19,7 +19,8 @@ import { getCheckDataHorarios, updateHorarioSamplingTime } from '../js/gestionSo
 import { getOrdinaryScheduleSW12,getWeekendScheduleSW12,getFestivalScheduleSW12 ,getSpecialDaysSW12,postHorariosSW12 ,postDiasEspecialesSW12} from '../js/apiFunctionsSW12';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { useSelector } from 'react-redux';
+import { addOrdinarios,addFestivo,addFinSemana } from "../features/controlers/controlerSlice";
+import { useSelector,useDispatch } from 'react-redux';
 import '../css/HorariosView.css';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -58,6 +59,7 @@ export default function HorariosView() {
     const [value, setValue] = useState(null);
     const [currentDiaFestivo, setCurrentDiaFestivo] = useState();
     const [cambioDias, setCambioDias] = useState(false);
+    const dispatch = useDispatch();
     const [currentHorario, setCurrentHorario] = useState(
         { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
     );
@@ -192,6 +194,7 @@ export default function HorariosView() {
                     return horario_formated
                 })
                 updateFirebase('horario_ordinario',formated_data);
+                dispatch(addOrdinarios(formated_data));
             }else if(tipoDia ===1){
                 result = await getWeekendScheduleSW12('192.168.2.97')
                 formated_data = result.map(item =>{
@@ -208,8 +211,8 @@ export default function HorariosView() {
                 
                     return horario_formated
                 })
-               
                 updateFirebase('horario_finsemana',formated_data);
+                dispatch(addFinSemana(formated_data));
             }else if(tipoDia ===2){
                 result = await getFestivalScheduleSW12('192.168.2.97')
         
@@ -228,6 +231,7 @@ export default function HorariosView() {
                     return horario_formated
                 })
                 updateFirebase('horario_festivo',formated_data);
+                dispatch(addFestivo(formated_data));
             }
             setHorarios(formated_data)
             

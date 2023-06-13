@@ -36,8 +36,41 @@ export const controlerSlice = createSlice({
         addFases: (state,action)=>{
             state.fases = action.payload;
         },
-        addPlanes: (state,action)=>{
-            state.planes = action.payload;
+        addPlan1: (state,action)=>{
+            state.plan_1 = action.payload;
+        },
+        addPlan2: (state,action)=>{
+            state.plan_2 = action.payload;
+        },
+        addPlan3: (state,action)=>{
+            state.plan_3 = action.payload;
+        },
+        addPlan4: (state,action)=>{
+            state.plan_4 = action.payload;
+        },
+        addPlan5: (state,action)=>{
+            state.plan_5 = action.payload;
+        },
+        addPlan6: (state,action)=>{
+            state.plan_6 = action.payload;
+        },
+        addPlan7: (state,action)=>{
+            state.plan_7 = action.payload;
+        },
+        addPlan8: (state,action)=>{
+            state.plan_8 = action.payload;
+        },
+        addParametros: (state,action)=>{
+            state.otros_parametros = action.payload;
+        },
+        addOrdinarios: (state,action)=>{
+            state.horario_ordinario = action.payload;
+        },
+        addFinSemana: (state,action)=>{
+            state.horario_finsemana = action.payload;
+        },
+        addFestivo: (state,action)=>{
+            state.horario_festivo = action.payload;
         },
         setInitialStateController:(state,action)=>{
             state.canton = action.payload.canton;
@@ -70,6 +103,9 @@ export const controlerSlice = createSlice({
             state.plan_7 = action.payload.plan_7;
             state.plan_8 = action.payload.plan_8;
         },
+        setGruposControllers:(state,action)=>{
+            state.grupos = action.payload;
+        },
         setResumen:(state,action)=>{
             state.resumen = action.payload;
         },
@@ -94,8 +130,10 @@ export const controlerSlice = createSlice({
 
     }
 })
-export const {addFases, addPlanes,setInitialStateController,
-    setResumen,addIpsDisponibles,
+export const {addFases, addPlan1,addPlan2,addPlan3,addPlan4,addPlan5,addPlan6,
+    addPlan7,addPlan8,addParametros,
+    setInitialStateController,addOrdinarios,addFinSemana,addFestivo,
+    setResumen,addIpsDisponibles,setGruposControllers,
     setPasosActivos,setSemaforos,
     createNewController,addCurrentControler,reloadIps,setControllerData} = controlerSlice.actions
 export default controlerSlice.reducer

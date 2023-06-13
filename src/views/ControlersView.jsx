@@ -189,14 +189,10 @@ export default function ControlersView() {
         setEditarModal(true);
     }
     const guardarAjustes = async () => {
-        setDeshabilitar(true)
-        if (ipControlador.current !== currentController.ip) {
-            const ref = doc(db, "historial_controladores", currentController.mac);
-            await updateDoc(ref, currentController);
-            console.log(currentController)
-            setDeshabilitar(false)
-            setEditarModal(false)
-        }
+        console.log(currentController)
+        const ref = doc(db, "historial_controladores", currentController.id);
+        await updateDoc(ref, currentController);
+        setEditarModal(false)
 
     }
     //mostrar la interfaz de acuerdo al controlador
@@ -281,8 +277,8 @@ export default function ControlersView() {
             if (result.isConfirmed) {
                 console.log(_data)
                 console.log('se elimino');
-                await deleteDoc(doc(db, "historial_controladores", _data.mac));
-                await deleteDoc(doc(db, "controladores", _data.mac));
+                await deleteDoc(doc(db, "historial_controladores", _data.id));
+                await deleteDoc(doc(db, "controladores", _data.id));
             }
         })
     }
@@ -516,10 +512,10 @@ export default function ControlersView() {
                         </Grid>
                     </ModalBody>
                     <ModalFooter >
-                        <Button variant="contained" color='rojo' onClick={guardarAjustes} sx={{ marginLeft: 1 }}>
+                        <Button variant="contained" color='primary' onClick={guardarAjustes} sx={{ marginLeft: 1 }}>
                             Guardar
                         </Button>
-                        <Button variant="contained" color='verde' onClick={() => { setEditarModal(false) }} sx={{ marginLeft: 1 }}>
+                        <Button variant="contained" color='rojo' onClick={() => { setEditarModal(false) }} sx={{ marginLeft: 1 }}>
                             Cancelar
                         </Button>
                     </ModalFooter>

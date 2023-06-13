@@ -21,7 +21,8 @@ import { getPlan1SW12,getPlan2SW12,getPlan3SW12,getPlan4SW12,getPlan5SW12,
     postPlanesSW12,postOtrosParametrosSW12 } from '../js/apiFunctionsSW12';
 import '../css/PlanesView.css'
 import { useSelector, useDispatch } from 'react-redux';
-import { addPlanes } from "../features/controlers/controlerSlice";
+import { addPlan1,addPlan2,addPlan3,addPlan4,addPlan5,addPlan6,addPlan7,addPlan8,addParametros } from "../features/controlers/controlerSlice";
+
 //mitze rodriguez
 import { updatePlanesSamplingTime,getCheckDataPlanes } from '../js/gestionSolicitudes';
 import Swal from 'sweetalert2';
@@ -69,27 +70,35 @@ export default function PlanesView() {
             if(numPlan === 1){
                 result = await getPlan1SW12()
                 updateFirebase(result,'plan_1')
+                dispatch(addPlan1(result))
             }else if(numPlan === 2){
                 result = await getPlan2SW12()
                 updateFirebase(result,'plan_2')
+                dispatch(addPlan2(result))
             }else if(numPlan === 3){
                 result = await getPlan3SW12()
                 updateFirebase(result,'plan_3')
+                dispatch(addPlan3(result))
             }else if(numPlan === 4){
                 result = await getPlan4SW12()
                 updateFirebase(result,'plan_4')
+                dispatch(addPlan4(result))
             }else if(numPlan === 5){
                 result = await getPlan5SW12()
                 updateFirebase(result,'plan_5')
+                dispatch(addPlan5(result))
             }else if(numPlan === 6){
                 result = await getPlan6SW12()
                 updateFirebase(result,'plan_6')
+                dispatch(addPlan6(result))
             }else if(numPlan === 7){
                 result = await getPlan7SW12()
                 updateFirebase(result,'plan_7')
+                dispatch(addPlan7(result))
             }else if(numPlan === 8){
                 result = await getPlan8SW12()
                 updateFirebase(result,'plan_8')
+                dispatch(addPlan8(result))
             }
             
             setCurrentPlan(result)
@@ -126,7 +135,8 @@ export default function PlanesView() {
         try{
             setDeshabilitar4(true)
             let datosObtenidos = await getOperativeParamsSW12();
-            updateFirebase("otros_parametros",datosObtenidos);
+            updateFirebase(datosObtenidos,"otros_parametros");
+            dispatch(addParametros(datosObtenidos));
             setTiempoDestelloPrender(parseInt(datosObtenidos.destello_al_encender));
             setDestellarVerdePeatonal(parseInt(datosObtenidos.destello_verde_peatonal));
             setDestellarVerdeVehicular(parseInt(datosObtenidos.destello_verde_vehicular));
