@@ -14,7 +14,22 @@ export const controlerSlice = createSlice({
         online:false,
         ultima_conexion:'',
         historial_conexiones:[],
-        semaforos:[]
+        //datos de las config
+        semaforos:[],
+        fases:[],
+        grupos:[],
+        horario_festivo:[],
+        horario_finsemana:[],
+        horario_ordinario:[],
+        otros_parametros:{},
+        plan_1:[],
+        plan_2:[],
+        plan_3:[],
+        plan_4:[],
+        plan_5:[],
+        plan_6:[],
+        plan_7:[],
+        plan_8:[],
        
     },
     reducers: {
@@ -40,6 +55,20 @@ export const controlerSlice = createSlice({
         },
         setControllerData:(state,action)=>{
             state.semaforos = action.payload.semaforos;
+            state.fases = action.payload.fases;
+            state.grupos = action.payload.grupos;
+            state.horario_festivo = action.payload.horario_festivo;
+            state.horario_finsemana = action.payload.horario_finsemana;
+            state.horario_ordinario = action.payload.horario_ordinario;
+            state.otros_parametros = action.payload.otros_parametros;
+            state.plan_1 = action.payload.plan_1;
+            state.plan_2 = action.payload.plan_2;
+            state.plan_3 = action.payload.plan_3;
+            state.plan_4 = action.payload.plan_4;
+            state.plan_5 = action.payload.plan_5;
+            state.plan_6 = action.payload.plan_6;
+            state.plan_7 = action.payload.plan_7;
+            state.plan_8 = action.payload.plan_8;
         },
         setResumen:(state,action)=>{
             state.resumen = action.payload;

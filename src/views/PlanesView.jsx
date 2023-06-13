@@ -113,7 +113,7 @@ export default function PlanesView() {
     const updateFirebase = async (param,__data) => {
         const ref = doc(db, "controladores", `${controlerState.id}`);
         let aux_data = {}
-        aux_data[`${param}`] = __data
+        aux_data[`${__data}`] = param;
         await updateDoc(ref,aux_data);
     }
     const cargarPlanesFirebase = async(_planes,n_plan) =>{

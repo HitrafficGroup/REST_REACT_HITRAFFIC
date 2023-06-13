@@ -40,7 +40,7 @@ import Swal from 'sweetalert2';
 import RelogActual from "../components/RelogActual";
 import { useNavigate } from 'react-router-dom';
 import { getTimeControllerSW12, postTimeSW12 } from '../js/apiFunctionsSW12';
-import InfoSharpIcon from '@mui/icons-material/InfoSharp';
+
 
 const InitialTime = {
     day: "00",
@@ -136,60 +136,9 @@ export default function HomeView() {
         Changeview("/declarar-controlador")
     }
 
-    const getData = async (data) => {
+    
 
-        setDeshabilitar(true);
-        try {
-            console.log(controlerState)
-            let docRef = doc(db, "controladores", controlerState.id);
-            let document = await getDoc(docRef);
-            let controlador = document.data()
-            let gruposController = controlador.semaforos
-            let areas_temp = JSON.parse(JSON.stringify(gruposController))
-            console.log(controlador)
-            simulacion.current = false;
-            // setFlagsimu(false);
-            // setPosition([document.latitud, document.longitud])
-
-            // setReloadMap(!reloadMap)
-
-            // let aux_firmware = "SW-12";
-            // areas_temp.map((item) => {
-            //     let puntos_aux = item.points
-            //     item.points = [puntos_aux[0].pos, puntos_aux[1].pos, puntos_aux[2].pos, puntos_aux[3].pos]
-            //     return null;
-            // })
-
-            // semaforos2.current = areas_temp
-            // setAreas(areas_temp)
-            // allInfo.current = document.data()
-            // todaInformacion.current = document.data()
-
-            // parametrosCorriendo();
-
-            // Swal.fire({
-            //     icon: 'success',
-            //     title: 'Controlador Conectado',
-            //     showConfirmButton: false,
-            //     timer: 900
-            // })
-            setDeshabilitar(false)
-        } catch (error) {
-            setDeshabilitar(false)
-        }
-
-
-    }
-
-    /* funcion para actualizar la variable version en firebase, dependiendo del controlador*/
-    const enviarVersionFirebase = async (mac, ip, firmware) => {
-        const ref = doc(db, "controladores", `${mac}`);
-        await updateDoc(ref, {
-            mac: mac,
-            ip: ip,
-            version: firmware
-        });
-    }
+ 
     /*funcion encargada  de devolvernos el estado en el que se encuentra tal semaforo*/
     const returnModo = (data) => {
         if (data === 1) {
@@ -482,23 +431,48 @@ export default function HomeView() {
         Funcion encargada de cargar los datos necesarios para animar los semaforos
         del mapa.
      */
-    const parametrosCorriendo = () => {
-        let datos_controlador = JSON.parse(JSON.stringify(todaInformacion.current))
-
-        let dia_ordinario = datos_controlador.horarios.dia_ordinario
-        let planes = datos_controlador.planes
-        let parametros_operativos = datos_controlador.otros_parametros
-        tiempo_amarillo.current = parseInt(parametros_operativos.tiempo_amarillo_vehicular)
-
+    const calcularHorario = (horario)=>{
+        //esta funcion nos devuelve el horario actual y siguiente
+        let aux
+        let aux2
+        let temp
+        let new_horarios = []
         let hora_actual = new Date();
         let horas = hora_actual.getHours();
         let minutos = hora_actual.getMinutes();
-        let ultimo_horario = false
-        let aux;
-        let aux2;
-        let temp;
-        let ref;
-        let nro_horario;
+        let ref = horas * 100 + minutos
+        let ultimo_horario = horario[0]
+        let primer_horario = horario[horario.length - 1]
+        let temp_primer = parseInt(primer_horario.horas) * 100 + parseInt(primer_horario.minutos)
+        let temp_ultimo = parseInt(ultimo_horario.horas) * 100 + parseInt(ultimo_horario.minutos)
+        if(ref>temp_ultimo){
+            new_horarios.push(ultimo_horario)
+            new_horarios.push(primer_horario)
+        }else if(primer_horario>ref){
+            new_horarios.push(ultimo_horario)
+            new_horarios.push(primer_horario)
+        }else{
+            for (let i = 0; i < horario.length; i++) {
+                aux = parseInt(horario[i].horas)
+                aux2 = parseInt(horario[i].minutos)
+                temp = aux * 100 + aux2
+                if(temp<ref || temp === ref){
+                    new_horarios.push(horario[i])
+                    new_horarios.push(horario[i+1])
+                    break
+                }
+            }
+        }
+        return new_horarios
+    }
+    
+    const parametrosCorriendo = () => {
+        let datos_controlador = JSON.parse(JSON.stringify(controlerState))
+
+        let dia_ordinario = datos_controlador.horario_ordinario
+        let parametros_operativos = datos_controlador.otros_parametros
+        tiempo_amarillo.current = parseInt(parametros_operativos.tiempo_amarillo_vehicular)
+
         let dias_ordenados = JSON.parse(JSON.stringify(dia_ordinario))
 
         dias_ordenados.sort(function (a, b) {
@@ -511,74 +485,32 @@ export default function HomeView() {
             return b - a
         })
         let dias_ordenados_filtrados = dias_ordenados.filter(item => item.mod !== 0)
-        let nro_horario_sig = 0
-        for (let i = 0; i < dias_ordenados_filtrados.length; i++) {
-            aux = parseInt(dias_ordenados[i].horas)
-            aux2 = parseInt(dias_ordenados[i].minutos)
-            temp = aux * 100 + aux2
-            ref = horas * 100 + minutos
-            //console.log("ref: ",ref)
-            //console.log("temp: ",temp)
-            if (ref > temp) {
-                if (i === 0) {
-                    nro_horario = dias_ordenados[0].nro
-                    nro_horario_sig = dia_ordinario[0].nro
-                    ultimo_horario = true
-                } else {
-                    nro_horario = dias_ordenados[i].nro
-                    nro_horario_sig = dias_ordenados[i - 1].nro
-                    ultimo_horario = false
-                }
-
-                break
-            }
-            if (i === 0) {
-                nro_horario = dias_ordenados[0].nro
-                nro_horario_sig = dia_ordinario[0].nro
-                ultimo_horario = true
-            } else {
-                nro_horario = dias_ordenados[0].nro
-                nro_horario_sig = dias_ordenados[i].nro
-                ultimo_horario = false
-            }
-
-        }
-
-
-        let horario_activo = dias_ordenados.find(item => item.nro === nro_horario)
-        let horario_siguiente = dias_ordenados.find(item => item.nro === nro_horario_sig)
-
-
+        let horarios_actuales = calcularHorario(dias_ordenados_filtrados)
+        let horario_activo = horarios_actuales[0]
+        let horario_siguiente = horarios_actuales[1]
         let modo = returnModo(horario_activo.mod)
-
         modoControlador.current = modo
         let plan_activo = horario_activo.plan
-        let planname = `plan${plan_activo}`
-        let plan_filter = planes.filter(_plan => _plan.numPlan === planname)
-        let pasos = plan_filter[0].pasos
-
-        var pasos_habilitados = pasos.filter((item) => {
+        let planname = `plan_${plan_activo}`
+        let plan_filter = datos_controlador[planname]
+        var pasos_habilitados = plan_filter.filter((item) => {
             if (item.duracion > 0) {
                 return item;
             } else {
                 return null;
             }
         })
-
         let fases = datos_controlador.fases
-
-        var pasos_temp = pasos_habilitados
+        var pasos_temp = JSON.parse(JSON.stringify(pasos_habilitados))
         var fases_pasos = pasos_temp.map((item) => {
             let aux2 = fases.find(_item => _item.faseNum === item.fase)
             let obj_mod = {
                 duracion: item.duracion,
                 fase: item.fase,
                 grupos: item.grupos,
-                name: item.name
+                name: item.id
             }
             let grupos_aux = aux2.grupos
-
-
             if (modo === 'Destello') {
                 grupos_aux = aux2.grupos.map(item => ({
                     colorDescripcion: "amarillo",
@@ -608,11 +540,9 @@ export default function HomeView() {
         })
         let datos_amarillo = []
         fases_pasos_aux.current = fases_pasos
-        console.log("todo bien hasta aca", fases_pasos)
-        // esta parte del codigo se encarga de animar los ciclos en amarillo
-
+        //console.log("todo bien hasta aca", fases_pasos)
+        //esta parte del codigo se encarga de animar los ciclos en amarillo
         if (tiempo_amarillo.current > 0 && modo === "Tiempo Fijo") {
-
             let fases_pasos_aux2 = JSON.parse(JSON.stringify(fases_pasos))
             let fases_pasos_aux = JSON.parse(JSON.stringify(fases_pasos))
             let aux_copias = fases_pasos.length * 2
@@ -657,40 +587,41 @@ export default function HomeView() {
             }
             datos_amarillo.map((item, index) => (item.name = `Paso ${index + 1}`))
         }
-        datos_amarillo_aux.current = datos_amarillo
-        let resumen = {
-            horas: horario_activo.horas,
-            minutos: horario_activo.minutos,
-            plan: horario_activo.plan,
-            pasos: fases_pasos,
-            modo: modo,
-        }
-        dispatch(setResumen(resumen));
+        console.log(datos_amarillo)
+        // datos_amarillo_aux.current = datos_amarillo
+        // let resumen = {
+        //     horas: horario_activo.horas,
+        //     minutos: horario_activo.minutos,
+        //     plan: horario_activo.plan,
+        //     pasos: fases_pasos,
+        //     modo: modo,
+        // }
+        // dispatch(setResumen(resumen));
 
 
 
-        timer1.current = 0
+        // timer1.current = 0
 
-        dispatch(setPasosActivos(fases_pasos));
-        // aqui haremos el calculo para los indicadores 
+        // dispatch(setPasosActivos(fases_pasos));
+        // // aqui haremos el calculo para los indicadores 
 
-        //setPasosActivos(fases_pasos)
+        // //setPasosActivos(fases_pasos)
 
-        let segundos_pasos = []
-        if (ultimo_horario) {
-            const fecha = new Date()
-            let horas_1 = parseInt(horario_siguiente.horas)
-            if (fecha.getHours() >= horas_1) {
-                segundos_pasos = devolverSegundosPaso(horario_activo, { minutos: 0, horas: 24 })
-            } else {
-                segundos_pasos = devolverSegundosPaso({ minutos: 0, horas: 0, horario_siguiente })
-            }
-        } else {
-            segundos_pasos = devolverSegundosPaso(horario_activo, horario_siguiente)
-        }
-        informacionDelIndicador()
-        calculoEjecucion.current = segundos_pasos
-        //setSemaforo()
+        // let segundos_pasos = []
+        // if (ultimo_horario) {
+        //     const fecha = new Date()
+        //     let horas_1 = parseInt(horario_siguiente.horas)
+        //     if (fecha.getHours() >= horas_1) {
+        //         segundos_pasos = devolverSegundosPaso(horario_activo, { minutos: 0, horas: 24 })
+        //     } else {
+        //         segundos_pasos = devolverSegundosPaso({ minutos: 0, horas: 0, horario_siguiente })
+        //     }
+        // } else {
+        //     segundos_pasos = devolverSegundosPaso(horario_activo, horario_siguiente)
+        // }
+        // informacionDelIndicador()
+        // calculoEjecucion.current = segundos_pasos
+        // //setSemaforo()
 
 
     }
@@ -740,9 +671,6 @@ export default function HomeView() {
         let g4;
         let dataUpdated;
         let aux = semaforos2.current;
-
-        // console.log("hasta aqui llega el programa");
-
         let paso_actual = devolverPaso()
         g1 = devolverColor(faseActual.current[paso_actual].grupos[0].colorDescripcion);
         g2 = devolverColor(faseActual.current[paso_actual].grupos[1].colorDescripcion);
@@ -767,7 +695,7 @@ export default function HomeView() {
     }
     // funcion que compara los datos almacenados en la store
     const verifyDataSemaforos = () => {
-        console.log("existen datos")
+    
     }
     const obtenerCoordenadas = () => {
         let puntos = JSON.parse(JSON.stringify(pointsArea))
@@ -915,6 +843,7 @@ export default function HomeView() {
         }, 1000);
 
         verifyDataSemaforos()
+        console.log("datos del controlador redux ",controlerState)
         return () => clearInterval(interval);
         // eslint-disable-next-line
     }, []);
@@ -933,10 +862,10 @@ export default function HomeView() {
                 </Button> */}
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={4}>
-                        <article class="information [ card ]">
-                            <h2 class="title">Informacion del Controlador</h2>
-                            <p class="info">Ip: {controlerState.ip} y Mac: {controlerState.mac}</p>
-                            <dl class="details">
+                        <article className="information [ card ]">
+                            <h2 className="title">Informacion del Controlador</h2>
+                            <p className="info">Ip: {controlerState.ip} y Mac: {controlerState.mac}</p>
+                            <dl className="details">
                                 <div>
                                     <dt>Modelo</dt>
                                     <dd>{controlerState.modelo}</dd>
@@ -947,7 +876,7 @@ export default function HomeView() {
                                 </div>
 
                             </dl>
-                            <dl class="details">
+                            <dl className="details">
                                 <div>
                                     <dt>Latitud</dt>
                                     <dd>{controlerState.latitud}</dd>
@@ -1063,9 +992,6 @@ export default function HomeView() {
                     </Grid>*/}
 
                     <Grid item xs={12} md={12}>
-                        <Button variant="outlined" sx={{ margin: 0 }} onClick={getData} disabled={deshabilitar2} color='verde' >
-                            LEER
-                        </Button>
                         <article className="information [ card ]">
                             <h2 className="title">Map de los semaforos</h2>
 
@@ -1089,7 +1015,7 @@ export default function HomeView() {
                                             <Polygon positions={[item.points[0].pos, item.points[1].pos, item.points[2].pos, item.points[3].pos]} />
                                         </FeatureGroup>
                                     ))}
-                                    <Fab color={simulacion.current ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={iniciarSimulacion}>
+                                    <Fab color={simulacion.current ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={parametrosCorriendo}>
                                         {simulacion.current ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
                                     </Fab>
                                     <Fab color='verde2' disabled={btnAgregar} sx={{ position: "absolute", bottom: 150, right: 30 }} onClick={() => { obtenerCoordenadas() }} >
