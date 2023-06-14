@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { convertToFases,convertToGrupos } from './manageData'
-const BASE_HT200 = 'http://192.168.1.175:8000/';
+const BASE_HT200 = 'http://ec2-3-22-179-49.us-east-2.compute.amazonaws.com:8000/';
 
 
 async function getFasesSW12(ip) {

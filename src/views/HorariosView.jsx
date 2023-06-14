@@ -164,6 +164,31 @@ export default function HorariosView() {
                 return item;
             }
         })
+     
+        let data_aux = horarios_modify.filter(item => item.mod !== 0)
+        data_aux.sort(function (a, b) {
+            let a_aux = parseInt(a.horas)
+            let a_aux2 = parseInt(a.minutos)
+            let b_aux = parseInt(b.horas)
+            let b_aux2 = parseInt(b.minutos)
+            a = a_aux * 100 + a_aux2
+            b = b_aux * 100 + b_aux2
+            return a-b
+        })
+        console.log(data_aux)
+        let temp_order = []
+        for(let i =0;i<16;i++){
+            if(i <data_aux.length){
+                temp_order.push(data_aux[i])
+            }else{
+                temp_order.push(horario_cero)
+            }
+        }
+  
+        let final_data = JSON.parse(JSON.stringify(temp_order));
+        for (let i = 0; i < 12; i++) {
+            final_data[i].id = `horario-${i}`
+        }
         setHorarios(horarios_modify)
         setModalHorarios(false)
     }
@@ -976,3 +1001,13 @@ const horariosPorDefecto = [
     { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
     { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
 ]
+
+let horario_cero = { 
+    desfase: 0,
+    horas: '00', 
+    id:'horario-0',
+    minutos: '00', 
+    mod: 0,
+    mod_descriptor:"",
+    plan: 0,
+}
