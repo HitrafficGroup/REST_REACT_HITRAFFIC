@@ -14,7 +14,7 @@ export default function SalirMenu(){
     }
     return(
         <>
-            <ListItemButton onClick={() =>Changeview('/')}>
+            <ListItemButton onClick={() =>Changeview('/equipos')}>
                         <ListItemIcon>
                             <ExitToAppIcon fontSize='large' />
                         </ListItemIcon>

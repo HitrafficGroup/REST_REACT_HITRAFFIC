@@ -1,4 +1,4 @@
-import CardInformation from '../components/CardInformation';
+
 import CardController from "../components/CardController";
 import React, { useState } from 'react';
 import { db } from "../firebase/firebase-config";
@@ -55,7 +55,6 @@ export default function GruposView() {
         setDireccion(data.direccion)
         setSentido(data.sentido)
         setDestello(data.destello)
-        console.log(data)
         setModalGrupo(true);
     }
 
@@ -163,11 +162,10 @@ export default function GruposView() {
 
         for (let fila = 0; fila < 3; fila++) {
             let binario = respuesta[`fila-${fila + 1}`]
-            console.log(binario)
             let grupo_fila = fila + 1
 
             for (let index_b = 0; index_b < binario.length; index_b++) {
-                if (binario[index_b] == "1") {
+                if (binario[index_b] === "1") {
                     caseVerify(grupo_fila, index_b, true)
                     
                 } else {
@@ -235,7 +233,7 @@ export default function GruposView() {
             case "Noroeste": valor = "5"; break;
             case "Sureste": valor = "6"; break;
             case "Suroeste": valor = "7"; break;
-            case "Noroeste": valor = "8"; break;
+
             default: valor = ""; break;
         }
         return valor
@@ -263,12 +261,7 @@ export default function GruposView() {
         }
         return destelloDescripcion
     }
-    const cargarGruposFirebase = async(data) =>{
-        const ref = doc(db, "controladores", `${controlerState.mac}`);
-        await updateDoc(ref,{
-            grupos:data
-        });
-    }
+
     const convertirDatos=(data)=>{
        // sami si lees esto eres una guapa //6 de junio hay muchos easter eggs  como este en el codigo
         let lista_elementos = []
@@ -316,12 +309,7 @@ export default function GruposView() {
         })
     }
 
-    const cargarConflictosFirebase = async(data) =>{
-        const ref = doc(db, "controladores", `${controlerState.mac}`);
-        await updateDoc(ref,{
-            conflictos_verdes:data
-        });
-    }
+
     const cargarDatosConflictos = () => {
      
         let fila1 = []
@@ -377,14 +365,14 @@ export default function GruposView() {
                         checked3 ? "1":"0"
                     ]
                
-                    let  conflictoFirebase = {
-                        check1: checked1,
-                        check2: checked2,
-                        check3: checked3,
-                        fila1:[false,false,true,true],
-                        fila2: [false,false,false,false],
-                        fila3: [false,false,false,false],
-                    }
+                    // let  conflictoFirebase = {
+                    //     check1: checked1,
+                    //     check2: checked2,
+                    //     check3: checked3,
+                    //     fila1:[false,false,true,true],
+                    //     fila2: [false,false,false,false],
+                    //     fila3: [false,false,false,false],
+                    // }
                     let data_X = "00"+newConflicto[5]+newConflicto[4]+"000"+newConflicto[3]
                     let chec = parseInt(data_X, 2)
                     let data_formated = [newConflicto[0],newConflicto[1],newConflicto[2],chec]
@@ -630,7 +618,7 @@ export default function GruposView() {
             <CircularProgress color="inherit" />
         </Backdrop>
         <CardController/>
-        <CardInformation/>
+
     </>);
 }
 

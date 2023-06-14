@@ -1,4 +1,4 @@
-import CardInformation from '../components/CardInformation';
+
 import CardController from "../components/CardController";
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
@@ -18,7 +18,6 @@ import { useSelector} from 'react-redux';
 import Swal from 'sweetalert2';
 export default function EntradasView() {
     const controlerState = useSelector(state => state.controlers);
-    const [entradas,setEntradas] = useState(initialData);
     const [ent1,setEnt1] = useState(false);
     const [ent2,setEnt2] = useState(false);
     const [ent3,setEnt3] = useState(false);
@@ -124,19 +123,7 @@ export default function EntradasView() {
         })
       
     }
-    const cargarEntradasFirebase = async(data)=>{
-        const ref = doc(db, "controladores", `${controlerState.mac}`);
-        await updateDoc(ref,{
-            entradas:data
-        });
-    }
-
-    const cargarDatosEnetradasRest = async(data) =>{
-        console.log(data)
-        //await setEntradasControlador(data);
-        setDeshabilitar(false);
-        setDeshabilitar2(false);
-    }
+    
     return (
     <>
         <Container maxWidth="md">
@@ -295,14 +282,6 @@ export default function EntradasView() {
             <CircularProgress color="inherit" />
         </Backdrop>
         <CardController/>
-        <CardInformation/>
     </>
     );
-}
-
-const initialData = {
-entrada1: {checkbox: '0', fase: '0', tiempo: '0'},
-entrada2: {checkbox: '0', fase: '0', tiempo: '0'},
-entrada3: {checkbox: '0', fase: '0', tiempo: '0'},
-entrada4: {checkbox: '0', fase: '0', tiempo: '0'}
 }

@@ -25,8 +25,6 @@ import GruposMenu from './content/GruposMenu.jsx'
 import Button from '@mui/material/Button';
 import { useSelector } from 'react-redux';
 import "../css/ButtonAppBar.css"
-import PruebasMenu from './content/PruebasMenu';
-import ControlersMenu from './content/ControlersMenu';
 export default function ButtonAppBar(props) {
 
   const [state, setState] = React.useState({
@@ -87,7 +85,7 @@ export default function ButtonAppBar(props) {
     },
     {
       child: <ClonacionMenu />,
-      visibility: true,
+      visibility: false,
       key: 100
     },
     {

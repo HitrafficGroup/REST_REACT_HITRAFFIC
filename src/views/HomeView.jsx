@@ -1,20 +1,16 @@
-import CardInformation from '../components/CardInformation';
-import CardController from "../components/CardController";
+
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import CleaningServicesSharpIcon from '@mui/icons-material/CleaningServicesSharp';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
 import SaveIcon from '@mui/icons-material/Save';
-import MapIcon from '@mui/icons-material/Map';
-import { collection, updateDoc, doc, getDocs, getDoc } from "firebase/firestore";
+
+import { updateDoc, doc} from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import CheckSharpIcon from '@mui/icons-material/CheckSharp';
 import TextField from '@mui/material/TextField';
-import Chip from '@mui/material/Chip';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import "../css/HomeView.css"
 import "../css/SyncTimeView.css"
@@ -26,7 +22,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
 import Fab from '@mui/material/Fab';
-import { setSemaforos, setResumen, addIpsDisponibles, setPasosActivos, addCurrentControler, createNewController } from "../features/controlers/controlerSlice";
+import { setSemaforos } from "../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Backdrop from '@mui/material/Backdrop';
@@ -38,7 +34,6 @@ import '../css/HomeView.css';
 import '../css/beautifulCard.scss';
 import Swal from 'sweetalert2';
 import RelogActual from "../components/RelogActual";
-import { useNavigate } from 'react-router-dom';
 import { getTimeControllerSW12, postTimeSW12 } from '../js/apiFunctionsSW12';
 
 
@@ -61,22 +56,18 @@ export default function HomeView() {
     const [fechaController, setFechaController] = useState('Datos de fecha aun no Cargados')
     const [fechaActual, setFechaActual] = useState(new Date().toLocaleString("es-EC", { dateStyle: 'full' }))
     const [flagsimu, setFlagsimu] = useState(false);
-    const todaInformacion = useRef({});
     const [deshabilitar, setDeshabilitar] = useState(false);
     const [deshabilitar2, setDeshabilitar2] = useState(false);
     const modoControlador = useRef('Tiempo Fijo');
     const [areas, setAreas] = useState(controlerState.semaforos);
-    const navigate = useNavigate();
     const simulacion = useRef(false);
     const timer1 = useRef(0);
     const fases_pasos_aux = useRef([])
-    const allInfo = useRef({});
     const faseActual = useRef(0);
     const calculoEjecucion = useRef([]);
     const tiempo_amarillo = useRef(0)
     const datos_amarillo_aux = useRef(0)
     const [pointsArea, setPointsArea] = useState([]);
-    const center = [-2.898794750323891, -79.00108637169295]
     const [draggable, setDraggable] = useState(false)
     const [position, setPosition] = useState([controlerState.latitud, controlerState.longitud])
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
@@ -85,7 +76,6 @@ export default function HomeView() {
     const dispatch = useDispatch();
     const [indicadorData, setIndicadorData] = useState(initialData.resumen);
     //banderas para los botones 
-    const [flagCargando, setFlagCargando] = useState(false);
     const [botonCrear, setBotonCrear] = useState(true);
 
     //prueba semaforo
@@ -122,9 +112,6 @@ export default function HomeView() {
         )
     }
 
-    const Changeview = (referencia) => {
-        navigate(referencia);
-    }
 
 
     const toggleDraggable = useCallback(() => {
@@ -132,9 +119,6 @@ export default function HomeView() {
     }, [])
     const markerRef = useRef(null)
 
-    const agregarControlador = () => {
-        Changeview("/declarar-controlador")
-    }
 
     
 
@@ -176,12 +160,6 @@ export default function HomeView() {
     }
 
 
-    // funcion para actualizar datos de los controladores en firebase 
-    const updateDataFirebase = async (mac, jsonData) => {
-        const ref = doc(db, "historial_controladores", mac);
-        await updateDoc(ref, jsonData);
-    }
-
     /*
     esta funcion agrega y actualiza el semaforo que se selecciona en los grupos
     ,nos permite desplazar elsemaforo dentro del mapa actualizando su latitud y longitud
@@ -189,7 +167,6 @@ export default function HomeView() {
     const agregarSemaforo = async () => {
         setDeshabilitar(true)
         let areas_temp = JSON.parse(JSON.stringify(areas))
-        console.log(areas_temp)
         if (pointsArea.length === 4) {
             let newpositions = pointsArea.map((item) => (
                 {
@@ -436,7 +413,11 @@ export default function HomeView() {
         let aux
         let aux2
         let temp
-        let new_horarios = []
+        let new_horarios = {
+            actual:"",
+            siguiente:"",
+            flag:false
+        }
         let hora_actual = new Date();
         let horas = hora_actual.getHours();
         let minutos = hora_actual.getMinutes();
@@ -446,19 +427,22 @@ export default function HomeView() {
         let temp_primer = parseInt(primer_horario.horas) * 100 + parseInt(primer_horario.minutos)
         let temp_ultimo = parseInt(ultimo_horario.horas) * 100 + parseInt(ultimo_horario.minutos)
         if(ref>temp_ultimo){
-            new_horarios.push(ultimo_horario)
-            new_horarios.push(primer_horario)
-        }else if(primer_horario>ref){
-            new_horarios.push(ultimo_horario)
-            new_horarios.push(primer_horario)
+            new_horarios.actual = ultimo_horario
+            new_horarios.siguiente = primer_horario
+            new_horarios.flag = true
+        }else if(temp_primer>ref){
+            new_horarios.actual = ultimo_horario
+            new_horarios.siguiente = primer_horario
+            new_horarios.flag = true
         }else{
             for (let i = 0; i < horario.length; i++) {
                 aux = parseInt(horario[i].horas)
                 aux2 = parseInt(horario[i].minutos)
                 temp = aux * 100 + aux2
                 if(temp<ref || temp === ref){
-                    new_horarios.push(horario[i])
-                    new_horarios.push(horario[i+1])
+                    new_horarios.actual = horario[i]
+                    new_horarios.siguiente = horario[i-1]
+                    new_horarios.flag = false
                     break
                 }
             }
@@ -486,8 +470,8 @@ export default function HomeView() {
         })
         let dias_ordenados_filtrados = dias_ordenados.filter(item => item.mod !== 0)
         let horarios_actuales = calcularHorario(dias_ordenados_filtrados)
-        let horario_activo = horarios_actuales[0]
-        let horario_siguiente = horarios_actuales[1]
+        let horario_activo = horarios_actuales.actual
+        let horario_siguiente = horarios_actuales.siguiente
         let modo = returnModo(horario_activo.mod)
         modoControlador.current = modo
         let plan_activo = horario_activo.plan
@@ -606,7 +590,7 @@ export default function HomeView() {
         // //setPasosActivos(fases_pasos)
 
         let segundos_pasos = []
-        if (true) {
+        if (horarios_actuales.flag) {
             const fecha = new Date()
             let horas_1 = parseInt(horario_siguiente.horas)
             if (fecha.getHours() >= horas_1) {
@@ -702,7 +686,6 @@ export default function HomeView() {
             position: [position.lat, position.lng]
         }
 
-        console.log(newPoint)
         if (puntos.length < 4) {
             puntos.push(newPoint)
             data = puntos.map(item => (
@@ -759,7 +742,6 @@ export default function HomeView() {
             response['date'] = formatData(response['date'])
             response['year'] = formatData(response['year'])
             //let data_formated = response.map(item=>(formatData(item)))
-            console.log(response)
             setTiempoController(response)
             const fechac = `${response.month}-${response.date}-${response.year}`
             const dateObj = new Date(fechac)
@@ -769,31 +751,13 @@ export default function HomeView() {
             setDeshabilitar2(false);
         } catch (e) {
             console.log(e)
-
+            setDeshabilitar(false);
             setDeshabilitar2(false);
         }
 
     }
-    const updateHoraControllerFirebase = async (data) => {
-        const ref = doc(db, "controladores", `${controlerState.mac}`);
-        await updateDoc(ref, {
-            hora_controlador: data
-        });
 
-    }
     const sincronizarTiempoFromRest = async () => {
-
-        // const tiempohoy = new Date();
-        // const dataForFirebase = {
-        //     time_zone:"-5",
-        //     horas: tiempohoy.getHours().toString(),
-        //     minutos: tiempohoy.getMinutes().toString(),
-        //     segundos: tiempohoy.getSeconds().toString(),
-        //     dia: tiempohoy.getDate().toString(),
-        //     indice_dia: "2",
-        //     mes: (tiempohoy.getMonth()+1).toString(),
-        //     year: tiempohoy.getFullYear().toString(),
-        // }
 
 
         try {
@@ -811,7 +775,6 @@ export default function HomeView() {
                     setDeshabilitar(true);
                     await postTimeSW12({ mac: '12:f:3', trama: ['2'] });
                     setDeshabilitar(false);
-                    //updateHoraControllerFirebase(dataForFirebase);
 
                 }
             })
@@ -838,7 +801,6 @@ export default function HomeView() {
         }, 1000);
 
         verifyDataSemaforos()
-        console.log("datos del controlador redux ",controlerState)
         return () => clearInterval(interval);
         // eslint-disable-next-line
     }, []);
@@ -894,7 +856,7 @@ export default function HomeView() {
                                 <Button variant="outlined" sx={{ margin: 0 }} onClick={obtenerTiempoFromRestApi} disabled={deshabilitar2} color='verde' >
                                     LEER
                                 </Button>
-                                <Button variant="outlined" sx={{ margin: 0 }} onClick={sincronizarTiempoFromRest} disabled={deshabilitar} colo >
+                                <Button variant="outlined" sx={{ margin: 0 }} onClick={sincronizarTiempoFromRest} disabled={deshabilitar} color='primary' >
                                     CARGAR
                                 </Button>
                             </div>
@@ -922,69 +884,9 @@ export default function HomeView() {
 
                             </dl>
                         </article>
-                        {/* <Grid container spacing={1}>
-                                    <Grid item xs={12}>
-                                <h5>Datos del Computador</h5>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <h5>Hora Actual</h5> 
-                                <RelogActual/>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <h5>Fecha Actual</h5> 
-                                {fechaActual.toUpperCase()}
-                            </Grid>
-                            <Grid item xs={12}>
-                                <h5>Datos del Controlador</h5>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <h5>Hora del Controlador</h5> 
-                                <p>{tiempoController.hours+':'+tiempoController.minutes+':'+tiempoController.seconds}</p>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <h5>Fecha del Controlador</h5> 
-                                {fechaController.toUpperCase()}
-                            </Grid>
-                            <Grid item xs={12}>
-                                <h5>Funciones del Controlador</h5>
-                            </Grid>
-                            <Grid item md={3} xs={12}>
-                                <Button variant="contained" onClick={obtenerTiempoFromRestApi} fullWidth disabled={deshabilitar2} color="verde" sx={{height:'100%'}}>
-                                LEER DATOS
-                                </Button>
-                                
-                            </Grid>
-                            <Grid item md={3} xs={12}>
-                                <Button variant="contained" onClick={sincronizarTiempoFromRest} fullWidth disabled={deshabilitar} sx={{height:'100%'}}>
-                                    Actualizar DATOS
-                                </Button>
-                            </Grid>
-                            </Grid> */}
+                    
 
                     </Grid>
-
-
-
-                    {/* <Grid item md={12}>
-                        <div className="h-controler-select">
-                            <h5>Gestionar Semáforos:</h5>
-                        </div>
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                        <TextField id="outlined" focused value={position.lat} label="Latitud" variant="outlined" fullWidth />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                        <TextField id="outlined" focused value={position.lng} label="Longitud" variant="outlined" fullWidth />
-                    </Grid> 
-                     <Grid item xs={12} md={2}>
-                        <Button variant="contained" startIcon={<SaveIcon />} disabled={btnAgregar} onClick={() => { obtenerCoordenadas() }} color="azulm" fullWidth sx={{ height: "100%" }}>GUARDAR</Button>
-                    </Grid>
-                    <Grid item xs={12} md={2}>
-                        <Button variant="contained" color='verde2' startIcon={<MapIcon />} disabled={btnAgregar} onClick={() => { setModalCrearSemaforo(true) }} fullWidth sx={{ height: "100%" }}>CREAR</Button>
-                    </Grid>
-                    <Grid item xs={12} md={2}>
-                        <Button variant="contained" color='anaranjado1' disabled={btnAgregar} fullWidth sx={{ height: "100%" }} onClick={limpiarPuntos} >LIMPIAR</Button>
-                    </Grid>*/}
 
                     <Grid item xs={12} md={12}>
                         <article className="information [ card ]">
@@ -1031,64 +933,6 @@ export default function HomeView() {
                             </div>
                         </article>
                     </Grid>
-
-
-
-
-
-
-                    <Grid item xs={12} md={12}>
-                        {/* <Table className='home-t'>
-                            <Thead>
-                                <Tr>
-                                    <Th className='home-t-th'>#</Th>
-                                    <Th className='home-t-th'>Paso</Th>
-                                    <Th className='home-t-th'>Duración</Th>
-                                    <Th className='home-t-th'>Fase</Th>
-                                    <Th className='home-t-th'>Grupos</Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {controlerState.pasos_activos.map((dato, index) => (
-                                    <Tr className={"tablas-focus"} key={index} >
-                                        <Td>
-                                            {index + 1}
-                                        </Td>
-                                        <Td >
-                                            {dato.name}
-                                        </Td>
-                                        <Td >
-                                            {dato.duracion}
-                                        </Td>
-                                        <Td >
-                                            {dato.fase}
-                                        </Td>
-                                        <Td className='home-t-th' >
-                                            <Table>
-                                                <Thead>
-                                                    <Tr>
-                                                        <Th>G1</Th>
-                                                        <Th>G2</Th>
-                                                        <Th>G3</Th>
-                                                        <Th>G4</Th>
-                                                    </Tr>
-                                                </Thead>
-                                                <Tbody>
-                                                    <Tr >
-                                                        <Td> <Chip label={dato.grupos[0].colorDescripcion} sx={{ width: 110, marginRight: 1 }} color={dato.grupos[0].colorDescripcion} /></Td>
-                                                        <Td> <Chip label={dato.grupos[1].colorDescripcion} sx={{ width: 110, marginRight: 1 }} color={dato.grupos[1].colorDescripcion} /></Td>
-                                                        <Td> <Chip label={dato.grupos[2].colorDescripcion} sx={{ width: 110, marginRight: 1 }} color={dato.grupos[2].colorDescripcion} /></Td>
-                                                        <Td> <Chip label={dato.grupos[3].colorDescripcion} sx={{ width: 110, marginRight: 1 }} color={dato.grupos[3].colorDescripcion} /></Td>
-                                                    </Tr>
-                                                </Tbody>
-                                            </Table>
-                                        </Td>
-
-                                    </Tr>
-                                ))}
-                            </Tbody>
-                        </Table> */}
-                    </Grid>
                     <Grid item xs={12}>
                         <article className="information [ card ]">
                             <Table className='home-t'>
@@ -1102,22 +946,17 @@ export default function HomeView() {
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-
                                     {indicadorData.map((dato, index) => (
                                         <Tr className="tablas-focus" key={index} >
                                             <Td>
                                                 {index + 1}
                                             </Td>
-
                                             <Td >
                                                 {dato.grupo}
                                             </Td>
                                             <Td style={{ marginBottom: 10 }}>
                                                 <CustomProgress red={dato.rojo} yellow={dato.amarillo} green={dato.verde} modo={dato.modo} />
                                             </Td>
-
-
-
                                         </Tr>
                                     ))}
                                 </Tbody>
@@ -1189,63 +1028,13 @@ export default function HomeView() {
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar}>
                 <CircularProgress color="inherit" />
             </Backdrop>
-            {/* <CardController />
-            <CardInformation /> */}
+
         </div>
     );
 
 }
 
-const IOSSwitch = styled((props) => (
-    <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} checked={props.estado === 'online' ? true : false} />
-))(({ theme }) => ({
-    width: 42,
-    height: 26,
-    padding: 0,
-    '& .MuiSwitch-switchBase': {
-        padding: 0,
-        margin: 2,
-        transitionDuration: '300ms',
-        '&.Mui-checked': {
-            transform: 'translateX(16px)',
-            color: '#fff',
-            '& + .MuiSwitch-track': {
-                backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#65C466',
-                opacity: 1,
-                border: 0,
-            },
-            '&.Mui-disabled + .MuiSwitch-track': {
-                opacity: 0.5,
-            },
-        },
-        '&.Mui-focusVisible .MuiSwitch-thumb': {
-            color: '#33cf4d',
-            border: '6px solid #fff',
-        },
-        '&.Mui-disabled .MuiSwitch-thumb': {
-            color:
-                theme.palette.mode === 'light'
-                    ? theme.palette.grey[100]
-                    : theme.palette.grey[600],
-        },
-        '&.Mui-disabled + .MuiSwitch-track': {
-            opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
-        },
-    },
-    '& .MuiSwitch-thumb': {
-        boxSizing: 'border-box',
-        width: 22,
-        height: 22,
-    },
-    '& .MuiSwitch-track': {
-        borderRadius: 26 / 2,
-        backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
-        opacity: 1,
-        transition: theme.transitions.create(['background-color'], {
-            duration: 500,
-        }),
-    },
-}));
+
 
 const point = new L.Icon({
     iconUrl: require('../assets/point2.png'),

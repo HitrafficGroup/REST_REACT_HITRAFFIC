@@ -1,4 +1,4 @@
-import CardInformation from '../components/CardInformation';
+
 import CardController from "../components/CardController";
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
@@ -15,9 +15,7 @@ import Alert from '@mui/material/Alert';
 import Swal from 'sweetalert2';
 import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
-import { getCheckDataHorarios, updateHorarioSamplingTime } from '../js/gestionSolicitudes';
 import { getOrdinaryScheduleSW12,getWeekendScheduleSW12,getFestivalScheduleSW12 ,getSpecialDaysSW12,postHorariosSW12 ,postDiasEspecialesSW12} from '../js/apiFunctionsSW12';
-import Autocomplete from '@mui/material/Autocomplete';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { addOrdinarios,addFestivo,addFinSemana } from "../features/controlers/controlerSlice";
 import { useSelector,useDispatch } from 'react-redux';
@@ -57,7 +55,6 @@ export default function HorariosView() {
     const [tablaDias, setTablaDias] = useState([]);
     const [cambiosHorarios, setCambiosHorarios] = useState(false);
     const [value, setValue] = useState(null);
-    const [currentDiaFestivo, setCurrentDiaFestivo] = useState();
     const [cambioDias, setCambioDias] = useState(false);
     const dispatch = useDispatch();
     const [currentHorario, setCurrentHorario] = useState(
@@ -369,16 +366,10 @@ export default function HorariosView() {
         })
 
     }
-    const cargarDiaFestivosFirebase = async (data) => {
-        const ref = doc(db, "controladores", `${controlerState.mac}`);
-        await updateDoc(ref, {
-            dias_especiales: data
-        });
-    }
+
     const setDiafestivoFromrestApi = async () => {
         setDeshabilitar4(true);
         let dias_festivos = JSON.parse(JSON.stringify(tablaDias))
-        console.log('dias festivos: ',dias_festivos)
         let data_dias = [3]
 
         for (let i = 0; i < 16; i++) {
@@ -413,29 +404,24 @@ export default function HorariosView() {
             denyButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed) {
-                console.log("se removera el siguiente dato", _data)
                 let obj_horarios_new = Object.assign({}, objHorarios);
                 let objeto_vacio = { nro: 17, horas: '00', minutos: '00', mod: 0, plan: 0, desfase: "0" }
                 let aux_horarios  = JSON.parse(JSON.stringify(horarios));
-                console.log("horarios sin modificar:", horarios)
                 let filter_h = aux_horarios.filter((item) => item.nro !== _data.nro)
                 filter_h.push(objeto_vacio)
                 filter_h.forEach((i, index) => {
                     i.nro = index
                 })
-                console.log(filter_h)
                 setHorarios(filter_h)
                 obj_horarios_new['dia_ordinario'] = filter_h
                 setObjHorarios(obj_horarios_new);
-                console.log(filter_h)
                 setCambiosHorarios(true)
             }
         })
     }
     const borrarDiaFestivo = (data) => {
-        setCurrentDiaFestivo(data);
+    
         let aux = tablaDias
-        console.log(tablaDias)
         let newDatos = aux.filter((_data) => {
             if (_data.dia === data.dia && _data.mes === data.mes) {
                 return null
@@ -443,17 +429,11 @@ export default function HorariosView() {
                 return _data
             }
         });
-        console.log(newDatos)
         setTablaDias(newDatos)
         setCambioDias(true);
     }
 
-    const cargarHorariosFirebase = async (horario,__data) => {
-        const ref = doc(db, "controladores", `${controlerState.id}`);
-        let aux_data = {}
-        aux_data[`${horario}`] = __data
-        await updateDoc(ref,aux_data);
-    }
+
 
     const cargarDatos = async () => {
 
@@ -482,8 +462,7 @@ export default function HorariosView() {
     const cargarHorariosFromRestApi = async () => {
         setHabilitar2(true);
         const data = JSON.parse(JSON.stringify(horarios));
-        console.log(data)
-        const aux_ObjHorarios = JSON.parse(JSON.stringify(objHorarios));
+  
         let datos_enviar = [tipoDia]
         var newObject = {}
         for (let num = 0; num < 16; num++) {
@@ -520,12 +499,19 @@ export default function HorariosView() {
         newObject['ip'] = controlerState.ip
         newObject['mac'] = controlerState.mac
         newObject['num_horario'] = formatearTipoDia(tipoDia)
-        //aux_ObjHorarios[`${tipoDia}`] = horarios
-        //setObjHorarios(aux_ObjHorarios)
-        //console.log(datos_enviar)
-        await postHorariosSW12({'trama':datos_enviar});
 
-        //cargarHorariosFirebase(aux_ObjHorarios)
+        await postHorariosSW12({'trama':datos_enviar});
+        if(tipoDia === 0){
+            updateFirebase('horario_ordinario',data);
+            dispatch(addOrdinarios(data));
+        }else if(tipoDia === 1){
+            updateFirebase('horario_finsemana',data);
+            dispatch(addFinSemana(data));
+        }else{
+            updateFirebase('horario_festivo',data);
+            dispatch(addFestivo(data));
+        }
+
         setHabilitar2(false);
     }
     return (
@@ -820,7 +806,7 @@ export default function HorariosView() {
                 <CircularProgress color="inherit" />
             </Backdrop>
             <CardController/>
-            <CardInformation/>
+     
         </>
     );
 

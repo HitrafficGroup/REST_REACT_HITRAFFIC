@@ -1,10 +1,9 @@
-import CardInformation from '../components/CardInformation';
+
 import CardController from "../components/CardController";
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { useSelector} from 'react-redux';
 import { getErroresSW12 } from '../js/apiFunctionsSW12';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Backdrop from '@mui/material/Backdrop';
@@ -20,28 +19,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-const columns = [
-
-    //{field:'id',headerName:'ID',width:90},
-    {
-        field: 'fecha',
-        headerName: 'Tiempo Registrado',
-        width: 400,
-        editable: false,
-    },
-    {
-        field: 'evento',
-        headerName: 'Tipo de Eventos',
-        width: 400,
-        editable: false,
-    },
-];
-
 
 
 
 export default function ErroresView() {
-    const controlerState = useSelector(state => state.controlers);
     const [errores,setErrores] = useState([{}])
     const [deshabilitar,setDeshabilitar] = useState(true);
     const [deshabilitar2,setDeshabilitar2] = useState(false);
@@ -62,7 +43,8 @@ export default function ErroresView() {
                 return item
             })
 
-            setErrores(data_modify);
+
+            setErrores(data_modify.reverse());
             setDeshabilitar(false)
             setDeshabilitar2(false)
         } catch (error) {
@@ -192,7 +174,6 @@ export default function ErroresView() {
             <CircularProgress color="inherit" />
         </Backdrop>
         <CardController/>
-        <CardInformation/>
         </>
     );
 
