@@ -8,7 +8,6 @@ import Button from '@mui/material/Button';
 import { db } from "../firebase/firebase-config";
 import { updateDoc, doc } from "firebase/firestore";
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import Collapse from '@mui/material/Collapse';
 import Alert from '@mui/material/Alert';
@@ -31,8 +30,37 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-
-
+// tablas
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import { styled } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+  
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
 export default function HorariosView() {
     const [horarios, setHorarios] = useState(horariosPorDefecto);
     const controlerState = useSelector(state => state.controlers);
@@ -57,9 +85,20 @@ export default function HorariosView() {
     const [value, setValue] = useState(null);
     const [cambioDias, setCambioDias] = useState(false);
     const dispatch = useDispatch();
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [page, setPage] = useState(0);
     const [currentHorario, setCurrentHorario] = useState(
         { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
     );
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(+event.target.value);
+        setPage(0);
+    };
     const editarHorarios = (__data) => {       
         let respaldo_data = JSON.parse(JSON.stringify(__data));
         setCurrentHorario(respaldo_data)
@@ -412,6 +451,7 @@ export default function HorariosView() {
                 filter_h.forEach((i, index) => {
                     i.nro = index
                 })
+             
                 setHorarios(filter_h)
                 obj_horarios_new['dia_ordinario'] = filter_h
                 setObjHorarios(obj_horarios_new);
@@ -545,8 +585,8 @@ export default function HorariosView() {
                     </Grid>
                     <Grid item xs={12} >
                         <div className={habilitar1 ? 'disabled-tabla-horarios' : 'habilited-tabla-horarios'}>
-                            <div className='h-scroller '>
-                                <Table className='home-t'>
+                    
+                                {/* <Table className='home-t'>
                                     <Thead>
                                         <Tr>
                                             <Th className='home-t-th'>Nro</Th>
@@ -585,9 +625,94 @@ export default function HorariosView() {
                                             </Tr>
                                         ))}
                                     </Tbody>
-                                </Table>
+                                </Table> */}
+                                    <TableContainer sx={{ maxHeight: 430 }}>
+                                                        <Table stickyHeader aria-label="sticky table">
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    <TableCell
+                                                                        key={"num"}
+                                                                        align={"left"} 
+                                                                    >
+                                                                        Nro
+                                                                    </TableCell>
+                                                                    <TableCell
+                                                                        key={"fase"}
+                                                                        align={"center"} 
+                                                                    >
+                                                                        Hora De Inicio
+                                                                    </TableCell>
+                                                                    <TableCell
+                                                                        key={"dura"}
+                                                                        align={"center"}
+                                                                    >
+                                                                        Modo Operativo
+                                                                    </TableCell>
+
+                                                                    <TableCell
+                                                                        key={"plan"}
+                                                                        align={"left"}
+                                                                    >
+                                                                        Plan No.
+                                                                    </TableCell>
+                                                                    <TableCell
+                                                                        key={"desfase"}
+                                                                        align={"left"}
+                                                                    >
+                                                                        Desfase
+                                                                    </TableCell>
+                                                                    <TableCell
+                                                                        key={"acc"}
+                                                                        align={"left"}
+                                                                    >
+                                                                        Acciones
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                {horarios
+                                                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                                                    .map((dato, index) => {
+                                                                        return (
+                                                                            <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                                                                <TableCell align={"left"}>
+                                                                                {dato.id}
+                                                                                </TableCell>
+                                                                                <TableCell align={"center"}>
+                                                                                {dato.horas + ':' + dato.minutos}
+                                                                                </TableCell>
+                                                                                <TableCell align={"center"}>
+                                                                                {dato.mod ? modoFormat(dato.mod) : 'No especificado'}
+                                                                                </TableCell>
+                                                                                <TableCell align={"center"}>
+                                                                                {dato.plan}
+                                                                                </TableCell>
+                                                                                <TableCell align={"center"}>
+                                                                                {dato.desfase}
+                                                                                </TableCell>
+                                                                                <TableCell align={"center"}>
+                                                                                <div className="horarios-t-buttons">
+                                                                                    <Button variant="contained" onClick={() => { editarHorarios(dato) }} color='crema'>Editar</Button>
+                                                                                    <Button variant="contained" onClick={() => { removeHorario(dato) }}  color='rojo'>QUITAR</Button>
+                                                                                </div>
+                                                                                </TableCell>
+                                                                            </TableRow>
+                                                                        );
+                                                                    })}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </TableContainer>
+                                                    <TablePagination
+                                                        rowsPerPageOptions={[10, 25, 100]}
+                                                        component="div"
+                                                        count={horarios.length}
+                                                        rowsPerPage={rowsPerPage}
+                                                        page={page}
+                                                        onPageChange={handleChangePage}
+                                                        onRowsPerPageChange={handleChangeRowsPerPage}
+                                                    />
+
                             </div>
-                        </div>
                     </Grid>
                     <Grid item xs={12}>
                         <Collapse in={cambiosHorarios}>
@@ -655,7 +780,7 @@ export default function HorariosView() {
                     </Grid>
 
                     <Grid item xs={12} >
-                        <Table className='home-t'>
+                        {/* <Table className='home-t'>
                             <Thead>
                                 <Tr>
                                     <Th className='home-t-th'>Fecha</Th>
@@ -678,7 +803,29 @@ export default function HorariosView() {
                                     </Tr>
                                 ))}
                             </Tbody>
-                        </Table>
+                        </Table> */}
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                                <TableHead>
+                                <TableRow>
+                                    <StyledTableCell align="center">Fecha</StyledTableCell>
+                                    <StyledTableCell align="left">Modo</StyledTableCell>
+                                    <StyledTableCell align="left">Acciones</StyledTableCell>
+                                </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                {tablaDias.map((dato,index) => (
+                                    <StyledTableRow key={index}>
+                                    <StyledTableCell align="center"> {dato.mes}-{dato.dia}-{2023}</StyledTableCell>
+                                    <StyledTableCell align="left"> {dato.descriptor_modo}</StyledTableCell>
+                                    <StyledTableCell align="left"> 
+                                    <Button variant="contained" sx={{ height: '100%' }} disabled={deshabilitar3} onClick={() => { borrarDiaFestivo(dato) }} color='rojo'>Borrar</Button>
+                                    </StyledTableCell>
+                                    </StyledTableRow>
+                                ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </Grid>
                     <Grid item xs={12}>
                         <Collapse in={cambioDias}>
