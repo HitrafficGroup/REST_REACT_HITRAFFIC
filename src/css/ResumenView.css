@@ -120,6 +120,7 @@
     border-top: 2px solid black;
     border-left: 2px solid black;
     border-bottom: 2px solid black;
+    border-right: 2px solid black;
 }
 .g-r-rojo{
     height: 28px;
@@ -138,7 +139,7 @@
     height: 28px;
     width: 28px;
     display: flex;
-    color: white;
+    color: black;
     background-color:  #196F3D;
     justify-content: center;
     align-items: center;
@@ -148,7 +149,36 @@
 
     border-bottom: 2px solid black;
 }
+.g-r-amarillo{
+    height: 28px;
+    width: 28px;
+    display: flex;
+    color: white;
+    background-color:  #F1C40F;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 9px;
+    border-top: 2px solid black;
+    border-right: 2px solid black;
 
+    border-left: 2px solid black;
+    border-bottom: 2px solid black;
+}
+.g-r-amarillo{
+    height: 28px;
+    width: 28px;
+    display: flex;
+    color: white;
+    background-color:  #CD5C5C;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 9px;
+    border-top: 2px solid black;
+    border-right: 2px solid black;
+
+    border-left: 2px solid black;
+    border-bottom: 2px solid black;
+}
 .g-r-verde1{
     height: 28px;
     width: 28px;

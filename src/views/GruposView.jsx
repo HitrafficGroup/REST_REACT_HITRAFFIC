@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { db } from "../firebase/firebase-config";
 import { updateDoc, doc } from "firebase/firestore";
 import Container from '@mui/material/Container';
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
@@ -19,13 +18,42 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { setGruposControllers } from "../features/controlers/controlerSlice";
 import { useSelector,useDispatch } from 'react-redux';
 import { getGruposSW12,getGreenConflictSW12,postGruposSW12,postGreenConflictSW12 } from '../js/apiFunctionsSW12';
+import IconButton from '@mui/material/IconButton';
 import Collapse from '@mui/material/Collapse';
+import EditIcon from '@mui/icons-material/Edit';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Swal from 'sweetalert2';
 import Alert from '@mui/material/Alert';
 import { CheckAndLinkBits } from '../js/manageData';
-
+// tablas dependencias
+import { styled } from '@mui/material/styles';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+  
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
 export default function GruposView() {
     const controlerState = useSelector(state => state.controlers);
     const [grupos, setGrupos] = useState(gruposDefault);
@@ -400,7 +428,7 @@ export default function GruposView() {
             <Grid container spacing={1}>
                 <Grid item xs={12}>
                     <div className={deshabilitar ? 'disabled-grupos' : 'habilited-grupos'}>
-                        <Table className='home-t'>
+                        {/* <Table className='home-t'>
                             <Thead>
                                 <Tr>
                                     <Th className='home-t-th'>Grupo</Th>
@@ -432,7 +460,35 @@ export default function GruposView() {
                                     </Tr>
                                 ))}
                             </Tbody>
+                        </Table> */}
+                          <TableContainer component={Paper}>
+                         <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                            <TableHead>
+                            <TableRow>
+                                <StyledTableCell align="center">Grupo</StyledTableCell>
+                                <StyledTableCell align="left">Direccion</StyledTableCell>
+                                <StyledTableCell align="left">Sentido</StyledTableCell>
+                                <StyledTableCell align="left">Destello</StyledTableCell>
+                                <StyledTableCell align="center">Acciones</StyledTableCell>
+                            </TableRow>
+                            </TableHead>
+                            <TableBody>
+                            {grupos.map((row,index) => (
+                                <StyledTableRow key={index}>
+                                <StyledTableCell align="center">{row.grupo}</StyledTableCell>
+                                <StyledTableCell align="left">{row.direccion}</StyledTableCell>
+                                <StyledTableCell align="left">{row.sentido}</StyledTableCell>
+                                <StyledTableCell align="left">{row.destello}</StyledTableCell>
+                                <StyledTableCell align="center">
+                                <IconButton color="amarillo"  aria-label="add to shopping cart"  onClick={() => { abrirModalGrupo(row) }}>
+                                    <EditIcon />
+                                    </IconButton>
+                                </StyledTableCell>
+                                </StyledTableRow>
+                            ))}
+                            </TableBody>
                         </Table>
+                        </TableContainer>
                     </div>
                 </Grid>
                 <Grid item xs={12}>

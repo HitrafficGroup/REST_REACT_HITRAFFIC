@@ -7,7 +7,7 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
+import Stack from '@mui/material/Stack';
 import FormControl from '@mui/material/FormControl';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -21,13 +21,23 @@ import { getPlan1SW12,getPlan2SW12,getPlan3SW12,getPlan4SW12,getPlan5SW12,
 import '../css/PlanesView.css'
 import { useSelector, useDispatch } from 'react-redux';
 import { addPlan1,addPlan2,addPlan3,addPlan4,addPlan5,addPlan6,addPlan7,addPlan8,addParametros } from "../features/controlers/controlerSlice";
-
+import IconButton from '@mui/material/IconButton';
 //mitze rodriguez
 import { updatePlanesSamplingTime,getCheckDataPlanes } from '../js/gestionSolicitudes';
 import Swal from 'sweetalert2';
 import Chip from '@mui/material/Chip';
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
+//fases 
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 export default function PlanesView() {
     const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers)
@@ -58,7 +68,8 @@ export default function PlanesView() {
     const [cambio,setCambio] = useState(false)
     const [dis,setDis] = useState('disabled')
     //esta variable de planes2 debe actualizarse con este formato que es mas adecuado
-    
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [page, setPage] = useState(0);
     const readData = async () => {
         let result = []
         try {
@@ -108,6 +119,14 @@ export default function PlanesView() {
         }
        
     }
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+            setRowsPerPage(+event.target.value);
+            setPage(0);
+        };
 
     const abrirModalEditar = (data) => {
  
@@ -341,9 +360,9 @@ const handleNumPlan = (event) => {
 
                     </Grid>
                     <Grid item xs={12}>
-                        <div className={`scroller ${dis}-table-p`}>
+                       
 
-                            <Table >
+                            {/* <Table >
                                 <Thead>
                                     <Tr>
 
@@ -372,8 +391,82 @@ const handleNumPlan = (event) => {
                                         </Tr>
                                     ))}
                                 </Tbody>
+                            </Table> */}
+                             <TableContainer sx={{ maxHeight: 430 }}>
+                            <Table stickyHeader aria-label="sticky table">
+                                <TableHead>
+                                    <TableRow>
+                                    <TableCell
+                                                key={"num"}
+                                                align={"left"}S
+                                            >
+                                     Nro
+                                            </TableCell>
+                                        <TableCell
+                                                key={"fase"}
+                                                align={"left"}S
+                                            >
+                                        Fase a ejecutar
+                                            </TableCell>
+                                            <TableCell
+                                                key={"dura"}
+                                                align={"center"}
+                                           
+                                            >
+                                             Duracion
+                                            </TableCell>
+                                            
+                                            <TableCell
+                                                key={"acc"}
+                                                align={"left"}
+                                              
+                                            >
+                                               Acciones
+                                            </TableCell>
+                                          
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {currentPlan
+                                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                        .map((dato,index) => {
+                                            return (
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                                      <TableCell  align={"left"}>
+                                                     {dato.id}
+                                                     </TableCell>
+                                                     <TableCell  align={"left"}>
+                                                     <Chip label={'fase - ' + dato.fase} sx={{ width: 100 }} color={'anaranjado1'} variant="outlined" />
+                                                     </TableCell>
+                                                     <TableCell  align={"center"}>
+                                                     <Chip label={dato.duracion + 's'} sx={{ width: 100 }} color={'morado1'} variant="outlined" />
+                                                     </TableCell>
+                                                     <TableCell  align={"center"}>
+                                                        <Stack direction="row" spacing={1}>
+                                                            <IconButton aria-label="delete"  color="amarillo" onClick={() => { abrirModalEditar(dato) }} >
+                                                                <EditIcon />
+                                                            </IconButton>
+                                                            <IconButton aria-label="delete"  color="rojo" onClick={() => { EliminarPlan(dato) }} >
+                                                                <DeleteIcon />
+                                                            </IconButton>
+                                                        </Stack>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                </TableBody>
                             </Table>
-                        </div>
+                        </TableContainer>
+                        <TablePagination
+                            rowsPerPageOptions={[10, 25, 100]}
+                            component="div"
+                            count={currentPlan.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+
                     </Grid>
                     <Grid item xs={12}>
                         <Collapse in={cambio}>
