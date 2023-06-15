@@ -129,14 +129,7 @@ const dataTest = [
 // CUANDO TENGO DOS INTERFACES DE RED CONECTADAS A DIFERENTES CONTROLADORES , SIMPLEMENTE ME VA A TRAER EL PRIMER
 //CONTROLADOR QUE DETECTE.
 
-const cantones = [
-    { canton: 'Loja' },
-    { canton: 'Pasaje' },
-    { canton: 'Zamora' },
-    { canton: 'Cuenca' },
-    { canton: 'Cañar' },
-    { canton: "La Troncal" }
-]
+
 export default function ControlersView() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -148,7 +141,8 @@ export default function ControlersView() {
     const [deshabilitar, setDeshabilitar] = useState(false);
     const flagFilter = useRef(true);
     const respaldoData = useRef([])
-    const cantonselected = useRef({})
+    const cantonselected = useRef("")
+    const modelselected = useRef("")
     const ipControlador = useRef('')
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dataTest.length) : 0;
     const navigate = useNavigate(); // hook para navegar entre urls o vistas
@@ -304,7 +298,7 @@ export default function ControlersView() {
             </AppBar>
             <Container maxWidth="md" sx={{ paddingTop: 3 }}>
                 <Grid container spacing={2}>
-                    <Grid md={7} xs={12}>
+                    <Grid md={4} xs={12}>
                         <div className="card-admin">
                             <div className="header">
                                 <p className="nombre-card">Acciones</p>
@@ -314,7 +308,7 @@ export default function ControlersView() {
                                 <Grid container >
 
                                     <Grid item xs={12} md={12}>
-                                        <Button variant="contained" size="medium" onClick={() => { Changeview('/crear_equipo') }}  >DECLARAR NUEVO CONTROLADOR</Button>
+                                        <Button variant="contained" size="medium" onClick={() => { Changeview('/crear_equipo') }}  >+ CONTROLADOR</Button>
                                     </Grid>
 
                                 </Grid>
@@ -322,7 +316,7 @@ export default function ControlersView() {
                             </div>
                         </div>
                     </Grid>
-                    <Grid md={2.5} xs={6}>
+                    {/* <Grid md={2.5} xs={6}>
                         <div className="card-admin">
                             <div className="header">
                                 <p className="nombre-card">Activos</p>
@@ -341,8 +335,8 @@ export default function ControlersView() {
                                 <h5 className="number-indicador">2</h5> <PowerOffIcon fontSize="large" sx={{ color: "#F5B7B1" }} />
                             </div>
                         </div>
-                    </Grid>
-                    <Grid md={12} xs={12}>
+                    </Grid> */}
+                    <Grid md={8} xs={12}>
                         <div className="card-controller-filter">
                             <div className="header-controller-filter">
                                 <p className="nombre-card">Filtros</p>
@@ -350,37 +344,37 @@ export default function ControlersView() {
                             <div className="card-body-controler">
 
                                 <Grid container >
-                                    <Grid item xs={12} md={3}>
+                                    <Grid item xs={12} md={5}>
                                         <Autocomplete
                                             id="size-small-outlined"
                                             size="small"
                                             options={cantones}
-                                            getOptionLabel={(option) => option.canton}
+                                            
                                             onChange={(event, newValue) => {
                                                 cantonselected.current = newValue
                                             }}
 
                                             renderInput={(params) => (
-                                                <TextField {...params} label="Canton" placeholder="Escoga el Canton" />
+                                                <TextField {...params} label="Canton" placeholder="canton" />
                                             )}
                                         />
                                     </Grid>
-                                    <Grid item xs={12} md={3}>
+                                    <Grid item xs={12} md={4}>
                                         <Autocomplete
                                             id="size-small-outlined"
                                             size="small"
-                                            options={cantones}
-                                            getOptionLabel={(option) => option.canton}
+                                            options={controladores}
+                                  
                                             onChange={(event, newValue) => {
-                                                cantonselected.current = newValue
+                                                modelselected.current = newValue
                                             }}
 
                                             renderInput={(params) => (
-                                                <TextField {...params} label="Modelo" placeholder="Escoga el Modelo" />
+                                                <TextField {...params} label="Modelo" placeholder="modelo" />
                                             )}
                                         />
                                     </Grid>
-                                    <Grid item xs={12} md={3.5}>
+                                    {/* <Grid item xs={12} md={3.5}>
                                         <RadioGroup
                                             row
                                             aria-labelledby="demo-row-radio-buttons-group-label"
@@ -391,7 +385,7 @@ export default function ControlersView() {
 
 
                                         </RadioGroup>
-                                    </Grid>
+                                    </Grid> */}
                                     <Grid item xs={12} md={2}>
                                         <Button variant="contained" size="medium" onClick={filtrarLosDatos}  >FILTRAR</Button>
                                     </Grid>
@@ -588,3 +582,13 @@ export default function ControlersView() {
         </>
     )
 }
+let cantones = [
+    "CUENCA","GIRON","GUALACEO","NABON","PAUTE","PUCARA","SAN FERNANDO","SANTA ISABEL","SIGSIG","OÑA","CHORDELEG",
+    "CHILLANES","GUARANDA","CHIMBO","SAN MIGUEL","AZOGUES","BIBLIÁN","CAÑAR","LA TRONCAL","EL TAMBO","TULCAN","BOLIVAR",
+    "ESPEJO","LATACUNGA","PUJILI","SALCEDO","RIOBAMBA","ALAUSI","MACHALA","ARENILLAS","ATAHUALPA","BALSAS","EL GUABO","HUAQUILLAS",
+    "PASAJE","PIÑAS","PORTOVELO","SANTA ROSA","ZARUMA","ESMERALDAS","ATACAMES","GUAYAQUIL","QUITO","LOJA","CALVAS","CATAMAYO"
+]
+
+let controladores = [
+    "HT-200","SW-12"
+]

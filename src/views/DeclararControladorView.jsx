@@ -45,7 +45,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-
+import Autocomplete from '@mui/material/Autocomplete';
 
 export default function DeclararControladorView() {
     const center = [-2.876428, -78.965342];
@@ -214,24 +214,23 @@ export default function DeclararControladorView() {
                         t_horarios: 1667372400000,
                         t_peticion: 1667372400000,
                         t_planes: 1667372400000,
-                        ip:ipControlador,
-                        mac:macControlador,
-                        informacion:{
-                            nombre:nombreControlador,
-                            ubicacion:[latitud,longitud]
-                        },
                         // parametros que se iran llenando conforme actualice el controlador
-                        version: {},
                         conflictos_verdes:{},
                         dias_especiales:{},
-                        entradas:{},
                         fases:{},
                         grupos:{},
                         hora_controlador:{},
                         horarios:{},
                         semaforos:areas_aux,
                         otros_parametros:{},
-                        planes:{},
+                        plan_1:[],
+                        plan_2:[],
+                        plan_3:[],
+                        plan_4:[],
+                        plan_5:[],
+                        plan_6:[],
+                        plan_7:[],
+                        plan_8:[],
                         latitud: parseFloat(latitud),
                         longitud:parseFloat(longitud),
     
@@ -250,6 +249,8 @@ export default function DeclararControladorView() {
                         ultima_conexion:'',
                         modelo:model,
                     }
+                
+                    
                     console.log(parametrosIniciales)
                     try {
                         setFlagCargando(true);
@@ -398,7 +399,14 @@ export default function DeclararControladorView() {
                         <TextField id="outlined"  value={longitud} label="Longitud" variant="outlined"  onChange={(e)=>{setLongitud(e.target.value)}} fullWidth />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <TextField id="outlined" value={canton} fullWidth  onChange={(e) =>{setCanton(e.target.value)}}  label="Canton" variant="outlined"   />
+                        <Autocomplete
+                            disablePortal
+                            id="combo-box-demo"
+                            options={cantones}
+                            onChange={(event,newValue)=>{setCanton(newValue)}}
+                            renderInput={(params) => <TextField {...params} label="cantones" />}
+                        />
+
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <h4>Mapa del controlador</h4>
@@ -593,3 +601,9 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   }));
   
+let cantones = [
+    "CUENCA","GIRON","GUALACEO","NABON","PAUTE","PUCARA","SAN FERNANDO","SANTA ISABEL","SIGSIG","OÑA","CHORDELEG",
+    "CHILLANES","GUARANDA","CHIMBO","SAN MIGUEL","AZOGUES","BIBLIÁN","CAÑAR","LA TRONCAL","EL TAMBO","TULCAN","BOLIVAR",
+    "ESPEJO","LATACUNGA","PUJILI","SALCEDO","RIOBAMBA","ALAUSI","MACHALA","ARENILLAS","ATAHUALPA","BALSAS","EL GUABO","HUAQUILLAS",
+    "PASAJE","PIÑAS","PORTOVELO","SANTA ROSA","ZARUMA","ESMERALDAS","ATACAMES","GUAYAQUIL","QUITO","LOJA","CALVAS","CATAMAYO"
+]
