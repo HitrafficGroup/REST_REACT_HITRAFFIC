@@ -1,4 +1,3 @@
-
 import CardController from "../components/CardController";
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
@@ -14,10 +13,10 @@ import Alert from '@mui/material/Alert';
 import Swal from 'sweetalert2';
 import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
-import { getOrdinaryScheduleSW12,getWeekendScheduleSW12,getFestivalScheduleSW12 ,getSpecialDaysSW12,postHorariosSW12 ,postDiasEspecialesSW12} from '../js/apiFunctionsSW12';
+import { getOrdinaryScheduleSW12, getWeekendScheduleSW12, getFestivalScheduleSW12, getSpecialDaysSW12, postHorariosSW12, postDiasEspecialesSW12 } from '../js/apiFunctionsSW12';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { addOrdinarios,addFestivo,addFinSemana } from "../features/controlers/controlerSlice";
-import { useSelector,useDispatch } from 'react-redux';
+import { addOrdinarios, addFestivo, addFinSemana } from "../features/controlers/controlerSlice";
+import { useSelector, useDispatch } from 'react-redux';
 import '../css/HorariosView.css';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -42,32 +41,32 @@ import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
+        backgroundColor: theme.palette.common.black,
+        color: theme.palette.common.white,
     },
     [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
+        fontSize: 14,
     },
-  }));
-  
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
+        backgroundColor: theme.palette.action.hover,
     },
     // hide last border
     '&:last-child td, &:last-child th': {
-      border: 0,
+        border: 0,
     },
-  }));
+}));
 export default function HorariosView() {
     const [horarios, setHorarios] = useState(horariosPorDefecto);
     const controlerState = useSelector(state => state.controlers);
     const [modalHorarios, setModalHorarios] = useState(false);
     const [tipoDia, setTipoDia] = useState(0);
     const [time1, setTime1] = useState(new Date());
-    const [objHorarios, setObjHorarios] = useState(null);
     const [habilitar1, setHabilitar1] = useState(true);
     const [habilitar2, setHabilitar2] = useState(false);
     const [deshabilitar3, setDeshabilitar3] = useState(true);
@@ -99,8 +98,12 @@ export default function HorariosView() {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
-    const editarHorarios = (__data) => {       
+    const editarHorarios = (__data) => {
         let respaldo_data = JSON.parse(JSON.stringify(__data));
+        if(respaldo_data.plan === 0){
+            respaldo_data.plan = 1
+            respaldo_data.mod = 1
+        }
         setCurrentHorario(respaldo_data)
         let horas = respaldo_data.horas
         let minutos = respaldo_data.minutos
@@ -157,14 +160,14 @@ export default function HorariosView() {
         let aux_horarios = JSON.parse(JSON.stringify(horarios));
         let horario = JSON.parse(JSON.stringify(currentHorario));
         horario.desfase = parseInt(horario.desfase)
-        let horarios_modify = aux_horarios.map((item)=>{
-            if(item.id === horario.id){
+        let horarios_modify = aux_horarios.map((item) => {
+            if (item.id === horario.id) {
                 return horario
-            }else{
+            } else {
                 return item;
             }
         })
-     
+
         let data_aux = horarios_modify.filter(item => item.mod !== 0)
         data_aux.sort(function (a, b) {
             let a_aux = parseInt(a.horas)
@@ -173,18 +176,18 @@ export default function HorariosView() {
             let b_aux2 = parseInt(b.minutos)
             a = a_aux * 100 + a_aux2
             b = b_aux * 100 + b_aux2
-            return a-b
+            return a - b
         })
         console.log(data_aux)
         let temp_order = []
-        for(let i =0;i<16;i++){
-            if(i <data_aux.length){
+        for (let i = 0; i < 16; i++) {
+            if (i < data_aux.length) {
                 temp_order.push(data_aux[i])
-            }else{
+            } else {
                 temp_order.push(horario_cero)
             }
         }
-  
+
         let final_data = JSON.parse(JSON.stringify(temp_order));
         for (let i = 0; i < 12; i++) {
             final_data[i].id = `horario-${i}`
@@ -202,16 +205,16 @@ export default function HorariosView() {
     const handleTipoDia = (event) => {
         setHabilitar1(true)
         setTipoDia(event.target.value);
-        
+
 
     };
     const crearDiaEspecial = () => {
-        
+
         let aux_horarios = JSON.parse(JSON.stringify(tablaDias));
         const dateObj = new Date(value);
         const mes = dateObj.toLocaleString("es-EC", { month: '2-digit' });
         const dia = dateObj.toLocaleString("es-EC", { day: '2-digit' });
-        let num_id = tablaDias.length +1
+        let num_id = tablaDias.length + 1
         const newDiaObject = {
             id: `date-${num_id}`,
             mes: mes,
@@ -238,91 +241,79 @@ export default function HorariosView() {
         let result = []
         setHabilitar2(true);
         try {
-            if(tipoDia === 0){
+            if (tipoDia === 0) {
                 result = await getOrdinaryScheduleSW12('192.168.2.97')
-                formated_data = result.map(item =>{
+                formated_data = result.map(item => {
                     let mod = formatMod(item.modo)
                     let horario_formated = {
-                        id:item.id,
-                        horas:formatHour(item.hora),
-                        minutos:formatMinute(item.minuto),
-                        mod:mod[0],
-                        mod_descriptor:mod[1],
-                        plan:mod[2],
-                        desfase:item.desfase
+                        id: item.id,
+                        horas: formatHour(item.hora),
+                        minutos: formatMinute(item.minuto),
+                        mod: mod[0],
+                        mod_descriptor: mod[1],
+                        plan: mod[2],
+                        desfase: item.desfase
                     }
-                  
+
                     return horario_formated
                 })
-                updateFirebase('horario_ordinario',formated_data);
+                updateFirebase('horario_ordinario', formated_data);
                 dispatch(addOrdinarios(formated_data));
-            }else if(tipoDia ===1){
+            } else if (tipoDia === 1) {
                 result = await getWeekendScheduleSW12('192.168.2.97')
-                formated_data = result.map(item =>{
+                formated_data = result.map(item => {
                     let mod = formatMod(item.modo)
                     let horario_formated = {
-                        id:item.id,
-                        horas:formatHour(item.hora),
-                        minutos:formatMinute(item.minuto),
-                        mod:mod[0],
-                        mod_descriptor:mod[1],
-                        plan:mod[2],
-                        desfase:item.desfase
+                        id: item.id,
+                        horas: formatHour(item.hora),
+                        minutos: formatMinute(item.minuto),
+                        mod: mod[0],
+                        mod_descriptor: mod[1],
+                        plan: mod[2],
+                        desfase: item.desfase
                     }
-                
+
                     return horario_formated
                 })
-                updateFirebase('horario_finsemana',formated_data);
+                updateFirebase('horario_finsemana', formated_data);
                 dispatch(addFinSemana(formated_data));
-            }else if(tipoDia ===2){
+            } else if (tipoDia === 2) {
                 result = await getFestivalScheduleSW12('192.168.2.97')
-        
-                formated_data = result.map(item =>{
+
+                formated_data = result.map(item => {
                     let mod = formatMod(item.modo)
                     let horario_formated = {
-                        id:item.id,
-                        horas:formatHour(item.hora),
-                        minutos:formatMinute(item.minuto),
-                        mod:mod[0],
-                        mod_descriptor:mod[1],
-                        plan:mod[2],
-                        desfase:item.desfase
+                        id: item.id,
+                        horas: formatHour(item.hora),
+                        minutos: formatMinute(item.minuto),
+                        mod: mod[0],
+                        mod_descriptor: mod[1],
+                        plan: mod[2],
+                        desfase: item.desfase
                     }
-                   
+
                     return horario_formated
                 })
-                updateFirebase('horario_festivo',formated_data);
+                updateFirebase('horario_festivo', formated_data);
                 dispatch(addFestivo(formated_data));
             }
             setHorarios(formated_data)
-            
-            // let flag = await getCheckDataHorarios(controlerState.mac, "horarios",50)
-            // if (flag !== false) {
-            //     result = flag
 
-            // } else {
-            //     result = await getHorariosFromRestApi(controlerState.mac, controlerState.ip)
-            //     cargarHorariosFirebase(result)
-            //     await updateHorarioSamplingTime(controlerState.mac)
-            // }
-            // setObjHorarios(result)
-          
-            // chargeHorario(result);
 
             setHabilitar1(false)
             setHabilitar2(false);
         } catch (e) {
-          
+
             setHabilitar2(false);
         }
     }
-    const updateFirebase = async (param,__data) => {
+    const updateFirebase = async (param, __data) => {
         const ref = doc(db, "controladores", `${controlerState.id}`);
         let aux_data = {}
         aux_data[`${param}`] = __data
-        await updateDoc(ref,aux_data);
+        await updateDoc(ref, aux_data);
     }
-    const formatMod = (_data)=>{
+    const formatMod = (_data) => {
         let nombres = ["", "Tiempo Fijo", "Pulsante", "Destello", "Todo en Rojo", "Apagado"]
         let mod_plan = _data
         mod_plan = mod_plan.toString(2)
@@ -334,16 +325,16 @@ export default function HorariosView() {
         let plan = mod_plan.substring(3, 8)
         let mod_int = parseInt(mod, 2)
         let plan_int = parseInt(plan, 2)
-        return [mod_int,nombres[mod_int],plan_int]
+        return [mod_int, nombres[mod_int], plan_int]
     }
-    const formatHour =(hora)=>{
+    const formatHour = (hora) => {
         hora = hora.toString(16)
         if (hora.length < 2) {
             hora = "0" + hora
         }
         return hora
     }
-    const formatMinute =(_data)=>{
+    const formatMinute = (_data) => {
         let minutos = _data.toString(16)
         if (minutos.length < 2) {
             minutos = "0" + minutos
@@ -380,8 +371,8 @@ export default function HorariosView() {
     const LeerParamOperativos = async () => {
         try {
             setDeshabilitar4(true);
-            const data = await getSpecialDaysSW12('192.168.1.74'); 
-            updateFirebase('dias_especiales',data)     
+            const data = await getSpecialDaysSW12('192.168.1.74');
+            updateFirebase('dias_especiales', data)
             setClunes(data['fines_semana'].lunes)
             setCmartes(data['fines_semana'].martes)
             setCmiercoles(data['fines_semana'].miercoles)
@@ -389,8 +380,8 @@ export default function HorariosView() {
             setCviernes(data['fines_semana'].viernes)
             setCsabado(data['fines_semana'].sabado)
             setCDomingo(data['fines_semana'].domingo)
-            let dias =data['dias']
-            let dias_modify = dias.map(item=>{
+            let dias = data['dias']
+            let dias_modify = dias.map(item => {
 
                 item.dia = formatData(item.dia)
                 item.mes = formatData(item.mes)
@@ -405,7 +396,7 @@ export default function HorariosView() {
             setDeshabilitar3(true);
         }
     }
-    const formatData = (_data)=>{
+    const formatData = (_data) => {
         let data = _data.toString(16)
         if (data.length < 2) {
             data = "0" + data
@@ -437,14 +428,14 @@ export default function HorariosView() {
         let data_dias = [3]
 
         for (let i = 0; i < 16; i++) {
-            if(i< dias_festivos.length ){
-                let aux_mes = parseInt(dias_festivos[i].mes,16)
-                let aux_dia = parseInt(dias_festivos[i].dia,16)
+            if (i < dias_festivos.length) {
+                let aux_mes = parseInt(dias_festivos[i].mes, 16)
+                let aux_dia = parseInt(dias_festivos[i].dia, 16)
                 data_dias.push(aux_mes)
                 data_dias.push(aux_dia)
                 data_dias.push(dias_festivos[i].tipo)
-                
-            }else{
+
+            } else {
                 data_dias.push(0)
                 data_dias.push(0)
                 data_dias.push(0)
@@ -452,7 +443,7 @@ export default function HorariosView() {
         }
         data_dias.push(65)
         //console.log(data_dias)
-        await postDiasEspecialesSW12({'trama':data_dias});
+        await postDiasEspecialesSW12({ 'trama': data_dias });
         //cargarDiaFestivosFirebase(newDiasFirebase)
         setDeshabilitar4(false);
     }
@@ -468,24 +459,22 @@ export default function HorariosView() {
             denyButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed) {
-                let obj_horarios_new = Object.assign({}, objHorarios);
-                let objeto_vacio = { nro: 17, horas: '00', minutos: '00', mod: 0, plan: 0, desfase: "0" }
-                let aux_horarios  = JSON.parse(JSON.stringify(horarios));
-                let filter_h = aux_horarios.filter((item) => item.nro !== _data.nro)
+                let objeto_vacio = { id: '', horas: '00', minutos: '00', mod: 0, plan: 0, desfase: "0" }
+                let aux_horarios = JSON.parse(JSON.stringify(horarios));
+
+                let filter_h = aux_horarios.filter((item) => item.id !== _data.id)
                 filter_h.push(objeto_vacio)
                 filter_h.forEach((i, index) => {
-                    i.nro = index
+                    i.id = `horario-${index}`
                 })
-             
+
                 setHorarios(filter_h)
-                obj_horarios_new['dia_ordinario'] = filter_h
-                setObjHorarios(obj_horarios_new);
                 setCambiosHorarios(true)
             }
         })
     }
     const borrarDiaFestivo = (data) => {
-    
+
         let aux = tablaDias
         let newDatos = aux.filter((_data) => {
             if (_data.dia === data.dia && _data.mes === data.mes) {
@@ -527,7 +516,7 @@ export default function HorariosView() {
     const cargarHorariosFromRestApi = async () => {
         setHabilitar2(true);
         const data = JSON.parse(JSON.stringify(horarios));
-  
+
         let datos_enviar = [tipoDia]
         var newObject = {}
         for (let num = 0; num < 16; num++) {
@@ -550,7 +539,7 @@ export default function HorariosView() {
             let aux_hora = parseInt(horas, 16)
             let aux_minuto = parseInt(minutos, 16)
             let desfase = data[num].desfase
-            
+
             newObject['hora' + (num + 1)] = aux_hora
             newObject['minuto' + (num + 1)] = aux_minuto
             newObject['desfase' + (num + 1)] = desfase
@@ -565,15 +554,15 @@ export default function HorariosView() {
         newObject['mac'] = controlerState.mac
         newObject['num_horario'] = formatearTipoDia(tipoDia)
 
-        await postHorariosSW12({'trama':datos_enviar});
-        if(tipoDia === 0){
-            updateFirebase('horario_ordinario',data);
+        await postHorariosSW12({ 'trama': datos_enviar });
+        if (tipoDia === 0) {
+            updateFirebase('horario_ordinario', data);
             dispatch(addOrdinarios(data));
-        }else if(tipoDia === 1){
-            updateFirebase('horario_finsemana',data);
+        } else if (tipoDia === 1) {
+            updateFirebase('horario_finsemana', data);
             dispatch(addFinSemana(data));
-        }else{
-            updateFirebase('horario_festivo',data);
+        } else {
+            updateFirebase('horario_festivo', data);
             dispatch(addFestivo(data));
         }
 
@@ -610,134 +599,97 @@ export default function HorariosView() {
                     </Grid>
                     <Grid item xs={12} >
                         <div className={habilitar1 ? 'disabled-tabla-horarios' : 'habilited-tabla-horarios'}>
-                    
-                                {/* <Table className='home-t'>
-                                    <Thead>
-                                        <Tr>
-                                            <Th className='home-t-th'>Nro</Th>
-                                            <Th className='home-t-th'>Hora de Inicio 24h</Th>
-                                            <Th className='home-t-th'>Modo Operativo</Th>
-                                            <Th className='home-t-th'>Plan No.</Th>
-                                            <Th className='home-t-th'>Desfase</Th>
-                                            <Th className='home-t-th'>Acciones</Th>
-                                        </Tr>
-                                    </Thead>
-                                    <Tbody>
-                                        {horarios.map((dato, index) => (
-                                            <Tr className="tablas-focus" key={index} >
-                                                <Td>
-                                                    {dato.nro}
-                                                </Td>
-                                                <Td >
-                                                    {dato.horas + ':' + dato.minutos}
-                                                </Td>
-                                                <Td >
-                                                    {dato.mod ? modoFormat(dato.mod) : 'No especificado'}
-                                                </Td>
-                                                <Td >
-                                                    {dato.plan}
-                                                </Td>
-                                                <Td >
-                                                    {dato.desfase}
-                                                </Td>
-                                                <Td >
-                                                    <div className="horarios-t-buttons">
-                                                        <Button variant="contained" onClick={() => { editarHorarios(dato) }} color='crema'>Editar</Button>
-                                                        <Button variant="contained" onClick={() => { removeHorario(dato) }}  color='rojo'>QUITAR</Button>
-                                                    </div>
-                                            
-                                                </Td>
-                                            </Tr>
-                                        ))}
-                                    </Tbody>
-                                </Table> */}
-                                    <TableContainer sx={{ maxHeight: 430 }}>
-                                                        <Table stickyHeader aria-label="sticky table">
-                                                            <TableHead>
-                                                                <TableRow>
-                                                                    <TableCell
-                                                                        key={"num"}
-                                                                        align={"left"} 
-                                                                    >
-                                                                        Nro
-                                                                    </TableCell>
-                                                                    <TableCell
-                                                                        key={"fase"}
-                                                                        align={"center"} 
-                                                                    >
-                                                                        Hora De Inicio
-                                                                    </TableCell>
-                                                                    <TableCell
-                                                                        key={"dura"}
-                                                                        align={"center"}
-                                                                    >
-                                                                        Modo Operativo
-                                                                    </TableCell>
+                            <TableContainer sx={{ maxHeight: 430 }}>
+                                <Table stickyHeader aria-label="sticky table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell
+                                                key={"num"}
+                                                align={"left"}
+                                            >
+                                                Nro
+                                            </TableCell>
+                                            <TableCell
+                                                key={"fase"}
+                                                align={"center"}
+                                            >
+                                                Hora De Inicio
+                                            </TableCell>
+                                            <TableCell
+                                                key={"dura"}
+                                                align={"center"}
+                                            >
+                                                Modo Operativo
+                                            </TableCell>
 
-                                                                    <TableCell
-                                                                        key={"plan"}
-                                                                        align={"left"}
-                                                                    >
-                                                                        Plan No.
-                                                                    </TableCell>
-                                                                    <TableCell
-                                                                        key={"desfase"}
-                                                                        align={"left"}
-                                                                    >
-                                                                        Desfase
-                                                                    </TableCell>
-                                                                    <TableCell
-                                                                        key={"acc"}
-                                                                        align={"left"}
-                                                                    >
-                                                                        Acciones
-                                                                    </TableCell>
-                                                                </TableRow>
-                                                            </TableHead>
-                                                            <TableBody>
-                                                                {horarios
-                                                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                                                    .map((dato, index) => {
-                                                                        return (
-                                                                            <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                                                                                <TableCell align={"left"}>
-                                                                                {dato.id}
-                                                                                </TableCell>
-                                                                                <TableCell align={"center"}>
-                                                                                {dato.horas + ':' + dato.minutos}
-                                                                                </TableCell>
-                                                                                <TableCell align={"center"}>
-                                                                                {dato.mod ? modoFormat(dato.mod) : 'No especificado'}
-                                                                                </TableCell>
-                                                                                <TableCell align={"center"}>
-                                                                                {dato.plan}
-                                                                                </TableCell>
-                                                                                <TableCell align={"center"}>
-                                                                                {dato.desfase}
-                                                                                </TableCell>
-                                                                                <TableCell align={"center"}>
-                                                                                <div className="horarios-t-buttons">
-                                                                                    <Button variant="contained" onClick={() => { editarHorarios(dato) }} color='crema'>Editar</Button>
-                                                                                    <Button variant="contained" onClick={() => { removeHorario(dato) }}  color='rojo'>QUITAR</Button>
-                                                                                </div>
-                                                                                </TableCell>
-                                                                            </TableRow>
-                                                                        );
-                                                                    })}
-                                                            </TableBody>
-                                                        </Table>
-                                                    </TableContainer>
-                                                    <TablePagination
-                                                        rowsPerPageOptions={[10, 25, 100]}
-                                                        component="div"
-                                                        count={horarios.length}
-                                                        rowsPerPage={rowsPerPage}
-                                                        page={page}
-                                                        onPageChange={handleChangePage}
-                                                        onRowsPerPageChange={handleChangeRowsPerPage}
-                                                    />
+                                            <TableCell
+                                                key={"plan"}
+                                                align={"left"}
+                                            >
+                                                Plan No.
+                                            </TableCell>
+                                            <TableCell
+                                                key={"desfase"}
+                                                align={"left"}
+                                            >
+                                                Desfase
+                                            </TableCell>
+                                            <TableCell
+                                                key={"acc"}
+                                                align={"left"}
+                                            >
+                                                Acciones
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {horarios
+                                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                            .map((dato, index) => {
+                                                return (
+                                                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                                        <TableCell align={"left"}>
+                                                            {dato.id}
+                                                        </TableCell>
+                                                        <TableCell align={"center"}>
+                                                            {dato.horas + ':' + dato.minutos}
+                                                        </TableCell>
+                                                        <TableCell align={"center"}>
+                                                            {dato.mod ? modoFormat(dato.mod) : 'No especificado'}
+                                                        </TableCell>
+                                                        <TableCell align={"center"}>
+                                                            {dato.plan}
+                                                        </TableCell>
+                                                        <TableCell align={"center"}>
+                                                            {dato.desfase}
+                                                        </TableCell>
+                                                        <TableCell align={"center"}>
+                                                            <div className="horarios-t-buttons">
+                                                                <IconButton aria-label="delete" disabled color="primary" onClick={() => { removeHorario(dato) }}>
+                                                                    <DeleteIcon  />
+                                                                </IconButton>
+                                                                <IconButton aria-label="delete" disabled color="primary" onClick={() => { editarHorarios(dato) }}>
+                                                                    <EditIcon />
+                                                                </IconButton>
+                                                            </div>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                );
+                                            })}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                            <TablePagination
+                                rowsPerPageOptions={[10, 25, 100]}
+                                component="div"
+                                count={horarios.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                            />
 
-                            </div>
+                        </div>
                     </Grid>
                     <Grid item xs={12}>
                         <Collapse in={cambiosHorarios}>
@@ -774,11 +726,11 @@ export default function HorariosView() {
                             <DatePicker
                                 label="Escoga Fecha"
                                 value={value}
-                               
+
                                 onChange={(newValue) => {
                                     setValue(newValue);
                                 }}
-                                renderInput={(params) => <TextField  fullWidth {...params} />}
+                                renderInput={(params) => <TextField fullWidth {...params} />}
                             />
                         </LocalizationProvider>
                     </Grid>
@@ -796,7 +748,7 @@ export default function HorariosView() {
                                 <MenuItem value={1}>Día Ordinario</MenuItem>
                                 <MenuItem value={2}>Fin de Semana</MenuItem>
                                 <MenuItem value={3}>Día Festivo</MenuItem>
-                            
+
                             </Select>
                         </FormControl>
                     </Grid>
@@ -805,49 +757,25 @@ export default function HorariosView() {
                     </Grid>
 
                     <Grid item xs={12} >
-                        {/* <Table className='home-t'>
-                            <Thead>
-                                <Tr>
-                                    <Th className='home-t-th'>Fecha</Th>
-                                    <Th className='home-t-th'>Modo</Th>
-                                    <></>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {tablaDias.map((dato, index) => (
-                                    <Tr key={index} >
-                                        <Td >
-                                            {dato.mes}-{dato.dia}-{2023}
-                                        </Td>
-                                        <Td >
-                                            {dato.descriptor_modo}
-                                        </Td>
-                                        <Td>
-                                            <Button variant="contained" sx={{ height: '100%' }} disabled={deshabilitar3} onClick={() => { borrarDiaFestivo(dato) }} color='rojo'>Borrar</Button>
-                                        </Td>
-                                    </Tr>
-                                ))}
-                            </Tbody>
-                        </Table> */}
                         <TableContainer component={Paper}>
                             <Table sx={{ minWidth: 700 }} aria-label="customized table">
                                 <TableHead>
-                                <TableRow>
-                                    <StyledTableCell align="center">Fecha</StyledTableCell>
-                                    <StyledTableCell align="left">Modo</StyledTableCell>
-                                    <StyledTableCell align="left">Acciones</StyledTableCell>
-                                </TableRow>
+                                    <TableRow>
+                                        <StyledTableCell align="center">Fecha</StyledTableCell>
+                                        <StyledTableCell align="left">Modo</StyledTableCell>
+                                        <StyledTableCell align="left">Acciones</StyledTableCell>
+                                    </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                {tablaDias.map((dato,index) => (
-                                    <StyledTableRow key={index}>
-                                    <StyledTableCell align="center"> {dato.mes}-{dato.dia}-{2023}</StyledTableCell>
-                                    <StyledTableCell align="left"> {dato.descriptor_modo}</StyledTableCell>
-                                    <StyledTableCell align="left"> 
-                                    <Button variant="contained" sx={{ height: '100%' }} disabled={deshabilitar3} onClick={() => { borrarDiaFestivo(dato) }} color='rojo'>Borrar</Button>
-                                    </StyledTableCell>
-                                    </StyledTableRow>
-                                ))}
+                                    {tablaDias.map((dato, index) => (
+                                        <StyledTableRow key={index}>
+                                            <StyledTableCell align="center"> {dato.mes}-{dato.dia}-{2023}</StyledTableCell>
+                                            <StyledTableCell align="left"> {dato.descriptor_modo}</StyledTableCell>
+                                            <StyledTableCell align="left">
+                                                <Button variant="contained" sx={{ height: '100%' }} disabled={deshabilitar3} onClick={() => { borrarDiaFestivo(dato) }} color='rojo'>Borrar</Button>
+                                            </StyledTableCell>
+                                        </StyledTableRow>
+                                    ))}
                                 </TableBody>
                             </Table>
                         </TableContainer>
@@ -869,16 +797,13 @@ export default function HorariosView() {
                         <Button variant="contained" fullWidth sx={{ height: '100%' }} onClick={cargarDiaFestivo} disabled={deshabilitar3} >CARGAR DATOS</Button>
                     </Grid>
                     <Grid item xs={12} >
-                        <div style={{height:8}}>
+                        <div style={{ height: 8 }}>
 
                         </div>
                     </Grid>
 
                 </Grid>
             </Container>
-
-
-            {/* se crea el modal */}
             <Modal isOpen={modalHorarios} >
                 <ModalHeader>
                     <div>
@@ -912,7 +837,6 @@ export default function HorariosView() {
                                 >
                                     <MenuItem value={0}>Ninguno</MenuItem>
                                     <MenuItem value={1}>Tiempo Fijo</MenuItem>
-                                    <MenuItem value={2}>Pulsante</MenuItem>
                                     <MenuItem value={3}>Destello</MenuItem>
                                     <MenuItem value={4}>Todo en Rojo</MenuItem>
                                     <MenuItem value={5}>Apagado</MenuItem>
@@ -920,7 +844,7 @@ export default function HorariosView() {
                             </FormControl>
                         </Grid>
                         <Grid item xs={12}>
-                        <FormControl fullWidth>
+                            <FormControl fullWidth>
                                 <InputLabel id="demo-simple-select-label">Plan</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -939,24 +863,15 @@ export default function HorariosView() {
                                     <MenuItem value={6}>Plan 6</MenuItem>
                                     <MenuItem value={7}>Plan 7</MenuItem>
                                     <MenuItem value={8}>Plan 8</MenuItem>
-                                    
-                                    
                                 </Select>
                             </FormControl>
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField
-                                id="outlined-number"
-                                label="Desfase"
-                                name='desfase'
-                                onChange={handleHorario}
-                                fullWidth
-                                value={currentHorario.desfase}
+                            <TextField id="outlined-number" label="Desfase" name='desfase' onChange={handleHorario} fullWidth value={currentHorario.desfase}
                                 type="number"
                                 InputLabelProps={{
                                     shrink: true,
-                                }}
-                            />
+                                }} />
                         </Grid>
                     </Grid>
                 </ModalBody>
@@ -977,8 +892,8 @@ export default function HorariosView() {
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={habilitar2}>
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <CardController/>
-     
+            <CardController />
+
         </>
     );
 
@@ -1002,12 +917,12 @@ const horariosPorDefecto = [
     { horas: '00', minutos: '00', mod: 0, plan: 0, desfase: '0' },
 ]
 
-let horario_cero = { 
+let horario_cero = {
     desfase: 0,
-    horas: '00', 
-    id:'horario-0',
-    minutos: '00', 
+    horas: '00',
+    id: 'horario-0',
+    minutos: '00',
     mod: 0,
-    mod_descriptor:"",
+    mod_descriptor: "",
     plan: 0,
 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-const BASE_HT200 = 'http://192.168.1.175:8000';
+const BASE_HT200 = 'https://www.hitraffic-group.com';
 
 
 async function getUnitHT200(mac,ip) {
