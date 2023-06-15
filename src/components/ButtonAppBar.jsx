@@ -36,6 +36,11 @@ export default function ButtonAppBar(props) {
   const userState = useSelector(state => state.auth);
 
   const menuData = [
+    {
+      child: <SalirMenu />,
+      visibility: true,
+      key: 110
+    },
 
     {
       child: <HomeMenu />,
@@ -88,11 +93,7 @@ export default function ButtonAppBar(props) {
       visibility: false,
       key: 100
     },
-    {
-      child: <SalirMenu />,
-      visibility: true,
-      key: 110
-    },
+
   ]
 
   // funcion para hacer funcionar el drawer

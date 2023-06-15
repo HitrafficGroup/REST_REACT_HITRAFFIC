@@ -29,10 +29,15 @@ import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
 import BallotIcon from '@mui/icons-material/Ballot';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import WifiChannelIcon from '@mui/icons-material/WifiChannel';
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 export default  function HT200AppBar(){
     const [state, setState] =  useState({left: false,});
     const [drawerHT,setDrawerHT] = useState({left:false});
     const navigate = useNavigate(); // hook para navegar entre urls o vistas
+
+    const menuState = useSelector(state => state.menu);
+    const userState = useSelector(state => state.auth);
+
       // funcion para hacer funcionar el drawer
       const toggleDrawer = (anchor, open) => (event) => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -69,11 +74,13 @@ export default  function HT200AppBar(){
             >
                 <MenuIcon />
             </IconButton>
-            <Typography sx={{ display: { xs: 'none', md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
-           
-            </Typography>
-
-            <Button variant="text" sx={{color:"white"}} onClick={cerrarSesion} endIcon={<LogoutIcon />} >Cerrar Sesion</Button>
+            <Typography sx={{ display: { md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
+            {menuState.menu}
+          </Typography>
+            <Typography  sx={{ display: { xs: 'none', md: 'flex' } }}variant="h6" component="div">
+                   Bienvenido {userState.name} {userState.lastname} !
+                </Typography>
+          <Button sx={{marginLeft:2}} variant="contained" color='error' onClick={cerrarSesion} endIcon={<LogoutIcon />} >SALIR</Button>
             </Toolbar>
         </AppBar>
         <Drawer
@@ -91,6 +98,12 @@ export default  function HT200AppBar(){
               <h3>Menu</h3>
             </ListSubheader> }
         >
+             <ListItemButton onClick={()=>{navigate('/equipos')}} >
+                        <ListItemIcon>
+                            <MenuOpenIcon fontSize='large' />
+                        </ListItemIcon>
+                        <ListItemText primary="Menu Principal"/>
+            </ListItemButton>
             <ListItemButton onClick={()=>{navigate('unit')}} >
                         <ListItemIcon>
                             <FlagIcon fontSize='large' />
@@ -146,6 +159,7 @@ export default  function HT200AppBar(){
                         </ListItemIcon>
                         <ListItemText primary="channel"/>
             </ListItemButton>
+         
         </List>
       </Drawer>
     </>

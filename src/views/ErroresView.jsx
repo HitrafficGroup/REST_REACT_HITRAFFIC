@@ -98,7 +98,9 @@ export default function ErroresView() {
                 <Grid item md={4} xs={12}>
                     <Button color="verde2" sx={{height:'100%'}} fullWidth variant="contained" onClick={getDatosFromRestApi}>Leer Datos</Button>
                 </Grid>
-             
+                <Grid item md={3} xs={12}>
+                    <Button variant="contained"   sx={{height:'100%',bgcolor:'#CB4335'}} disabled={deshabilitar} fullWidth onClick={getDatosFromRestApi}  endIcon={<PictureAsPdfIcon />}>Generar PDF</Button>
+                </Grid>
                 <Grid item xs={12}>
                 <TableContainer sx={{ maxHeight: 440 }}>
                             <Table stickyHeader aria-label="sticky table">
@@ -158,12 +160,7 @@ export default function ErroresView() {
                             onRowsPerPageChange={handleChangeRowsPerPage}
                         />
                 </Grid>
-                <Grid item md={3} xs={12}>
-                    <Button variant="contained"   sx={{height:'100%',bgcolor:'#CB4335'}} disabled={deshabilitar} fullWidth onClick={getDatosFromRestApi}  endIcon={<PictureAsPdfIcon />}>Generar PDF</Button>
-                </Grid>
-                <Grid item md={3} xs={12}>
-                    <Button variant="contained"  sx={{height:'100%',bgcolor:'#117A65'}} disabled={deshabilitar} fullWidth onClick={getDatosFromRestApi}  endIcon={<GridOnIcon />} >Generar Excel</Button>
-                </Grid>
+             
 
                 </Grid>
                 <div style={{height:15}}>

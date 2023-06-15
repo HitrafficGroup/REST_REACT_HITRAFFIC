@@ -2,9 +2,9 @@ import React  from 'react';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import { useNavigate } from 'react-router-dom';
 
+import { useNavigate } from 'react-router-dom';
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 
 
 export default function SalirMenu(){
@@ -16,9 +16,9 @@ export default function SalirMenu(){
         <>
             <ListItemButton onClick={() =>Changeview('/equipos')}>
                         <ListItemIcon>
-                            <ExitToAppIcon fontSize='large' />
+                            <MenuOpenIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Salir" />
+                        <ListItemText primary="Menu Principal" />
             </ListItemButton>
         </>
     )
