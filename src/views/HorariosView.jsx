@@ -178,11 +178,11 @@ export default function HorariosView() {
             b = b_aux * 100 + b_aux2
             return a - b
         })
-        console.log(data_aux)
+        let aux_order = JSON.parse(JSON.stringify(data_aux));
         let temp_order = []
         for (let i = 0; i < 16; i++) {
-            if (i < data_aux.length) {
-                temp_order.push(data_aux[i])
+            if (i < aux_order.length) {
+                temp_order.push(aux_order[i])
             } else {
                 temp_order.push(horario_cero)
             }
@@ -192,7 +192,7 @@ export default function HorariosView() {
         for (let i = 0; i < 12; i++) {
             final_data[i].id = `horario-${i}`
         }
-        setHorarios(horarios_modify)
+        setHorarios(final_data)
         setModalHorarios(false)
     }
 
@@ -665,10 +665,10 @@ export default function HorariosView() {
                                                         </TableCell>
                                                         <TableCell align={"center"}>
                                                             <div className="horarios-t-buttons">
-                                                                <IconButton aria-label="delete" disabled color="primary" onClick={() => { removeHorario(dato) }}>
+                                                                <IconButton aria-label="delete"  color="rojo" onClick={() => { removeHorario(dato) }}>
                                                                     <DeleteIcon  />
                                                                 </IconButton>
-                                                                <IconButton aria-label="delete" disabled color="primary" onClick={() => { editarHorarios(dato) }}>
+                                                                <IconButton aria-label="delete"  color="amarillo" onClick={() => { editarHorarios(dato) }}>
                                                                     <EditIcon />
                                                                 </IconButton>
                                                             </div>
