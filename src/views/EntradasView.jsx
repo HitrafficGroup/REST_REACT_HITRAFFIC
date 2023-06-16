@@ -35,7 +35,7 @@ export default function EntradasView() {
     const traerEntradasFromRestApi = async() =>{
         try {
             setDeshabilitar2(true);
-            let data = await getEntradasSW12();
+            let data = await getEntradasSW12(controlerState.ip);
             updateFirebase('entradas',data)
             console.log(data)
             setEnt1(data[0].check);
@@ -115,7 +115,7 @@ export default function EntradasView() {
                 data_entradas.push(binary4)
                 data_entradas.push(t4)
                 console.log(data_entradas)
-                await postEntradasSW12({'trama':data_entradas});
+                await postEntradasSW12({trama:data_entradas,ip:controlerState.ip});
                 setDeshabilitar(false);
                 setDeshabilitar2(false);
                

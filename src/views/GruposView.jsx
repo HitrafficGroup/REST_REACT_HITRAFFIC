@@ -1,4 +1,3 @@
-
 import CardController from "../components/CardController";
 import React, { useState } from 'react';
 import { db } from "../firebase/firebase-config";
@@ -136,7 +135,7 @@ export default function GruposView() {
         try {
             setDeshabilitar2(true);
             setCambioGrupos(false);
-            const response = await getGruposSW12("192.168.1.2")
+            const response = await getGruposSW12(controlerState.ip)
             const responseFormat = []
             for (let i = 1; i < 5; i++) {
                 let temp = response['grupo' + i]
@@ -231,7 +230,7 @@ export default function GruposView() {
         try {
             setDeshabilitar4(true);
             setCambioConflictos(false);
-            let response = await getGreenConflictSW12("192.168.2.97");
+            let response = await getGreenConflictSW12(controlerState.ip);
             updateFirebase('conflictos_verdes',response);
             mapConflicts(response);
             setDeshabilitar3(false);
@@ -324,7 +323,7 @@ export default function GruposView() {
                     const newGruposconf = convertirDatos(grupos)
                     console.log(newGruposconf)
 
-                    await postGruposSW12({'trama':newGruposconf});
+                    await postGruposSW12({trama:newGruposconf,ip:controlerState.ip});
                     //cargarGruposFirebase(grupos);
                     setCambioGrupos(false)
                     setDeshabilitar2(false);
@@ -405,7 +404,7 @@ export default function GruposView() {
                     let chec = parseInt(data_X, 2)
                     let data_formated = [newConflicto[0],newConflicto[1],newConflicto[2],chec]
                     //console.log(data_formated)
-                    await postGreenConflictSW12({'trama':data_formated});
+                    await postGreenConflictSW12({trama:data_formated,ip:controlerState.ip});
                     //cargarConflictosFirebase(conflictoFirebase);
                     //setCambioConflictos(false)
                     setDeshabilitar4(false);

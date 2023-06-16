@@ -10,8 +10,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import "../css/ErroresView.css";
-
-
+import { useSelector} from 'react-redux';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -23,6 +22,7 @@ import TableRow from '@mui/material/TableRow';
 
 
 export default function ErroresView() {
+    const controlerState = useSelector(state => state.controlers);
     const [errores,setErrores] = useState([{}])
     const [deshabilitar,setDeshabilitar] = useState(true);
     const [deshabilitar2,setDeshabilitar2] = useState(false);
@@ -32,8 +32,7 @@ export default function ErroresView() {
     const getDatosFromRestApi = async () =>{
         try {
             setDeshabilitar2(true);
-            let data = await getErroresSW12()
-            console.log(data)
+            let data = await getErroresSW12(controlerState.ip)
             let data_modify = data.map(item=>{
                 item.minute = formatData(item.minute)
                 item.hour =formatData(item.hour)

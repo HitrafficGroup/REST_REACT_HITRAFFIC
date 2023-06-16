@@ -24,7 +24,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addPlan1, addPlan2, addPlan3, addPlan4, addPlan5, addPlan6, addPlan7, addPlan8, addParametros } from "../features/controlers/controlerSlice";
 import IconButton from '@mui/material/IconButton';
 //mitze rodriguez
-import { updatePlanesSamplingTime, getCheckDataPlanes } from '../js/gestionSolicitudes';
+// import { updatePlanesSamplingTime, getCheckDataPlanes } from '../js/gestionSolicitudes';
 import Swal from 'sweetalert2';
 import Chip from '@mui/material/Chip';
 import Alert from '@mui/material/Alert';
@@ -43,15 +43,10 @@ export default function PlanesView() {
     const dispatch = useDispatch();
     const controlerState = useSelector(state => state.controlers)
     const [currentPlan, setCurrentPlan] = useState(planInicial)
-    const [selectPlan, setSelectPlan] = useState("plan1");
-    const [planes, setPlanes] = useState([])
     const [numPlan, setNumPlan] = useState(1)
     const [modalEditar, setModalEditar] = useState(false);
-    const [faseSemaforo, setFaseSemaforo] = useState('1');
-    const [tiempoSemaforo, setTiempoSemaforo] = useState(0);
     const [currentPaso, setCurrentPaso] = useState({ duracion: 0, fase: 0, id: '' });
     //Variables de parametros Operativos del controlador
-    const [otrosParam, setOtrosParam] = useState(otrosParametros)
     const [destellarVerdePeatonal, setDestellarVerdePeatonal] = useState(0);
     const [destellarVerdeVehicular, setDestellarVerdeVehicular] = useState(0);
     const [tiempoAmarilloVehicular, setTiempoAmarilloVehicular] = useState(0);
@@ -66,8 +61,8 @@ export default function PlanesView() {
     const [deshabilitar2, setDeshabilitar2] = useState(false);
     const [deshabilitar3, setDeshabilitar3] = useState(true);
     const [deshabilitar4, setDeshabilitar4] = useState(false);
-    const [cambio, setCambio] = useState(false)
-    const [dis, setDis] = useState('disabled')
+    const [cambio, setCambio] = useState(false);
+    const [dis, setDis] = useState('disabled');
     //esta variable de planes2 debe actualizarse con este formato que es mas adecuado
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
@@ -78,36 +73,36 @@ export default function PlanesView() {
             setDeshabilitar2(true)
             setDis('disabled')
             if (numPlan === 1) {
-                result = await getPlan1SW12()
-                updateFirebase(result, 'plan_1')
+                result = await getPlan1SW12(controlerState.ip)
+                updateFirebase('plan_1',result)
                 dispatch(addPlan1(result))
             } else if (numPlan === 2) {
-                result = await getPlan2SW12()
-                updateFirebase(result, 'plan_2')
+                result = await getPlan2SW12(controlerState.ip)
+                updateFirebase('plan_2',result)
                 dispatch(addPlan2(result))
             } else if (numPlan === 3) {
-                result = await getPlan3SW12()
-                updateFirebase(result, 'plan_3')
+                result = await getPlan3SW12(controlerState.ip)
+                updateFirebase('plan_3',result)
                 dispatch(addPlan3(result))
             } else if (numPlan === 4) {
-                result = await getPlan4SW12()
-                updateFirebase(result, 'plan_4')
+                result = await getPlan4SW12(controlerState.ip)
+                updateFirebase('plan_4',result)
                 dispatch(addPlan4(result))
             } else if (numPlan === 5) {
-                result = await getPlan5SW12()
-                updateFirebase(result, 'plan_5')
+                result = await getPlan5SW12(controlerState.ip)
+                updateFirebase('plan_5',result)
                 dispatch(addPlan5(result))
             } else if (numPlan === 6) {
-                result = await getPlan6SW12()
-                updateFirebase(result, 'plan_6')
+                result = await getPlan6SW12(controlerState.ip)
+                updateFirebase('plan_6',result)
                 dispatch(addPlan6(result))
             } else if (numPlan === 7) {
-                result = await getPlan7SW12()
-                updateFirebase(result, 'plan_7')
+                result = await getPlan7SW12(controlerState.ip)
+                updateFirebase('plan_7',result)
                 dispatch(addPlan7(result))
             } else if (numPlan === 8) {
-                result = await getPlan8SW12()
-                updateFirebase(result, 'plan_8')
+                result = await getPlan8SW12(controlerState.ip)
+                updateFirebase('plan_8',result)
                 dispatch(addPlan8(result))
             }
 
@@ -130,9 +125,6 @@ export default function PlanesView() {
     };
 
     const abrirModalEditar = (data) => {
-
-        setFaseSemaforo(data.fase.toString());
-        setTiempoSemaforo(data.duracion);
         setCurrentPaso(data);
         setModalEditar(true);
     }
@@ -140,15 +132,15 @@ export default function PlanesView() {
     const updateFirebase = async (param, __data) => {
         const ref = doc(db, "controladores", `${controlerState.id}`);
         let aux_data = {}
-        aux_data[`${__data}`] = param;
+        aux_data[`${param}`] = __data;
         await updateDoc(ref, aux_data);
     }
 
     const leerOtrosParametrosApi = async () => {
         try {
             setDeshabilitar4(true)
-            let datosObtenidos = await getOperativeParamsSW12();
-            updateFirebase(datosObtenidos, "otros_parametros");
+            let datosObtenidos = await getOperativeParamsSW12(controlerState.ip);
+            updateFirebase("otros_parametros",datosObtenidos);
             dispatch(addParametros(datosObtenidos));
             setTiempoDestelloPrender(parseInt(datosObtenidos.destello_al_encender));
             setDestellarVerdePeatonal(parseInt(datosObtenidos.destello_verde_peatonal));
@@ -169,8 +161,6 @@ export default function PlanesView() {
         let newParams = {
             destellar_verde_peatonal: destellarVerdePeatonal.toString(),
             destellar_verde_vehicular: destellarVerdeVehicular.toString(),
-            ip: controlerState.ip,
-            mac: controlerState.mac,
             tiempo_amarillo_vehicular: tiempoAmarilloVehicular.toString(),
             tiempo_destello_prender: tiempoDestelloPrender.toString(),
             tiempo_rojo_prender: tiempoRojoPrender.toString(),
@@ -203,12 +193,11 @@ export default function PlanesView() {
             denyButtonText: 'Cancelar',
         }).then(async (result) => {
             if (result.isConfirmed) {
-                setDeshabilitar4(true)
+                setDeshabilitar4(true);
                 setCambio(false);
-                console.log(params_data)
-                await postOtrosParametrosSW12({ 'trama': params_data });
-                setDeshabilitar4(false)
-
+                updateFirebase("otros_parametros",newParams);
+                await postOtrosParametrosSW12({trama:params_data,ip:controlerState.ip});
+                setDeshabilitar4(false);
             }
         })
 
@@ -308,22 +297,14 @@ export default function PlanesView() {
                 if (result.isConfirmed) {
                     setDeshabilitar2(true)
                     let data_plan = [numPlan - 1]
-                    var newData = {}
-                    var j = 0
+                   
                     for (let i = 0; i < 12; i++) {
                         data_plan.push(parseInt(currentPlan[i].fase))
                         data_plan.push(parseInt(currentPlan[i].duracion))
-                        newData['data' + j] = currentPlan[i].fase.toString()
-                        newData['data' + (1 + j)] = currentPlan[i].duracion.toString()
-                        j += 2;
+           
                     }
-                    newData['ip'] = controlerState.ip
-                    newData['mac'] = controlerState.mac
-                    newData['num_plan'] = returnNumPlan(selectPlan)
                     setCambio(false);
-                    console.log(data_plan)
-                    await postPlanesSW12({ 'trama': data_plan });
-                    //cargarPlanesFirebase(planes);
+                    await postPlanesSW12({ trama:data_plan,ip:controlerState.ip });
                     setDeshabilitar2(false)
                 }
             })
@@ -331,15 +312,7 @@ export default function PlanesView() {
             console.log(e)
         }
     }
-    const returnNumPlan = (data) => {
-        console.log('nose que hace esta funcion:', data)
-        for (let i = 1; i < 16; i++) {
-            var condition = 'plan' + i
-            if (data === condition) {
-                return i
-            }
-        }
-    }
+
 
 
     return (
@@ -383,7 +356,7 @@ export default function PlanesView() {
                     </Grid>
                     <Grid item xs={12}>
 
-
+                    <div className={`${dis}-table-p`}>
                         <TableContainer sx={{ maxHeight: 430 }}>
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
@@ -458,6 +431,7 @@ export default function PlanesView() {
                             onPageChange={handleChangePage}
                             onRowsPerPageChange={handleChangeRowsPerPage}
                         />
+                    </div>
 
                     </Grid>
                     <Grid item xs={12}>
@@ -703,21 +677,7 @@ const planInicial = [
     { name: 'Paso 12', fase: 0, duracion: 0 },
 ]
 
-const planes2 = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']
 
-const planes4 = ["plan1", "plan2", "plan3", "plan4", "plan5", "plan6", "plan7", "plan8", "plan9", "plan10", "plan11", "plan12"]
-
-const otrosParametros = {
-    destellar_verde_peatonal: "0",
-    destellar_verde_vehicular: "0",
-    tiempo_amarillo_vehicular: "0",
-    tiempo_destello_prender: "0",
-    tiempo_minimo_verde_1: "0",
-    tiempo_minimo_verde_2: "0",
-    tiempo_rojo_prender: "0",
-    tiempo_todo_rojo: "0",
-    valor_sincronizacion: "0"
-}
 
 
 let paso_aux = { id: 'paso-4', fase: 0, duracion: 0 }

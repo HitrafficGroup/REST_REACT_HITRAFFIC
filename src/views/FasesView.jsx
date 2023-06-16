@@ -121,7 +121,7 @@ export default function FasesView() {
                             datos_fases["fase" + (index_f + 1).toString()] = parseInt(fase, 2)
                             lista_datos.push(parseInt(fase, 2))
                         }
-                        await postFasesSW12({'trama':lista_datos})
+                        await postFasesSW12({trama:lista_datos,ip:controlerState.ip})
                         dispatch(addFases(fases));
                         enviarFasesFirebase(fases);
                        
@@ -229,7 +229,7 @@ export default function FasesView() {
     const readData = async () => {
         try{
             setDeshabilitar2(true);
-            let result = await getFasesSW12("192.168.1.97");
+            let result = await getFasesSW12(controlerState.ip);
             var arregloFases = []
                     for (let index_plan = 1; index_plan < 17; index_plan++) {
                         var faseT = result["fase" + index_plan]

@@ -1,8 +1,8 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { convertToFases,convertToGrupos } from './manageData'
-const BASE_HT200 = 'https://www.hitraffic-group.com';
-
+// const BASE_HT200 = 'https://www.hitraffic-group.com';
+const BASE_HT200 = 'http://127.0.0.1:8000';
 
 async function getFasesSW12(ip) {
 	var res;
@@ -89,9 +89,9 @@ async function getFestivalScheduleSW12(ip) {
 	})
 	return res
 }
-async function getPlan1SW12() {
+async function getPlan1SW12(ip) {
 	var res;
-	await axios.get(`${BASE_HT200}/rest/getPlan1SW12`).then(response => {
+	await axios.get(`${BASE_HT200}/rest/getPlan1SW12?ip=${ip}`).then(response => {
 		res = response.data;
 		Swal.fire({
 			title: "Completado!",
@@ -111,9 +111,9 @@ async function getPlan1SW12() {
 	})
 	return res
 }
-async function getPlan2SW12() {
+async function getPlan2SW12(ip) {
 	var res;
-	await axios.get(`${BASE_HT200}/rest/getPlan2SW12`).then(response => {
+	await axios.get(`${BASE_HT200}/rest/getPlan2SW12?ip=${ip}`).then(response => {
 		res = response.data;
 		Swal.fire({
 			title: "Completado!",
@@ -135,9 +135,9 @@ async function getPlan2SW12() {
 }
 
 
-async function getPlan3SW12() {
+async function getPlan3SW12(ip) {
 	var res;
-	await axios.get(`${BASE_HT200}/rest/getPlan3SW12`).then(response => {
+	await axios.get(`${BASE_HT200}/rest/getPlan3SW12?ip=${ip}`).then(response => {
 		res = response.data;
 		Swal.fire({
 			title: "Completado!",
@@ -159,9 +159,9 @@ async function getPlan3SW12() {
 }
 
 
-async function getPlan4SW12() {
+async function getPlan4SW12(ip) {
 	var res;
-	await axios.get(`${BASE_HT200}/rest/getPlan4SW12`).then(response => {
+	await axios.get(`${BASE_HT200}/rest/getPlan4SW12?ip=${ip}`).then(response => {
 		res = response.data;
 		Swal.fire({
 			title: "Completado!",
@@ -182,9 +182,9 @@ async function getPlan4SW12() {
 	return res
 }
 
-async function getPlan5SW12() {
+async function getPlan5SW12(ip) {
 	var res;
-	await axios.get(`${BASE_HT200}/rest/getPlan5SW12`).then(response => {
+	await axios.get(`${BASE_HT200}/rest/getPlan5SW12?ip=${ip}`).then(response => {
 		res = response.data;
 		Swal.fire({
 			title: "Completado!",
@@ -206,9 +206,9 @@ async function getPlan5SW12() {
 }
 
 
-async function getPlan6SW12() {
+async function getPlan6SW12(ip) {
 	var res;
-	await axios.get(`${BASE_HT200}/rest/getPlan6SW12`).then(response => {
+	await axios.get(`${BASE_HT200}/rest/getPlan6SW12?ip=${ip}`).then(response => {
 		res = response.data;
 		Swal.fire({
 			title: "Completado!",
@@ -230,9 +230,9 @@ async function getPlan6SW12() {
 }
 
 
-async function getPlan7SW12() {
+async function getPlan7SW12(ip) {
 	var res;
-	await axios.get(`${BASE_HT200}/rest/getPlan7SW12`).then(response => {
+	await axios.get(`${BASE_HT200}/rest/getPlan7SW12?ip=${ip}`).then(response => {
 		res = response.data;
 		Swal.fire({
 			title: "Completado!",
@@ -254,9 +254,9 @@ async function getPlan7SW12() {
 }
 
 
-async function getPlan8SW12() {
+async function getPlan8SW12(ip) {
 	var res;
-	await axios.get(`${BASE_HT200}/rest/getPlan8SW12`).then(response => {
+	await axios.get(`${BASE_HT200}/rest/getPlan8SW12?ip=${ip}`).then(response => {
 		res = response.data;
 		Swal.fire({
 			title: "Completado!",
@@ -277,9 +277,9 @@ async function getPlan8SW12() {
 	return res
 }
 
-async function getOperativeParamsSW12() {
+async function getOperativeParamsSW12(ip) {
 	var res;
-	await axios.get(`${BASE_HT200}/rest/getOperativeParamsSW12`).then(response => {
+	await axios.get(`${BASE_HT200}/rest/getOperativeParamsSW12?ip=${ip}`).then(response => {
 		res = response.data;
 		Swal.fire({
 			title: "Completado!",
@@ -431,7 +431,7 @@ async function getErroresSW12(ip) {
 }
 
 async function postFasesSW12(jsonData) {
-	await axios.post(`${BASE_HT200}/rest/postFasesSW12?mac=${jsonData['mac']}`,jsonData)
+	await axios.post(`${BASE_HT200}/rest/postFasesSW12?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
 			Swal.fire({
@@ -451,7 +451,7 @@ async function postFasesSW12(jsonData) {
 }
 
 async function postGruposSW12(jsonData) {
-	await axios.post(`${BASE_HT200}/rest/postGruposSW12?mac=${jsonData['mac']}`,jsonData)
+	await axios.post(`${BASE_HT200}/rest/postGruposSW12?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
 			Swal.fire({
@@ -471,7 +471,7 @@ async function postGruposSW12(jsonData) {
 }
 
 async function postGreenConflictSW12(jsonData) {
-	await axios.post(`${BASE_HT200}/rest/postGreenConflictSW12?mac=${jsonData['mac']}`,jsonData)
+	await axios.post(`${BASE_HT200}/rest/postGreenConflictSW12?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
 			Swal.fire({
@@ -491,7 +491,7 @@ async function postGreenConflictSW12(jsonData) {
 }
 
 async function postPlanesSW12(jsonData) {
-	await axios.post(`${BASE_HT200}/rest/postPlanesSW12?mac=${jsonData['mac']}`,jsonData)
+	await axios.post(`${BASE_HT200}/rest/postPlanesSW12?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
 			Swal.fire({
@@ -511,7 +511,7 @@ async function postPlanesSW12(jsonData) {
 }
 
 async function postOtrosParametrosSW12(jsonData) {
-	await axios.post(`${BASE_HT200}/rest/postOtrosParametrosSW12?mac=${jsonData['mac']}`,jsonData)
+	await axios.post(`${BASE_HT200}/rest/postOtrosParametrosSW12?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
 			Swal.fire({
@@ -531,7 +531,7 @@ async function postOtrosParametrosSW12(jsonData) {
 }
 
 async function postHorariosSW12(jsonData) {
-	await axios.post(`${BASE_HT200}/rest/postHorariosSW12?mac=${jsonData['mac']}`,jsonData)
+	await axios.post(`${BASE_HT200}/rest/postHorariosSW12?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
 			Swal.fire({
@@ -550,7 +550,7 @@ async function postHorariosSW12(jsonData) {
 		});
 }
 async function postDiasEspecialesSW12(jsonData) {
-	await axios.post(`${BASE_HT200}/rest/postDiasEspecialesSW12?mac=${jsonData['mac']}`,jsonData)
+	await axios.post(`${BASE_HT200}/rest/postDiasEspecialesSW12?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
 			Swal.fire({
@@ -570,7 +570,7 @@ async function postDiasEspecialesSW12(jsonData) {
 }
 
 async function postEntradasSW12(jsonData) {
-	await axios.post(`${BASE_HT200}/rest/postEntradasSW12?mac=${jsonData['mac']}`,jsonData)
+	await axios.post(`${BASE_HT200}/rest/postEntradasSW12?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
 			Swal.fire({
@@ -590,7 +590,7 @@ async function postEntradasSW12(jsonData) {
 }
 
 async function postTimeSW12(jsonData) {
-	await axios.post(`${BASE_HT200}/rest/postTimeSW12?mac=${jsonData['mac']}`,jsonData)
+	await axios.post(`${BASE_HT200}/rest/postTimeSW12?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
 			Swal.fire({

@@ -733,7 +733,7 @@ export default function HomeView() {
     const obtenerTiempoFromRestApi = async () => {
         try {
             setDeshabilitar(true);
-            const response = await getTimeControllerSW12()
+            const response = await getTimeControllerSW12(controlerState.ip)
 
             response['seconds'] = formatData(response['seconds'])
             response['minutes'] = formatData(response['minutes'])

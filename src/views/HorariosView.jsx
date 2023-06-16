@@ -242,7 +242,7 @@ export default function HorariosView() {
         setHabilitar2(true);
         try {
             if (tipoDia === 0) {
-                result = await getOrdinaryScheduleSW12('192.168.2.97')
+                result = await getOrdinaryScheduleSW12(controlerState.ip)
                 formated_data = result.map(item => {
                     let mod = formatMod(item.modo)
                     let horario_formated = {
@@ -260,7 +260,7 @@ export default function HorariosView() {
                 updateFirebase('horario_ordinario', formated_data);
                 dispatch(addOrdinarios(formated_data));
             } else if (tipoDia === 1) {
-                result = await getWeekendScheduleSW12('192.168.2.97')
+                result = await getWeekendScheduleSW12(controlerState.ip)
                 formated_data = result.map(item => {
                     let mod = formatMod(item.modo)
                     let horario_formated = {
@@ -278,7 +278,7 @@ export default function HorariosView() {
                 updateFirebase('horario_finsemana', formated_data);
                 dispatch(addFinSemana(formated_data));
             } else if (tipoDia === 2) {
-                result = await getFestivalScheduleSW12('192.168.2.97')
+                result = await getFestivalScheduleSW12(controlerState.ip)
 
                 formated_data = result.map(item => {
                     let mod = formatMod(item.modo)
@@ -371,7 +371,7 @@ export default function HorariosView() {
     const LeerParamOperativos = async () => {
         try {
             setDeshabilitar4(true);
-            const data = await getSpecialDaysSW12('192.168.1.74');
+            const data = await getSpecialDaysSW12(controlerState.ip);
             updateFirebase('dias_especiales', data)
             setClunes(data['fines_semana'].lunes)
             setCmartes(data['fines_semana'].martes)
@@ -382,7 +382,6 @@ export default function HorariosView() {
             setCDomingo(data['fines_semana'].domingo)
             let dias = data['dias']
             let dias_modify = dias.map(item => {
-
                 item.dia = formatData(item.dia)
                 item.mes = formatData(item.mes)
                 item.descriptor_modo = ObtenerClaseDia(item.tipo)
@@ -442,8 +441,7 @@ export default function HorariosView() {
             }
         }
         data_dias.push(65)
-        //console.log(data_dias)
-        await postDiasEspecialesSW12({ 'trama': data_dias });
+        await postDiasEspecialesSW12({trama: data_dias,ip:controlerState.ip});
         //cargarDiaFestivosFirebase(newDiasFirebase)
         setDeshabilitar4(false);
     }
@@ -499,10 +497,50 @@ export default function HorariosView() {
             confirmButtonText: 'Si, actualizar!',
             showDenyButton: true,
             denyButtonText: 'Cancelar',
-        }).then((result) => {
+        }).then(async(result) => {
             if (result.isConfirmed) {
                 try {
-                    cargarHorariosFromRestApi();
+                    setHabilitar2(true);
+                    const data = JSON.parse(JSON.stringify(horarios));
+                    let datos_enviar = [tipoDia]
+                    for (let num = 0; num < 16; num++) {
+                        let mod = data[num].mod
+                        let plan = data[num].plan
+                        mod = parseInt(mod).toString(2)
+                        plan = parseInt(plan).toString(2)
+                        let bits_faltantes_mod = 3 - mod.length
+                        let bits_faltantes_plan = 5 - plan.length
+                        for (let bit = 0; bit < bits_faltantes_mod; bit++) {
+                            mod = "0" + mod
+                        }
+                        for (let bit = 0; bit < bits_faltantes_plan; bit++) {
+                            plan = "0" + plan
+                        }
+                        let mod_plan = mod + plan
+                        mod_plan = parseInt(mod_plan, 2)
+                        let horas = data[num].horas
+                        let minutos = data[num].minutos
+                        let aux_hora = parseInt(horas, 16)
+                        let aux_minuto = parseInt(minutos, 16)
+                        let desfase = data[num].desfase
+                        datos_enviar.push(aux_hora)
+                        datos_enviar.push(aux_minuto)
+                        datos_enviar.push(mod_plan)
+                        datos_enviar.push(desfase)
+                    }
+                    await postHorariosSW12({trama:datos_enviar,ip:controlerState.ip});
+                    if (tipoDia === 0) {
+                        updateFirebase('horario_ordinario', data);
+                        dispatch(addOrdinarios(data));
+                    } else if (tipoDia === 1) {
+                        updateFirebase('horario_finsemana', data);
+                        dispatch(addFinSemana(data));
+                    } else {
+                        updateFirebase('horario_festivo', data);
+                        dispatch(addFestivo(data));
+                    }
+            
+                    setHabilitar2(false);
                     setCambiosHorarios(false);
                 } catch (e) {
                     console.log(e);
@@ -513,61 +551,7 @@ export default function HorariosView() {
 
 
     }
-    const cargarHorariosFromRestApi = async () => {
-        setHabilitar2(true);
-        const data = JSON.parse(JSON.stringify(horarios));
-
-        let datos_enviar = [tipoDia]
-        var newObject = {}
-        for (let num = 0; num < 16; num++) {
-            let mod = data[num].mod
-            let plan = data[num].plan
-            mod = parseInt(mod).toString(2)
-            plan = parseInt(plan).toString(2)
-            let bits_faltantes_mod = 3 - mod.length
-            let bits_faltantes_plan = 5 - plan.length
-            for (let bit = 0; bit < bits_faltantes_mod; bit++) {
-                mod = "0" + mod
-            }
-            for (let bit = 0; bit < bits_faltantes_plan; bit++) {
-                plan = "0" + plan
-            }
-            let mod_plan = mod + plan
-            mod_plan = parseInt(mod_plan, 2)
-            let horas = data[num].horas
-            let minutos = data[num].minutos
-            let aux_hora = parseInt(horas, 16)
-            let aux_minuto = parseInt(minutos, 16)
-            let desfase = data[num].desfase
-
-            newObject['hora' + (num + 1)] = aux_hora
-            newObject['minuto' + (num + 1)] = aux_minuto
-            newObject['desfase' + (num + 1)] = desfase
-            newObject['mod_plan' + (num + 1)] = mod_plan
-
-            datos_enviar.push(aux_hora)
-            datos_enviar.push(aux_minuto)
-            datos_enviar.push(mod_plan)
-            datos_enviar.push(desfase)
-        }
-        newObject['ip'] = controlerState.ip
-        newObject['mac'] = controlerState.mac
-        newObject['num_horario'] = formatearTipoDia(tipoDia)
-
-        await postHorariosSW12({ 'trama': datos_enviar });
-        if (tipoDia === 0) {
-            updateFirebase('horario_ordinario', data);
-            dispatch(addOrdinarios(data));
-        } else if (tipoDia === 1) {
-            updateFirebase('horario_finsemana', data);
-            dispatch(addFinSemana(data));
-        } else {
-            updateFirebase('horario_festivo', data);
-            dispatch(addFestivo(data));
-        }
-
-        setHabilitar2(false);
-    }
+   
     return (
         <>
             <Container maxWidth="md">
