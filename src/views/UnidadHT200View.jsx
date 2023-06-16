@@ -9,7 +9,9 @@ import FormLabel from '@mui/material/FormLabel';
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import { getUnitHT200,PostUnitHT200 } from '../js/apiFunctionsHT200';
+import { useSelector, useDispatch } from 'react-redux';
 export default function UnidadHT200View() {
+    const controlerState = useSelector(state => state.controlers)
     const [state, setState] = useState({
         StartupFlash: "0",
         StartupAllRed: "0",
@@ -24,6 +26,7 @@ export default function UnidadHT200View() {
         RedGreenConflictDetectFlag: false,
         RedFailedDetectFlag: false,
     });
+
    
     const uploadData = async() =>{
         let backup_time = state["BackupTime"] 
@@ -44,17 +47,13 @@ export default function UnidadHT200View() {
             state.RedGreenConflictDetectFlag ? 1:0,
             state.RedFailedDetectFlag ? 1:0
         ]
-        let controler_data = {
-            trama:trama,
-            ip:"192.168.1.122",
-            mac:"25:aa:ff:23:aa",
-        }
-        await PostUnitHT200(controler_data)
+    
+        await PostUnitHT200({trama:trama,ip:controlerState.ip})
         console.log(trama)
     }
 
     const readData=async()=>{
-        let data = await getUnitHT200("23:45:15:56","192.168.1.122");
+        let data = await getUnitHT200(controlerState.ip);
         console.log(data)
         data["GreenConflictDetectFlag"] =  data["GreenConflictDetectFlag"] === 1 ? true:false;
         data["RedGreenConflictDetectFlag"] =  data["RedGreenConflictDetectFlag"] === 1 ? true:false;

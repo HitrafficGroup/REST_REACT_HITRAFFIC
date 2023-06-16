@@ -20,15 +20,16 @@ import DoneIcon from '@mui/icons-material/Done';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useSelector, useDispatch } from 'react-redux';
 export default function SplitHT200View() {
-
+    const controlerState = useSelector(state => state.controlers)
     const [splitTab, setSplitTab] = useState("split-1");
     const [splits, setSplits] = useState([{}]);
     const [currentTab, setCurrentTab] = useState([{}]);
     const [modalConfig, setModalConfig] = useState(false);
     const [currentSplit, setCurrentSplit] = useState({ tiempo: 0 });
     const readData = async () => {
-        let data = await getSplitHT200("23:45:15:56", "192.168.1.122");
+        let data = await getSplitHT200(controlerState.ip);
 
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 16; j++) {
@@ -191,7 +192,7 @@ export default function SplitHT200View() {
             }
         }
    
-        await PostSplitHT200({trama:array_data,mac:"12:32:12:23"})
+        await PostSplitHT200({trama:array_data,ip:controlerState.ip})
     }
     const eliminarSplit = (__data) =>{
         let custom_delete = {fase:0,mode:"Ninguno",tiempo:0,coord:0}

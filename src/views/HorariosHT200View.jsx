@@ -28,7 +28,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-
+import { useSelector, useDispatch } from 'react-redux';
 
 export default function HorariosHT200View(){
 
@@ -37,6 +37,7 @@ export default function HorariosHT200View(){
     const [modalConfig,setModalConfig] = useState(false);
     const [data,setData] = useState([{mes_formated:[],fecha_formated:[],dia_formated:[]}]);
     const [currentHorario,setCurrentHorario] = useState({day_plan:""});
+    const controlerState = useSelector(state => state.controlers)
     const [dia,setDia] = useState({
         lunes:false,
         martes:false,
@@ -102,7 +103,7 @@ export default function HorariosHT200View(){
         setPage(0);
     };
     const readData = async()=>{
-        let data = await getHorarioHT200("23:45:15:56", "192.168.1.122");
+        let data = await getHorarioHT200(controlerState.ip);
         data.forEach(element => {
             element['mes_formated'] = formatMonth(element)
             element['fecha_formated'] = formatearDias(element)
@@ -207,7 +208,7 @@ export default function HorariosHT200View(){
             array_data.push(aux.day_plan)
         }
         console.log(array_data)
-        await PostHorariosHT200({trama:array_data,mac:"12:32:12:23"})
+        await PostHorariosHT200({trama:array_data,ip:controlerState.ip})
 
     }
   

@@ -19,13 +19,14 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import TextField from '@mui/material/TextField';
+import { useSelector, useDispatch } from 'react-redux';
 export default function AccionesHT200View(){
     const [data,setData]=useState([{}]);
     const [page, setPage] = useState(0);
     const [modalConfig,setModalConfig] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [currentAction,setCurrentAction] = useState({});
+    const controlerState = useSelector(state => state.controlers)
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -36,7 +37,7 @@ export default function AccionesHT200View(){
     };
 
     const readData = async () => {
-        let datos = await getAccionHT200("23:45:15:56", "192.168.1.122");
+        let datos = await getAccionHT200(controlerState.ip);
     
         console.log(datos)
         setData(datos)
@@ -128,7 +129,7 @@ export default function AccionesHT200View(){
         
         }
         console.log(array_data.length)
-        await PostActionHT200({trama:array_data,mac:"12:32:12:23"})
+        await PostActionHT200({trama:array_data,ip:controlerState.ip})
     }
 
     return(

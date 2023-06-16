@@ -11,7 +11,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 //iconos
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
-
+import { useSelector, useDispatch } from 'react-redux';
 export default function SecuencyHT200View() {
 
     const [secuencias, setSecuencias] = useState([{ data: [], id: '' }]);
@@ -20,9 +20,9 @@ export default function SecuencyHT200View() {
     const [inputValue, setInputValue] = useState('');
     const [currentSeq,setCurrentSeq]= useState([{}]);
     const [idSeq,setIdSeq] = useState();
-
+    const controlerState = useSelector(state => state.controlers)
     const readData = async () => {
-        let data = await getSecuencyHT200("23:45:15:56", "192.168.1.122");
+        let data = await getSecuencyHT200(controlerState.ip);
         let data_formated = []
         data.forEach(element => {
             let aux_data = element.data
@@ -131,8 +131,7 @@ export default function SecuencyHT200View() {
 
             }
             console.log(data_formated.length)
-            let data_send = {trama:data_formated}
-            await PostSecuenciasHT200(data_send)
+            await PostSecuenciasHT200({trama:data_formated,ip:controlerState.ip})
 
     }
     return (

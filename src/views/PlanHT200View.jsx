@@ -17,7 +17,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-
+import { useSelector, useDispatch } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -31,6 +31,7 @@ export default function PlanHT200View(){
     const [data,setData] = useState([{}]);
     const [modalConfig,setModalConfig] = useState(false);
     const [currentPlan,setCurrentPlan] = useState({});
+    const controlerState = useSelector(state => state.controlers)
     const handlePlan = (event)=>{
         setPlanTab(event.target.value);
         let plan_actual = data.filter((item) => item.id === event.target.value)
@@ -46,7 +47,7 @@ export default function PlanHT200View(){
         setPage(0);
     };
     const readData = async()=>{
-        let data = await getPlanHT200("23:45:15:56", "192.168.1.122");
+        let data = await getPlanHT200(controlerState.ip);
         setCurrentTab(data[0].data)
         console.log(data)
         setData(data)
@@ -72,7 +73,7 @@ export default function PlanHT200View(){
            
          
         }
-        await PostPlanHT200({trama:array_data,mac:"12:32:12:23"})
+        await PostPlanHT200({trama:array_data,ip:controlerState.ip})
     }
     const aplicarCambios=()=>{
         let aux_plan = JSON.parse(JSON.stringify(currentPlan))

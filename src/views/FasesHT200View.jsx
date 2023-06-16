@@ -14,7 +14,7 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { getFasesHT200,PostFasesHT200 } from "../js/apiFunctionsHT200";
-
+import { useSelector, useDispatch } from 'react-redux';
 //iconos
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -27,6 +27,7 @@ export default function FasesHT200View() {
     const [fases,setFases] = useState([]);
     const [modalConfig,setModalConfig] = useState(false);
     const [currentFase,setCurrentFase] = useState(currentFase_init);
+    const controlerState = useSelector(state => state.controlers)
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -49,7 +50,7 @@ export default function FasesHT200View() {
         setModalConfig(false)
     }
     const readData=async()=>{
-        let data = await getFasesHT200("23:45:15:56","192.168.1.122");
+        let data = await getFasesHT200(controlerState.ip);
         setFases(data)
         console.log(data)
     }
@@ -85,7 +86,7 @@ export default function FasesHT200View() {
 
        })
        console.log(array_data)
-       await PostFasesHT200({'trama':array_data})
+       await PostFasesHT200({trama:array_data,ip:controlerState.ip})
       
     }
 

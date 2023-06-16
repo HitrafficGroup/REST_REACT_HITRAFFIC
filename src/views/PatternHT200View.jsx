@@ -20,12 +20,14 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
+import { useSelector, useDispatch } from 'react-redux';
 export default function PatternHT200View() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [data,setData] = useState([{number:0,cycletime:0,offsettime:0,sequencenumber:0,splitnumber:0,workmode:0}])
     const [modalConfig,setModalConfig] = useState(false);
     const [currentPattern,setCurrentPattern] = useState({number:0,cycletime:0,offsettime:0,sequencenumber:0,splitnumber:0,workmode:0});
+    const controlerState = useSelector(state => state.controlers)
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -44,7 +46,7 @@ export default function PatternHT200View() {
 
     };
     const readData = async () => {
-        let data = await getPatternHT200("23:45:15:56", "192.168.1.122");
+        let data = await getPatternHT200(controlerState.ip);
         console.log(data)
         setData(data)
 
@@ -98,7 +100,7 @@ export default function PatternHT200View() {
         
         }
         console.log(array_data)
-        await PostPatternHT200({trama:array_data,mac:"12:32:12:23"})
+        await PostPatternHT200({trama:array_data,ip:controlerState.ip})
     }
     const convertWorkmode = (__data)=>{
         if (__data === 1) {

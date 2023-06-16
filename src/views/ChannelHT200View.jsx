@@ -25,12 +25,14 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
+import { useSelector, useDispatch } from 'react-redux';
 export default function ChannelHT200View(){
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
     const [modalConfig,setModalConfig] = useState(false);
     const [data,setData] = useState([{}]);
     const [currentChannel ,setCurrentChannel] = useState({});
+    const controlerState = useSelector(state => state.controlers)
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -124,7 +126,7 @@ export default function ChannelHT200View(){
     }
 
     const readData= async()=>{
-        let data= await getChannelHT200()
+        let data= await getChannelHT200(controlerState.ip)
         console.log(data)
         setData(data)
     }
@@ -141,7 +143,7 @@ export default function ChannelHT200View(){
             data_array.push(aux_data[i].direction)
             data_array.push(aux_data[i].countdown)
         }
-        await PostChannelHT200({trama:data_array,mac:"12:32:12:23"})
+        await PostChannelHT200({trama:data_array,ip:controlerState.ip})
     }
 
     const AplicarCambios =()=>{
