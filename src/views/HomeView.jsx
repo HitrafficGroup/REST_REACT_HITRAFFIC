@@ -773,7 +773,7 @@ export default function HomeView() {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     setDeshabilitar(true);
-                    await postTimeSW12({ mac: '12:f:3', trama: ['2'] });
+                    await postTimeSW12({ ip:controlerState.ip });
                     setDeshabilitar(false);
 
                 }
