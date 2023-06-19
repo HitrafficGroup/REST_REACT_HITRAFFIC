@@ -1,12 +1,10 @@
 import AppBar from '@mui/material/AppBar';
 import React,{useState} from 'react';
-import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
 import ListSubheader from '@mui/material/ListSubheader';
 import Drawer from '@mui/material/Drawer';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +12,6 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import Button from '@mui/material/Button';
 import { useSelector } from 'react-redux';
 import "../css/ButtonAppBar.css"
-import { Routes, Route } from "react-router-dom";
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -30,8 +27,8 @@ import BallotIcon from '@mui/icons-material/Ballot';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import WifiChannelIcon from '@mui/icons-material/WifiChannel';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
+import HomeIcon from '@mui/icons-material/Home';
 export default  function HT200AppBar(){
-    const [state, setState] =  useState({left: false,});
     const [drawerHT,setDrawerHT] = useState({left:false});
     const navigate = useNavigate(); // hook para navegar entre urls o vistas
 
@@ -48,18 +45,7 @@ export default  function HT200AppBar(){
       const cerrarSesion = ()=>{
         navigate('/');
     }
-      //drawer a mostrar
-      const list = (anchor) => (
-        <Box
-          sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
-          role="presentation"
-          onClick={toggleDrawer(anchor, false)}
-          onKeyDown={toggleDrawer(anchor, false)}
-        >
-          <Divider />
-    
-        </Box>
-      );
+
     return(
     <>
         <AppBar position="static" sx={{ backgroundColor: "#34495E" }}>
@@ -103,6 +89,12 @@ export default  function HT200AppBar(){
                             <MenuOpenIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Menu Principal"/>
+            </ListItemButton>
+            <ListItemButton onClick={()=>{navigate('home')}} >
+                        <ListItemIcon>
+                            <HomeIcon fontSize='large' />
+                        </ListItemIcon>
+                        <ListItemText primary="Home"/>
             </ListItemButton>
             <ListItemButton onClick={()=>{navigate('unit')}} >
                         <ListItemIcon>

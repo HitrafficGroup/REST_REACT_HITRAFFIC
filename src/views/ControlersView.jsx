@@ -2,23 +2,20 @@ import React, { useEffect, useRef, useState } from "react";
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import '../css/ControlersView.css';
-import PropTypes from 'prop-types';
-import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
+
+//
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableFooter from '@mui/material/TableFooter';
+import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
-import TableHead from '@mui/material/TableHead';
-import Chip from '@mui/material/Chip';
+
+
+//
+
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -28,9 +25,6 @@ import { setInitialStateController, setControllerData } from "../features/contro
 import Swal from 'sweetalert2';
 import { collection, updateDoc, doc, onSnapshot, query, deleteDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -39,74 +33,12 @@ import { useNavigate } from 'react-router-dom';
 //iconos
 import DeleteIcon from '@mui/icons-material/Delete';
 import InfoIcon from '@mui/icons-material/Info';
-import CableIcon from '@mui/icons-material/Cable';
 import Autocomplete from '@mui/material/Autocomplete';
-import PowerIcon from '@mui/icons-material/Power';
-import PowerOffIcon from '@mui/icons-material/PowerOff';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Backdrop from '@mui/material/Backdrop';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CircularProgress from '@mui/material/CircularProgress';
 
-function TablePaginationActions(props) {
-    const theme = useTheme();
-    const { count, page, rowsPerPage, onPageChange } = props;
-
-    const handleFirstPageButtonClick = (event) => {
-        onPageChange(event, 0);
-    };
-
-    const handleBackButtonClick = (event) => {
-        onPageChange(event, page - 1);
-    };
-
-    const handleNextButtonClick = (event) => {
-        onPageChange(event, page + 1);
-    };
-
-    const handleLastPageButtonClick = (event) => {
-        onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-    };
-    return (
-        <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-            <IconButton
-                onClick={handleFirstPageButtonClick}
-                disabled={page === 0}
-                aria-label="first page"
-            >
-                {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-            </IconButton>
-            <IconButton
-                onClick={handleBackButtonClick}
-                disabled={page === 0}
-                aria-label="previous page"
-            >
-                {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-            </IconButton>
-            <IconButton
-                onClick={handleNextButtonClick}
-                disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-                aria-label="next page"
-            >
-                {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-            </IconButton>
-            <IconButton
-                onClick={handleLastPageButtonClick}
-                disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-                aria-label="last page"
-            >
-                {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-            </IconButton>
-        </Box>
-    );
-}
-
-TablePaginationActions.propTypes = {
-    count: PropTypes.number.isRequired,
-    onPageChange: PropTypes.func.isRequired,
-    page: PropTypes.number.isRequired,
-    rowsPerPage: PropTypes.number.isRequired,
-};
 
 
 const dataTest = [
@@ -131,46 +63,71 @@ const dataTest = [
 
 
 export default function ControlersView() {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+
     const [editarModal, setEditarModal] = useState(false);
     const [infoModal, setInfoModal] = useState(false);
     const [controlers, setControlers] = useState(dataTest);
     const [currentController, setCurrentController] = useState({});
+    const [reload,setReload] = useState(true);
+    const [model,setModel] = useState('');
+    const [canton,setCanton] = useState('');
     const userState = useSelector(state => state.auth);
     const [deshabilitar, setDeshabilitar] = useState(false);
-    const flagFilter = useRef(true);
     const respaldoData = useRef([])
-    const cantonselected = useRef("")
-    const modelselected = useRef("")
     const ipControlador = useRef('')
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dataTest.length) : 0;
     const navigate = useNavigate(); // hook para navegar entre urls o vistas
     const dispatch = useDispatch();
 
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  
+    const handleChangePage = (event, newPage) => {
+      setPage(newPage);
+    };
+  
+    const handleChangeRowsPerPage = (event) => {
+      setRowsPerPage(+event.target.value);
+      setPage(0);
+    };
 
     const Changeview = (referencia) => {
         navigate(referencia);
     }
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
+
     const filtrarLosDatos = () => {
 
         let aux_data = JSON.parse(JSON.stringify(respaldoData.current))
-
-        if (Object.keys(cantonselected.current).length !== 0) {
-            let data_filter = aux_data.filter(item => item.canton === cantonselected.current.canton)
-            flagFilter.current = !flagFilter.current
-            if (flagFilter.current) {
-                setControlers(aux_data)
-            } else {
-                setControlers(data_filter)
-            }
-        }
+        let filterData = aux_data.filter(filterByCanton).filter(filterByModel)
+        setControlers(filterData)
+        setReload(!reload)
+        setCanton("")
+        setModel("")
     }
 
-
+    const filterByCanton =(item)=>{
+        if(canton !== ""){
+            if(item.canton === canton){
+                return item;
+            }else{
+                return null;
+            }
+        }else{
+            return item;
+        }
+        
+    }
+    const filterByModel =(item)=>{
+        if(model !== ""){
+            if(item.modelo === model){
+                return item;
+            }else{
+                return null;
+            }
+        }else{
+            return item;
+        }
+        
+    }
     const abrirModalinformacion = (_data) => {
         let aux_data = JSON.parse(JSON.stringify(_data))
         setCurrentController(aux_data)
@@ -191,9 +148,9 @@ export default function ControlersView() {
     }
     //mostrar la interfaz de acuerdo al controlador
     const programarControlador = async (_equipo) => {
+        setDeshabilitar(true)
         const docRef = doc(db, "controladores", _equipo.id);
         const docSnap = await getDoc(docRef);
-
         if (docSnap.exists()) {
             console.log("Document data:", docSnap.data());
             let aux_equipo = JSON.parse(JSON.stringify(_equipo))
@@ -218,6 +175,7 @@ export default function ControlersView() {
                     historial_conexiones: conexiones,
                 });
                 navigate('/controlador_HT200/home')
+                setDeshabilitar(false)
             } else if (_equipo.modelo === "SW-12") {
                 dispatch(setInitialStateController(aux_equipo));
                 dispatch(setControllerData(equipo_info));
@@ -227,10 +185,12 @@ export default function ControlersView() {
                     historial_conexiones: conexiones,
                 });
                 navigate('/controlador_SW12/home')
+                setDeshabilitar(false)
             }
         } else {
             // docSnap.data() will be undefined in this case
             console.log("No such document!");
+            setDeshabilitar(false)
         }
 
     }
@@ -239,10 +199,7 @@ export default function ControlersView() {
         navigate('/');
     }
     //funciones de la tabla
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
+
     const dataFromFirebase = async () => {
         const reference = query(collection(db, "historial_controladores"));
         onSnapshot(reference, (querySnapshot) => {
@@ -304,15 +261,11 @@ export default function ControlersView() {
                                 <p className="nombre-card">Acciones</p>
                             </div>
                             <div className="card-body-controler">
-
                                 <Grid container >
-
                                     <Grid item xs={12} md={12}>
                                         <Button variant="contained" size="medium" onClick={() => { Changeview('/crear_equipo') }}  >+ CONTROLADOR</Button>
                                     </Grid>
-
                                 </Grid>
-
                             </div>
                         </div>
                     </Grid>
@@ -349,9 +302,9 @@ export default function ControlersView() {
                                             id="size-small-outlined"
                                             size="small"
                                             options={cantones}
-                                            
+                                            key={reload}
                                             onChange={(event, newValue) => {
-                                                cantonselected.current = newValue
+                                                setCanton(newValue)
                                             }}
 
                                             renderInput={(params) => (
@@ -364,9 +317,9 @@ export default function ControlersView() {
                                             id="size-small-outlined"
                                             size="small"
                                             options={controladores}
-                                  
+                                            key={reload}
                                             onChange={(event, newValue) => {
-                                                modelselected.current = newValue
+                                                setModel(newValue)
                                             }}
 
                                             renderInput={(params) => (
@@ -399,25 +352,53 @@ export default function ControlersView() {
 
 
                     <Grid md={12}>
-                        <div className="shadow-table">
-
-                            <TableContainer component={Paper}>
-                                <Table aria-label="custom pagination table">
+                    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                        <TableContainer sx={{ maxHeight: 440 }}>
+                        <Table stickyHeader aria-label="sticky table">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell align="left">Name</TableCell>
-                                            <TableCell align="left">Ip</TableCell>
-                                            <TableCell align="left">Modelo</TableCell>
-                                            <TableCell align="left">Canton</TableCell>
-                                            {/* <TableCell align="center">Estado</TableCell> */}
-                                            <TableCell align="center">Acciones</TableCell>
+                                            <TableCell
+                                                key={"Name"}
+                                                align={"left"}
+                                                style={{ minWidth: 100 }}
+                                                >
+                                                Name
+                                            </TableCell>
+                                            <TableCell
+                                                key={"ip"}
+                                                align={"left"}
+                                                style={{ minWidth: 100 }}
+                                                >
+                                                Ip
+                                            </TableCell>
+                                            <TableCell
+                                                key={"modelo"}
+                                                align={"left"}
+                                                style={{ minWidth: 100 }}
+                                                >
+                                                Modelo
+                                            </TableCell>
+                                            <TableCell
+                                                key={"canton"}
+                                                align={"left"}
+                                                style={{ minWidth: 100 }}
+                                                >
+                                                Canton
+                                            </TableCell>
+                                            <TableCell
+                                                key={"acciones"}
+                                                align={"left"}
+                                                style={{ minWidth: 100 }}
+                                                >
+                                                Acciones
+                                            </TableCell>
+                                      
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {(rowsPerPage > 0
-                                            ? controlers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                            : controlers
-                                        ).map((row, index) => (
+                                    {controlers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map((row,index) => {
+                                        return (
                                             <TableRow key={index}>
                                                 <TableCell align="left">
                                                     {row.nombre}
@@ -449,38 +430,22 @@ export default function ControlersView() {
                                                     </Stack>
                                                 </TableCell>
 
-                                            </TableRow>
-                                        ))}
-
-                                        {emptyRows > 0 && (
-                                            <TableRow style={{ height: 72.8 * emptyRows }}>
-                                                <TableCell colSpan={6} />
-                                            </TableRow>
-                                        )}
+                                            </TableRow>);
+                                        })}
                                     </TableBody>
-                                    <TableFooter>
-                                        <TableRow>
-                                            <TablePagination
-                                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                                                colSpan={6}
-                                                count={controlers.length}
-                                                rowsPerPage={rowsPerPage}
-                                                page={page}
-                                                SelectProps={{
-                                                    inputProps: {
-                                                        'aria-label': 'rows per page',
-                                                    },
-                                                    native: true,
-                                                }}
-                                                onPageChange={handleChangePage}
-                                                onRowsPerPageChange={handleChangeRowsPerPage}
-                                                ActionsComponent={TablePaginationActions}
-                                            />
-                                        </TableRow>
-                                    </TableFooter>
+                                 
                                 </Table>
                             </TableContainer>
-                        </div>
+                            <TablePagination
+                                        rowsPerPageOptions={[10, 25, 100]}
+                                        component="div"
+                                        count={controlers.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handleChangePage}
+                                        onRowsPerPageChange={handleChangeRowsPerPage}
+                                    />
+                        </Paper>
                     </Grid>
                 </Grid>
                 {/*          A partir de esta linea son solo modals            */}

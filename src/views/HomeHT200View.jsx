@@ -4,7 +4,6 @@ import CleaningServicesSharpIcon from '@mui/icons-material/CleaningServicesSharp
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import SaveIcon from '@mui/icons-material/Save';
-
 import { updateDoc, doc} from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
@@ -34,8 +33,7 @@ import '../css/HomeView.css';
 import '../css/beautifulCard.scss';
 import Swal from 'sweetalert2';
 import RelogActual from "../components/RelogActual";
-import { getTimeControllerSW12, postTimeSW12 } from '../js/apiFunctionsSW12';
-
+import { getTimeHT200 } from '../js/apiFunctionsHT200';
 const InitialTime = {
     day: "00",
     hours: "00",
@@ -718,9 +716,9 @@ export default function HomeView() {
         setPointsArea([])
     }
     const formatData = (_data) => {
-        let data = _data.toString(16)
+        let data = _data.toString();
         if (data.length < 2) {
-            data = "0" + data
+            data = "0" + data;
         }
         return data
     }
@@ -732,20 +730,21 @@ export default function HomeView() {
     const obtenerTiempoFromRestApi = async () => {
         try {
             setDeshabilitar(true);
-            const response = await getTimeControllerSW12(controlerState.ip)
-
-            response['seconds'] = formatData(response['seconds'])
-            response['minutes'] = formatData(response['minutes'])
-            response['hours'] = formatData(response['hours'])
-            response['month'] = formatData(response['month'])
-            response['date'] = formatData(response['date'])
-            response['year'] = formatData(response['year'])
-            //let data_formated = response.map(item=>(formatData(item)))
-            setTiempoController(response)
-            const fechac = `${response.month}-${response.date}-${response.year}`
+            const response = await getTimeHT200(controlerState.ip);
+            console.log(response)
+            let data_formated={
+                seconds: formatData(response['segundos']),
+                minutes: formatData(response['minutos']),
+                hours: formatData(response['hour']),
+                month: formatData(response['mes']),
+                date: formatData(response['dia']),
+                year: formatData(response['year']),
+            }
+            setTiempoController(data_formated)
+            const fechac = `${response.mes}-${response.dia}-${response.year}`
             const dateObj = new Date(fechac)
             const formatDate = dateObj.toLocaleString("es-EC", { dateStyle: 'full' });
-            setFechaActual(formatDate)
+            setFechaActual(formatDate);
             setDeshabilitar(false);
             setDeshabilitar2(false);
         } catch (e) {
@@ -753,7 +752,6 @@ export default function HomeView() {
             setDeshabilitar(false);
             setDeshabilitar2(false);
         }
-
     }
 
     const sincronizarTiempoFromRest = async () => {
@@ -771,9 +769,9 @@ export default function HomeView() {
                 denyButtonText: 'Cancelar',
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    setDeshabilitar(true);
-                    await postTimeSW12({ ip:controlerState.ip });
-                    setDeshabilitar(false);
+                    // setDeshabilitar(true);
+                    // await postTimeSW12({ ip:controlerState.ip });
+                    // setDeshabilitar(false);
 
                 }
             })
