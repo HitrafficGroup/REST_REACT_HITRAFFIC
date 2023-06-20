@@ -46,11 +46,13 @@ const theme = createTheme({
     rojo: {
       main: '#CD5C5C',
       contrastText: '#fff',
+      dark: '#CB4335',
 
     },
     verde: {
       main: '#27AE60',
-      contrastText: '#fff',
+      contrastText: '#fff', 
+      dark: '#0E6251',
     },
     destello: {
       main: '#85C1E9',

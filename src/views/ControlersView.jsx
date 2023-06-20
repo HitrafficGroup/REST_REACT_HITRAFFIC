@@ -12,10 +12,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-
-
 //
-
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -31,7 +28,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import { useNavigate } from 'react-router-dom';
-//iconos
+//
 import DeleteIcon from '@mui/icons-material/Delete';
 import InfoIcon from '@mui/icons-material/Info';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -254,7 +251,7 @@ export default function ControlersView() {
                     <Button sx={{ marginLeft: 2 }} variant="contained" color='error' onClick={cerrarSesion} endIcon={<LogoutIcon />} >SALIR</Button>
                 </Toolbar>
             </AppBar>
-            <Container maxWidth="md" sx={{ paddingTop: 3 }}>
+            <Container maxWidth="lg" sx={{ paddingTop: 3 }}>
                 <Grid container spacing={2}>
                     <Grid md={4} xs={12}>
                         <div className="card-admin">
@@ -358,10 +355,17 @@ export default function ControlersView() {
                         <Table stickyHeader aria-label="sticky table">
                                     <TableHead>
                                         <TableRow>
+                                        <TableCell
+                                                key={"Name"}
+                                                align={"left"}
+                                                style={{ minWidth: 200 }}
+                                                >
+                                                Ultima Conexion
+                                            </TableCell>
                                             <TableCell
                                                 key={"Name"}
                                                 align={"left"}
-                                                style={{ minWidth: 100 }}
+                                                style={{ minWidth: 200 }}
                                                 >
                                                 Name
                                             </TableCell>
@@ -401,6 +405,9 @@ export default function ControlersView() {
                                     .map((row,index) => {
                                         return (
                                             <TableRow key={index}>
+                                                 <TableCell align="left">
+                                                    {row.ultima_conexion}
+                                                </TableCell>
                                                 <TableCell align="left">
                                                     {row.nombre}
                                                 </TableCell>

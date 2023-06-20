@@ -15,7 +15,7 @@ import "../css/ButtonAppBar.css"
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-
+import SettingsIcon from '@mui/icons-material/Settings';
 //iconos
 import FlagIcon from '@mui/icons-material/Flag';
 import SsidChartIcon from '@mui/icons-material/SsidChart';
@@ -81,14 +81,15 @@ export default  function HT200AppBar(){
           aria-labelledby="nested-list-subheader"
           subheader={
             <ListSubheader component="div" id="nested-list-subheader">
-              <h3>Menu</h3>
-            </ListSubheader> }
+              Configuracion Basica
+          </ListSubheader>
+          }
         >
              <ListItemButton onClick={()=>{navigate('/equipos')}} >
                         <ListItemIcon>
                             <MenuOpenIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Menu Principal"/>
+                        <ListItemText primary="Controladores"/>
             </ListItemButton>
             <ListItemButton onClick={()=>{navigate('home')}} >
                         <ListItemIcon>
@@ -102,6 +103,24 @@ export default  function HT200AppBar(){
                         </ListItemIcon>
                         <ListItemText primary="Unit"/>
             </ListItemButton>
+            <ListItemButton onClick={()=>{navigate('config')}} >
+                        <ListItemIcon>
+                            <SettingsIcon fontSize='large' />
+                        </ListItemIcon>
+                        <ListItemText primary="Config"/>
+            </ListItemButton>
+            </List>
+            <List
+          sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+          component="nav"
+          aria-labelledby="nested-list-subheader"
+          subheader={
+            <ListSubheader component="div" id="nested-list-subheader">
+            Configuracion Avanzada
+          </ListSubheader>
+          }
+        >
+           
             <ListItemButton onClick={()=>{navigate('fases')}} >
                         <ListItemIcon>
                             <SsidChartIcon fontSize='large' />
@@ -153,6 +172,7 @@ export default  function HT200AppBar(){
             </ListItemButton>
          
         </List>
+
       </Drawer>
     </>
     );

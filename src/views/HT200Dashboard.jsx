@@ -11,12 +11,15 @@ import AccionesHT200View from "./AccionesHT200View";
 import PlanHT200View from "./PlanHT200View";
 import HorariosHT200View from "./HorariosHT200View";
 import ChannelHT200View from "./ChannelHT200View";
+import BasicSettingsHT200View from "./BasicSettingsHT200View";
+
 export default function HT200Dashboard(){
     return (
         <>
         <HT200AppBar />
             <Routes>
                 <Route path="home" element={<HomeHT200View />} />
+                <Route path="config" element={<BasicSettingsHT200View />} />
                 <Route path="unit" element={<UnidadHT200View />} />
                 <Route path="fases" element={<FasesHT200View />} />
                 <Route path="sequency" element={<SecuencyHT200View />} />
