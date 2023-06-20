@@ -9,9 +9,9 @@ import FormLabel from '@mui/material/FormLabel';
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import { getUnitHT200,PostUnitHT200 } from '../js/apiFunctionsHT200';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 export default function UnidadHT200View() {
-    const controlerState = useSelector(state => state.controlers)
+    const controlerState = useSelector(state => state.controlerht200)
     const [state, setState] = useState({
         StartupFlash: "0",
         StartupAllRed: "0",

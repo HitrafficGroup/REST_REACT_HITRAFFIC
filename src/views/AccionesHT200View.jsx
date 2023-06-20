@@ -20,27 +20,40 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from '../firebase/firebase-config';
+import { updateParamsHT200 } from '../features/controlerht200/controlerHT200Slice';
 export default function AccionesHT200View(){
     const [data,setData]=useState([{}]);
     const [page, setPage] = useState(0);
     const [modalConfig,setModalConfig] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [currentAction,setCurrentAction] = useState({});
-    const controlerState = useSelector(state => state.controlers)
+    const controlerState = useSelector(state => state.controlerht200)
+    const dispatch = useDispatch();
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
+    
 
+    const updateFirebase = async (param, __data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${param}`] = __data;
+        await updateDoc(ref, aux_data);
+    }
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
 
     const readData = async () => {
-        let datos = await getAccionHT200(controlerState.ip);
-    
-        console.log(datos)
-        setData(datos)
+        let controller_data = await getAccionHT200(controlerState.ip);
+   
+        console.log(controller_data)
+        setData(controller_data)
+        updateFirebase('acciones',controller_data)
+        dispatch(updateParamsHT200({target:'acciones',data:controller_data}));
     }
 
     const modificarAccion = (__data) =>{
@@ -130,6 +143,8 @@ export default function AccionesHT200View(){
         }
         console.log(array_data.length)
         await PostActionHT200({trama:array_data,ip:controlerState.ip})
+        updateFirebase('acciones',aux_data)
+        dispatch(updateParamsHT200({target:'acciones',data:aux_data}));
     }
 
     return(

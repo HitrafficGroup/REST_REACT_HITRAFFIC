@@ -5,7 +5,6 @@ import Button from '@mui/material/Button';
 import { getHorarioHT200,PostHorariosHT200 } from "../js/apiFunctionsHT200";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -29,7 +28,9 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from "../firebase/firebase-config";
+import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
 export default function HorariosHT200View(){
 
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -37,7 +38,8 @@ export default function HorariosHT200View(){
     const [modalConfig,setModalConfig] = useState(false);
     const [data,setData] = useState([{mes_formated:[],fecha_formated:[],dia_formated:[]}]);
     const [currentHorario,setCurrentHorario] = useState({day_plan:""});
-    const controlerState = useSelector(state => state.controlers)
+    const controlerState = useSelector(state => state.controlerht200);
+    const dispatch = useDispatch();
     const [dia,setDia] = useState({
         lunes:false,
         martes:false,
@@ -103,14 +105,23 @@ export default function HorariosHT200View(){
         setPage(0);
     };
     const readData = async()=>{
-        let data = await getHorarioHT200(controlerState.ip);
+        let controller_data = await getHorarioHT200(controlerState.ip);
         data.forEach(element => {
             element['mes_formated'] = formatMonth(element)
             element['fecha_formated'] = formatearDias(element)
             element['dia_formated'] = formatWeek(element)
         });
-        setData(data)
-        console.log(data)
+        updateFirebase('horarios',controller_data);
+        dispatch(updateParamsHT200({target:'horarios',data:controller_data}));
+        setData(controller_data)
+        console.log(controller_data)
+
+    }
+    const updateFirebase = async (param, __data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${param}`] = __data;
+        await updateDoc(ref, aux_data);
     }
     const uploadData = async()=>{
         let aux_data = JSON.parse(JSON.stringify(data));
@@ -175,13 +186,16 @@ export default function HorariosHT200View(){
                 diciembre:'0',
             }
             aux.mes_formated.map(item => {
-                aux_meses[item] = '1'
+                aux_meses[item] = '1';
+                return item;
             })
             aux.fecha_formated.map(item => {
-                aux_fecha[`dia${item}`] = '1'
+                aux_fecha[`dia${item}`] = '1';
+                return item;
             })
             aux.dia_formated.map(item => {
                 aux_dia[item] = '1'
+                return item;
             })
             let aux_m1 =  aux_meses.julio+aux_meses.junio+aux_meses.mayo+aux_meses.abril+aux_meses.marzo+aux_meses.febrero+aux_meses.enero+'0'
             let aux_m2 =  "000"+aux_meses.diciembre+aux_meses.noviembre+aux_meses.octubre+aux_meses.septiembre+aux_meses.agosto
@@ -209,6 +223,8 @@ export default function HorariosHT200View(){
         }
         console.log(array_data)
         await PostHorariosHT200({trama:array_data,ip:controlerState.ip})
+        updateFirebase('horarios',aux_data);
+        dispatch(updateParamsHT200({target:'horarios',data:aux_data}));
 
     }
   
@@ -271,13 +287,17 @@ export default function HorariosHT200View(){
             diciembre:false,
         }
         aux.mes_formated.map(item => {
-            aux_meses[item] = true
+            aux_meses[item] = true;
+            return item;
         })
         aux.fecha_formated.map(item => {
-            aux_fecha[`dia${item}`] = true
+            aux_fecha[`dia${item}`] = true;
+            return item;
         })
         aux.dia_formated.map(item => {
-            aux_dia[item] = true
+            aux_dia[item] = true;
+            return item;
+
         })
         setModalConfig(true);
         setMes(aux_meses)

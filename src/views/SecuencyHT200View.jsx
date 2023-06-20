@@ -11,7 +11,10 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 //iconos
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from "../firebase/firebase-config";
+import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
 export default function SecuencyHT200View() {
 
     const [secuencias, setSecuencias] = useState([{ data: [], id: '' }]);
@@ -19,7 +22,8 @@ export default function SecuencyHT200View() {
     const [value, setValue] = useState('');
     const [currentSeq,setCurrentSeq]= useState([{}]);
     const [idSeq,setIdSeq] = useState();
-    const controlerState = useSelector(state => state.controlers)
+    const controlerState = useSelector(state => state.controlerht200)
+    const dispatch = useDispatch();
     const readData = async () => {
         let data = await getSecuencyHT200(controlerState.ip);
         let data_formated = []
@@ -32,6 +36,8 @@ export default function SecuencyHT200View() {
             data_formated.push(dictionario)
         });
         console.log(data_formated)
+        updateFirebase('secuencias',data_formated)
+        dispatch(updateParamsHT200({target:'secuencias',data:data_formated}));
         setSecuencias(data_formated)
     }
 
@@ -42,6 +48,12 @@ export default function SecuencyHT200View() {
         setIdSeq(__data.id)
         setCurrentSeq(seq_formated)
         setModalConfig(true)
+    }
+    const updateFirebase = async (param, __data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${param}`] = __data;
+        await updateDoc(ref, aux_data);
     }
     
     const agregarFasesSeq = ()=>{
@@ -73,6 +85,7 @@ export default function SecuencyHT200View() {
             if(item.id === idSeq){
                 item.data = formated_seq
             }
+            return item
         })
         setSecuencias(aux_seq)
         setModalConfig(false)
@@ -84,6 +97,7 @@ export default function SecuencyHT200View() {
         if(data_filter.length >0){
             data_filter.map((item,index) =>{
                 item.id = 'paso-'+(index+1)
+                return item
             })
         }
       
@@ -131,6 +145,8 @@ export default function SecuencyHT200View() {
             }
             console.log(data_formated.length)
             await PostSecuenciasHT200({trama:data_formated,ip:controlerState.ip})
+            updateFirebase('secuencias',aux_secuencias)
+            dispatch(updateParamsHT200({target:'secuencias',data:aux_secuencias}));
 
     }
     return (

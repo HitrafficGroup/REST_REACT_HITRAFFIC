@@ -17,12 +17,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from "../firebase/firebase-config";
+import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
 export default function PlanHT200View(){
     const [planTab,setPlanTab] = useState("plan-1");
     const [currentTab, setCurrentTab] = useState([{}]);
@@ -31,7 +32,8 @@ export default function PlanHT200View(){
     const [data,setData] = useState([{}]);
     const [modalConfig,setModalConfig] = useState(false);
     const [currentPlan,setCurrentPlan] = useState({});
-    const controlerState = useSelector(state => state.controlers)
+    const controlerState = useSelector(state => state.controlerht200);
+    const dispatch = useDispatch();
     const handlePlan = (event)=>{
         setPlanTab(event.target.value);
         let plan_actual = data.filter((item) => item.id === event.target.value)
@@ -47,12 +49,21 @@ export default function PlanHT200View(){
         setPage(0);
     };
     const readData = async()=>{
-        let data = await getPlanHT200(controlerState.ip);
-        setCurrentTab(data[0].data)
-        console.log(data)
-        setData(data)
+        let data_controller = await getPlanHT200(controlerState.ip);
+        setCurrentTab(data_controller[0].data)
+        console.log(data_controller)
+        setData(data_controller);
+        updateFirebase('plan',data_controller);
+        dispatch(updateParamsHT200({target:'plan',data:data_controller}));
 
     }
+    const updateFirebase = async (param, __data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${param}`] = __data;
+        await updateDoc(ref, aux_data);
+    }
+
     const modificarPlan =(__data)=>{
         setModalConfig(true)
         setCurrentPlan(__data)
@@ -74,6 +85,8 @@ export default function PlanHT200View(){
          
         }
         await PostPlanHT200({trama:array_data,ip:controlerState.ip})
+        updateFirebase('plan',aux_data);
+        dispatch(updateParamsHT200({target:'plan',data:aux_data}));
     }
     const aplicarCambios=()=>{
         let aux_plan = JSON.parse(JSON.stringify(currentPlan))

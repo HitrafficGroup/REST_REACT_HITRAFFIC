@@ -15,6 +15,9 @@ import Button from '@mui/material/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { getFasesHT200,PostFasesHT200 } from "../js/apiFunctionsHT200";
 import { useSelector, useDispatch } from 'react-redux';
+import { updateDoc, doc } from "firebase/firestore";
+import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
+import { db } from "../firebase/firebase-config";
 //iconos
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -27,7 +30,8 @@ export default function FasesHT200View() {
     const [fases,setFases] = useState([]);
     const [modalConfig,setModalConfig] = useState(false);
     const [currentFase,setCurrentFase] = useState(currentFase_init);
-    const controlerState = useSelector(state => state.controlers)
+    const controlerState = useSelector(state => state.controlerht200);
+    const dispatch = useDispatch();
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -37,6 +41,12 @@ export default function FasesHT200View() {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
+    const updateFirebase = async (param, __data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${param}`] = __data;
+        await updateDoc(ref, aux_data);
+    }
     const updateFase = ()=>{
         let aux_fases = JSON.parse(JSON.stringify(fases))
         let fases_edited = aux_fases.map((item)=>{
@@ -51,9 +61,12 @@ export default function FasesHT200View() {
         setModalConfig(false)
     }
     const readData=async()=>{
-        let data = await getFasesHT200(controlerState.ip);
-        setFases(data)
-        console.log(data)
+        let controller_data = await getFasesHT200(controlerState.ip);
+        setFases(controller_data)
+        updateFirebase('fases',controller_data)
+        dispatch(updateParamsHT200({target:'fases',data:controller_data}));
+        
+        console.log(controller_data)
     }
     const abrirModalConfig =(__data)=>{
         setModalConfig(true);
@@ -64,14 +77,15 @@ export default function FasesHT200View() {
     const handleTextField = (event) => {
         setCurrentFase({
             ...currentFase,
-            [event.target.name]: event.target.value,
+            [event.target.name]: parseInt(event.target.value),
         });
 
     };
     const uploadData = async() =>{
     let array_data = []
     let aux_data = []
-       fases.forEach((item,index)=> {
+    
+    fases.forEach((item,index)=> {
             if(item.number >  0){
              aux_data = [item.number,item.walk,
                     item.pedestrianClear,item.minimumGreen,item.passage,
@@ -86,7 +100,8 @@ export default function FasesHT200View() {
             }
 
        })
-       console.log(array_data)
+       updateFirebase('fases',fases)
+       dispatch(updateParamsHT200({target:'fases',data:fases}));
        await PostFasesHT200({trama:array_data,ip:controlerState.ip})
       
     }

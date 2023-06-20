@@ -54,10 +54,14 @@ export const controlerHT200Slice = createSlice({
             state.horarios = action.payload.horarios;
             state.channel = action.payload.channel;
         },
+        updateParamsHT200:(state,action)=>{
+            state[action.payload.target] = action.payload.data 
+            
+        }
 
 
     }
 })
-export const {addFases,setInitialStateControllerHT200,setControllerDataHT200} = controlerHT200Slice.actions
+export const {addFases,setInitialStateControllerHT200,setControllerDataHT200,updateParamsHT200} = controlerHT200Slice.actions
 export default controlerHT200Slice.reducer
 

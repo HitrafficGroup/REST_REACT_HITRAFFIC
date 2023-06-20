@@ -48,7 +48,7 @@ const InitialTime = {
 
 export default function HomeView() {
 
-    const controlerState = useSelector(state => state.controlers)
+    const controlerState = useSelector(state => state.controlerht200)
     const [tiempoController, setTiempoController] = useState(InitialTime)
     //const [fechaController, setFechaController] = useState('Datos de fecha aun no Cargados')
     const [fechaActual, setFechaActual] = useState(new Date().toLocaleString("es-EC", { dateStyle: 'full' }))
@@ -786,6 +786,7 @@ export default function HomeView() {
     */
 
     useEffect(() => {
+        console.log(controlerState)
         const interval = setInterval(() => {
 
             if (simulacion.current) {

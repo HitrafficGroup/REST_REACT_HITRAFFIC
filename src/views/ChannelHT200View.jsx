@@ -24,18 +24,29 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from '../firebase/firebase-config';
+import { updateParamsHT200 } from '../features/controlerht200/controlerHT200Slice';
 export default function ChannelHT200View(){
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
     const [modalConfig,setModalConfig] = useState(false);
     const [data,setData] = useState([{}]);
     const [currentChannel ,setCurrentChannel] = useState({});
-    const controlerState = useSelector(state => state.controlers)
+    const controlerState = useSelector(state => state.controlerht200);
+    const dispatch = useDispatch();
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
+
+    const updateFirebase = async (param, __data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${param}`] = __data;
+        await updateDoc(ref, aux_data);
+    }
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
@@ -125,9 +136,11 @@ export default function ChannelHT200View(){
     }
 
     const readData= async()=>{
-        let data= await getChannelHT200(controlerState.ip)
-        console.log(data)
-        setData(data)
+        let controller_data= await getChannelHT200(controlerState.ip);
+        updateFirebase('channel',data);
+        dispatch(updateParamsHT200({target:'channel',data:controller_data}));
+        console.log(controller_data)
+        setData(controller_data)
     }
     const uploadData = async()=>{
         let aux_data = JSON.parse(JSON.stringify(data))
@@ -143,6 +156,8 @@ export default function ChannelHT200View(){
             data_array.push(aux_data[i].countdown)
         }
         await PostChannelHT200({trama:data_array,ip:controlerState.ip})
+        updateFirebase('channel',aux_data);
+        dispatch(updateParamsHT200({target:'channel',data:aux_data}));
     }
 
     const AplicarCambios =()=>{
@@ -255,7 +270,7 @@ export default function ChannelHT200View(){
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((row,index) => {
                                             return (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                                                     <TableCell  align={"center"}>
                                                         {"grupo-"+row.number}
                                                     </TableCell>

@@ -21,16 +21,27 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import { useSelector, useDispatch } from 'react-redux';
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from "../firebase/firebase-config";
+import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
+
 export default function PatternHT200View() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [data,setData] = useState([{number:0,cycletime:0,offsettime:0,sequencenumber:0,splitnumber:0,workmode:0}])
     const [modalConfig,setModalConfig] = useState(false);
     const [currentPattern,setCurrentPattern] = useState({number:0,cycletime:0,offsettime:0,sequencenumber:0,splitnumber:0,workmode:0});
-    const controlerState = useSelector(state => state.controlers)
+    const controlerState = useSelector(state => state.controlerht200)
+    const dispatch = useDispatch();
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
+    const updateFirebase = async (param, __data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${param}`] = __data;
+        await updateDoc(ref, aux_data);
+    }
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
@@ -46,9 +57,11 @@ export default function PatternHT200View() {
 
     };
     const readData = async () => {
-        let data = await getPatternHT200(controlerState.ip);
-        console.log(data)
-        setData(data)
+        let controller_data = await getPatternHT200(controlerState.ip);
+        console.log(controller_data)
+        updateFirebase('pattern',controller_data)
+        dispatch(updateParamsHT200({target:'pattern',data:controller_data}));
+        setData(controller_data)
 
     }
 
@@ -101,6 +114,8 @@ export default function PatternHT200View() {
         }
         console.log(array_data)
         await PostPatternHT200({trama:array_data,ip:controlerState.ip})
+        updateFirebase('pattern',array_data)
+        dispatch(updateParamsHT200({target:'pattern',data:array_data}));
     }
     const convertWorkmode = (__data)=>{
         if (__data === 1) {

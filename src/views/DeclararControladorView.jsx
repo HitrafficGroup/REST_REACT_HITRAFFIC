@@ -213,8 +213,9 @@ export default function DeclararControladorView() {
                         dias_especiales:{},
                         fases:{},
                         grupos:{},
-                        hora_controlador:{},
-                        horarios:{},
+                        horario_ordinario:[],
+                        horario_finsemana:[],
+                        horario_festivo:[],
                         semaforos:areas_aux,
                         otros_parametros:{},
                         plan_1:[],
@@ -264,7 +265,7 @@ export default function DeclararControladorView() {
                             setFlagCargando(false);
                     }
                 }
-                if(nombreControlador !== "" && model === "HT-200"){
+                else if(nombreControlador !== "" && model === "HT-200"){
                     let areas_aux = JSON.parse(JSON.stringify(areas)) 
                     let id_controller = uuidv4()
                     let parametrosIniciales = {

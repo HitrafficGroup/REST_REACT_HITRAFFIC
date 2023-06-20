@@ -20,7 +20,8 @@ import DoneIcon from '@mui/icons-material/Done';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
+import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
 //
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -29,9 +30,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from "../firebase/firebase-config";
 //
 export default function SplitHT200View() {
-    const controlerState = useSelector(state => state.controlers)
+    const controlerState = useSelector(state => state.controlerht200)
     const [splitTab, setSplitTab] = useState("split-1");
     const [splits, setSplits] = useState([{}]);
     const [currentTab, setCurrentTab] = useState([{}]);
@@ -39,48 +42,58 @@ export default function SplitHT200View() {
     const [currentSplit, setCurrentSplit] = useState({ tiempo: 0 });
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
-
+    const dispatch = useDispatch();
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-const handleChangeRowsPerPage = (event) => {
+
+    const updateFirebase = async (param, __data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${param}`] = __data;
+        await updateDoc(ref, aux_data);
+    }
+
+    const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
 
 
     const readData = async () => {
-        let data = await getSplitHT200(controlerState.ip);
+        let controller_data = await getSplitHT200(controlerState.ip);
 
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 16; j++) {
 
-                let target = data[i].data[j].mode
+                let target = controller_data[i].data[j].mode
                 if (target === 1) {
-                    data[i].data[j].mode = "Otro"
+                    controller_data[i].data[j].mode = "Otro"
                 } else if (target === 2) {
-                    data[i].data[j].mode = "Ninguno"
+                    controller_data[i].data[j].mode = "Ninguno"
                 } else if (target === 3) {
-                    data[i].data[j].mode = "Minimun Vehicle Recall"
+                    controller_data[i].data[j].mode = "Minimun Vehicle Recall"
                 } else if (target === 4) {
-                    data[i].data[j].mode = "Maximun Vehicle Recall"
+                    controller_data[i].data[j].mode = "Maximun Vehicle Recall"
                 } else if (target === 5) {
-                    data[i].data[j].mode = "Pedestrian Recall"
+                    controller_data[i].data[j].mode = "Pedestrian Recall"
                 } else if (target === 6) {
-                    data[i].data[j].mode = "Maximun vehicle Pedestrian Recall"
+                    controller_data[i].data[j].mode = "Maximun vehicle Pedestrian Recall"
                 }  else if (target === 7) {
-                    data[i].data[j].mode = "Phase Omitted"
+                    controller_data[i].data[j].mode = "Phase Omitted"
                 }else {
-                    data[i].data[j].mode = "Ninguno"
+                    controller_data[i].data[j].mode = "Ninguno"
                 }
 
             }
         }
-        console.log(data)
-        setSplits(data)
-        setCurrentTab(data[0].data)
+        console.log(controller_data)
+        updateFirebase('split',controller_data)
+        dispatch(updateParamsHT200({target:'split',data:controller_data}));
+        setSplits(controller_data)
+        setCurrentTab(controller_data[0].data)
         setSplitTab("split-1");
 
     }
@@ -216,6 +229,8 @@ const handleChangeRowsPerPage = (event) => {
         }
    
         await PostSplitHT200({trama:array_data,ip:controlerState.ip})
+        updateFirebase('split',aux_splits)
+        dispatch(updateParamsHT200({target:'split',data:aux_splits}));
     }
     const eliminarSplit = (__data) =>{
         let custom_delete = {fase:0,mode:"Ninguno",tiempo:0,coord:0}
@@ -274,7 +289,7 @@ const handleChangeRowsPerPage = (event) => {
                                     <TableRow>
                                         <TableCell
                                                 key={"num"}
-                                                align={"left"}S
+                                                align={"left"}
                                             >
                                             Fase
                                             </TableCell>
