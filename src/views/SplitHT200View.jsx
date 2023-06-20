@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
+
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Button from '@mui/material/Button';
 import { getSplitHT200,PostSplitHT200} from "../js/apiFunctionsHT200";
@@ -20,7 +20,16 @@ import DoneIcon from '@mui/icons-material/Done';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+//
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+//
 export default function SplitHT200View() {
     const controlerState = useSelector(state => state.controlers)
     const [splitTab, setSplitTab] = useState("split-1");
@@ -28,6 +37,20 @@ export default function SplitHT200View() {
     const [currentTab, setCurrentTab] = useState([{}]);
     const [modalConfig, setModalConfig] = useState(false);
     const [currentSplit, setCurrentSplit] = useState({ tiempo: 0 });
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [page, setPage] = useState(0);
+
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(+event.target.value);
+        setPage(0);
+    };
+
+
     const readData = async () => {
         let data = await getSplitHT200(controlerState.ip);
 
@@ -55,7 +78,7 @@ export default function SplitHT200View() {
 
             }
         }
-
+        console.log(data)
         setSplits(data)
         setCurrentTab(data[0].data)
         setSplitTab("split-1");
@@ -245,56 +268,107 @@ export default function SplitHT200View() {
                         <Button variant="contained" sx={{ height: '100%' }} color='oscuro' fullWidth onClick={uploadData}>Cargar Datos</Button>
                     </Grid>
                     <Grid item md={12} xs={12}>
-                        <Table className='home-t'>
-                            <Thead>
-                                <Tr>
-                                    <Th className='home-t-th'>Fase</Th>
-                                    <Th className='home-t-th'>Tiempo</Th>
-                                    <Th className='home-t-th'>Mode</Th>
-                                    <Th className='home-t-th'>Fase Coordinada</Th>
-                                    <Th className='home-t-th'>Fase Clave</Th>
-                                    <Th className='home-t-th'>Fase Fija</Th>
-                                    <Th className='home-t-th'>Acciones</Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {currentTab.map((dato, index) => (
-                                    <Tr className="tablas-focus" key={index} >
-                                        <Td>
-                                            {dato.fase}
-                                        </Td>
-                                        <Td >
-                                            {dato.tiempo}
-                                        </Td>
+                    <TableContainer sx={{ maxHeight: 430 }}>
+                            <Table stickyHeader aria-label="sticky table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell
+                                                key={"num"}
+                                                align={"left"}S
+                                            >
+                                            Fase
+                                            </TableCell>
+                                            <TableCell
+                                                key={"grupo1"}
+                                                align={"center"}
+                                           
+                                            >
+                                            Tiempo
+                                            </TableCell>
+                                            
+                                            <TableCell
+                                                key={"grupo2"}
+                                                align={"center"}
+                                              
+                                            >
+                                            Mode
+                                            </TableCell>
+                                            <TableCell
+                                                key={"grupo3"}
+                                                align={"center"}
+                                    
+                                            >
+                                            Fase Coordinada
+                                            </TableCell>
+                                            <TableCell
+                                                key={"grupo4"}
+                                                align={"center"}
+                                            >
+                                            Fase Clave
+                                            </TableCell>
+                                            <TableCell
+                                                key={"fase"}
+                                                align={"center"}
+                                            >
+                                            Fase Fija
+                                            </TableCell>
+                                            <TableCell
+                                                key={"Acciones"}
+                                                align={"center"}
+                                            >
+                                            Acciones
+                                            </TableCell>
+                                           
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {currentTab
+                                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                        .map((dato,index) => {
+                                            return (
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                                     <TableCell  align={"left"}>
+                                                        {dato.fase}
+                                                     </TableCell>
+                                                    <TableCell  align={"center"}>
+                                                        {dato.tiempo}
+                                                    </TableCell>
+                                                    <TableCell  align={"center"}>
+                                                        {dato.mode}
+                                                    </TableCell>
+                                                    <TableCell  align={"center"}>
+                                                        {dato.coord === 1 ? <DoneIcon color="verde2" /> : <ClearIcon color="gris" />}
+                                                    </TableCell>
+                                                    <TableCell  align={"center"}>
+                                                        {dato.coord === 2 ? <DoneIcon color="verde2" /> : <ClearIcon color="gris" />}
+                                                    </TableCell>
+                                                    <TableCell  align={"center"}>
+                                                        {dato.coord === 4 ? <DoneIcon color="verde2" /> : <ClearIcon color="gris" />}
+                                                    </TableCell>
+                                                    <TableCell  align={"center"}>
+                                                        <IconButton color="oscuro" aria-label="add an alarm" onClick={() => { modficarSplit(dato) }} >
+                                                            <EditIcon />
+                                                        </IconButton>
+                                                        <IconButton color="rojo" aria-label="add an alarm" onClick={() => { eliminarSplit(dato) }}>
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <TablePagination
+                            rowsPerPageOptions={[10, 25, 100]}
+                            component="div"
+                            count={currentTab.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
 
-                                        <Td >
-                                            {dato.mode}
-                                        </Td>
-                                        <Td >
-                                            {dato.coord === 1 ? <DoneIcon color="verde2" /> : <ClearIcon color="gris" />}
-                                        </Td>
-                                        <Td >
-                                            {dato.coord === 2 ? <DoneIcon color="verde2" /> : <ClearIcon color="gris" />}
-                                        </Td>
-                                        <Td >
-                                            {dato.coord === 4 ? <DoneIcon color="verde2" /> : <ClearIcon color="gris" />}
-                                        </Td>
-                                        <Td >
-                                            <div className="horarios-t-buttons">
-                                                <IconButton color="oscuro" aria-label="add an alarm" onClick={() => { modficarSplit(dato) }} >
-                                                    <EditIcon />
-                                                </IconButton>
-                                                <IconButton color="rojo" aria-label="add an alarm" onClick={() => { eliminarSplit(dato) }}>
-                                                    <DeleteIcon />
-                                                </IconButton>
-
-                                            </div>
-
-                                        </Td>
-                                    </Tr>
-                                ))}
-                            </Tbody>
-                        </Table>
                     </Grid>
                     <Grid item md={12} xs={12}>
                         <div style={{height:80}}>
@@ -351,9 +425,9 @@ export default function SplitHT200View() {
                                     onChange={handleChange}
                                     row
                                 >
-                                    <FormControlLabel value={1} control={<Radio />} label="Fase Clave" />
-                                    <FormControlLabel value={2} control={<Radio />} label="Fase Fija" />
-                                    <FormControlLabel value={4} control={<Radio />} label="Fase Coord" />
+                                    <FormControlLabel value={1} control={<Radio />} label="Fase Coord" />
+                                    <FormControlLabel value={2} control={<Radio />} label="Fase Clave" />
+                                    <FormControlLabel value={4} control={<Radio />} label="Fase Fija" />
                                 </RadioGroup>
                             </FormControl>
                         </Grid>

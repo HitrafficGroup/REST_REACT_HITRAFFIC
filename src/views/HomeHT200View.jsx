@@ -33,7 +33,7 @@ import '../css/HomeView.css';
 import '../css/beautifulCard.scss';
 import Swal from 'sweetalert2';
 import RelogActual from "../components/RelogActual";
-import { getTimeHT200 } from '../js/apiFunctionsHT200';
+import { getTimeHT200,PostTimeHT200 } from '../js/apiFunctionsHT200';
 const InitialTime = {
     day: "00",
     hours: "00",
@@ -769,9 +769,9 @@ export default function HomeView() {
                 denyButtonText: 'Cancelar',
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    // setDeshabilitar(true);
-                    // await postTimeSW12({ ip:controlerState.ip });
-                    // setDeshabilitar(false);
+                    setDeshabilitar(true);
+                    await PostTimeHT200({ ip:controlerState.ip });
+                    setDeshabilitar(false);
 
                 }
             })

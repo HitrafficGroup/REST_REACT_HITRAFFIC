@@ -415,6 +415,25 @@ async function PostChannelHT200(jsonData) {
 		});
 }
 
+async function PostTimeHT200(jsonData) {
+	await axios.post(`${BASE_HT200}/rest/setTimeHT200?ip=${jsonData['ip']}`,jsonData)
+		.then(response => {
+			console.log(response.data)
+			Swal.fire({
+				title: "Completado!",
+				text: "Cambios Cargados Con Éxito",
+				icon: "success",
+			});
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+			  })
+		});
+}
 
 
 
@@ -430,6 +449,6 @@ export {
 	getPlanHT200,PostPlanHT200,
 	getHorarioHT200,PostHorariosHT200,
 	getChannelHT200,PostChannelHT200,
-	getTimeHT200
+	getTimeHT200,PostTimeHT200
 
 }

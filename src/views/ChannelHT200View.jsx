@@ -18,14 +18,13 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 //iconos
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 export default function ChannelHT200View(){
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
@@ -187,9 +186,9 @@ export default function ChannelHT200View(){
                                             <TableCell
                                                 key={"channel"}
                                                 align={"left"}
-                                           
+                                                style={{ minWidth: 100 }}
                                             >
-                                                Canal
+                                                Grupo
                                             </TableCell>
                                             
                                             <TableCell
@@ -216,6 +215,7 @@ export default function ChannelHT200View(){
                                             <TableCell
                                                 key={"dim"}
                                                 align={"left"}
+                                            
                                             
                                             >
                                                 Dim Parameter
@@ -257,7 +257,7 @@ export default function ChannelHT200View(){
                                             return (
                                                 <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
                                                     <TableCell  align={"center"}>
-                                                        {row.number}
+                                                        {"grupo-"+row.number}
                                                     </TableCell>
                                                     <TableCell  align={"center"}>
                                                         {row.source}
@@ -311,13 +311,34 @@ export default function ChannelHT200View(){
                 <ModalHeader>
                     <div>
                         <h1>
-                            Editar Channel
+                            Editar Channel - {currentChannel.numbe}
                         </h1>
                     </div>
                 </ModalHeader>
                 <ModalBody>
                     <Grid container spacing={4}>
-
+                    <Grid item xs={12} md={12}>
+                    <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Fase</InputLabel>
+                                <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={currentChannel.source}
+                                            label="Fase"
+                                            name="source"
+                                            onChange={handleChange}
+                                        >
+                                        <MenuItem value={1}>fase 1</MenuItem>
+                                        <MenuItem value={2}>fase 2</MenuItem>
+                                        <MenuItem value={3}>fase 3</MenuItem>
+                                        <MenuItem value={4}>fase 4</MenuItem>
+                                        <MenuItem value={5}>fase 5</MenuItem>
+                                        <MenuItem value={6}>fase 6</MenuItem>
+                                        <MenuItem value={7}>fase 7</MenuItem>
+                                        <MenuItem value={8}>fase 8</MenuItem>
+                                </Select>
+                        </FormControl>
+                    </Grid>
                         <Grid item xs={12} md={12}>
                         <FormControl>
                             <FormLabel id="demo-controlled-radio-buttons-group">Control Type</FormLabel>
@@ -412,7 +433,7 @@ export default function ChannelHT200View(){
                                         <MenuItem value={6}>No Vehicle</MenuItem>
                                         <MenuItem value={0}>Other</MenuItem>
                                     </Select>
-                                </FormControl>
+                            </FormControl>
                         </Grid>
                     </Grid>
                 </ModalBody>
@@ -430,11 +451,3 @@ export default function ChannelHT200View(){
 }
 
 
-const columns = [
-    { id: 'id', label: 'id', minWidth: 100 },
-    { id: 'hour', label: 'Hour', minWidth: 100 },
-    { id: 'minute', label: 'Minute', minWidth: 100 },
-    { id: 'action', label: 'action', minWidth: 100 },
-    // { id: 'special', label: 'Especial', minWidth: 100 },
-    // { id: 'auxiliary', label: 'Auxiliar', minWidth: 100 },
-];

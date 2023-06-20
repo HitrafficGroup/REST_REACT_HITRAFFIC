@@ -46,6 +46,7 @@ export default function FasesHT200View() {
                 return item
             }
         })
+        
         setFases(fases_edited)
         setModalConfig(false)
     }

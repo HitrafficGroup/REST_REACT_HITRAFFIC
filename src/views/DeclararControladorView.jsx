@@ -28,8 +28,6 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 // dependencias del mapa
 import Fab from '@mui/material/Fab';
-
-
 import { useNavigate } from 'react-router-dom';
 import { setNameMenu } from '../features/menu/menuSlice';
 import { reloadIps } from '../features/controlers/controlerSlice';
@@ -60,7 +58,6 @@ export default function DeclararControladorView() {
     const [nombreControlador,setNombreControlador]  = useState("");
     const [ipControlador,setIpControlador] = useState("");
     const [macControlador,setMacControlador] = useState("");
-
     const [pointsArea,setPointsArea] = useState([]);
     const [canton,setCanton] = useState('')
     //banderas para los botones 
@@ -99,10 +96,7 @@ export default function DeclararControladorView() {
    
     const selectModel = (event) => {
         setModel(event.target.value);
-    
     };
-
-
     const obtenerCoordenadas = () => {
         let puntos = JSON.parse(JSON.stringify(pointsArea))
         let data;
@@ -199,7 +193,7 @@ export default function DeclararControladorView() {
                     'error'
                     )
             }else{
-                if(nombreControlador !== ""){
+                if(nombreControlador !== "" && model === "SW-12"){
 
         
                     let areas_aux = JSON.parse(JSON.stringify(areas)) 
@@ -246,24 +240,14 @@ export default function DeclararControladorView() {
                         mac:macControlador,
                         canton:canton,
                         online:true,
-                        ultima_conexion:'',
                         modelo:model,
                     }
                 
-                    
-                    console.log(parametrosIniciales)
+                
                     try {
                         setFlagCargando(true);
                         await setDoc(doc(db, "controladores",id_controller, ), parametrosIniciales);
                         await setDoc(doc(db, "historial_controladores",id_controller, ), historialControladorData);
-                        // if(controlerState.nuevo_controlador.ip !== ipControlador){
-                        //     let jason_data = {
-                        //         ip:controlerState.nuevo_controlador.ip,
-                        //         nueva_ip:ipControlador,
-                        //         mac:controlerState.nuevo_controlador.mac,
-                        //     }
-                        //     await setCambiarIpControlador(jason_data);
-                        // }
                         Swal.fire(
                             'Exito',
                             'Controlador Declarado! ',
@@ -279,7 +263,61 @@ export default function DeclararControladorView() {
                             )
                             setFlagCargando(false);
                     }
-                }else{
+                }
+                if(nombreControlador !== "" && model === "HT-200"){
+                    let areas_aux = JSON.parse(JSON.stringify(areas)) 
+                    let id_controller = uuidv4()
+                    let parametrosIniciales = {
+                        // parametros inicializados por defecto
+                        latitud: parseFloat(latitud),
+                        longitud:parseFloat(longitud),
+                        id:id_controller,
+                        semaforos:areas_aux,
+                        // parametros que se iran llenando conforme actualice el controlador
+                        fases:[],
+                        secuencias:[],
+                        split:[],
+                        pattern:[],
+                        acciones:[],
+                        plan:[],
+                        horarios:[],
+                        channel:[],
+                    }
+                    let historialControladorData = {
+                        id:id_controller,
+                        nombre:nombreControlador,
+                        historial_conexiones:[],
+                        ultima_conexion:'',
+                        latitud:parseFloat(latitud),
+                        longitud:parseFloat(longitud),
+                        ip:ipControlador,
+                        mac:macControlador,
+                        canton:canton,
+                        online:true,
+                        modelo:model,
+                    }
+                    try {
+                        setFlagCargando(true);
+                        await setDoc(doc(db, "controladores",id_controller, ), parametrosIniciales);
+                        await setDoc(doc(db, "historial_controladores",id_controller, ), historialControladorData);
+                        Swal.fire(
+                            'Exito',
+                            'Controlador Declarado! ',
+                            'success'
+                            )
+                        setFlagCargando(false);
+                        Changeview('/equipos')
+                    } catch (error) {
+                        Swal.fire(
+                            'Error',
+                            `Error: ${error}`,
+                            'error'
+                            )
+                            setFlagCargando(false);
+                    }
+
+                }
+                else{
                       Swal.fire(
                         'Falta el Nombre',
                         'Llene el nombre del Controlador ! ',

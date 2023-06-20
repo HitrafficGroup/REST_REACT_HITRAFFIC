@@ -22,6 +22,7 @@ import Button from '@mui/material/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { setInitialStateController, setControllerData } from "../features/controlers/controlerSlice";
+import { setInitialStateControllerHT200,setControllerDataHT200 } from "../features/controlerht200/controlerHT200Slice";
 import Swal from 'sweetalert2';
 import { collection, updateDoc, doc, onSnapshot, query, deleteDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
@@ -167,8 +168,8 @@ export default function ControlersView() {
             aux_equipo['historial_conexiones'] = conexiones
   
             if (_equipo.modelo === "HT-200") {
-                dispatch(setInitialStateController(aux_equipo));
-                dispatch(setControllerData(equipo_info));
+                dispatch(setInitialStateControllerHT200(aux_equipo));
+                dispatch(setControllerDataHT200(equipo_info));
                 const ref = doc(db, "historial_controladores", _equipo.id);
                 await updateDoc(ref, {
                     ultima_conexion: fecha,

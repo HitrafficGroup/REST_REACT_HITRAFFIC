@@ -186,7 +186,7 @@ export default function AccionesHT200View(){
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((row,index) => {
                                             return (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                                                     {columns.map((column) => {
                                                         const value = row[column.id];
                                                         return (

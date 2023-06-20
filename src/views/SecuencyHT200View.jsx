@@ -11,13 +11,12 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 //iconos
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 export default function SecuencyHT200View() {
 
     const [secuencias, setSecuencias] = useState([{ data: [], id: '' }]);
     const [modalConfig, setModalConfig] = useState(false)
     const [value, setValue] = useState('');
-    const [inputValue, setInputValue] = useState('');
     const [currentSeq,setCurrentSeq]= useState([{}]);
     const [idSeq,setIdSeq] = useState();
     const controlerState = useSelector(state => state.controlers)
@@ -32,7 +31,7 @@ export default function SecuencyHT200View() {
             }
             data_formated.push(dictionario)
         });
-
+        console.log(data_formated)
         setSecuencias(data_formated)
     }
 
@@ -265,30 +264,6 @@ export default function SecuencyHT200View() {
 
 }
 
-let aux_data = [
-    {
-        phase: 1,
-        ped_walk: 2,
-        ped_clear: 3,
-        mini_green: 4,
-        passage: 5,
-        max_green: 1,
-        max_green2: 1,
-        vehicle_yellow: 5,
-        red_clear: 9,
-        red_revert: 5,
-        vehicle_clear: 8
-    }
-]
 
-const columns = [
-    { id: 'qw', label: 'seq1', minWidth: 100 },
-    { id: 'cowede', label: 'seq2', minWidth: 100 },
-    { id: 'w', label: 'seq3', minWidth: 100 },
-    { id: 'wq', label: 'seq4', minWidth: 100 },
-    { id: 'cs', label: 'seq5', minWidth: 100 },
-    { id: '31', label: 'seq6', minWidth: 100 },
-    { id: 'weq1', label: 'seq7', minWidth: 100 },
-    { id: 'qww', label: 'seq8', minWidth: 100 },
-];
+
 const options = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16'];
