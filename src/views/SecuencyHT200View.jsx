@@ -3,7 +3,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import { getSecuencyHT200,PostSecuenciasHT200 } from "../js/apiFunctionsHT200";
 import Button from '@mui/material/Button';
-import "../css/SecuencyHT200View.css";
+import "../css/SecuencyHT200View.scss";
 import SettingsIcon from '@mui/icons-material/Settings';
 import IconButton from '@mui/material/IconButton';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
@@ -143,7 +143,7 @@ export default function SecuencyHT200View() {
                 }
 
             }
-            console.log(data_formated.length)
+            console.log(data_formated)
             await PostSecuenciasHT200({trama:data_formated,ip:controlerState.ip})
             updateFirebase('secuencias',aux_secuencias)
             dispatch(updateParamsHT200({target:'secuencias',data:aux_secuencias}));

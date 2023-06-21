@@ -12,6 +12,18 @@
 .seq-list{
     list-style: none;
 }
+.seq-item{
+    background-color: #2874A6;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    font-weight: bold;
+}
 
 .list-container-seq{
     width: 100%;

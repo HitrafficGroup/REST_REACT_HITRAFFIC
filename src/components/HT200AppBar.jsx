@@ -28,6 +28,7 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import WifiChannelIcon from '@mui/icons-material/WifiChannel';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import HomeIcon from '@mui/icons-material/Home';
+import BugReportIcon from '@mui/icons-material/BugReport';
 export default  function HT200AppBar(){
     const [drawerHT,setDrawerHT] = useState({left:false});
     const navigate = useNavigate(); // hook para navegar entre urls o vistas
@@ -108,6 +109,12 @@ export default  function HT200AppBar(){
                             <SettingsIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Config"/>
+            </ListItemButton>
+            <ListItemButton onClick={()=>{navigate('pruebas')}} >
+                        <ListItemIcon>
+                            <BugReportIcon fontSize='large' />
+                        </ListItemIcon>
+                        <ListItemText primary="Pruebas"/>
             </ListItemButton>
             </List>
             <List

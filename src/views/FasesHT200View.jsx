@@ -100,9 +100,11 @@ export default function FasesHT200View() {
             }
 
        })
-       updateFirebase('fases',fases)
+     
+       updateFirebase('fases',fases);
        dispatch(updateParamsHT200({target:'fases',data:fases}));
-       await PostFasesHT200({trama:array_data,ip:controlerState.ip})
+       console.log(array_data);
+       await PostFasesHT200({trama:array_data,ip:controlerState.ip});
       
     }
 

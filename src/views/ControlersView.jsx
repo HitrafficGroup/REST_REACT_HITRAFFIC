@@ -356,7 +356,7 @@ export default function ControlersView() {
                                     <TableHead>
                                         <TableRow>
                                         <TableCell
-                                                key={"Name"}
+                                                key={"last"}
                                                 align={"left"}
                                                 style={{ minWidth: 200 }}
                                                 >
