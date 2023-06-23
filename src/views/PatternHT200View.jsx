@@ -11,7 +11,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-
+import { generatePatternFrame } from "../js/generateFrameApiHT200";
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -89,30 +89,7 @@ export default function PatternHT200View() {
     }
     const uploadData = async() =>{
         let array_data = []
-        let aux_data = JSON.parse(JSON.stringify(data))
-    
-
-        for(let i = 0;i<100;i++){
-            if(i <16){
-                array_data.push(aux_data[i].number)
-                array_data.push(aux_data[i].cycletime & 0xff)
-                array_data.push(aux_data[i].cycletime >> 8)
-                array_data.push(aux_data[i].offsettime)
-                array_data.push(aux_data[i].splitnumber)
-                array_data.push(aux_data[i].sequencenumber)
-                array_data.push(aux_data[i].workmode)
-            }else{
-                array_data.push(0)
-                array_data.push(0)
-                array_data.push(0)
-                array_data.push(0)
-                array_data.push(0)
-                array_data.push(0)
-                array_data.push(0)
-            }
-        
-        }
-        console.log(array_data)
+        array_data = generatePatternFrame(data)
         await PostPatternHT200({trama:array_data,ip:controlerState.ip})
         updateFirebase('pattern',array_data)
         dispatch(updateParamsHT200({target:'pattern',data:array_data}));
@@ -152,15 +129,34 @@ export default function PatternHT200View() {
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
-                                        {columns.map((column) => (
-                                            <TableCell
-                                                key={column.id}
-                                                align={column.align}
-                                                style={{ minWidth: column.minWidth }}
+                                             <TableCell
+                                                key={"number"}
+                                                align={"center"}
+                                                style={{ minWidth: 100 }}
                                             >
-                                                {column.label}
+                                                Number
                                             </TableCell>
-                                        ))}
+                                            <TableCell
+                                                key={"sequencenumber"}
+                                                align={"center"}
+                                                style={{ minWidth: 100 }}
+                                            >
+                                                Sequencenumber
+                                            </TableCell>
+                                            <TableCell
+                                                key={"splitnumber"}
+                                                align={"center"}
+                                                style={{ minWidth: 100 }}
+                                            >
+                                                Splitnumber
+                                            </TableCell>
+                                            <TableCell
+                                                key={"offsettime"}
+                                                align={"center"}
+                                                style={{ minWidth: 100 }}
+                                            >
+                                                Offsettime
+                                            </TableCell>
                                          <TableCell
                                                 key={"workmode"}
                                                 align={"center"}
@@ -182,17 +178,19 @@ export default function PatternHT200View() {
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((row,index) => {
                                             return (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                                                    {columns.map((column) => {
-                                                        const value = row[column.id];
-                                                        return (
-                                                            <TableCell key={column.id} align={column.align}>
-                                                                {column.format && typeof value === 'number'
-                                                                    ? column.format(value)
-                                                                    : value}
-                                                            </TableCell>
-                                                        );
-                                                    })}
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                                        <TableCell  align={"center"}>
+                                                            {row.number}
+                                                        </TableCell>
+                                                        <TableCell  align={"center"}>
+                                                            {row.sequencenumber}
+                                                        </TableCell>
+                                                        <TableCell  align={"center"}>
+                                                            {row.splitnumber}
+                                                        </TableCell>
+                                                        <TableCell  align={"center"}>
+                                                            {row.offsettime}
+                                                        </TableCell>
                                                         <TableCell  align={"center"}>
                                                             {convertWorkmode(row.workmode)}
                                                             </TableCell>
@@ -300,12 +298,3 @@ export default function PatternHT200View() {
 
 }
 
-
-const columns = [
-    { id: 'number', label: 'Number', minWidth: 100 },
-    //{ id: 'cycletime', label: 'Cycletime', minWidth: 100 },
-    { id: 'sequencenumber', label: 'Sequence Number', minWidth: 100 },
-    { id: 'splitnumber', label: 'Split Number', minWidth: 100 },
-    { id: 'offsettime', label: 'OffsetTime', minWidth: 100 },
-    // { id: 'workmode', label: 'Workmode', minWidth: 100 },
-];

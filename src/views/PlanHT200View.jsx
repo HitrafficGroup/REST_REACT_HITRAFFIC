@@ -8,6 +8,7 @@ import Select from '@mui/material/Select';
 import { getPlanHT200,PostPlanHT200 } from '../js/apiFunctionsHT200';
 import Button from '@mui/material/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { generatePlanFrame } from '../js/generateFrameApiHT200';
 import TextField from '@mui/material/TextField';
 //
 import Table from '@mui/material/Table';
@@ -70,23 +71,11 @@ export default function PlanHT200View(){
     }
 
     const uploadData = async() =>{
-        let aux_data = JSON.parse(JSON.stringify(data))
         let array_data = []
-        let target_plan = []
-        for(let i = 0;i<16;i++){
-            array_data.push(i+1)
-                target_plan = aux_data[i].data
-                for(let j = 0;j<24;j++){
-                    array_data.push(target_plan[j].hour)
-                    array_data.push(target_plan[j].minute)
-                    array_data.push(target_plan[j].action)
-                }
-           
-         
-        }
+        array_data = generatePlanFrame(data)
         await PostPlanHT200({trama:array_data,ip:controlerState.ip})
-        updateFirebase('plan',aux_data);
-        dispatch(updateParamsHT200({target:'plan',data:aux_data}));
+        updateFirebase('plan',data);
+        dispatch(updateParamsHT200({target:'plan',data:data}));
     }
     const aplicarCambios=()=>{
         let aux_plan = JSON.parse(JSON.stringify(currentPlan))

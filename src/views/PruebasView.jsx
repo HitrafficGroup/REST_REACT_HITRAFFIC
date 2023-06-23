@@ -130,7 +130,6 @@ export default function PruebasView() {
 
     const uploadData = async () => {
         let data_formated = []
-
         let seq_target
         let aux_secuencias = JSON.parse(JSON.stringify(secuencias))
 
@@ -171,9 +170,7 @@ export default function PruebasView() {
                         data_formated.push(0)
                     }
                 }
-
             }
-
         }
         console.log(data_formated)
         await PostSecuenciasHT200({ trama: data_formated, ip: controlerState.ip })

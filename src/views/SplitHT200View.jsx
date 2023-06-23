@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-
+import { generateSplitFrame } from "../js/generateFrameApiHT200";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Button from '@mui/material/Button';
 import { getSplitHT200,PostSplitHT200} from "../js/apiFunctionsHT200";
@@ -161,72 +161,19 @@ export default function SplitHT200View() {
 
     const uploadData = async() =>{
       
-
-        let array_data = []
         let aux_splits = JSON.parse(JSON.stringify(splits))
+       
         let data = aux_splits.map((item) => {
             if(item.id === splitTab){
                 return {data:  JSON.parse(JSON.stringify(currentTab)),id:splitTab}
-
             }else{
                 return item;
             }
         })
 
-        for (let i = 0; i < 8; i++) {
-            for (let j = 0; j < 16; j++) {
-
-                let target = data[i].data[j].mode
-                if (target === "Otro") {
-                    data[i].data[j].mode = 1
-                } else if (target === "Ninguno") {
-                    data[i].data[j].mode = 2
-                } else if (target === "Minimun Vehicle Recall") {
-                    data[i].data[j].mode = 3
-                } else if (target === "Maximun Vehicle Recall") {
-                    data[i].data[j].mode = 4
-                } else if (target === "Pedestrian Recall") {
-                    data[i].data[j].mode = 5
-                } else if (target === "Maximun vehicle Pedestrian Recall") {
-                    data[i].data[j].mode = 6
-                } else if (target === "Phase Omitted") {
-                    data[i].data[j].mode = 7
-                }else {
-                    data[i].data[j].mode = 0
-                }
-
-            }
-        }
-        for (let i = 0; i < 8; i++) {
-            for (let j = 0; j < 16; j++) {
-                let target = data[i].data[j].fase
-                if(target === 0){
-                    data[i].data[j].mode = 0
-                    data[i].data[j].coord = 0
-                    data[i].data[j].tiempo = 0
-                }
-            }
-        }
-        console.log(data)
-        for(let i = 0; i<20;i++){
-            array_data.push(i+1)
-            if(i<8){
-                let target_array = data[i].data
-                for(let j = 0; j<16;j++){
-                    array_data.push(target_array[j].fase)
-                    array_data.push(target_array[j].tiempo)  
-                    array_data.push(target_array[j].mode)    
-                    array_data.push(target_array[j].coord)  
-                }
-            }else{
-                for(let j = 0; j<16;j++){
-                    array_data.push(0)
-                    array_data.push(0)  
-                    array_data.push(0)    
-                    array_data.push(0)  
-                }
-            }
-        }
+       
+        let array_data = generateSplitFrame(data)
+        
    
         await PostSplitHT200({trama:array_data,ip:controlerState.ip})
         updateFirebase('split',aux_splits)

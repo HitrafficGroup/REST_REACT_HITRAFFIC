@@ -29,6 +29,7 @@ import { useSelector,useDispatch } from 'react-redux';
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from '../firebase/firebase-config';
 import { updateParamsHT200 } from '../features/controlerht200/controlerHT200Slice';
+import { generateChannelFrame } from '../js/generateFrameApiHT200';
 export default function ChannelHT200View(){
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
@@ -144,21 +145,11 @@ export default function ChannelHT200View(){
         setData(controller_data)
     }
     const uploadData = async()=>{
-        let aux_data = JSON.parse(JSON.stringify(data))
-        let data_array = []
-        for( let i =0; i<16;i++){
-            data_array.push(aux_data[i].number)
-            data_array.push(aux_data[i].source)
-            data_array.push(aux_data[i].type)
-            data_array.push(aux_data[i].flash)
-            data_array.push(aux_data[i].dim)
-            data_array.push(aux_data[i].position)
-            data_array.push(aux_data[i].direction)
-            data_array.push(aux_data[i].countdown)
-        }
+        console.log(data)
+        let data_array = generateChannelFrame(data)
         await PostChannelHT200({trama:data_array,ip:controlerState.ip})
-        updateFirebase('channel',aux_data);
-        dispatch(updateParamsHT200({target:'channel',data:aux_data}));
+        updateFirebase('channel',data);
+        dispatch(updateParamsHT200({target:'channel',data:data}));
     }
 
     const AplicarCambios =()=>{

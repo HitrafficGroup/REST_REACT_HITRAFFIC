@@ -1,0 +1,6353 @@
+{
+    "fases":[
+                {
+                    "number": 1,
+                    "walk": 10,
+                    "pedestrianClear": 6,
+                    "minimumGreen": 6,
+                    "passage": 3,
+                    "maximun1": 30,
+                    "maximun2": 40,
+                    "yellowchange": 3,
+                    "redclear": 2,
+                    "RedRevert": 0,
+                    "AddedInitial": 0,
+                    "MaximunInitial": 0,
+                    "TimeBeforeReduction": 0,
+                    "carsbeforereduction": 0,
+                    "timetoreduce": 0,
+                    "reduceby": 0,
+                    "minimungap": 0,
+                    "dynamimaxlist": 0,
+                    "dynamicmaxstep": 0,
+                    "startup": 1,
+                    "ring": 1,
+                    "vehicleclear": 3,
+                    "options": 0,
+                    "concurrency": 65535,
+                    "releasephase": 0
+                },
+                {
+                    "number": 2,
+                    "walk": 10,
+                    "pedestrianClear": 6,
+                    "minimumGreen": 6,
+                    "passage": 3,
+                    "maximun1": 30,
+                    "maximun2": 40,
+                    "yellowchange": 3,
+                    "redclear": 2,
+                    "RedRevert": 0,
+                    "AddedInitial": 0,
+                    "MaximunInitial": 0,
+                    "TimeBeforeReduction": 0,
+                    "carsbeforereduction": 0,
+                    "timetoreduce": 0,
+                    "reduceby": 0,
+                    "minimungap": 0,
+                    "dynamimaxlist": 0,
+                    "dynamicmaxstep": 0,
+                    "startup": 1,
+                    "ring": 1,
+                    "vehicleclear": 3,
+                    "options": 0,
+                    "concurrency": 65535,
+                    "releasephase": 0
+                },
+                {
+                    "number": 3,
+                    "walk": 10,
+                    "pedestrianClear": 6,
+                    "minimumGreen": 6,
+                    "passage": 3,
+                    "maximun1": 30,
+                    "maximun2": 40,
+                    "yellowchange": 3,
+                    "redclear": 2,
+                    "RedRevert": 0,
+                    "AddedInitial": 0,
+                    "MaximunInitial": 0,
+                    "TimeBeforeReduction": 0,
+                    "carsbeforereduction": 0,
+                    "timetoreduce": 0,
+                    "reduceby": 0,
+                    "minimungap": 0,
+                    "dynamimaxlist": 0,
+                    "dynamicmaxstep": 0,
+                    "startup": 1,
+                    "ring": 1,
+                    "vehicleclear": 3,
+                    "options": 0,
+                    "concurrency": 65535,
+                    "releasephase": 0
+                },
+                {
+                    "number": 4,
+                    "walk": 10,
+                    "pedestrianClear": 6,
+                    "minimumGreen": 6,
+                    "passage": 3,
+                    "maximun1": 30,
+                    "maximun2": 40,
+                    "yellowchange": 3,
+                    "redclear": 2,
+                    "RedRevert": 0,
+                    "AddedInitial": 0,
+                    "MaximunInitial": 0,
+                    "TimeBeforeReduction": 0,
+                    "carsbeforereduction": 0,
+                    "timetoreduce": 0,
+                    "reduceby": 0,
+                    "minimungap": 0,
+                    "dynamimaxlist": 0,
+                    "dynamicmaxstep": 0,
+                    "startup": 1,
+                    "ring": 1,
+                    "vehicleclear": 3,
+                    "options": 0,
+                    "concurrency": 65535,
+                    "releasephase": 0
+                }
+    ],
+    "seq":[
+        {
+            "id": "seq-1",
+            "ring1": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 1
+                }
+            ],
+            "ring2": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 2
+                }
+            ],
+            "ring3": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 3
+                }
+            ],
+            "ring4": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 4
+                }
+            ]
+        },
+        {
+            "id": "seq-2",
+            "ring1": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 1
+                }
+            ],
+            "ring2": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 2
+                }
+            ],
+            "ring3": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 3
+                }
+            ],
+            "ring4": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 4
+                }
+            ]
+        },
+        {
+            "id": "seq-3",
+            "ring1": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 1
+                }
+            ],
+            "ring2": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 2
+                }
+            ],
+            "ring3": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 3
+                }
+            ],
+            "ring4": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 4
+                }
+            ]
+        },
+        {
+            "id": "seq-4",
+            "ring1": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 1
+                }
+            ],
+            "ring2": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 2
+                }
+            ],
+            "ring3": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 3
+                }
+            ],
+            "ring4": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 4
+                }
+            ]
+        },
+        {
+            "id": "seq-5",
+            "ring1": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 1
+                }
+            ],
+            "ring2": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 2
+                }
+            ],
+            "ring3": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 3
+                }
+            ],
+            "ring4": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 4
+                }
+            ]
+        },
+        {
+            "id": "seq-6",
+            "ring1": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 1
+                }
+            ],
+            "ring2": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 2
+                }
+            ],
+            "ring3": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 3
+                }
+            ],
+            "ring4": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 4
+                }
+            ]
+        },
+        {
+            "id": "seq-7",
+            "ring1": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 1
+                }
+            ],
+            "ring2": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 2
+                }
+            ],
+            "ring3": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 3
+                }
+            ],
+            "ring4": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 4
+                }
+            ]
+        },
+        {
+            "id": "seq-8",
+            "ring1": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 1
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 1
+                }
+            ],
+            "ring2": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 2
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 2
+                }
+            ],
+            "ring3": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 3
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 3
+                }
+            ],
+            "ring4": [
+                {
+                    "id": "paso-1",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-2",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-3",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-4",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-5",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-6",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-7",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-8",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-9",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-10",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-11",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-12",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-13",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-14",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-15",
+                    "value": 0,
+                    "ring": 4
+                },
+                {
+                    "id": "paso-16",
+                    "value": 0,
+                    "ring": 4
+                }
+            ]
+        }
+    ],
+
+    "split":[
+        {
+            "data": [
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                }
+            ],
+            "id": "split-1"
+        },
+        {
+            "data": [
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                }
+            ],
+            "id": "split-2"
+        },
+        {
+            "data": [
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                }
+            ],
+            "id": "split-3"
+        },
+        {
+            "data": [
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                }
+            ],
+            "id": "split-4"
+        },
+        {
+            "data": [
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                }
+            ],
+            "id": "split-5"
+        },
+        {
+            "data": [
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                }
+            ],
+            "id": "split-6"
+        },
+        {
+            "data": [
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                }
+            ],
+            "id": "split-7"
+        },
+        {
+            "data": [
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                },
+                {
+                    "fase": 0,
+                    "tiempo": 0,
+                    "mode": "Ninguno",
+                    "coord": 0
+                }
+            ],
+            "id": "split-8"
+        }
+    ],
+    "pattern":[
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        },
+        {
+            "number": 0,
+            "cycletime": 0,
+            "offsettime": 0,
+            "splitnumber": 0,
+            "sequencenumber": 0,
+            "workmode": 0
+        }
+    ],
+    "acciones":[
+        {
+            "number": 1,
+            "patron": 1,
+            "auxiliary": 1,
+            "special": 1
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        },
+        {
+            "number": 0,
+            "patron": 0,
+            "auxiliary": 0,
+            "special": 0
+        }
+    ],
+    "plan":[
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 1
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-1"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-2"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-3"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-4"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-5"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-6"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-7"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-8"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-9"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-10"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-11"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-12"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-13"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-14"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-15"
+        },
+        {
+            "data": [
+                {
+                    "id": "num-1",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-2",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-3",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-4",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-5",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-6",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-7",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-8",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-9",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-10",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-11",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-12",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-13",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-14",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-15",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-16",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-17",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-18",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-19",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-20",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-21",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-22",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-23",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                },
+                {
+                    "id": "num-24",
+                    "hour": 0,
+                    "minute": 0,
+                    "action": 0
+                }
+            ],
+            "id": "plan-16"
+        }
+    ],
+    "channel":[
+        {
+            "number": 1,
+            "source": 1,
+            "type": 2,
+            "flash": 2,
+            "dim": 1,
+            "position": 1,
+            "direction": 1,
+            "countdown": 0
+        },
+        {
+            "number": 2,
+            "source": 2,
+            "type": 2,
+            "flash": 2,
+            "dim": 1,
+            "position": 1,
+            "direction": 2,
+            "countdown": 1
+        },
+        {
+            "number": 3,
+            "source": 3,
+            "type": 2,
+            "flash": 2,
+            "dim": 1,
+            "position": 1,
+            "direction": 3,
+            "countdown": 2
+        },
+        {
+            "number": 4,
+            "source": 4,
+            "type": 2,
+            "flash": 2,
+            "dim": 1,
+            "position": 1,
+            "direction": 4,
+            "countdown": 3
+        },
+        {
+            "number": 5,
+            "source": 2,
+            "type": 2,
+            "flash": 2,
+            "dim": 1,
+            "position": 2,
+            "direction": 1,
+            "countdown": 4
+        },
+        {
+            "number": 6,
+            "source": 2,
+            "type": 2,
+            "flash": 2,
+            "dim": 1,
+            "position": 2,
+            "direction": 2,
+            "countdown": 5
+        },
+        {
+            "number": 7,
+            "source": 2,
+            "type": 2,
+            "flash": 2,
+            "dim": 1,
+            "position": 2,
+            "direction": 3,
+            "countdown": 6
+        },
+        {
+            "number": 8,
+            "source": 5,
+            "type": 3,
+            "flash": 4,
+            "dim": 1,
+            "position": 2,
+            "direction": 4,
+            "countdown": 7
+        },
+        {
+            "number": 9,
+            "source": 3,
+            "type": 2,
+            "flash": 2,
+            "dim": 1,
+            "position": 3,
+            "direction": 1,
+            "countdown": 8
+        },
+        {
+            "number": 10,
+            "source": 3,
+            "type": 2,
+            "flash": 2,
+            "dim": 1,
+            "position": 3,
+            "direction": 2,
+            "countdown": 9
+        },
+        {
+            "number": 11,
+            "source": 3,
+            "type": 2,
+            "flash": 2,
+            "dim": 1,
+            "position": 3,
+            "direction": 3,
+            "countdown": 10
+        },
+        {
+            "number": 12,
+            "source": 5,
+            "type": 3,
+            "flash": 4,
+            "dim": 1,
+            "position": 3,
+            "direction": 4,
+            "countdown": 11
+        },
+        {
+            "number": 13,
+            "source": 4,
+            "type": 2,
+            "flash": 2,
+            "dim": 1,
+            "position": 4,
+            "direction": 1,
+            "countdown": 12
+        },
+        {
+            "number": 14,
+            "source": 4,
+            "type": 2,
+            "flash": 2,
+            "dim": 1,
+            "position": 4,
+            "direction": 2,
+            "countdown": 13
+        },
+        {
+            "number": 15,
+            "source": 4,
+            "type": 2,
+            "flash": 2,
+            "dim": 1,
+            "position": 4,
+            "direction": 3,
+            "countdown": 14
+        },
+        {
+            "number": 16,
+            "source": 5,
+            "type": 3,
+            "flash": 4,
+            "dim": 1,
+            "position": 4,
+            "direction": 4,
+            "countdown": 15
+        }
+    ]
+
+    
+}
+
+   

@@ -19,6 +19,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { generateActionFrame } from '../js/generateFrameApiHT200';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from '../firebase/firebase-config';
@@ -124,24 +125,7 @@ export default function AccionesHT200View(){
     const uploadData = async() =>{
         let array_data = []
         let aux_data =  JSON.parse(JSON.stringify(data))
-        console.log(aux_data)
-        for(let i = 0;i<100;i++){
-            if(i <16){
-                array_data.push(aux_data[i].number)
-                array_data.push(aux_data[i].patron)
-                array_data.push(aux_data[i].auxiliary)
-                array_data.push(aux_data[i].special)
-
-            }else{
-                array_data.push(0)
-                array_data.push(0)
-                array_data.push(0)
-                array_data.push(0)
-  
-            }
-        
-        }
-        console.log(array_data.length)
+        array_data = generateActionFrame(aux_data)
         await PostActionHT200({trama:array_data,ip:controlerState.ip})
         updateFirebase('acciones',aux_data)
         dispatch(updateParamsHT200({target:'acciones',data:aux_data}));

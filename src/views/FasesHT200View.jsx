@@ -17,6 +17,7 @@ import { getFasesHT200,PostFasesHT200 } from "../js/apiFunctionsHT200";
 import { useSelector, useDispatch } from 'react-redux';
 import { updateDoc, doc } from "firebase/firestore";
 import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
+import { generatePhaseFrame } from "../js/generateFrameApiHT200";
 import { db } from "../firebase/firebase-config";
 //iconos
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -65,7 +66,6 @@ export default function FasesHT200View() {
         setFases(controller_data)
         updateFirebase('fases',controller_data)
         dispatch(updateParamsHT200({target:'fases',data:controller_data}));
-        
         console.log(controller_data)
     }
     const abrirModalConfig =(__data)=>{
@@ -82,29 +82,11 @@ export default function FasesHT200View() {
 
     };
     const uploadData = async() =>{
-    let array_data = []
-    let aux_data = []
-    
-    fases.forEach((item,index)=> {
-            if(item.number >  0){
-             aux_data = [item.number,item.walk,
-                    item.pedestrianClear,item.minimumGreen,item.passage,
-                    item.maximun1,item.maximun2,
-                    item.yellowchange,item.redclear,item.RedRevert,0,0,0,0,0,0,0,0,0,
-                    1,1,2,0,0,0,0,0,0,0,0,0,0
-                ]
-                array_data.push(aux_data)
-            }else{
-                aux_data = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-                array_data.push(aux_data)
-            }
-
-       })
-     
-       updateFirebase('fases',fases);
-       dispatch(updateParamsHT200({target:'fases',data:fases}));
-       console.log(array_data);
-       await PostFasesHT200({trama:array_data,ip:controlerState.ip});
+        let array_data = generatePhaseFrame(fases)
+        updateFirebase('fases',fases);
+        dispatch(updateParamsHT200({target:'fases',data:fases}));
+        console.log(array_data);
+        await PostFasesHT200({trama:array_data,ip:controlerState.ip});
       
     }
 
