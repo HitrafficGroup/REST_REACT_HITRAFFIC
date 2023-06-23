@@ -110,12 +110,12 @@ export default  function HT200AppBar(){
                         </ListItemIcon>
                         <ListItemText primary="Config"/>
             </ListItemButton>
-            <ListItemButton onClick={()=>{navigate('pruebas')}} >
+            {/* <ListItemButton onClick={()=>{navigate('pruebas')}} >
                         <ListItemIcon>
                             <BugReportIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Pruebas"/>
-            </ListItemButton>
+            </ListItemButton> */}
             </List>
             <List
           sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}

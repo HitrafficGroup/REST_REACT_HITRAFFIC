@@ -24,6 +24,7 @@ export const controlerHT200Slice = createSlice({
         plan:[],
         horarios:[],
         channel:[],
+        basic_info:[],
        
     },
     reducers: {
@@ -53,6 +54,7 @@ export const controlerHT200Slice = createSlice({
             state.plan = action.payload.plan;
             state.horarios = action.payload.horarios;
             state.channel = action.payload.channel;
+            state.basic_info = action.payload.basic_info;
         },
         updateParamsHT200:(state,action)=>{
             state[action.payload.target] = action.payload.data 

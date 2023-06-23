@@ -63,10 +63,11 @@ export default function FasesHT200View() {
     }
     const readData=async()=>{
         let controller_data = await getFasesHT200(controlerState.ip);
-        setFases(controller_data)
-        updateFirebase('fases',controller_data)
-        dispatch(updateParamsHT200({target:'fases',data:controller_data}));
-        console.log(controller_data)
+        let data_filter = controller_data.filter(item=> item.number !== 0)
+        setFases(data_filter)
+        updateFirebase('fases',data_filter)
+        dispatch(updateParamsHT200({target:'fases',data:data_filter}));
+        console.log(data_filter)
     }
     const abrirModalConfig =(__data)=>{
         setModalConfig(true);
@@ -102,6 +103,9 @@ export default function FasesHT200View() {
                     </Grid>
                     <Grid item xs={12} md={6} >
                         <Button color='oscuro' variant="contained"  onClick={uploadData} >Cargar datos</Button>
+                    </Grid>
+                    <Grid item xs={12} md={6} >
+                        <Button color='oscuro' variant="contained" onClick={()=>{abrirModalConfig(currentFase_init)}}  >Agregar Fase</Button>
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <TableContainer sx={{ maxHeight: 440 }}>
@@ -326,7 +330,7 @@ export default function FasesHT200View() {
                 </ModalBody>
                 <ModalFooter >
                     <Button variant="contained" onClick={updateFase} color="rojo" sx={{ marginLeft: 1 }}>
-                        guardar cambios
+                        GUARDAR
                     </Button>
                     <Button variant="contained" onClick={()=>{setModalConfig(false)}} color="oscuro" sx={{ marginLeft: 1 }}>
                         cancelar

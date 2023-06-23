@@ -107,6 +107,33 @@
                     "options": 0,
                     "concurrency": 65535,
                     "releasephase": 0
+                },
+                {
+                    "number": 15,
+                    "walk": 10,
+                    "pedestrianClear": 6,
+                    "minimumGreen": 6,
+                    "passage": 3,
+                    "maximun1": 30,
+                    "maximun2": 40,
+                    "yellowchange": 3,
+                    "redclear": 2,
+                    "RedRevert": 0,
+                    "AddedInitial": 0,
+                    "MaximunInitial": 0,
+                    "TimeBeforeReduction": 0,
+                    "carsbeforereduction": 0,
+                    "timetoreduce": 0,
+                    "reduceby": 0,
+                    "minimungap": 0,
+                    "dynamimaxlist": 0,
+                    "dynamicmaxstep": 0,
+                    "startup": 1,
+                    "ring": 1,
+                    "vehicleclear": 3,
+                    "options": 0,
+                    "concurrency": 65535,
+                    "releasephase": 0
                 }
     ],
     "seq":[
@@ -3803,7 +3830,7 @@
             "data": [
                 {
                     "id": "num-1",
-                    "hour": 0,
+                    "hour": 7,
                     "minute": 0,
                     "action": 1
                 },

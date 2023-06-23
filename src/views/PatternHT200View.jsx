@@ -89,10 +89,11 @@ export default function PatternHT200View() {
     }
     const uploadData = async() =>{
         let array_data = []
+
         array_data = generatePatternFrame(data)
         await PostPatternHT200({trama:array_data,ip:controlerState.ip})
-        updateFirebase('pattern',array_data)
-        dispatch(updateParamsHT200({target:'pattern',data:array_data}));
+        updateFirebase('pattern',data)
+        dispatch(updateParamsHT200({target:'pattern',data:data}));
     }
     const convertWorkmode = (__data)=>{
         if (__data === 1) {

@@ -8,11 +8,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import LightModeIcon from '@mui/icons-material/LightMode';
+import { db } from "../firebase/firebase-config";
 import Paper from '@mui/material/Paper';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-
+import { updateDoc, doc } from "firebase/firestore";
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -20,9 +21,10 @@ import '../css/basicSettings.scss';
 import frameJson from "../js/ht200Frame.json";
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
 import { generatePhaseFrame,generateSeqFrame,generateSplitFrame,generatePatternFrame,generateActionFrame,generatePlanFrame, generateChannelFrame } from "../js/generateFrameApiHT200";
 import {setBasicPlan } from "../js/apiFunctionsHT200";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
         backgroundColor: theme.palette.common.black,
@@ -46,12 +48,14 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export default function BasicSettingsHT200View() {
     const [planesSemaforos, setPlanesSemaforos] = useState([initial_paso]);
     const [disabledFlag, setDisabledFlag] = useState(true);
+
     const [planFlag, setPlanFlag] = useState(false);
     const [hora, setHora] = useState(0);
     const [minuto, setMinuto] = useState(0);
     const controlerState = useSelector(state => state.controlerht200);
+    const dispatch = useDispatch();
     const [ctdPlanes, setCtdPlanes] = useState(1);
-    const [planificacion, setPlanificacion] = useState([{ id: "prueba", data: [] }]);
+    const [planificacion, setPlanificacion] = useState([{ id: "prueba",hora:hora,minuto:minuto, data: [initial_paso] }]);
     const agregarPaso = () => {
         let pasos = JSON.parse(JSON.stringify(planesSemaforos))
         let aux = JSON.parse(JSON.stringify(initial_paso))
@@ -113,10 +117,14 @@ export default function BasicSettingsHT200View() {
     }
 
     
+    const updateFirebase = async (param, __data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${param}`] = __data;
+        await updateDoc(ref, aux_data);
+    }
 
     const cargarDatos = async() => {
-    
-     
         // valores por defecto
         let data_aux = JSON.parse(JSON.stringify(planificacion))
         let fases_aux = JSON.parse(JSON.stringify(frameJson.fases))
@@ -130,57 +138,74 @@ export default function BasicSettingsHT200View() {
             g1:0,
             g2:0,
             g3:0,
-            g4:0
+            g4:0,
+            g15:0,
         }
         let tiempos_aux = []
-        for (let j = 0; j < data_aux.length; j++) {
-            //modificamos las secuencias
-            let new_seq = seq_aux[j]
-            for (let i = 0; i < data_aux[j].data.length; i++) {
-                let temp_data = data_aux[j].data[i]
-                let aux_ring = 1
-                for(let x=0;x<4;x++){
-                    if(temp_data[`g${x+1}`]=== true){
-                        new_seq['ring'+aux_ring][i].value = x + 1
-                        canales_duracion_aux['g'+(x+1)] =  temp_data.duracion
-                        aux_ring +=1
-                    }
-                }
-                
-            }
-            tiempos_aux.push(canales_duracion_aux)
-            //modificamos el split
-            let new_split = split_aux[j]
+       
 
-            for (let i = 0; i < 4; i++) {
-                new_split.data[i].fase = i + 1
-                new_split.data[i].tiempo = tiempos_aux[j]['g'+(i+1)]
-                new_split.data[i].coord = 4
+            for (let j = 0; j < data_aux.length; j++) {
+                //modificamos las secuencias
+                let new_seq = seq_aux[j]
+                for (let i = 0; i < data_aux[j].data.length; i++) {
+                    let temp_data = data_aux[j].data[i]
+                   
+                    if(temp_data.g1 === false && temp_data.g2 === false && temp_data.g3 === false && temp_data.g4 === false ){
+                        new_seq.ring1[i].value = 15
+                        new_seq.ring2[i].value = 15
+                        new_seq.ring3[i].value = 15
+                        new_seq.ring4[i].value = 15
+                        canales_duracion_aux.g15 = temp_data.duracion
+                    }else{
+                        let aux_ring = 1
+                        for(let x=0;x<4;x++){
+                            if(temp_data[`g${x+1}`]=== true){
+                                new_seq['ring'+aux_ring][i].value = x + 1
+                                canales_duracion_aux['g'+(x+1)] =  temp_data.duracion
+                                aux_ring +=1
+                            }
+                        }
+                    }
+                   
+                    
+                }
+                tiempos_aux.push(canales_duracion_aux)
+                //modificamos el split
+                let new_split = split_aux[j]
+    
+                for (let i = 0; i < 4; i++) {
+                    new_split.data[i].fase = i + 1
+                    new_split.data[i].tiempo = tiempos_aux[j]['g'+(i+1)]
+                    new_split.data[i].coord = 4
+                }
+                new_split.data[4].fase = 15
+                new_split.data[4].tiempo = tiempos_aux[j].g15
+                new_split.data[4].coord = 4
             }
-        }
-        // modificamos pattern
-        for (let i = 0; i < ctdPlanes; i++) {
-            pattern_aux[i].cycletime = 0;
-            pattern_aux[i].number = i + 1;
-            pattern_aux[i].offsettime = 0;
-            pattern_aux[i].sequencenumber = i + 1;
-            pattern_aux[i].splitnumber = i + 1;
-            pattern_aux[i].workmode = 1;
-        }
-        // modificamos accion
-        for (let i = 0; i < ctdPlanes; i++) {
-            accion_aux[i].number = i + 1;
-            accion_aux[i].patron = i + 1;
-            accion_aux[i].auxiliary = 0;
-            accion_aux[i].special = 0;
-        }
-        //modificamos plan
-        let new_plan = plan_aux[0]
-        for (let i = 0; i < ctdPlanes; i++) {
-            new_plan.data[i].action = i + 1;
-            new_plan.data[i].hour = data_aux[i].hora;
-            new_plan.data[i].minute = data_aux[i].minuto;
-        }
+            // modificamos pattern
+            for (let i = 0; i < ctdPlanes; i++) {
+                pattern_aux[i].cycletime = 0;
+                pattern_aux[i].number = i + 1;
+                pattern_aux[i].offsettime = 0;
+                pattern_aux[i].sequencenumber = i + 1;
+                pattern_aux[i].splitnumber = i + 1;
+                pattern_aux[i].workmode = 1;
+            }
+            // modificamos accion
+            for (let i = 0; i < ctdPlanes; i++) {
+                accion_aux[i].number = i + 1;
+                accion_aux[i].patron = i + 1;
+                accion_aux[i].auxiliary = 0;
+                accion_aux[i].special = 0;
+            }
+            //modificamos plan
+            let new_plan = plan_aux[0]
+            for (let i = 0; i < ctdPlanes; i++) {
+                new_plan.data[i].action = i + 1;
+                new_plan.data[i].hour = data_aux[i].hora;
+                new_plan.data[i].minute = data_aux[i].minuto;
+            }
+     
         // generamos las tramas
         let fases_frame = generatePhaseFrame(fases_aux);
         let seq_frame = generateSeqFrame(seq_aux);
@@ -190,7 +215,7 @@ export default function BasicSettingsHT200View() {
         let plan_frame =  generatePlanFrame(plan_aux)
         let channel_frame = generateChannelFrame(channel_aux)
         console.log(seq_aux)
-        //cargar Datos
+        // cargar Datos
         await setBasicPlan({
             fases:fases_frame,
             secuencias:seq_frame,
@@ -201,8 +226,8 @@ export default function BasicSettingsHT200View() {
             channel:channel_frame,
             ip:controlerState.ip
         })
-        
-
+        await updateFirebase('basic_info',data_aux)
+        dispatch(updateParamsHT200({target:'basic_info',data:data_aux}))
 
       
 
@@ -213,7 +238,7 @@ export default function BasicSettingsHT200View() {
             <Container maxWidth="lg" sx={{ paddingTop: 15 }}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
-                        <Button variant="contained" onClick={cargarDatos} >CARGAR DATOS</Button>
+                        <Button variant="contained" onClick={cargarDatos}  disabled={!planFlag}>CARGAR DATOS</Button>
                     </Grid>
                     <Grid item md={1}>
                         <TextField
@@ -334,6 +359,7 @@ export default function BasicSettingsHT200View() {
                                                                 id="outlined-number"
                                                                 label="Tiempo"
                                                                 type="number"
+                                                               
                                                                 sx={{ width: 100 }}
                                                                 onChange={(event) => { row.duracion = parseInt(event.target.value) }}
                                                                 size="small"
@@ -425,4 +451,5 @@ export default function BasicSettingsHT200View() {
         </>
     )
 }
-let initial_paso = { g1: false, g2: false, g3: false, g4: false, duracion: 0, id: 1 }
+
+let initial_paso = { g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }

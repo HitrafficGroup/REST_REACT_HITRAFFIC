@@ -283,6 +283,7 @@ export default function DeclararControladorView() {
                         plan:[],
                         horarios:[],
                         channel:[],
+                        basic_info:[],
                     }
                     let historialControladorData = {
                         id:id_controller,
