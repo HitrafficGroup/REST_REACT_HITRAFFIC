@@ -158,9 +158,10 @@ function generatePatternFrame(patterns){
 }
 function generateActionFrame(actions){
     let array_data = []
+    let data_size = actions.length
     let aux_data =  JSON.parse(JSON.stringify(actions))
         for(let i = 0;i<100;i++){
-            if(i <16){
+            if(i<data_size){
                 array_data.push(aux_data[i].number)
                 array_data.push(aux_data[i].patron)
                 array_data.push(aux_data[i].auxiliary)
@@ -184,9 +185,16 @@ function generatePlanFrame(planes){
         array_data.push(i+1)
             target_plan = aux_data[i].data
             for(let j = 0;j<24;j++){
-                array_data.push(target_plan[j].hour)
-                array_data.push(target_plan[j].minute)
-                array_data.push(target_plan[j].action)
+                if(j<target_plan.length){
+                    array_data.push(target_plan[j].hour)
+                    array_data.push(target_plan[j].minute)
+                    array_data.push(target_plan[j].action)
+                }else{
+                    array_data.push(0)
+                    array_data.push(0)
+                    array_data.push(0)
+                }
+          
             }
     }
     return array_data

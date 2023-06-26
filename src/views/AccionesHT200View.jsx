@@ -18,6 +18,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import Swal from 'sweetalert2';
 import Select from '@mui/material/Select';
 import { generateActionFrame } from '../js/generateFrameApiHT200';
 import { useSelector, useDispatch } from 'react-redux';
@@ -133,6 +134,13 @@ export default function AccionesHT200View(){
     }
     const abrirModalCrear=()=>{
         setModalCrear(true)
+        
+        setCurrentAction({
+            "number": 1,
+            "patron": 1,
+            "auxiliary": 0,
+            "special": 0
+        })
     }
     const crearAccion=()=>{
         let aux_acciones = JSON.parse(JSON.stringify(data))
@@ -150,6 +158,26 @@ export default function AccionesHT200View(){
             console.log("ya existe esa fase");
         }
         console.log("hola")
+    }
+
+    const eliminarAccion=(__data)=>{
+        Swal.fire({
+            title: 'Deseas Continuar ?',
+            text: 'Se Eliminara Esta Configuracion',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, Eliminar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let aux_accion = JSON.parse(JSON.stringify(data))
+                aux_accion = aux_accion.filter(item=> item.number !== __data.number)
+                setData(aux_accion)
+
+            }
+        })
+
     }
     return(
         <>
@@ -170,15 +198,20 @@ export default function AccionesHT200View(){
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
-                                        {columns.map((column) => (
-                                            <TableCell
-                                                key={column.id}
-                                                align={column.align}
-                                                style={{ minWidth: column.minWidth }}
+                                         <TableCell
+                                                key={"number"}
+                                                align={"center"}
+                                                style={{ minWidth: 100 }}
                                             >
-                                                {column.label}
+                                                Accion
                                             </TableCell>
-                                        ))}
+                                            <TableCell
+                                                key={"patron"}
+                                                align={"center"}
+                                                style={{ minWidth: 100 }}
+                                            >
+                                                Patron
+                                            </TableCell>
                                            <TableCell
                                                 key={"auxliary"}
                                                 align={"center"}
@@ -208,16 +241,12 @@ export default function AccionesHT200View(){
                                         .map((row,index) => {
                                             return (
                                                 <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                                                    {columns.map((column) => {
-                                                        const value = row[column.id];
-                                                        return (
-                                                            <TableCell key={column.id} align={column.align}>
-                                                                {column.format && typeof value === 'number'
-                                                                    ? column.format(value)
-                                                                    : value}
-                                                            </TableCell>
-                                                        );
-                                                    })}
+                                                       <TableCell  align={"center"}>
+                                                            {row.patron}
+                                                        </TableCell>
+                                                     <TableCell  align={"center"}>
+                                                            {row.number}
+                                                        </TableCell>
                                                        <TableCell key={index} align={"center"}>
                                                             {convertFuncion(row.auxiliary)}
                                                             </TableCell>
@@ -228,7 +257,7 @@ export default function AccionesHT200View(){
                                                          <IconButton color="oscuro" aria-label="add an alarm"onClick={()=>{modificarAccion(row)}} >
                                                             <EditIcon />
                                                         </IconButton>
-                                                        <IconButton color="rojo" aria-label="add an alarm" >
+                                                        <IconButton color="rojo" aria-label="add an alarm" onClick={()=>{eliminarAccion(row)}} >
                                                             <DeleteIcon />
                                                         </IconButton>
                                                             </TableCell>
@@ -255,7 +284,7 @@ export default function AccionesHT200View(){
                 <ModalHeader>
                     <div>
                         <h1>
-                            Editar
+                            Editar Accion
                         </h1>
                     </div>
                 </ModalHeader>
@@ -296,6 +325,7 @@ export default function AccionesHT200View(){
                                     name="auxiliary"
                                     onChange={handleChange}
                                 >
+                                    <MenuItem value={0}>Sin Auxiliar</MenuItem>
                                     <MenuItem value={1}>Funcion Aux 1</MenuItem>
                                     <MenuItem value={2}>Funcion Aux 2</MenuItem>
                                     <MenuItem value={4}>Funcion Aux 3</MenuItem>
@@ -315,6 +345,7 @@ export default function AccionesHT200View(){
                                     name="special"
                                     onChange={handleChange}
                                 >
+                                    <MenuItem value={0}>Sin Especial</MenuItem>
                                     <MenuItem value={1}>Especial 1</MenuItem>
                                     <MenuItem value={2}>Especial 2</MenuItem>
                                     <MenuItem value={4}>Especial 3</MenuItem>
@@ -340,14 +371,123 @@ export default function AccionesHT200View(){
                     </Button>
                 </ModalFooter>
             </Modal>
+
+
+
+            <Modal isOpen={modalCrear} >
+                <ModalHeader>
+                    <div>
+                        <h1>
+                            Crear Accion
+                        </h1>
+                    </div>
+                </ModalHeader>
+                <ModalBody>
+                    <Grid container spacing={4}>
+                    <Grid item xs={12} md={12}>
+                        <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Accion</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={currentAction.number}
+                                    label="Accion"
+                                    name="number"
+                                    onChange={handleChange}
+                                >
+                                    <MenuItem value={1}>accion 1</MenuItem>
+                                    <MenuItem value={2}>accion 2</MenuItem>
+                                    <MenuItem value={3}>accion 3</MenuItem>
+                                    <MenuItem value={4}>accion 4</MenuItem>
+                                    <MenuItem value={5}>accion 5</MenuItem>
+                                    <MenuItem value={6}>accion 6</MenuItem>
+                                    <MenuItem value={7}>accion 7</MenuItem>
+                                    <MenuItem value={8}>accion 8</MenuItem>
+                                    <MenuItem value={9}>accion 9</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={12}>
+                        <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Pattern</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={currentAction.patron}
+                                    label="Pattern"
+                                    name="patron"
+                                    onChange={handleChange}
+                                >
+                                    <MenuItem value={1}>patron 1</MenuItem>
+                                    <MenuItem value={2}>patron 2</MenuItem>
+                                    <MenuItem value={3}>patron 3</MenuItem>
+                                    <MenuItem value={4}>patron 4</MenuItem>
+                                    <MenuItem value={5}>patron 5</MenuItem>
+                                    <MenuItem value={6}>patron 6</MenuItem>
+                                    <MenuItem value={7}>patron 7</MenuItem>
+                                    <MenuItem value={8}>patron 8</MenuItem>
+                                    <MenuItem value={9}>patron 9</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={12}>
+                        <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Funcion Auxiliar</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={currentAction.auxiliary}
+                                    label="Funcion Auxiliar"
+                                    name="auxiliary"
+                                    onChange={handleChange}
+                                >  
+                                    <MenuItem value={0}>Sin Auxiliar</MenuItem>
+                                    <MenuItem value={1}>Funcion Aux 1</MenuItem>
+                                    <MenuItem value={2}>Funcion Aux 2</MenuItem>
+                                    <MenuItem value={4}>Funcion Aux 3</MenuItem>
+                                    <MenuItem value={8}>Dim</MenuItem>
+                
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={12}>
+                        <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Funcion Especial</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={currentAction.special}
+                                    label="Funcion Especial"
+                                    name="special"
+                                    onChange={handleChange}
+                                >
+                                    <MenuItem value={0}>Sin Especial</MenuItem>
+                                    <MenuItem value={1}>Especial 1</MenuItem>
+                                    <MenuItem value={2}>Especial 2</MenuItem>
+                                    <MenuItem value={4}>Especial 3</MenuItem>
+                                    <MenuItem value={8}>Especial 4</MenuItem>
+                                    <MenuItem value={16}>Especial 5</MenuItem>
+                                    <MenuItem value={32}>Especial 6</MenuItem>
+                                    <MenuItem value={64}>Especial 7</MenuItem>
+                                    <MenuItem value={128}>Especial 8</MenuItem>
+                        
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                      
+                        
+                    </Grid>
+                </ModalBody>
+                <ModalFooter >
+                    <Button variant="contained" color="rojo" sx={{ marginLeft: 1 }}   onClick={crearAccion} >
+                        aplicar
+                    </Button>
+                    <Button variant="contained" onClick={()=>{setModalCrear(false)}} color="oscuro" sx={{ marginLeft: 1 }}>
+                        cancelar
+                    </Button>
+                </ModalFooter>
+            </Modal>
         </>
     )
 }
 
-const columns = [
-    { id: 'number', label: 'Number', minWidth: 100 },
-    //{ id: 'cycletime', label: 'Cycletime', minWidth: 100 },
-    { id: 'patron', label: 'Pattern', minWidth: 100 },
-    // { id: 'special', label: 'Especial', minWidth: 100 },
-    // { id: 'auxiliary', label: 'Auxiliar', minWidth: 100 },
-];

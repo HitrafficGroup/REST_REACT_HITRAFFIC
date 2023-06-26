@@ -10,6 +10,7 @@ import Button from '@mui/material/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { generatePlanFrame } from '../js/generateFrameApiHT200';
 import TextField from '@mui/material/TextField';
+import Swal from 'sweetalert2';
 //
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -26,14 +27,15 @@ import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
 export default function PlanHT200View(){
+    const controlerState = useSelector(state => state.controlerht200);
     const [planTab,setPlanTab] = useState("plan-1");
-    const [currentTab, setCurrentTab] = useState([{}]);
+    const [currentTab, setCurrentTab] = useState(controlerState.plan[0].data);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
-    const [data,setData] = useState([{}]);
+    const [data,setData] = useState(controlerState.plan);
     const [modalConfig,setModalConfig] = useState(false);
+    const [modalCrear,setModalCrear] = useState(false);
     const [currentPlan,setCurrentPlan] = useState({});
-    const controlerState = useSelector(state => state.controlerht200);
     const dispatch = useDispatch();
     const handlePlan = (event)=>{
         setPlanTab(event.target.value);
@@ -51,11 +53,15 @@ export default function PlanHT200View(){
     };
     const readData = async()=>{
         let data_controller = await getPlanHT200(controlerState.ip);
-        setCurrentTab(data_controller[0].data)
-        console.log(data_controller)
-        setData(data_controller);
-        updateFirebase('plan',data_controller);
-        dispatch(updateParamsHT200({target:'plan',data:data_controller}));
+        let modify_data = data_controller.map(item =>{
+            item.data = item.data.filter(item => item.action !== 0)
+            return item
+        })
+        console.log(modify_data)
+        setCurrentTab(modify_data[0].data)
+        setData(modify_data);
+        updateFirebase('plan',modify_data);
+        dispatch(updateParamsHT200({target:'plan',data:modify_data}));
 
     }
     const updateFirebase = async (param, __data) => {
@@ -102,6 +108,25 @@ export default function PlanHT200View(){
         setModalConfig(false)
     
     }
+    const crearPlan =()=>{
+        let aux_data = JSON.parse(JSON.stringify(data))
+        let aux_plan = JSON.parse(JSON.stringify(currentPlan))
+        let aux_currentab = JSON.parse(JSON.stringify(currentTab))
+        aux_currentab.push(aux_plan)
+        aux_currentab.sort(function(a, b) {
+                return a.hour - b.hour;
+              });
+        aux_currentab.map((item,index)=>(item.id = `num-${index+1}`))
+        let modify_plan = aux_data.map(item=>{
+            if(item.id ===planTab){
+                item.data = aux_currentab
+            }
+            return item;
+            })
+        setData(modify_plan)
+        setCurrentTab(aux_currentab)
+        setModalCrear(false)
+    }
     const handleChange = (event) => {
         setCurrentPlan({
             ...currentPlan,
@@ -109,6 +134,36 @@ export default function PlanHT200View(){
         });
 
     };
+    const eliminarPlan = (__data)=>{
+        Swal.fire({
+            title: 'Deseas Continuar ?',
+            text: 'Se Eliminara Esta Configuracion',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, Eliminar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let aux_data = JSON.parse(JSON.stringify(data))
+                let aux_currentab = JSON.parse(JSON.stringify(currentTab))
+                aux_currentab = aux_currentab.filter(item=> item.id !== __data.id)
+                aux_currentab.map((item,index)=>(item.id = `num-${index+1}`))
+                let modify_plan = aux_data.map(item=>{
+                    if(item.id ===planTab){
+                        item.data = aux_currentab
+                    }
+                    return item;
+                    })
+                setCurrentTab(aux_currentab)
+                setData(modify_plan)
+
+            }
+        })
+    }
+    const abrirModalCrear=()=>{
+        setModalCrear(true)
+    }
     return(
         <>    
             <Container maxWidth="md">
@@ -116,13 +171,7 @@ export default function PlanHT200View(){
                     <Grid item md={12} xs={12} >
                         <h1>Plan HT200</h1>
                     </Grid>
-                    <Grid item md={3} xs={12}>
-                        <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={readData}  >Leer Datos</Button>
-                    </Grid>
-                    <Grid item md={3} xs={12}>
-                        <Button variant="contained" color='oscuro' sx={{ height: '100%' }}  fullWidth onClick={uploadData}>Cargar Datos</Button>
-                    </Grid>
-                    <Grid item md={6} xs={12} >
+                    <Grid item md={3} xs={12} >
                     <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">Plan Tab</InputLabel>
                             <Select
@@ -143,24 +192,54 @@ export default function PlanHT200View(){
                             </Select>
                         </FormControl>
                     </Grid>
+                    <Grid item md={3} xs={12}>
+                        <Button variant="contained" color='azulm' sx={{ height: '100%' }} fullWidth onClick={abrirModalCrear}  >Crear Plan</Button>
+                    </Grid>
+                    <Grid item md={3} xs={12}>
+                        <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={readData}  >Leer Datos</Button>
+                    </Grid>
+                    <Grid item md={3} xs={12}>
+                        <Button variant="contained" color='oscuro' sx={{ height: '100%' }}  fullWidth onClick={uploadData}>Cargar Datos</Button>
+                    </Grid>
+              
                     <Grid item md={12} xs={12} >
                     <TableContainer sx={{ maxHeight: 440 }}>
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
-                                        {columns.map((column) => (
-                                            <TableCell
-                                                key={column.id}
-                                                align={column.align}
-                                                style={{ minWidth: column.minWidth }}
+                                
+                                        <TableCell
+                                                key={"id"}
+                                                align={"center"}
+                                          
                                             >
-                                                {column.label}
+                                                Id
                                             </TableCell>
-                                        ))}
+                                            <TableCell
+                                                key={"hora"}
+                                                align={"center"}
+                                              
+                                            >
+                                                Hora
+                                            </TableCell>
+                                            <TableCell
+                                                key={"minuto"}
+                                                align={"center"}
+                                  
+                                            >
+                                                Minuto
+                                            </TableCell>
+                                            <TableCell
+                                                key={"accion"}
+                                                align={"center"}
+                                             
+                                            >
+                                                Accion
+                                            </TableCell>
                                             <TableCell
                                                 key={"acciones"}
                                                 align={"center"}
-                                                style={{ minWidth: 100 }}
+                                  
                                             >
                                                 Acciones
                                             </TableCell>
@@ -172,21 +251,23 @@ export default function PlanHT200View(){
                                         .map((row,index) => {
                                             return (
                                                 <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                                                    {columns.map((column) => {
-                                                        const value = row[column.id];
-                                                        return (
-                                                            <TableCell key={column.id} align={column.align}>
-                                                                {column.format && typeof value === 'number'
-                                                                    ? column.format(value)
-                                                                    : value}
+                                                      <TableCell  align={"center"}>
+                                                              {row.id}
                                                             </TableCell>
-                                                        );
-                                                    })}
+                                                            <TableCell  align={"center"}>
+                                                              {row.hour}
+                                                            </TableCell>
+                                                            <TableCell  align={"center"}>
+                                                              {row.minute}
+                                                            </TableCell>
+                                                            <TableCell  align={"center"}>
+                                                              {row.action}
+                                                            </TableCell>
                                                  <TableCell  align={"center"}>
                                                          <IconButton color="oscuro" aria-label="add an alarm" onClick={()=>{modificarPlan(row)}} >
                                                             <EditIcon />
                                                         </IconButton>
-                                                        <IconButton color="rojo" aria-label="add an alarm" >
+                                                        <IconButton color="rojo" aria-label="add an alarm" onClick={()=>{eliminarPlan(row)}} >
                                                             <DeleteIcon />
                                                         </IconButton>
                                                             </TableCell>
@@ -274,15 +355,73 @@ export default function PlanHT200View(){
                     </Button>
                 </ModalFooter>
             </Modal>
+            <Modal isOpen={modalCrear} >
+                <ModalHeader>
+                    <div>
+                        <h1>
+                            Crear Planes
+                        </h1>
+                    </div>
+                </ModalHeader>
+                <ModalBody>
+                    <Grid container spacing={4}>
+
+                        <Grid item xs={12} md={12}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Modifique La Accion</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={currentPlan.action}
+                                    label="Modifique La Accion"
+                                    name='action'
+                                    onChange={handleChange}
+                                >
+                                    <MenuItem value={1}>Action 1</MenuItem>
+                                    <MenuItem value={2}>Action 2</MenuItem>
+                                    <MenuItem value={3}>Action 3</MenuItem>
+                                    <MenuItem value={4}>Action 4</MenuItem>
+                                    <MenuItem value={5}>Action 5</MenuItem>
+                                    <MenuItem value={6}>Action 6</MenuItem>
+                                    <MenuItem value={7}>Action 7</MenuItem>
+                                    <MenuItem value={8}>Action 8</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                        <TextField id="outlined-basic" 
+                        label="Horas" 
+                        variant="outlined" 
+                        name="hour" fullWidth   
+                        InputProps={{ inputProps: { min: 0, max: 24 } }} 
+                        onChange={handleChange} 
+                        value={currentPlan.hour} 
+                        type="number" />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                        <TextField id="outlined-basic" 
+                        label="Minutos" 
+                        variant="outlined" 
+                        name="minute" 
+                        fullWidth 
+                        InputProps={{ inputProps: { min: 0, max: 60 } }}  
+                        onChange={handleChange} 
+                        value={currentPlan.minute} 
+                        type="number" />
+                        </Grid>
+                       
+                    </Grid>
+                </ModalBody>
+                <ModalFooter >
+                    <Button variant="contained" color="rojo" sx={{ marginLeft: 1 }}  onClick={()=>{crearPlan()}} >
+                        aplicar
+                    </Button>
+                    <Button variant="contained" onClick={() => { setModalCrear(false) }} color="oscuro" sx={{ marginLeft: 1 }}>
+                        cancelar
+                    </Button>
+                </ModalFooter>
+            </Modal>
         </>
     );
 }
 
-const columns = [
-    { id: 'id', label: 'id', minWidth: 100 },
-    { id: 'hour', label: 'Hour', minWidth: 100 },
-    { id: 'minute', label: 'Minute', minWidth: 100 },
-    { id: 'action', label: 'action', minWidth: 100 },
-    // { id: 'special', label: 'Especial', minWidth: 100 },
-    // { id: 'auxiliary', label: 'Auxiliar', minWidth: 100 },
-];

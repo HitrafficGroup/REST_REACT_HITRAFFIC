@@ -22,7 +22,7 @@ import FormLabel from '@mui/material/FormLabel';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-
+import Swal from 'sweetalert2';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -33,12 +33,13 @@ import { db } from "../firebase/firebase-config";
 import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
 export default function HorariosHT200View(){
 
+    const controlerState = useSelector(state => state.controlerht200);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
     const [modalConfig,setModalConfig] = useState(false);
-    const [data,setData] = useState([{mes_formated:[],fecha_formated:[],dia_formated:[]}]);
+    const [data,setData] = useState(controlerState.horarios);
     const [currentHorario,setCurrentHorario] = useState({day_plan:""});
-    const controlerState = useSelector(state => state.controlerht200);
+    const [flagCrear,setFlagCrear]=useState(false);
     const dispatch = useDispatch();
     const [dia,setDia] = useState({
         lunes:false,
@@ -106,13 +107,15 @@ export default function HorariosHT200View(){
     };
     const readData = async()=>{
         let controller_data = await getHorarioHT200(controlerState.ip);
-        data.forEach(element => {
+        controller_data.forEach(element => {
             element['mes_formated'] = formatMonth(element)
             element['fecha_formated'] = formatearDias(element)
             element['dia_formated'] = formatWeek(element)
         });
+        controller_data = controller_data.filter(item=> item.number !== 0)
         updateFirebase('horarios',controller_data);
         dispatch(updateParamsHT200({target:'horarios',data:controller_data}));
+
         setData(controller_data)
         console.log(controller_data)
 
@@ -127,99 +130,111 @@ export default function HorariosHT200View(){
         let aux_data = JSON.parse(JSON.stringify(data));
         let array_data = []
         for(let i = 0; i<40;i++){
+            if( i<aux_data.length){
 
-            let aux = aux_data[i]
-            let aux_dia = {
-                lunes:'0',
-                martes:'0',
-                miercoles:'0',
-                jueves:'0',
-                viernes:'0',
-                sabado:'0',
-                domingo:'0',
+                let aux = aux_data[i]
+                let aux_dia = {
+                    lunes:'0',
+                    martes:'0',
+                    miercoles:'0',
+                    jueves:'0',
+                    viernes:'0',
+                    sabado:'0',
+                    domingo:'0',
+                }
+                let aux_fecha = {
+                    dia1:'0',
+                    dia2:'0',
+                    dia3:'0',
+                    dia4:'0',
+                    dia5:'0',
+                    dia6:'0',
+                    dia7:'0',
+                    dia8:'0',
+                    dia9:'0',
+                    dia10:'0',
+                    dia11:'0',
+                    dia12:'0',
+                    dia13:'0',
+                    dia14:'0',
+                    dia15:'0',
+                    dia16:'0',
+                    dia17:'0',
+                    dia18:'0',
+                    dia19:'0',
+                    dia20:'0',
+                    dia21:'0',
+                    dia22:'0',
+                    dia23:'0',
+                    dia24:'0',
+                    dia25:'0',
+                    dia26:'0',
+                    dia27:'0',
+                    dia28:'0',
+                    dia29:'0',
+                    dia30:'0',
+                    dia31:'0',
+                }
+                let aux_meses = {
+                    enero:'0',
+                    febrero:'0',
+                    marzo:'0',
+                    abril:'0',
+                    mayo:'0',
+                    junio:'0',
+                    julio:'0',
+                    agosto:'0',
+                    septiembre:'0',
+                    octubre:'0',
+                    noviembre:'0',
+                    diciembre:'0',
+                }
+                aux.mes_formated.map(item => {
+                    aux_meses[item] = '1';
+                    return item;
+                })
+                aux.fecha_formated.map(item => {
+                    aux_fecha[`dia${item}`] = '1';
+                    return item;
+                })
+                aux.dia_formated.map(item => {
+                    aux_dia[item] = '1'
+                    return item;
+                })
+                let aux_m1 =  aux_meses.julio+aux_meses.junio+aux_meses.mayo+aux_meses.abril+aux_meses.marzo+aux_meses.febrero+aux_meses.enero+'0'
+                let aux_m2 =  "000"+aux_meses.diciembre+aux_meses.noviembre+aux_meses.octubre+aux_meses.septiembre+aux_meses.agosto
+                let aux_d1 = aux_fecha.dia7+aux_fecha.dia6+aux_fecha.dia5+aux_fecha.dia4+aux_fecha.dia3+aux_fecha.dia2+aux_fecha.dia1+'0'
+                let aux_d2 = aux_fecha.dia15+aux_fecha.dia14+aux_fecha.dia13+aux_fecha.dia12+aux_fecha.dia11+aux_fecha.dia10+aux_fecha.dia9+aux_fecha.dia8
+                let aux_d3 = aux_fecha.dia23+aux_fecha.dia22+aux_fecha.dia21+aux_fecha.dia20+aux_fecha.dia19+aux_fecha.dia18+aux_fecha.dia17+aux_fecha.dia16
+                let aux_d4 = aux_fecha.dia31+aux_fecha.dia30+aux_fecha.dia29+aux_fecha.dia28+aux_fecha.dia27+aux_fecha.dia26+aux_fecha.dia25+aux_fecha.dia24
+                let dia_byte = aux_dia.sabado+aux_dia.viernes+aux_dia.jueves+aux_dia.miercoles+aux_dia.martes+aux_dia.lunes+aux_dia.domingo+'0'
+                var temp_m1 = parseInt(aux_m1, 2);
+                var temp_m2 = parseInt(aux_m2, 2);
+                var temp_d1 = parseInt(aux_d1, 2);
+                var temp_d2 = parseInt(aux_d2, 2);
+                var temp_d3 = parseInt(aux_d3, 2);
+                var temp_d4 = parseInt(aux_d4, 2);
+                var temp_dia = parseInt(dia_byte, 2);
+                array_data.push(aux.number)
+                array_data.push(temp_m1)
+                array_data.push(temp_m2)
+                array_data.push(temp_dia)
+                array_data.push(temp_d1)
+                array_data.push(temp_d2)
+                array_data.push(temp_d3)
+                array_data.push(temp_d4)
+                array_data.push(aux.day_plan)
+            }else{
+                array_data.push(0)
+                array_data.push(0)
+                array_data.push(0)
+                array_data.push(0)
+                array_data.push(0)
+                array_data.push(0)
+                array_data.push(0)
+                array_data.push(0)
+                array_data.push(0)
             }
-            let aux_fecha = {
-                dia1:'0',
-                dia2:'0',
-                dia3:'0',
-                dia4:'0',
-                dia5:'0',
-                dia6:'0',
-                dia7:'0',
-                dia8:'0',
-                dia9:'0',
-                dia10:'0',
-                dia11:'0',
-                dia12:'0',
-                dia13:'0',
-                dia14:'0',
-                dia15:'0',
-                dia16:'0',
-                dia17:'0',
-                dia18:'0',
-                dia19:'0',
-                dia20:'0',
-                dia21:'0',
-                dia22:'0',
-                dia23:'0',
-                dia24:'0',
-                dia25:'0',
-                dia26:'0',
-                dia27:'0',
-                dia28:'0',
-                dia29:'0',
-                dia30:'0',
-                dia31:'0',
-            }
-            let aux_meses = {
-                enero:'0',
-                febrero:'0',
-                marzo:'0',
-                abril:'0',
-                mayo:'0',
-                junio:'0',
-                julio:'0',
-                agosto:'0',
-                septiembre:'0',
-                octubre:'0',
-                noviembre:'0',
-                diciembre:'0',
-            }
-            aux.mes_formated.map(item => {
-                aux_meses[item] = '1';
-                return item;
-            })
-            aux.fecha_formated.map(item => {
-                aux_fecha[`dia${item}`] = '1';
-                return item;
-            })
-            aux.dia_formated.map(item => {
-                aux_dia[item] = '1'
-                return item;
-            })
-            let aux_m1 =  aux_meses.julio+aux_meses.junio+aux_meses.mayo+aux_meses.abril+aux_meses.marzo+aux_meses.febrero+aux_meses.enero+'0'
-            let aux_m2 =  "000"+aux_meses.diciembre+aux_meses.noviembre+aux_meses.octubre+aux_meses.septiembre+aux_meses.agosto
-            let aux_d1 = aux_fecha.dia7+aux_fecha.dia6+aux_fecha.dia5+aux_fecha.dia4+aux_fecha.dia3+aux_fecha.dia2+aux_fecha.dia1+'0'
-            let aux_d2 = aux_fecha.dia15+aux_fecha.dia14+aux_fecha.dia13+aux_fecha.dia12+aux_fecha.dia11+aux_fecha.dia10+aux_fecha.dia9+aux_fecha.dia8
-            let aux_d3 = aux_fecha.dia23+aux_fecha.dia22+aux_fecha.dia21+aux_fecha.dia20+aux_fecha.dia19+aux_fecha.dia18+aux_fecha.dia17+aux_fecha.dia16
-            let aux_d4 = aux_fecha.dia31+aux_fecha.dia30+aux_fecha.dia29+aux_fecha.dia28+aux_fecha.dia27+aux_fecha.dia26+aux_fecha.dia25+aux_fecha.dia24
-            let dia_byte = aux_dia.sabado+aux_dia.viernes+aux_dia.jueves+aux_dia.miercoles+aux_dia.martes+aux_dia.lunes+aux_dia.domingo+'0'
-            var temp_m1 = parseInt(aux_m1, 2);
-            var temp_m2 = parseInt(aux_m2, 2);
-            var temp_d1 = parseInt(aux_d1, 2);
-            var temp_d2 = parseInt(aux_d2, 2);
-            var temp_d3 = parseInt(aux_d3, 2);
-            var temp_d4 = parseInt(aux_d4, 2);
-            var temp_dia = parseInt(dia_byte, 2);
-            array_data.push(aux.number)
-            array_data.push(temp_m1)
-            array_data.push(temp_m2)
-            array_data.push(temp_dia)
-            array_data.push(temp_d1)
-            array_data.push(temp_d2)
-            array_data.push(temp_d3)
-            array_data.push(temp_d4)
-            array_data.push(aux.day_plan)
         }
         console.log(array_data)
         await PostHorariosHT200({trama:array_data,ip:controlerState.ip})
@@ -299,6 +314,7 @@ export default function HorariosHT200View(){
             return item;
 
         })
+        setFlagCrear(false)
         setModalConfig(true);
         setMes(aux_meses)
         setFecha(aux_fecha)
@@ -398,6 +414,7 @@ export default function HorariosHT200View(){
         return resultado;
       }
     const aplicarCambios =()=>{
+        let data_modify = []
         let aux = JSON.parse(JSON.stringify(currentHorario))
         let aux_data = JSON.parse(JSON.stringify(data))
         let lista_mes = obtenerAtributosVerdaderos(mes)
@@ -409,15 +426,25 @@ export default function HorariosHT200View(){
         aux.dia_formated = lista_dia
         aux.fecha_formated = lista_fecha_formated
         aux.mes_formated = lista_mes
-        let data_modify = aux_data.map(item =>{
-            if(item.number === aux.number){
-                return aux;
-            }else{
-                return item;
-            }
-        })
-        setData(data_modify)
-        setModalConfig(false)
+        if(!flagCrear){
+           
+             data_modify = aux_data.map(item =>{
+                if(item.number === aux.number){
+                    return aux;
+                }else{
+                    return item;
+                }
+            })
+            setData(data_modify)
+            setModalConfig(false)
+        }else{
+            console.log(aux_data)
+            aux_data.push(aux)
+            aux_data.map((item,index)=>(item.number = (index+1)))
+            setData(aux_data)
+            setModalConfig(false)
+        }
+       
     }
 
     const  obtenerAtributosVerdaderos =(obj)=> {
@@ -431,15 +458,46 @@ export default function HorariosHT200View(){
         
         return atributosVerdaderos;
       }
+    
+    const abrirModalCrear =()=>{
+        setModalConfig(true);
+        setFlagCrear(true)
+    }
+    const eliminarHorario=(__data)=>{
+      console.log(data)
+        Swal.fire({
+            title: 'Deseas Continuar ?',
+            text: 'Se Eliminara Esta Configuracion',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, Eliminar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let aux_data = JSON.parse(JSON.stringify(data))
+             
+                let data_modify  = aux_data.filter(item=> item.number !== __data.number)
+                data_modify.map((item,index)=>(item.number = (index+1)))
+                console.log(data_modify)
+                setData(data_modify)
+
+            }
+        })
+    }
+
     return(
         <>
               <Container maxWidth="md">
                 <h1 style={{ marginBottom: 20 }}>Vista Horarios</h1>
                 <Grid container spacing={3}>
-                <Grid item md={3} xs={12}>
+                <Grid item xs={12} md={4} >
+                        <Button color='azulm' variant="contained" fullWidth onClick={abrirModalCrear}  >Agregar Fase</Button>
+                    </Grid>
+                <Grid item md={4} xs={12}>
                         <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={readData}  >Leer Datos</Button>
                     </Grid>
-                    <Grid item md={3} xs={12}>
+                    <Grid item md={4} xs={12}>
                         <Button variant="contained" color='oscuro' sx={{ height: '100%' }}  fullWidth onClick={uploadData}>Cargar Datos</Button>
                     </Grid>
                     <Grid item md={12} xs={12}>
@@ -514,7 +572,7 @@ export default function HorariosHT200View(){
                                                          <IconButton color="oscuro" aria-label="add an alarm" onClick={()=>{modificarHorario(row)}} >
                                                             <EditIcon />
                                                         </IconButton>
-                                                        <IconButton color="rojo" aria-label="add an alarm" >
+                                                        <IconButton color="rojo" aria-label="add an alarm" onClick={()=>{eliminarHorario(row)}}>
                                                             <DeleteIcon />
                                                         </IconButton>
                                                     </TableCell>
@@ -541,7 +599,7 @@ export default function HorariosHT200View(){
                 <ModalHeader>
                     <div>
                         <h1>
-                            Editar
+                            {flagCrear? "Crear Horario":"Editar Horario"}
                         </h1>
                     </div>
                 </ModalHeader>
@@ -943,6 +1001,9 @@ export default function HorariosHT200View(){
                     </Button>
                 </ModalFooter>
             </Modal>
+
+
+           
         </>
     )
 
