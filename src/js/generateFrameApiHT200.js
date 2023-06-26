@@ -131,9 +131,11 @@ function generateSplitFrame(splits){
 
 function generatePatternFrame(patterns){
     let array_data = []
+
     let aux_data = JSON.parse(JSON.stringify(patterns))
+    let data_size = aux_data.length
     for(let i = 0;i<100;i++){
-        if(i <16){
+        if(i<data_size){
             array_data.push(aux_data[i].number)
             array_data.push(aux_data[i].cycletime & 0xff)
             array_data.push(aux_data[i].cycletime >> 8)

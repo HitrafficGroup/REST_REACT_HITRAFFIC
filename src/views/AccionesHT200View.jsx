@@ -25,12 +25,13 @@ import { updateDoc, doc } from "firebase/firestore";
 import { db } from '../firebase/firebase-config';
 import { updateParamsHT200 } from '../features/controlerht200/controlerHT200Slice';
 export default function AccionesHT200View(){
-    const [data,setData]=useState([{}]);
+    const controlerState = useSelector(state => state.controlerht200)
     const [page, setPage] = useState(0);
     const [modalConfig,setModalConfig] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [currentAction,setCurrentAction] = useState({});
-    const controlerState = useSelector(state => state.controlerht200)
+    const [data,setData]=useState(controlerState.acciones);
+    const [modalCrear,setModalCrear] = useState(false)
     const dispatch = useDispatch();
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -50,7 +51,7 @@ export default function AccionesHT200View(){
 
     const readData = async () => {
         let controller_data = await getAccionHT200(controlerState.ip);
-   
+        controller_data = controller_data.filter(item=> item.number !== 0)
         console.log(controller_data)
         setData(controller_data)
         updateFirebase('acciones',controller_data)
@@ -130,17 +131,38 @@ export default function AccionesHT200View(){
         updateFirebase('acciones',aux_data)
         dispatch(updateParamsHT200({target:'acciones',data:aux_data}));
     }
-
+    const abrirModalCrear=()=>{
+        setModalCrear(true)
+    }
+    const crearAccion=()=>{
+        let aux_acciones = JSON.parse(JSON.stringify(data))
+        let aux_current  = JSON.parse(JSON.stringify(currentAction))
+        let flag = aux_acciones.includes(aux_acciones.find(el=>el.number===aux_current.number));
+        if(!flag){
+            aux_acciones.push(aux_current)
+            aux_acciones.sort(function(a, b) {
+                return a.number - b.number;
+              });
+        setData(aux_acciones)
+        setModalCrear(false)
+        
+        }else{
+            console.log("ya existe esa fase");
+        }
+        console.log("hola")
+    }
     return(
         <>
             <Container maxWidth="md">
                 <h1>Acciones View</h1>
                 <Grid container spacing={2}>
-                    
-                <Grid item md={3} xs={12}>
+                <Grid item xs={12} md={4} >
+                        <Button color='azulm' variant="contained"  fullWidth onClick={abrirModalCrear}  >crear Accion</Button>
+                    </Grid>
+                <Grid item md={4} xs={12}>
                         <Button variant="contained" color='verde2' sx={{ height: '100%' }} onClick={readData} fullWidth >Leer Datos</Button>
                     </Grid>
-                    <Grid item md={3} xs={12}>
+                    <Grid item md={4} xs={12}>
                         <Button variant="contained" sx={{ height: '100%' }} color='oscuro' fullWidth onClick={uploadData} >Cargar Datos</Button>
                     </Grid>
                     <Grid item md={12} xs={12}>

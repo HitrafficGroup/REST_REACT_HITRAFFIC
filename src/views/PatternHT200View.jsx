@@ -22,16 +22,18 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateDoc, doc } from "firebase/firestore";
+import Swal from 'sweetalert2';
 import { db } from "../firebase/firebase-config";
 import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
 
 export default function PatternHT200View() {
+    const controlerState = useSelector(state => state.controlerht200)
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [data,setData] = useState([{number:0,cycletime:0,offsettime:0,sequencenumber:0,splitnumber:0,workmode:0}])
+    const [data,setData] = useState(controlerState.pattern)
     const [modalConfig,setModalConfig] = useState(false);
-    const [currentPattern,setCurrentPattern] = useState({number:0,cycletime:0,offsettime:0,sequencenumber:0,splitnumber:0,workmode:0});
-    const controlerState = useSelector(state => state.controlerht200)
+    const [currentPattern,setCurrentPattern] = useState(controlerState.pattern[0]);
+    const [modalCrear,setModalCrear] = useState(false);
     const dispatch = useDispatch();
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -57,8 +59,9 @@ export default function PatternHT200View() {
 
     };
     const readData = async () => {
+        console.log(controlerState)
         let controller_data = await getPatternHT200(controlerState.ip);
-        console.log(controller_data)
+        controller_data = controller_data.filter(item=> item.number !== 0)
         updateFirebase('pattern',controller_data)
         dispatch(updateParamsHT200({target:'pattern',data:controller_data}));
         setData(controller_data)
@@ -112,6 +115,44 @@ export default function PatternHT200View() {
            return 0
         }
     }
+    const crearPatron=()=>{
+        let aux_patron = JSON.parse(JSON.stringify(data))
+        let aux_current  = JSON.parse(JSON.stringify(currentPattern))
+        let flag = aux_patron.includes(aux_patron.find(el=>el.number===aux_current.number));
+        if(!flag){
+            aux_patron.push(aux_current)
+            aux_patron.sort(function(a, b) {
+                return a.number - b.number;
+              });
+        setData(aux_patron)
+        setModalCrear(false)
+        
+        }else{
+            console.log("ya existe esa fase");
+        }
+        console.log("hola")
+    }
+    const abrirModalCrear =()=>{
+        setModalCrear(true);
+    }
+    const eliminarPatron=(__data)=>{
+        Swal.fire({
+            title: 'Deseas Continuar ?',
+            text: 'Se Eliminara Esta Configuracion',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, Eliminar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let aux_patron = JSON.parse(JSON.stringify(data))
+                aux_patron = aux_patron.filter(item=> item.number !== __data.number)
+                setData(aux_patron)
+
+            }
+        })
+    }
 
     return (
         <>
@@ -119,10 +160,13 @@ export default function PatternHT200View() {
             <Container maxWidth="md">
                 <h1>Vista Pattern</h1>
                 <Grid container spacing={2}>
-                    <Grid item md={3} xs={12}>
+                <Grid item xs={12} md={4} >
+                        <Button color='azulm' variant="contained"  fullWidth onClick={abrirModalCrear}  >crear patron</Button>
+                    </Grid>
+                    <Grid item md={4} xs={12}>
                         <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={readData}>Leer Datos</Button>
                     </Grid>
-                    <Grid item md={3} xs={12}>
+                    <Grid item md={4} xs={12}>
                         <Button variant="contained" sx={{ height: '100%' }} color='oscuro' fullWidth onClick={uploadData} >Cargar Datos</Button>
                     </Grid>
                     <Grid item md={12} xs={12}>
@@ -135,7 +179,7 @@ export default function PatternHT200View() {
                                                 align={"center"}
                                                 style={{ minWidth: 100 }}
                                             >
-                                                Number
+                                                Pattern
                                             </TableCell>
                                             <TableCell
                                                 key={"sequencenumber"}
@@ -199,7 +243,7 @@ export default function PatternHT200View() {
                                                          <IconButton color="oscuro" aria-label="add an alarm" onClick={()=>{modificarPatron(row)}} >
                                                             <EditIcon />
                                                         </IconButton>
-                                                        <IconButton color="rojo" aria-label="add an alarm" >
+                                                        <IconButton color="rojo" aria-label="add an alarm" onClick={()=>{eliminarPatron(row)}} >
                                                             <DeleteIcon />
                                                         </IconButton>
                                                             </TableCell>
@@ -290,6 +334,99 @@ export default function PatternHT200View() {
                         aplicar
                     </Button>
                     <Button variant="contained" onClick={() => { setModalConfig(false) }} color="oscuro" sx={{ marginLeft: 1 }}>
+                        cancelar
+                    </Button>
+                </ModalFooter>
+            </Modal>
+
+            <Modal isOpen={modalCrear} >
+                <ModalHeader>
+                    <div>
+                        <h1>
+                            Crear Patron
+                        </h1>
+                    </div>
+                </ModalHeader>
+                <ModalBody>
+                    <Grid container spacing={4}>
+                    <Grid item  md={12}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Pattern</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={currentPattern.number}
+                                    label="Pattern"
+                                    name="number"
+                                    onChange={handleChange}
+                                >
+                                    <MenuItem value={1}>Patron 1</MenuItem>
+                                    <MenuItem value={2}>Patron 2</MenuItem>
+                                    <MenuItem value={3}>Patron 3</MenuItem>
+                                    <MenuItem value={4}>Patron 4</MenuItem>
+                                    <MenuItem value={5}>Patron 5</MenuItem>
+                                    <MenuItem value={6}>Patron 6</MenuItem>
+                                    <MenuItem value={7}>Patron 7</MenuItem>
+                                    <MenuItem value={8}>Patron 8</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Split</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={currentPattern.splitnumber}
+                                    label="Split"
+                                    name="splitnumber"
+                                    onChange={handleChange}
+                                >
+                                    <MenuItem value={1}>ciclo 1</MenuItem>
+                                    <MenuItem value={2}>ciclo 2</MenuItem>
+                                    <MenuItem value={3}>ciclo 3</MenuItem>
+                                    <MenuItem value={4}>ciclo 4</MenuItem>
+                                    <MenuItem value={5}>ciclo 5</MenuItem>
+                                    <MenuItem value={6}>ciclo 6</MenuItem>
+                                    <MenuItem value={7}>ciclo 7</MenuItem>
+                                    <MenuItem value={8}>ciclo 8</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Modo de Trabajo</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={currentPattern.workmode}
+                                    label="Modo de Trabajo"
+                                    name="workmode"
+                                    onChange={handleChange}
+                                >
+                                    <MenuItem value={1}>Fixed Time</MenuItem>
+                                    <MenuItem value={2}>Green Wave</MenuItem>
+                                    <MenuItem value={3}>Sense Control</MenuItem>
+                                    <MenuItem value={4}>Flash Control</MenuItem>
+                                    <MenuItem value={5}>All red Control</MenuItem>
+                                    <MenuItem value={6}>Lamp Off Control</MenuItem>
+                                    <MenuItem value={7}>Ninguno</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                        <TextField id="outlined-basic" label="Offset" variant="outlined" name="offsettime" onChange={handleChange} value={currentPattern.offsettime} type="number" />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                        <TextField id="outlined-basic" label="secuencia" variant="outlined" name="sequencenumber" onChange={handleChange} value={currentPattern.sequencenumber} type="number" />
+                        </Grid>
+                    </Grid>
+                </ModalBody>
+                <ModalFooter >
+                    <Button variant="contained" color="rojo" sx={{ marginLeft: 1 }}  onClick={crearPatron} >
+                        aplicar
+                    </Button>
+                    <Button variant="contained" onClick={() => { setModalCrear(false) }} color="oscuro" sx={{ marginLeft: 1 }}>
                         cancelar
                     </Button>
                 </ModalFooter>

@@ -30,19 +30,17 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import EditIcon from '@mui/icons-material/Edit';
 export default function SecuencyHT200View() {  
-
-    const [secuencias, setSecuencias] = useState([{ data: [], id: '' }]);
+    const controlerState = useSelector(state => state.controlerht200)
+    const [secuencias, setSecuencias] = useState(controlerState.secuencias);
     const [modalConfig, setModalConfig] = useState(false)
     const [value, setValue] = useState('');
     const [currentSeq, setCurrentSeq] = useState([{}]);
     const [ring,setRing] = useState('ring1');
     const [seqTab, setSeqTab] = useState(0);
-    const [seqTarget, setSeqTarget] = useState({ ring1: [], ring2: [], ring3: [], ring4: [] });
-    const controlerState = useSelector(state => state.controlerht200)
+    const [seqTarget, setSeqTarget] = useState(controlerState.secuencias[0]);
     const dispatch = useDispatch();
     const readData = async () => {
         let data = await getSecuencyHT200(controlerState.ip);
-        console.log(data)
         let data_formated = []
         data.forEach(element => {
             let aux_data = element.data
@@ -153,7 +151,6 @@ export default function SecuencyHT200View() {
                     <Grid item xs={12} md={3} >
                         <Button color='verde' variant="contained"  fullWidth onClick={readData}  >leer datos</Button>
                     </Grid>
-
                     <Grid item xs={12} md={3} >
                         <Button color='oscuro' variant="contained"  fullWidth onClick={uploadData} >Cargar datos</Button>
                     </Grid>
