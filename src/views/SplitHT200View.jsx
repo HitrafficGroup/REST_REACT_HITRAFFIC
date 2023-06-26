@@ -14,7 +14,9 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
+import Swal from 'sweetalert2';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 //iconos
 import DoneIcon from '@mui/icons-material/Done';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -36,9 +38,10 @@ import { db } from "../firebase/firebase-config";
 export default function SplitHT200View() {
     const controlerState = useSelector(state => state.controlerht200)
     const [splitTab, setSplitTab] = useState("split-1");
-    const [splits, setSplits] = useState([{}]);
-    const [currentTab, setCurrentTab] = useState([{}]);
+    const [splits, setSplits] = useState(controlerState.split);
+    const [currentTab, setCurrentTab] = useState(controlerState.split[0].data);
     const [modalConfig, setModalConfig] = useState(false);
+    const [modalCrear,setModalCrear] = useState(false);
     const [currentSplit, setCurrentSplit] = useState({ tiempo: 0 });
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
@@ -51,7 +54,7 @@ export default function SplitHT200View() {
 
     const updateFirebase = async (param, __data) => {
         const ref = doc(db, "controladores", `${controlerState.id}`);
-        let aux_data = {}
+        let aux_data = {};
         aux_data[`${param}`] = __data;
         await updateDoc(ref, aux_data);
     }
@@ -89,11 +92,16 @@ export default function SplitHT200View() {
 
             }
         }
-        console.log(controller_data)
-        updateFirebase('split',controller_data)
-        dispatch(updateParamsHT200({target:'split',data:controller_data}));
-        setSplits(controller_data)
-        setCurrentTab(controller_data[0].data)
+
+        let modify_data = controller_data.map(item =>{
+            item.data = item.data.filter(item => item.fase !== 0)
+            return item
+        })
+        console.log(modify_data)
+        updateFirebase('split',modify_data)
+        dispatch(updateParamsHT200({target:'split',data:modify_data}));
+        setSplits(modify_data)
+        setCurrentTab(modify_data[0].data)
         setSplitTab("split-1");
 
     }
@@ -128,7 +136,6 @@ export default function SplitHT200View() {
         aux_data.tiempo = parseInt(aux_data.tiempo)
         let flag = true
         let split_edited = []
-        console.log(aux_data)
         if(aux_data.fase === 0){
             for(let i = 0;i<16;i++){
                 if( aux_split[i].fase === 0){
@@ -173,36 +180,78 @@ export default function SplitHT200View() {
 
        
         let array_data = generateSplitFrame(data)
-        
-   
         await PostSplitHT200({trama:array_data,ip:controlerState.ip})
         updateFirebase('split',aux_splits)
         dispatch(updateParamsHT200({target:'split',data:aux_splits}));
     }
-    const eliminarSplit = (__data) =>{
-        let custom_delete = {fase:0,mode:"Ninguno",tiempo:0,coord:0}
-        if(__data.fase !== 0){
-          
-            let aux_split = JSON.parse(JSON.stringify(currentTab))
-            console.log("eliminamos: ",__data)
-            let temp = aux_split.filter(item => item.fase !== __data.fase)
-            temp.push(custom_delete)
-          
-            setCurrentTab(temp)
+    const abrirModalCrear =()=>{
+        setCurrentSplit({fase:1,tiempo:10,mode:"Ninguno",coord:4})
+        setModalCrear(true)
+    }
+    const crearSplit =()=>{
+        let aux_splits = JSON.parse(JSON.stringify(splits))
+        let aux_currentab = JSON.parse(JSON.stringify(currentTab))
+        let flag = aux_currentab.includes(aux_currentab.find(el=>el.fase===currentSplit.fase));
+        if(!flag){
+            aux_currentab.push(currentSplit)
+            aux_currentab.sort(function(a, b) {
+                return a.fase - b.fase;
+              });
+        let modify_splits = aux_splits.map(item=>{
+            if(item.id ===splitTab){
+                item.data = aux_currentab
+            }
+            return item;
+        })
+        setCurrentTab(aux_currentab)
+        setSplits(modify_splits)
+        setModalCrear(false)
         }else{
-
+            console.log("ya existe esa fase")
         }
+      
+    }
+    const eliminarSplit = (__data) =>{
+      
+        Swal.fire({
+            title: 'Deseas Continuar ?',
+            text: 'Se Eliminara Esta Configuracion',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, Eliminar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let aux_splits = JSON.parse(JSON.stringify(splits))
+                let aux_currentab = JSON.parse(JSON.stringify(currentTab))
+                aux_currentab = aux_currentab.filter(item=> item.fase !== __data.fase)
+                let modify_splits = aux_splits.map(item=>{
+                    if(item.id ===splitTab){
+                        item.data = aux_currentab
+                    }
+                    return item;
+                })
+                setCurrentTab(aux_currentab)
+                setSplits(modify_splits)
+            }
+        })
+       
 
     }
 
     return (
         <>
-            <Container maxWidth="md">
-                <h1>Vista Split</h1>
-                <Grid container spacing={2}>
-                   
-
-                    <Grid item md={6} xs={12}>
+            <Container maxWidth="md" style={{paddingTop:20}}>
+        
+                <Grid container spacing={2} >
+            
+                <Grid item  xs={12}>
+                <Typography variant="h5" gutterBottom>
+                  Configuracion de Split
+                </Typography>
+                </Grid>
+                    <Grid item md={3} xs={12}>
                         <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">Split Tab</InputLabel>
                             <Select
@@ -223,12 +272,16 @@ export default function SplitHT200View() {
                             </Select>
                         </FormControl>
                     </Grid>
+                    <Grid item md={3} >
+                        <Button  variant="contained" color='azulm' sx={{ height: '100%' }} fullWidth onClick={abrirModalCrear}  >AGREGAR SPLIT</Button>
+                    </Grid>
                     <Grid item md={3} xs={12}>
                         <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={readData}  >Leer Datos</Button>
                     </Grid>
                     <Grid item md={3} xs={12}>
                         <Button variant="contained" sx={{ height: '100%' }} color='oscuro' fullWidth onClick={uploadData}>Cargar Datos</Button>
                     </Grid>
+                  
                     <Grid item md={12} xs={12}>
                     <TableContainer sx={{ maxHeight: 430 }}>
                             <Table stickyHeader aria-label="sticky table">
@@ -344,7 +397,7 @@ export default function SplitHT200View() {
                 <ModalHeader>
                     <div>
                         <h1>
-                            Editar
+                            Editar Split
                         </h1>
                     </div>
                 </ModalHeader>
@@ -400,6 +453,95 @@ export default function SplitHT200View() {
                         aplicar
                     </Button>
                     <Button variant="contained" onClick={() => { setModalConfig(false) }} color="oscuro" sx={{ marginLeft: 1 }}>
+                        cancelar
+                    </Button>
+                </ModalFooter>
+            </Modal>
+            <Modal isOpen={modalCrear} >
+                <ModalHeader>
+                    <div>
+                        <h1>
+                            Crear Split
+                        </h1>
+                    </div>
+                </ModalHeader>
+                <ModalBody>
+                    <Grid container spacing={4}>
+                    <Grid item md={6} xs={12}>
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Fases Controlador</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={currentSplit.fase}
+                                label="Fases Controlador"
+                                name="fase"
+                                onChange={handleChange}
+                            >
+                                <MenuItem value={1}>Fase 1</MenuItem>
+                                <MenuItem value={2}>Fase 2</MenuItem>
+                                <MenuItem value={3}>Fase 3</MenuItem>
+                                <MenuItem value={4}>Fase 4</MenuItem>
+                                <MenuItem value={5}>Fase 5</MenuItem>
+                                <MenuItem value={6}>Fase 6</MenuItem>
+                                <MenuItem value={7}>Fase 7</MenuItem>
+                                <MenuItem value={8}>Fase 8</MenuItem>
+                                <MenuItem value={9}>Fase 9</MenuItem>
+                                <MenuItem value={10}>Fase 10</MenuItem>
+                                <MenuItem value={11}>Fase 11</MenuItem>
+                                <MenuItem value={12}>Fase 12</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                        <Grid item xs={12} md={6}>
+                            <TextField id="outlined-basic" label="Tiempo" variant="outlined" name="tiempo" onChange={handleChange} value={currentSplit.tiempo} type="number" />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Modo</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={currentSplit.mode}
+                                    label="Modo"
+                                    name="mode"
+                                    onChange={handleChange}
+                                >
+                                    <MenuItem value={"Otro"}>Otro</MenuItem>
+                                    <MenuItem value={"Ninguno"}>Ninguno</MenuItem>
+                                    <MenuItem value={"Minimun Vehicle Recall"}>Minimun Vehicle Recall</MenuItem>
+                                    <MenuItem value={"Maximun Vehicle Recall"}>Maximun Vehicle Recall</MenuItem>
+                                    <MenuItem value={"Pedestrian Recall"}>Pedestrian Recall</MenuItem>
+                                    <MenuItem value={"Maximun vehicle Pedestrian Recall"}>Maximun vehicle Pedestrian Recall</MenuItem>
+                                    <MenuItem value={"Phase Omitted"}>Phase Omitted</MenuItem>
+                                    <MenuItem value={"No declarado"}>sin seleccionar</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+
+                        <Grid item xs={12} md={12}>
+                            <FormControl>
+                                <FormLabel id="demo-controlled-radio-buttons-group">Seleccionar Coord</FormLabel>
+                                <RadioGroup
+                                    aria-labelledby="demo-controlled-radio-buttons-group"
+                                    name="coord"
+                                    value={currentSplit.coord}
+                                    onChange={handleChange}
+                                    row
+                                >
+                                    <FormControlLabel value={1} control={<Radio />} label="Fase Coord" />
+                                    <FormControlLabel value={2} control={<Radio />} label="Fase Clave" />
+                                    <FormControlLabel value={4} control={<Radio />} label="Fase Fija" />
+                                </RadioGroup>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                </ModalBody>
+                <ModalFooter >
+                    <Button variant="contained" color="rojo" sx={{ marginLeft: 1 }} onClick={crearSplit} >
+                        aplicar
+                    </Button>
+                    <Button variant="contained" onClick={() => { setModalCrear(false) }} color="oscuro" sx={{ marginLeft: 1 }}>
                         cancelar
                     </Button>
                 </ModalFooter>

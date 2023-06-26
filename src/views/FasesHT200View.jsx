@@ -13,12 +13,17 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import Swal from 'sweetalert2';
 import { getFasesHT200,PostFasesHT200 } from "../js/apiFunctionsHT200";
 import { useSelector, useDispatch } from 'react-redux';
 import { updateDoc, doc } from "firebase/firestore";
 import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
 import { generatePhaseFrame } from "../js/generateFrameApiHT200";
 import { db } from "../firebase/firebase-config";
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
 //iconos
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -26,12 +31,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 
 export default function FasesHT200View() {
+    const controlerState = useSelector(state => state.controlerht200);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [fases,setFases] = useState([]);
+    const [fases,setFases] = useState(controlerState.fases);
     const [modalConfig,setModalConfig] = useState(false);
     const [currentFase,setCurrentFase] = useState(currentFase_init);
-    const controlerState = useSelector(state => state.controlerht200);
+    const [modalCrear,setModalCrear] = useState(false);
     const dispatch = useDispatch();
 
     const handleChangePage = (event, newPage) => {
@@ -67,13 +73,13 @@ export default function FasesHT200View() {
         setFases(data_filter)
         updateFirebase('fases',data_filter)
         dispatch(updateParamsHT200({target:'fases',data:data_filter}));
-        console.log(data_filter)
+  
     }
     const abrirModalConfig =(__data)=>{
         setModalConfig(true);
         let aux_data = JSON.parse(JSON.stringify(__data))
         setCurrentFase(aux_data);
-        console.log(__data)
+ 
     }
     const handleTextField = (event) => {
         setCurrentFase({
@@ -86,9 +92,50 @@ export default function FasesHT200View() {
         let array_data = generatePhaseFrame(fases)
         updateFirebase('fases',fases);
         dispatch(updateParamsHT200({target:'fases',data:fases}));
-        console.log(array_data);
+    
         await PostFasesHT200({trama:array_data,ip:controlerState.ip});
       
+    }
+    const abrirModalCrear=()=>{
+        setModalCrear(true)
+        setCurrentFase(currentFase_init)
+        
+    }
+    const crearFase=()=>{
+        let aux_fases = JSON.parse(JSON.stringify(fases))
+        let aux_current  = JSON.parse(JSON.stringify(currentFase))
+        let flag = aux_fases.includes(aux_fases.find(el=>el.number===aux_current.number));
+        if(!flag){
+            aux_fases.push(aux_current)
+            aux_fases.sort(function(a, b) {
+                return a.number - b.number;
+              });
+        setFases(aux_fases)
+        setModalCrear(false)
+        
+        }else{
+            console.log("ya existe esa fase");
+        }
+    }
+    const eliminarFase =(__data)=>{
+          
+        Swal.fire({
+            title: 'Deseas Continuar ?',
+            text: 'Se Eliminara Esta Configuracion',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Si, Eliminar!',
+            showDenyButton: true,
+            denyButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let aux_fases = JSON.parse(JSON.stringify(fases))
+                aux_fases = aux_fases.filter(item=> item.number !== __data.number)
+                setFases(aux_fases)
+
+            }
+        })
+       
     }
 
 
@@ -98,15 +145,16 @@ export default function FasesHT200View() {
             <Container maxWidth="md">
                 <h1 style={{ marginBottom: 20 }}>Vista Fases</h1>
                 <Grid container spacing={3}>
-                <Grid item xs={12} md={6} >
-                        <Button color='verde' variant="contained" onClick={readData}  >leer datos</Button>
+                <Grid item xs={12} md={4} >
+                        <Button color='azulm' variant="contained" fullWidth onClick={abrirModalCrear}  >Agregar Fase</Button>
                     </Grid>
-                    <Grid item xs={12} md={6} >
-                        <Button color='oscuro' variant="contained"  onClick={uploadData} >Cargar datos</Button>
+                <Grid item xs={12} md={4} >
+                        <Button color='verde' variant="contained"  fullWidth onClick={readData}  >leer datos</Button>
                     </Grid>
-                    <Grid item xs={12} md={6} >
-                        <Button color='oscuro' variant="contained" onClick={()=>{abrirModalConfig(currentFase_init)}}  >Agregar Fase</Button>
+                    <Grid item xs={12} md={4} >
+                        <Button color='oscuro' variant="contained" fullWidth  onClick={uploadData} >Cargar datos</Button>
                     </Grid>
+                
                     <Grid item xs={12} md={12}>
                         <TableContainer sx={{ maxHeight: 440 }}>
                             <Table stickyHeader aria-label="sticky table">
@@ -147,7 +195,7 @@ export default function FasesHT200View() {
                                                             <IconButton aria-label="delete" color="oscuro" onClick={()=>{abrirModalConfig(row)}} >
                                                                 <SettingsIcon />
                                                             </IconButton>
-                                                            <IconButton aria-label="delete" color="rojo">
+                                                            <IconButton aria-label="delete" color="rojo" onClick={()=>{eliminarFase(row)}} >
                                                                 <DeleteIcon />
                                                             </IconButton>
                                                         </Stack>
@@ -182,7 +230,9 @@ export default function FasesHT200View() {
                 </ModalHeader>
                 <ModalBody>
                     <Grid container spacing={4}>
-                        <Grid item xs={12} md={6} >
+                 
+                  
+                        <Grid item xs={12} md={4} >
                         <TextField
                             id="outlined-controlled"
                             value={currentFase.walk}
@@ -197,7 +247,7 @@ export default function FasesHT200View() {
                             
                             />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} md={4}>
                         <TextField
                             label="Ped Clear"
                             type="number"
@@ -211,7 +261,7 @@ export default function FasesHT200View() {
                             }}
                             />
                         </Grid>
-                        <Grid item xs={12} md={6} >
+                        <Grid item xs={12} md={4} >
                         <TextField
                             id="outlined-controlled"
                             value={currentFase.minimumGreen}
@@ -226,7 +276,7 @@ export default function FasesHT200View() {
                             
                             />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} md={4}>
                         <TextField
                             label="Peatonal"
                             type="number"
@@ -240,7 +290,7 @@ export default function FasesHT200View() {
                             }}
                             />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} md={4}>
                         <TextField
                             id="outlined-controlled"
                             value={currentFase.maximun1}
@@ -254,7 +304,7 @@ export default function FasesHT200View() {
                             }}
                             />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} md={4}>
                         <TextField
                             id="outlined-controlled"
                             value={currentFase.maximun2}
@@ -333,6 +383,199 @@ export default function FasesHT200View() {
                         GUARDAR
                     </Button>
                     <Button variant="contained" onClick={()=>{setModalConfig(false)}} color="oscuro" sx={{ marginLeft: 1 }}>
+                        cancelar
+                    </Button>
+                </ModalFooter>
+            </Modal>
+
+            
+            <Modal isOpen={modalCrear} >
+                <ModalHeader>
+                    <div>
+                        <h1>
+                          Crear Fase
+                        </h1>
+                    </div>
+                </ModalHeader>
+                <ModalBody>
+                    <Grid container spacing={4}>
+                    <Grid item xs={12} >
+                    <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Fases Controlador</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={currentFase.number}
+                                label="Fases Controlador"
+                                name="number"
+                                onChange={handleTextField}
+                            >
+                                <MenuItem value={1}>Fase 1</MenuItem>
+                                <MenuItem value={2}>Fase 2</MenuItem>
+                                <MenuItem value={3}>Fase 3</MenuItem>
+                                <MenuItem value={4}>Fase 4</MenuItem>
+                                <MenuItem value={5}>Fase 5</MenuItem>
+                                <MenuItem value={6}>Fase 6</MenuItem>
+                                <MenuItem value={7}>Fase 7</MenuItem>
+                                <MenuItem value={8}>Fase 8</MenuItem>
+                                <MenuItem value={9}>Fase 9</MenuItem>
+                                <MenuItem value={10}>Fase 10</MenuItem>
+                                <MenuItem value={11}>Fase 11</MenuItem>
+                                <MenuItem value={12}>Fase 12</MenuItem>
+                            </Select>
+                        </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={4} >
+                        <TextField
+                            id="outlined-controlled"
+                            value={currentFase.walk}
+                            fullWidth={true}
+                            onChange={handleTextField}
+                            name="walk"
+                            label="walk"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                        <TextField
+                            label="Ped Clear"
+                            type="number"
+                            id="outlined-controlled"
+                            value={currentFase.pedestrianClear}
+                            fullWidth={true}
+                            name="pedestrianClear"
+                            onChange={handleTextField}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4} >
+                        <TextField
+                            id="outlined-controlled"
+                            value={currentFase.minimumGreen}
+                            fullWidth={true}
+                            onChange={handleTextField}
+                            name="minimumGreen"
+                            label="Minimo en Verde"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                        <TextField
+                            label="Peatonal"
+                            type="number"
+                            id="outlined-controlled"
+                            value={currentFase.passage}
+                            fullWidth={true}
+                            onChange={handleTextField}
+                            name="passage"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                        <TextField
+                            id="outlined-controlled"
+                            value={currentFase.maximun1}
+                            fullWidth={true}
+                            onChange={handleTextField}
+                            name="maximun1"
+                            label="Maximo en verde1"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                        <TextField
+                            id="outlined-controlled"
+                            value={currentFase.maximun2}
+                            fullWidth={true}
+                            onChange={handleTextField}
+                            name="maximun2"
+                            label="Maximo en verde 2"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                        <TextField
+                            id="outlined-controlled"
+                            value={currentFase.yellowchange}
+                            fullWidth={true}
+                            onChange={handleTextField}
+                            name="yellowchange"
+                            label="vehicle yellow"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                        <TextField
+                            id="outlined-controlled"
+                            value={currentFase.redclear}
+                            fullWidth={true}
+                            onChange={handleTextField}
+                            name="redclear"
+                            label="redclear"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                        <TextField
+                            id="outlined-controlled"
+                            value={currentFase.RedRevert}
+                            fullWidth={true}
+                            onChange={handleTextField}
+                            name="RedRevert"
+                            label="Red Revert"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                        <TextField
+                            id="outlined-controlled"
+                            value={currentFase.vehicleclear}
+                            fullWidth={true}
+                            onChange={handleTextField}
+                            name="vehicleclear"
+                            label="vehicleclear"
+                            type="number"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            />
+                        </Grid>
+                       
+                      
+                    </Grid>
+                </ModalBody>
+                <ModalFooter >
+                    <Button variant="contained" onClick={crearFase} color="rojo" sx={{ marginLeft: 1 }}>
+                        crear
+                    </Button>
+                    <Button variant="contained" onClick={()=>{setModalCrear(false)}} color="oscuro" sx={{ marginLeft: 1 }}>
                         cancelar
                     </Button>
                 </ModalFooter>
@@ -423,7 +666,7 @@ let currentFase_init = {
     maximun2:0,
     minimumGreen:10,
     minimungap:0,
-    number:0,
+    number:5,
     options:0,
     passage:0,
     pedestrianClear:0,

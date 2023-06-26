@@ -78,37 +78,25 @@ function generateSplitFrame(splits){
     let array_data = []
     let aux_splits = JSON.parse(JSON.stringify(splits))
     for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 16; j++) {
-
-            let target = aux_splits[i].data[j].mode
-            if (target === "Otro") {
-                aux_splits[i].data[j].mode = 1
-            } else if (target === "Ninguno") {
-                aux_splits[i].data[j].mode = 2
-            } else if (target === "Minimun Vehicle Recall") {
-                aux_splits[i].data[j].mode = 3
-            } else if (target === "Maximun Vehicle Recall") {
-                aux_splits[i].data[j].mode = 4
-            } else if (target === "Pedestrian Recall") {
-                aux_splits[i].data[j].mode = 5
-            } else if (target === "Maximun vehicle Pedestrian Recall") {
-                aux_splits[i].data[j].mode = 6
-            } else if (target === "Phase Omitted") {
-                aux_splits[i].data[j].mode = 7
-            }else {
-                aux_splits[i].data[j].mode = 0
-            }
-
-        }
-    }
-    for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 16; j++) {
-            let target = aux_splits[i].data[j].fase
-            if(target === 0){
-                aux_splits[i].data[j].mode = 0
-                aux_splits[i].data[j].coord = 0
-                aux_splits[i].data[j].tiempo = 0
-            }
+        for (let j = 0; j < aux_splits[i].data.length; j++) {
+                let target = aux_splits[i].data[j].mode
+                if (target === "Otro") {
+                    aux_splits[i].data[j].mode = 1
+                } else if (target === "Ninguno") {
+                    aux_splits[i].data[j].mode = 2
+                } else if (target === "Minimun Vehicle Recall") {
+                    aux_splits[i].data[j].mode = 3
+                } else if (target === "Maximun Vehicle Recall") {
+                    aux_splits[i].data[j].mode = 4
+                } else if (target === "Pedestrian Recall") {
+                    aux_splits[i].data[j].mode = 5
+                } else if (target === "Maximun vehicle Pedestrian Recall") {
+                    aux_splits[i].data[j].mode = 6
+                } else if (target === "Phase Omitted") {
+                    aux_splits[i].data[j].mode = 7
+                }else {
+                    aux_splits[i].data[j].mode = 0
+                }
         }
     }
     for(let i = 0; i<20;i++){
@@ -116,10 +104,18 @@ function generateSplitFrame(splits){
         if(i<8){
             let target_array = aux_splits[i].data
             for(let j = 0; j<16;j++){
-                array_data.push(target_array[j].fase)
-                array_data.push(target_array[j].tiempo)  
-                array_data.push(target_array[j].mode)    
-                array_data.push(target_array[j].coord)  
+                if(j<target_array.length){
+                    array_data.push(target_array[j].fase)
+                    array_data.push(target_array[j].tiempo)  
+                    array_data.push(target_array[j].mode)    
+                    array_data.push(target_array[j].coord)  
+                }else{
+                array_data.push(0)
+                array_data.push(0)  
+                array_data.push(0)    
+                array_data.push(0) 
+                }
+          
             }
         }else{
             for(let j = 0; j<16;j++){
