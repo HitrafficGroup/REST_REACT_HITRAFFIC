@@ -23,6 +23,8 @@ import frameJson from "../js/ht200Frame.json";
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 import '../css/beautifulCard.scss';
 import { generatePhaseFrame,generateSeqFrame,generateSplitFrame,generatePatternFrame,generateActionFrame,generatePlanFrame, generateChannelFrame } from "../js/generateFrameApiHT200";
 import {setBasicPlan } from "../js/apiFunctionsHT200";
@@ -54,7 +56,7 @@ export default function BasicSettingsHT200View() {
     const [hora, setHora] = useState(0);
     const [minuto, setMinuto] = useState(0);
     const dispatch = useDispatch();
-    const [ctdPlanes, setCtdPlanes] = useState(1);
+    const [flagLoad, setFlagLoad] = useState(false);
     const [planificacion, setPlanificacion] = useState(controlerState.planificacion);
     const agregarPaso = () => {
         let pasos = JSON.parse(JSON.stringify(planesSemaforos))
@@ -147,7 +149,7 @@ export default function BasicSettingsHT200View() {
         // valores por defecto
         let data_aux = JSON.parse(JSON.stringify(planificacion))
         if(data_aux.length>0){
-
+            setFlagLoad(true)
             let fases_aux = JSON.parse(JSON.stringify(frameJson.fases))
             let seq_aux = JSON.parse(JSON.stringify(frameJson.seq))
             let split_aux = JSON.parse(JSON.stringify(frameJson.split))
@@ -204,7 +206,7 @@ export default function BasicSettingsHT200View() {
                     new_split.data[4].coord = 4
                 }
                 // modificamos pattern
-                for (let i = 0; i < ctdPlanes; i++) {
+                for (let i = 0; i < fases_aux.length; i++) {
                     pattern_aux[i].cycletime = 0;
                     pattern_aux[i].number = i + 1;
                     pattern_aux[i].offsettime = 0;
@@ -213,7 +215,7 @@ export default function BasicSettingsHT200View() {
                     pattern_aux[i].workmode = 1;
                 }
                 // modificamos accion
-                for (let i = 0; i < ctdPlanes; i++) {
+                for (let i = 0; i < fases_aux.length; i++) {
                     accion_aux[i].number = i + 1;
                     accion_aux[i].patron = i + 1;
                     accion_aux[i].auxiliary = 0;
@@ -221,7 +223,7 @@ export default function BasicSettingsHT200View() {
                 }
                 //modificamos plan
                 let new_plan = plan_aux[0]
-                for (let i = 0; i < ctdPlanes; i++) {
+                for (let i = 0; i < fases_aux.length; i++) {
                     new_plan.data[i].action = i + 1;
                     new_plan.data[i].hour = data_aux[i].hora;
                     new_plan.data[i].minute = data_aux[i].minuto;
@@ -248,6 +250,7 @@ export default function BasicSettingsHT200View() {
             })
             await updateFirebase('planificacion',data_aux)
             dispatch(updateParamsHT200({target:'planificacion',data:data_aux}))
+            setFlagLoad(false)
         }else{
             Swal.fire({
                 icon: 'warning',
@@ -477,6 +480,12 @@ export default function BasicSettingsHT200View() {
 
                 </div>
             </Container>
+            <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={flagLoad}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
         </>
     )
 }
