@@ -12,6 +12,7 @@ import { db } from "../firebase/firebase-config";
 import Paper from '@mui/material/Paper';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
+import Swal from 'sweetalert2';
 import Button from '@mui/material/Button';
 import { updateDoc, doc } from "firebase/firestore";
 import AddIcon from '@mui/icons-material/Add';
@@ -92,17 +93,32 @@ export default function BasicSettingsHT200View() {
         let pasos = JSON.parse(JSON.stringify(planesSemaforos));
 
         let aux_planificacion = JSON.parse(JSON.stringify(planificacion));
+        let data_filter = aux_planificacion.filter(item => item.id !== "prueba")
         let aux_plan = {
-            id: ctdPlanes,
+            id: 12,
             data: pasos,
             hora: hora,
             minuto: minuto
         }
+    
 
-        aux_planificacion.push(aux_plan);
-        let data_Filter = aux_planificacion.filter(item => item.id !== "prueba")
-        setCtdPlanes(data_Filter.length)
-        setPlanificacion(data_Filter);
+        data_filter.push(aux_plan);
+        data_filter.sort(function (a, b) {
+            let a_aux = parseInt(a.hora)
+            let a_aux2 = parseInt(a.minuto)
+            let b_aux = parseInt(b.hora)
+            let b_aux2 = parseInt(b.minuto)
+            a = a_aux * 100 + a_aux2
+            b = b_aux * 100 + b_aux2
+            return a -b 
+        })
+        let modify_data = data_filter.map((item,index)=>{
+            item.id = index+1
+            return item
+        })
+        
+        console.log(modify_data)
+        setPlanificacion(modify_data);
         setPlanesSemaforos([initial_paso])
         setHora(0)
         setMinuto(0)
@@ -111,7 +127,11 @@ export default function BasicSettingsHT200View() {
 
 
     const eliminarHorario = (__data) => {
-        console.log(__data)
+       
+        let aux_data = JSON.parse(JSON.stringify(planificacion))
+        aux_data = aux_data.filter(item=> item.id !== __data.id)
+        setPlanificacion(aux_data)
+
     }
 
     
@@ -125,107 +145,116 @@ export default function BasicSettingsHT200View() {
     const cargarDatos = async() => {
         // valores por defecto
         let data_aux = JSON.parse(JSON.stringify(planificacion))
-        let fases_aux = JSON.parse(JSON.stringify(frameJson.fases))
-        let seq_aux = JSON.parse(JSON.stringify(frameJson.seq))
-        let split_aux = JSON.parse(JSON.stringify(frameJson.split))
-        let pattern_aux = JSON.parse(JSON.stringify(frameJson.pattern))
-        let accion_aux = JSON.parse(JSON.stringify(frameJson.acciones))
-        let plan_aux = JSON.parse(JSON.stringify(frameJson.plan))
-        let channel_aux = JSON.parse(JSON.stringify(frameJson.channel))
-        let canales_duracion_aux = {
-            g1:0,
-            g2:0,
-            g3:0,
-            g4:0,
-            g15:0,
-        }
-        let tiempos_aux = []
-       
+        if(data_aux.length>0){
 
-            for (let j = 0; j < data_aux.length; j++) {
-                //modificamos las secuencias
-                let new_seq = seq_aux[j]
-                for (let i = 0; i < data_aux[j].data.length; i++) {
-                    let temp_data = data_aux[j].data[i]
-                   
-                    if(temp_data.g1 === false && temp_data.g2 === false && temp_data.g3 === false && temp_data.g4 === false ){
-                        new_seq.ring1[i].value = 15
-                        new_seq.ring2[i].value = 15
-                        new_seq.ring3[i].value = 15
-                        new_seq.ring4[i].value = 15
-                        canales_duracion_aux.g15 = temp_data.duracion
-                    }else{
-                        let aux_ring = 1
-                        for(let x=0;x<4;x++){
-                            if(temp_data[`g${x+1}`]=== true){
-                                new_seq['ring'+aux_ring][i].value = x + 1
-                                canales_duracion_aux['g'+(x+1)] =  temp_data.duracion
-                                aux_ring +=1
+            let fases_aux = JSON.parse(JSON.stringify(frameJson.fases))
+            let seq_aux = JSON.parse(JSON.stringify(frameJson.seq))
+            let split_aux = JSON.parse(JSON.stringify(frameJson.split))
+            let pattern_aux = JSON.parse(JSON.stringify(frameJson.pattern))
+            let accion_aux = JSON.parse(JSON.stringify(frameJson.acciones))
+            let plan_aux = JSON.parse(JSON.stringify(frameJson.plan))
+            let channel_aux = JSON.parse(JSON.stringify(frameJson.channel))
+            let canales_duracion_aux = {
+                g1:0,
+                g2:0,
+                g3:0,
+                g4:0,
+                g15:0,
+            }
+            let tiempos_aux = []
+           
+    
+                for (let j = 0; j < data_aux.length; j++) {
+                    //modificamos las secuencias
+                    let new_seq = seq_aux[j]
+                    for (let i = 0; i < data_aux[j].data.length; i++) {
+                        let temp_data = data_aux[j].data[i]
+                       
+                        if(temp_data.g1 === false && temp_data.g2 === false && temp_data.g3 === false && temp_data.g4 === false ){
+                            new_seq.ring1[i].value = 15
+                            new_seq.ring2[i].value = 15
+                            new_seq.ring3[i].value = 15
+                            new_seq.ring4[i].value = 15
+                            canales_duracion_aux.g15 = temp_data.duracion
+                        }else{
+                            let aux_ring = 1
+                            for(let x=0;x<4;x++){
+                                if(temp_data[`g${x+1}`]=== true){
+                                    new_seq['ring'+aux_ring][i].value = x + 1
+                                    canales_duracion_aux['g'+(x+1)] =  temp_data.duracion
+                                    aux_ring +=1
+                                }
                             }
                         }
+                       
+                        
                     }
-                   
-                    
+                    tiempos_aux.push(canales_duracion_aux)
+                    //modificamos el split
+                    let new_split = split_aux[j]
+        
+                    for (let i = 0; i < 4; i++) {
+                        new_split.data[i].fase = i + 1
+                        new_split.data[i].tiempo = tiempos_aux[j]['g'+(i+1)]
+                        new_split.data[i].coord = 4
+                    }
+                    new_split.data[4].fase = 15
+                    new_split.data[4].tiempo = tiempos_aux[j].g15
+                    new_split.data[4].coord = 4
                 }
-                tiempos_aux.push(canales_duracion_aux)
-                //modificamos el split
-                let new_split = split_aux[j]
+                // modificamos pattern
+                for (let i = 0; i < ctdPlanes; i++) {
+                    pattern_aux[i].cycletime = 0;
+                    pattern_aux[i].number = i + 1;
+                    pattern_aux[i].offsettime = 0;
+                    pattern_aux[i].sequencenumber = i + 1;
+                    pattern_aux[i].splitnumber = i + 1;
+                    pattern_aux[i].workmode = 1;
+                }
+                // modificamos accion
+                for (let i = 0; i < ctdPlanes; i++) {
+                    accion_aux[i].number = i + 1;
+                    accion_aux[i].patron = i + 1;
+                    accion_aux[i].auxiliary = 0;
+                    accion_aux[i].special = 0;
+                }
+                //modificamos plan
+                let new_plan = plan_aux[0]
+                for (let i = 0; i < ctdPlanes; i++) {
+                    new_plan.data[i].action = i + 1;
+                    new_plan.data[i].hour = data_aux[i].hora;
+                    new_plan.data[i].minute = data_aux[i].minuto;
+                }
+         
+            // generamos las tramas
+            let fases_frame = generatePhaseFrame(fases_aux);
+            let seq_frame = generateSeqFrame(seq_aux);
+            let split_frame = generateSplitFrame(split_aux);
+            let pattern_frame = generatePatternFrame(pattern_aux);
+            let action_frame = generateActionFrame(accion_aux);
+            let plan_frame =  generatePlanFrame(plan_aux)
+            let channel_frame = generateChannelFrame(channel_aux)
+            // cargar Datos
+            await setBasicPlan({
+                fases:fases_frame,
+                secuencias:seq_frame,
+                split:split_frame,
+                pattern:pattern_frame,
+                accion:action_frame,
+                plan:plan_frame,
+                channel:channel_frame,
+                ip:controlerState.ip
+            })
+            await updateFirebase('planificacion',data_aux)
+            dispatch(updateParamsHT200({target:'planificacion',data:data_aux}))
+        }else{
+            Swal.fire({
+                icon: 'warning',
+                title: 'No data',
+                text: "no hay planes para cargar",
     
-                for (let i = 0; i < 4; i++) {
-                    new_split.data[i].fase = i + 1
-                    new_split.data[i].tiempo = tiempos_aux[j]['g'+(i+1)]
-                    new_split.data[i].coord = 4
-                }
-                new_split.data[4].fase = 15
-                new_split.data[4].tiempo = tiempos_aux[j].g15
-                new_split.data[4].coord = 4
-            }
-            // modificamos pattern
-            for (let i = 0; i < ctdPlanes; i++) {
-                pattern_aux[i].cycletime = 0;
-                pattern_aux[i].number = i + 1;
-                pattern_aux[i].offsettime = 0;
-                pattern_aux[i].sequencenumber = i + 1;
-                pattern_aux[i].splitnumber = i + 1;
-                pattern_aux[i].workmode = 1;
-            }
-            // modificamos accion
-            for (let i = 0; i < ctdPlanes; i++) {
-                accion_aux[i].number = i + 1;
-                accion_aux[i].patron = i + 1;
-                accion_aux[i].auxiliary = 0;
-                accion_aux[i].special = 0;
-            }
-            //modificamos plan
-            let new_plan = plan_aux[0]
-            for (let i = 0; i < ctdPlanes; i++) {
-                new_plan.data[i].action = i + 1;
-                new_plan.data[i].hour = data_aux[i].hora;
-                new_plan.data[i].minute = data_aux[i].minuto;
-            }
-     
-        // generamos las tramas
-        let fases_frame = generatePhaseFrame(fases_aux);
-        let seq_frame = generateSeqFrame(seq_aux);
-        let split_frame = generateSplitFrame(split_aux);
-        let pattern_frame = generatePatternFrame(pattern_aux);
-        let action_frame = generateActionFrame(accion_aux);
-        let plan_frame =  generatePlanFrame(plan_aux)
-        let channel_frame = generateChannelFrame(channel_aux)
-        console.log(seq_aux)
-        // cargar Datos
-        await setBasicPlan({
-            fases:fases_frame,
-            secuencias:seq_frame,
-            split:split_frame,
-            pattern:pattern_frame,
-            accion:action_frame,
-            plan:plan_frame,
-            channel:channel_frame,
-            ip:controlerState.ip
-        })
-        await updateFirebase('planificacion',data_aux)
-        dispatch(updateParamsHT200({target:'planificacion',data:data_aux}))
+              })
+        }
 
       
 
