@@ -235,10 +235,8 @@ export default function BasicSettingsHT200View() {
         <>
             <Container maxWidth="lg" sx={{ paddingTop: 15 }}>
                 <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                        <Button variant="contained" onClick={cargarDatos}  >CARGAR DATOS</Button>
-                    </Grid>
-                    <Grid item md={1}>
+                   
+                    <Grid item xs={12} md={3}>
                         <TextField
                             id="outlined-number"
                             label="hora"
@@ -252,7 +250,7 @@ export default function BasicSettingsHT200View() {
                             }}
                         />
                     </Grid>
-                    <Grid item md={1}>
+                    <Grid item xs={12} md={3}>
                         <TextField
                             id="outlined-number"
                             label="minuto"
@@ -266,8 +264,11 @@ export default function BasicSettingsHT200View() {
                             }}
                         />
                     </Grid>
-                    <Grid item md={3}>
-                        <Button variant="outlined" sx={{ height: '100%' }} disabled={disabledFlag} onClick={agregarPlan}>CREAR PLAN</Button>
+                    <Grid item xs={12} md={3}>
+                        <Button fullWidth variant="outlined" sx={{ height: '100%' }} disabled={disabledFlag} onClick={agregarPlan}>CREAR PLAN</Button>
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                        <Button fullWidth variant="contained" onClick={cargarDatos}  >CARGAR DATOS</Button>
                     </Grid>
                     <Grid item xs={12}>
                         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
