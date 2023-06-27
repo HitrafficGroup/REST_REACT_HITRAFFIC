@@ -23,6 +23,7 @@ import frameJson from "../js/ht200Frame.json";
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
+import '../css/beautifulCard.scss';
 import { generatePhaseFrame,generateSeqFrame,generateSplitFrame,generatePatternFrame,generateActionFrame,generatePlanFrame, generateChannelFrame } from "../js/generateFrameApiHT200";
 import {setBasicPlan } from "../js/apiFunctionsHT200";
 import { useSelector, useDispatch } from 'react-redux';
