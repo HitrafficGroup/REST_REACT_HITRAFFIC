@@ -7,26 +7,16 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Switch from '@mui/material/Switch';
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from '../firebase/firebase-config';
 import Button from '@mui/material/Button';
 import { getUnitHT200,PostUnitHT200 } from '../js/apiFunctionsHT200';
-import { useSelector } from 'react-redux';
+import { updateParamsHT200 } from '../features/controlerht200/controlerHT200Slice';
+import { useSelector,useDispatch } from 'react-redux';
 export default function UnidadHT200View() {
     const controlerState = useSelector(state => state.controlerht200)
-    const [state, setState] = useState({
-        StartupFlash: "0",
-        StartupAllRed: "0",
-        AutomaticPedClear: false,
-        RedRevert: "0",
-        BackupTime: "0",
-        BackupTime2:"0",
-        FlowCycle: "0",
-        FlashStatus: "0",
-        Status: "0",
-        GreenConflictDetectFlag: false,
-        RedGreenConflictDetectFlag: false,
-        RedFailedDetectFlag: false,
-    });
-
+    const [state, setState] = useState(controlerState.unit);
+    const dispatch = useDispatch();
    
     const uploadData = async() =>{
         let backup_time = state["BackupTime"] 
@@ -47,19 +37,23 @@ export default function UnidadHT200View() {
             state.RedGreenConflictDetectFlag ? 1:0,
             state.RedFailedDetectFlag ? 1:0
         ]
+        
     
         await PostUnitHT200({trama:trama,ip:controlerState.ip})
-        console.log(trama)
+        updateFirebase('unit',state)
+        dispatch(updateParamsHT200({target:'unit',data:state}))
+       
     }
 
     const readData=async()=>{
         let data = await getUnitHT200(controlerState.ip);
-        console.log(data)
         data["GreenConflictDetectFlag"] =  data["GreenConflictDetectFlag"] === 1 ? true:false;
         data["RedGreenConflictDetectFlag"] =  data["RedGreenConflictDetectFlag"] === 1 ? true:false;
         data["RedFailedDetectFlag"] =  data["RedFailedDetectFlag"] === 1 ? true:false;
         data["AutomaticPedClear"] =  data["AutomaticPedClear"] === 2 ? true:false;
         setState(data);
+        updateFirebase('unit',data)
+        dispatch(updateParamsHT200({target:'unit',data:data}))
     }
     const handleSwitch = (event) => {
         setState({
@@ -68,7 +62,12 @@ export default function UnidadHT200View() {
         });
     };
     
-
+    const updateFirebase = async (param, __data) => {
+        const ref = doc(db, "controladores", `${controlerState.id}`);
+        let aux_data = {}
+        aux_data[`${param}`] = __data;
+        await updateDoc(ref, aux_data);
+    }
     const handleTextField = (event) => {
         setState({
             ...state,

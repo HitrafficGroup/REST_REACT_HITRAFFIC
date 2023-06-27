@@ -46,16 +46,14 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function BasicSettingsHT200View() {
+    const controlerState = useSelector(state => state.controlerht200);
     const [planesSemaforos, setPlanesSemaforos] = useState([initial_paso]);
     const [disabledFlag, setDisabledFlag] = useState(true);
-
-    const [planFlag, setPlanFlag] = useState(false);
     const [hora, setHora] = useState(0);
     const [minuto, setMinuto] = useState(0);
-    const controlerState = useSelector(state => state.controlerht200);
     const dispatch = useDispatch();
     const [ctdPlanes, setCtdPlanes] = useState(1);
-    const [planificacion, setPlanificacion] = useState([{ id: "prueba",hora:hora,minuto:minuto, data: [initial_paso] }]);
+    const [planificacion, setPlanificacion] = useState(controlerState.planificacion);
     const agregarPaso = () => {
         let pasos = JSON.parse(JSON.stringify(planesSemaforos))
         let aux = JSON.parse(JSON.stringify(initial_paso))
@@ -90,7 +88,7 @@ export default function BasicSettingsHT200View() {
     }
 
     const agregarPlan = async () => {
-        setPlanFlag(true)
+        
         let pasos = JSON.parse(JSON.stringify(planesSemaforos));
 
         let aux_planificacion = JSON.parse(JSON.stringify(planificacion));
@@ -226,8 +224,8 @@ export default function BasicSettingsHT200View() {
             channel:channel_frame,
             ip:controlerState.ip
         })
-        await updateFirebase('basic_info',data_aux)
-        dispatch(updateParamsHT200({target:'basic_info',data:data_aux}))
+        await updateFirebase('planificacion',data_aux)
+        dispatch(updateParamsHT200({target:'planificacion',data:data_aux}))
 
       
 
@@ -238,7 +236,7 @@ export default function BasicSettingsHT200View() {
             <Container maxWidth="lg" sx={{ paddingTop: 15 }}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
-                        <Button variant="contained" onClick={cargarDatos}  disabled={!planFlag}>CARGAR DATOS</Button>
+                        <Button variant="contained" onClick={cargarDatos}  >CARGAR DATOS</Button>
                     </Grid>
                     <Grid item md={1}>
                         <TextField
@@ -392,7 +390,7 @@ export default function BasicSettingsHT200View() {
                     </Grid>
                     {
                         planificacion.map(item => (
-                            <Grid item xs={12} sx={{ visibility: planFlag ? "visible" : "hidden" }}>
+                            <Grid item xs={12} >
                                 <Typography variant="h6" gutterBottom>
                                     Hora: {item.hora} Minuto: {item.minuto} {"              "}
                                     <Button variant="outlined" color="amarillo" endIcon={<DeleteIcon />} onClick={() => { eliminarHorario(item) }}  >ELIMINAR PLAN</Button>

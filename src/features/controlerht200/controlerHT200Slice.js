@@ -24,7 +24,21 @@ export const controlerHT200Slice = createSlice({
         plan:[],
         horarios:[],
         channel:[],
-        basic_info:[],
+        unit:{
+            StartupFlash: "0",
+            StartupAllRed: "0",
+            AutomaticPedClear: false,
+            RedRevert: "0",
+            BackupTime: "0",
+            BackupTime2:"0",
+            FlowCycle: "0",
+            FlashStatus: "0",
+            Status: "0",
+            GreenConflictDetectFlag: false,
+            RedGreenConflictDetectFlag: false,
+            RedFailedDetectFlag: false,
+        },
+        planificacion:[{ id: "prueba",hora:0,minuto:0, data: [{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }] }],
        
     },
     reducers: {
@@ -43,6 +57,7 @@ export const controlerHT200Slice = createSlice({
             state.online = action.payload.online;
             state.ultima_conexion = action.payload.ultima_conexion;
             state.historial_conexiones = action.payload.historial_conexiones;
+     
         },
         setControllerDataHT200:(state,action)=>{
             state.semaforos = action.payload.semaforos;
@@ -55,6 +70,8 @@ export const controlerHT200Slice = createSlice({
             state.horarios = action.payload.horarios;
             state.channel = action.payload.channel;
             state.basic_info = action.payload.basic_info;
+            state.planificacion = action.payload.planificacion;
+            state.unit = action.payload.unit;
         },
         updateParamsHT200:(state,action)=>{
             state[action.payload.target] = action.payload.data 
