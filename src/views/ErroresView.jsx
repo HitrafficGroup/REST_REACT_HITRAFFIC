@@ -8,7 +8,6 @@ import { getErroresSW12 } from '../js/apiFunctionsSW12';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import GridOnIcon from '@mui/icons-material/GridOn';
 import "../css/ErroresView.css";
 import { useSelector} from 'react-redux';
 import Table from '@mui/material/Table';
@@ -52,9 +51,7 @@ export default function ErroresView() {
        
 
     }
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
+
     const devolverDia = (__data)=>{
        if(__data === 1){
             return 'Lunes';
@@ -81,6 +78,9 @@ export default function ErroresView() {
         }
         return data
     }
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);

@@ -148,6 +148,7 @@ export default function BasicSettingsHT200View() {
     const cargarDatos = async() => {
         // valores por defecto
         let data_aux = JSON.parse(JSON.stringify(planificacion))
+        let size = data_aux.length
         if(data_aux.length>0){
             setFlagLoad(true)
             let fases_aux = JSON.parse(JSON.stringify(frameJson.fases))
@@ -206,7 +207,7 @@ export default function BasicSettingsHT200View() {
                     new_split.data[4].coord = 4
                 }
                 // modificamos pattern
-                for (let i = 0; i < fases_aux.length; i++) {
+                for (let i = 0; i < size; i++) {
                     pattern_aux[i].cycletime = 0;
                     pattern_aux[i].number = i + 1;
                     pattern_aux[i].offsettime = 0;
@@ -215,7 +216,7 @@ export default function BasicSettingsHT200View() {
                     pattern_aux[i].workmode = 1;
                 }
                 // modificamos accion
-                for (let i = 0; i < fases_aux.length; i++) {
+                for (let i = 0; i < size; i++) {
                     accion_aux[i].number = i + 1;
                     accion_aux[i].patron = i + 1;
                     accion_aux[i].auxiliary = 0;
@@ -223,7 +224,7 @@ export default function BasicSettingsHT200View() {
                 }
                 //modificamos plan
                 let new_plan = plan_aux[0]
-                for (let i = 0; i < fases_aux.length; i++) {
+                for (let i = 0; i < size; i++) {
                     new_plan.data[i].action = i + 1;
                     new_plan.data[i].hour = data_aux[i].hora;
                     new_plan.data[i].minute = data_aux[i].minuto;
