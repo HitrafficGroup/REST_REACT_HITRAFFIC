@@ -730,8 +730,7 @@ export default function HomeView() {
     const obtenerTiempoFromRestApi = async () => {
         try {
             setDeshabilitar(true);
-            const response = await getTimeHT200(controlerState.ip);
-            console.log(response)
+            const response = await getTimeHT200(controlerState.ip);        
             let data_formated={
                 seconds: formatData(response['segundos']),
                 minutes: formatData(response['minutos']),
@@ -786,7 +785,7 @@ export default function HomeView() {
     */
 
     useEffect(() => {
-        console.log(controlerState)
+  
         const interval = setInterval(() => {
 
             if (simulacion.current) {

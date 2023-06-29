@@ -558,9 +558,9 @@ export default function HorariosHT200View(){
                                                             </TableCell>
                                                             <TableCell align={"left"}>
                                                                 <ul>
-                                                                {row.mes_formated.map((item,index)=>{
+                                                                {row.mes_formated.map((item)=>{
                                                                         return(
-                                                                        <li key={index}>
+                                                                        <li >
                                                                             {item}
                                                                         </li>
                                                                             

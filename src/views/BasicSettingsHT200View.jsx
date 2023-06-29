@@ -121,7 +121,6 @@ export default function BasicSettingsHT200View() {
             return item
         })
         
-        console.log(modify_data)
         setPlanificacion(modify_data);
         setPlanesSemaforos([initial_paso])
         setHora(0)
@@ -250,9 +249,10 @@ export default function BasicSettingsHT200View() {
                 channel:channel_frame,
                 ip:controlerState.ip
             })
+            setFlagLoad(false)
             await updateFirebase('planificacion',data_aux)
             dispatch(updateParamsHT200({target:'planificacion',data:data_aux}))
-            setFlagLoad(false)
+           
         }else{
             Swal.fire({
                 icon: 'warning',
@@ -313,7 +313,7 @@ export default function BasicSettingsHT200View() {
                                         <TableRow>
 
                                             <TableCell
-                                                key={"channel"}
+                                         
                                                 align={"left"}
                                                 style={{ minWidth: 40 }}
                                             >
@@ -321,28 +321,28 @@ export default function BasicSettingsHT200View() {
                                             </TableCell>
 
                                             <TableCell
-                                                key={"source"}
+                                              
                                                 align={"center"}
                                                 style={{ minWidth: 140 }}
                                             >
                                                 Grupo 1
                                             </TableCell>
                                             <TableCell
-                                                key={"type"}
+                                            
                                                 align={"center"}
                                                 style={{ minWidth: 140 }}
                                             >
                                                 Grupo 2
                                             </TableCell>
                                             <TableCell
-                                                key={"flash"}
+                                              
                                                 align={"center"}
                                                 style={{ minWidth: 140 }}
                                             >
                                                 Grupo 3
                                             </TableCell>
                                             <TableCell
-                                                key={"dim"}
+                                               
                                                 align={"center"}
                                                 style={{ minWidth: 140 }}
 
@@ -350,7 +350,7 @@ export default function BasicSettingsHT200View() {
                                                 Grupo 4
                                             </TableCell>
                                             <TableCell
-                                                key={"orientation"}
+                                               
                                                 align={"center"}
                                                 style={{ minWidth: 30 }}
                                             >
@@ -358,7 +358,7 @@ export default function BasicSettingsHT200View() {
                                             </TableCell>
 
                                             <TableCell
-                                                key={"delete"}
+                                             
                                                 align={"center"}
 
                                             >
@@ -425,8 +425,8 @@ export default function BasicSettingsHT200View() {
                         </Paper>
                     </Grid>
                     {
-                        planificacion.filter(item=> item.id !== "prueba").map(item => (
-                            <Grid item xs={12} >
+                        planificacion.filter(item=> item.id !== "prueba").map((item,index) => (
+                            <Grid item xs={12} key={index} >
                                 <Typography variant="h6" gutterBottom>
                                     Hora: {item.hora} Minuto: {item.minuto} {"              "}
                                     <Button variant="outlined" color="amarillo" endIcon={<DeleteIcon />} onClick={() => { eliminarHorario(item) }}  >ELIMINAR PLAN</Button>

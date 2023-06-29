@@ -138,7 +138,7 @@ export default function ControlersView() {
         setEditarModal(true);
     }
     const guardarAjustes = async () => {
-        console.log(currentController)
+        
         const ref = doc(db, "historial_controladores", currentController.id);
         await updateDoc(ref, currentController);
         const ref2 = doc(db, "controladores", currentController.id);
@@ -152,7 +152,7 @@ export default function ControlersView() {
         const docRef = doc(db, "controladores", _equipo.id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
+           
             let aux_equipo = JSON.parse(JSON.stringify(_equipo))
             let equipo_info = docSnap.data()
             let conexiones = equipo_info.historial_conexiones;

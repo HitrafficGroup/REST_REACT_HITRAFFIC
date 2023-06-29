@@ -55,7 +55,6 @@ export default function SecuencyHT200View() {
             }
             data_formated.push(dictionario)
         });
-        console.log(data_formated)
         setSeqTarget(data_formated[0])
         updateFirebase('secuencias', data_formated)
         dispatch(updateParamsHT200({ target: 'secuencias', data: data_formated }));
@@ -110,7 +109,6 @@ export default function SecuencyHT200View() {
                 return item
             }
         })
-        console.log(modify_seq)
         setSecuencias(modify_seq)
         setModalConfig(false)
     }

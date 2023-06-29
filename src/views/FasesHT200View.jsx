@@ -161,17 +161,20 @@ export default function FasesHT200View() {
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
-                                        {columns.map((column) => (
-                                            <TableCell
-                                                key={column.id}
-                                                align={column.align}
-                                                style={{ minWidth: column.minWidth }}
-                                            >
-                                                {column.label}
-                                            </TableCell>
-                                        ))}
-                                        <TableCell key={1} align={'left'}>
-                                            Acciones
+                                        <TableCell  align={'center'}>
+                                        Fase Nro
+                                        </TableCell>
+                                        <TableCell  align={'center'}>
+                                        Ped walk
+                                        </TableCell>
+                                        <TableCell  align={'center'}>
+                                        ped clear
+                                        </TableCell>
+                                        <TableCell  align={'center'}>
+                                        Mini green
+                                        </TableCell>
+                                        <TableCell  align={'left'}>
+                                        Acciones
                                         </TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -180,18 +183,19 @@ export default function FasesHT200View() {
                                         .map((row, index) => {
                                             return (
                                                 <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                                                    {columns.map((column, index) => {
-                                                        const value = row[column.id];
-                                                        return (
-                                                            <TableCell key={column.id} align={column.align}>
-                                                                {column.format && typeof value === 'number'
-                                                                    ? column.format(value)
-                                                                    : value}
-                                                            </TableCell>
-                                                        );
-
-                                                    })}
-                                                    <TableCell key={index} align={"left"}>
+                                                    <TableCell align={"center"}>
+                                                        {row.number}
+                                                    </TableCell>
+                                                    <TableCell align={"center"}>
+                                                        {row.walk}
+                                                    </TableCell>
+                                                    <TableCell align={"center"}>
+                                                        {row.pedestrianClear}
+                                                    </TableCell>
+                                                    <TableCell align={"center"}>
+                                                        {row.minimumGreen}
+                                                    </TableCell>
+                                                    <TableCell  align={"center"}>
                                                         <Stack direction="row" spacing={1}>
                                                             <IconButton aria-label="delete" color="oscuro" onClick={()=>{abrirModalConfig(row)}} >
                                                                 <SettingsIcon />
@@ -586,74 +590,6 @@ export default function FasesHT200View() {
     )
 }
 
-const columns = [
-    { id: 'number', label: 'fase Nro', minWidth: 40 },
-    { id: 'walk', label: 'ped walk', minWidth: 100 },
-    {
-        id: 'pedestrianClear',
-        label: 'ped clear',
-        minWidth: 100,
-        align: 'left',
-
-    },
-    {
-        id: 'minimumGreen',
-        label: 'Mini green',
-        minWidth: 100,
-        align: 'left',
-
-    },
-    // {
-    //   id: 'passage',
-    //   label: 'paeatones',
-    //   minWidth: 100,
-    //   align: 'left',
-
-    // },
-    // {
-    //     id: 'max_green',
-    //     label: 'maximo en verde',
-    //     minWidth: 150,
-    //     align: 'left',
-
-    //   },
-
-    //   {
-    //     id: 'max_green2',
-    //     label: 'maximo en verde 2',
-    //     minWidth: 170,
-    //     align: 'left',
-
-    //   },
-    //   {
-    //     id: 'vehicle_yellow',
-    //     label: 'amarilllo vehicular',
-    //     minWidth: 150,
-    //     align: 'left',
-
-    //   },
-    //   {
-    //     id: 'red_clear',
-    //     label: 'red clear',
-    //     minWidth: 100,
-    //     align: 'left',
-
-    //   },
-    //   {
-    //     id: 'red_revert',
-    //     label: 'red revert',
-    //     minWidth: 150,
-    //     align: 'left',
-
-    //   },
-    //   {
-    //     id: 'vehicle_clear',
-    //     label: 'Vehicle Clear',
-    //     minWidth: 150,
-    //     align: 'left',
-
-    //   },
-];
 let currentFase_init = {
     AddedInitial: 0,
     MaximunInitial:0,
