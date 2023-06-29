@@ -145,11 +145,9 @@ export default function SecuencyHT200View() {
     return (
 
         <>
-            <Container maxWidth="md">
+            <Container maxWidth="md" style={{paddingTop:15}}>
                 <Grid container spacing={2}>
-                    <Grid item xs={8} md={12} >
-                        <h1>Secuencias</h1>
-                    </Grid>
+               
                     <Grid item xs={12} md={3} >
                         <Button color='verde' variant="contained"  fullWidth onClick={readData}  >leer datos</Button>
                     </Grid>

@@ -90,8 +90,7 @@ export default function UnidadHT200View() {
     };
     return (
         <>
-            <Container maxWidth="md">
-                <h1 style={{ marginBottom: 20 }}>Vista Unidades</h1>
+            <Container maxWidth="md" style={{paddingTop:15}}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={6} >
                         <Button color='verde' variant="contained"  onClick={readData} >leer datos</Button>

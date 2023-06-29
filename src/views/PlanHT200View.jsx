@@ -167,11 +167,9 @@ export default function PlanHT200View(){
     }
     return(
         <>    
-            <Container maxWidth="md">
+            <Container maxWidth="md" style={{paddingTop:15}}>
                 <Grid container spacing={2}>
-                    <Grid item md={12} xs={12} >
-                        <h1>Plan HT200</h1>
-                    </Grid>
+             
                     <Grid item md={3} xs={12} >
                     <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">Plan Tab</InputLabel>

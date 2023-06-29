@@ -268,7 +268,7 @@ export default function BasicSettingsHT200View() {
    
     return (
         <>
-            <Container maxWidth="md" sx={{ paddingTop: 15 }}>
+            <Container maxWidth="md" style={{paddingTop:15}}>
                 <Grid container spacing={3}>
                    
                     <Grid item xs={12} md={3}>

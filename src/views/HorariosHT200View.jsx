@@ -489,8 +489,7 @@ export default function HorariosHT200View(){
 
     return(
         <>
-              <Container maxWidth="md">
-                <h1 style={{ marginBottom: 20 }}>Vista Horarios</h1>
+              <Container maxWidth="md" style={{paddingTop:15}}>
                 <Grid container spacing={3}>
                 <Grid item xs={12} md={4} >
                         <Button color='azulm' variant="contained" fullWidth onClick={abrirModalCrear}  >Agregar Fase</Button>

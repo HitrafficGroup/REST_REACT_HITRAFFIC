@@ -31,13 +31,14 @@ import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import HomeIcon from '@mui/icons-material/Home';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import { resetParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
+import { setNameMenu } from '../features/menu/menuSlice';
 export default  function HT200AppBar(){
     const [drawerHT,setDrawerHT] = useState({left:false});
     const navigate = useNavigate(); // hook para navegar entre urls o vistas
     const dispatch = useDispatch();
     const menuState = useSelector(state => state.menu);
     const userState = useSelector(state => state.auth);
-    const controlerState = useSelector(state => state.controlerht200);
+ 
       // funcion para hacer funcionar el drawer
       const toggleDrawer = (anchor, open) => (event) => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -51,6 +52,10 @@ export default  function HT200AppBar(){
     const cambiarControlador = ()=>{
       dispatch(resetParamsHT200())
       navigate('/equipos');
+    }
+    const cambiarVista =(__name,__target)=>{
+      dispatch(setNameMenu(__name))
+      navigate(__target);
     }
     return(
     <>
@@ -67,7 +72,7 @@ export default  function HT200AppBar(){
                 <MenuIcon />
             </IconButton>
             <Typography sx={{ display: { md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
-            {controlerState.ip} 
+            {menuState.menu} 
           </Typography>
             <Typography  sx={{ display: { xs: 'none', md: 'flex' } }}variant="h6" component="div">
                    Bienvenido {userState.name} {userState.lastname} !
@@ -97,31 +102,31 @@ export default  function HT200AppBar(){
                         </ListItemIcon>
                         <ListItemText primary="Controladores"/>
             </ListItemButton>
-            <ListItemButton onClick={()=>{navigate('home')}} >
+            <ListItemButton onClick={()=>{cambiarVista('Dashboard Hitraffic','home')}} >
                         <ListItemIcon>
                             <HomeIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Home"/>
             </ListItemButton>
-            <ListItemButton onClick={()=>{navigate('unit')}} >
+            <ListItemButton onClick={()=>{cambiarVista('Configuracion Inicial','unit')}} >
                         <ListItemIcon>
                             <FlagIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Unit"/>
             </ListItemButton>
-            <ListItemButton onClick={()=>{navigate('config')}} >
+            <ListItemButton onClick={()=>{cambiarVista('Configuracion Basica','config')}} >
                         <ListItemIcon>
                             <SettingsIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Config"/>
             </ListItemButton>
-            <ListItemButton onClick={()=>{navigate('clonacion')}} >
+            <ListItemButton onClick={()=>{cambiarVista('Clonacion de Equipos','clonacion')}} >
                         <ListItemIcon>
                             <FileCopyIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Clonacion"/>
             </ListItemButton>
-            <ListItemButton onClick={()=>{navigate('errores')}} >
+            <ListItemButton onClick={()=>{cambiarVista('Registro de Errores','errores')}} >
                         <ListItemIcon>
                             <BugReportIcon fontSize='large' />
                         </ListItemIcon>
@@ -139,50 +144,50 @@ export default  function HT200AppBar(){
           }
         >
            
-            <ListItemButton onClick={()=>{navigate('fases')}} >
+            <ListItemButton onClick={()=>{cambiarVista('Prgramacion de Fases','fases')}} >
                         <ListItemIcon>
                             <SsidChartIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Fases"/>
             </ListItemButton>
-            <ListItemButton onClick={()=>{navigate('sequency')}} >
+            <ListItemButton onClick={()=>{cambiarVista('Programacion de Secuencias','sequency')}} >
                         <ListItemIcon>
                             <AnimationIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Secuencias"/>
             </ListItemButton>
 
-            <ListItemButton onClick={()=>{navigate('split')}} >
+            <ListItemButton onClick={()=>{cambiarVista('Programacion de Split','split')}} >
                         <ListItemIcon>
                             <LoopIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Ciclo"/>
             </ListItemButton>
-            <ListItemButton onClick={()=>{navigate('pattern')}} >
+            <ListItemButton onClick={()=>{cambiarVista('Programacion de pattern','pattern')}} >
                         <ListItemIcon>
                             <PatternIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Pattern"/>
             </ListItemButton>
-            <ListItemButton onClick={()=>{navigate('action')}} >
+            <ListItemButton onClick={()=>{cambiarVista('Programacion de accion','action')}} >
                         <ListItemIcon>
                             <SportsMartialArtsIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Action"/>
             </ListItemButton>
-            <ListItemButton onClick={()=>{navigate('plan')}} >
+            <ListItemButton onClick={()=>{cambiarVista('Programacion de plan','plan')}} >
                         <ListItemIcon>
                             <BallotIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Plan"/>
             </ListItemButton>
-            <ListItemButton onClick={()=>{navigate('horario')}} >
+            <ListItemButton onClick={()=>{cambiarVista('Programacion de Horario','horario')}} >
                         <ListItemIcon>
                             <ScheduleIcon fontSize='large' />
                         </ListItemIcon>
                         <ListItemText primary="Horario"/>
             </ListItemButton>
-            <ListItemButton onClick={()=>{navigate('channel')}} >
+            <ListItemButton onClick={()=>{cambiarVista('Programacion de Channel','channel')}} >
                         <ListItemIcon>
                             <WifiChannelIcon fontSize='large' />
                         </ListItemIcon>

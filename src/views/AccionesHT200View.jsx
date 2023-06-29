@@ -183,8 +183,8 @@ export default function AccionesHT200View(){
     return(
         <>
             <Container maxWidth="md">
-                <h1>Acciones View</h1>
-                <Grid container spacing={2}>
+               
+                <Grid container spacing={2} style={{paddingTop:15}}>
                 <Grid item xs={12} md={4} >
                         <Button color='azulm' variant="contained"  fullWidth onClick={abrirModalCrear}  >crear Accion</Button>
                     </Grid>

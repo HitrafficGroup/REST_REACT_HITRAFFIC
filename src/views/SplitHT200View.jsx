@@ -16,7 +16,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import Swal from 'sweetalert2';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 //iconos
 import DoneIcon from '@mui/icons-material/Done';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -243,14 +242,11 @@ export default function SplitHT200View() {
 
     return (
         <>
-            <Container maxWidth="md" style={{paddingTop:20}}>
+            <Container maxWidth="md" style={{paddingTop:15}}>
         
                 <Grid container spacing={2} >
             
                 <Grid item  xs={12}>
-                <Typography variant="h5" gutterBottom>
-                  Configuracion de Split
-                </Typography>
                 </Grid>
                     <Grid item md={3} xs={12}>
                         <FormControl fullWidth>

@@ -176,8 +176,7 @@ export default function ChannelHT200View(){
     };
     return(
     <>
-      <Container maxWidth="md">
-                <h1>Channel View</h1>
+      <Container maxWidth="md" style={{paddingTop:15}}> 
                 <Grid container spacing={2}>
                 <Grid item md={3} xs={12}>
                         <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={readData}  >Leer Datos</Button>
