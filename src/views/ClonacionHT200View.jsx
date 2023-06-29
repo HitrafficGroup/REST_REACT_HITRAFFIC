@@ -21,6 +21,7 @@ import { generatePhaseFrame,generateSeqFrame,generateSplitFrame,generatePatternF
 import frameJson from "../js/ht200Frame.json";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import CardControllerHT200 from '../components/CardControllerHT200';
 export default function ClonacionHT200View() {
     const [checked, setChecked] = React.useState([]);
     const controlerState = useSelector(state => state.controlerht200);
@@ -369,7 +370,7 @@ export default function ClonacionHT200View() {
         <CircularProgress color="inherit" />
       </Backdrop>
             </Container>
-
+            <CardControllerHT200 />
         </>
     )
 

@@ -28,6 +28,7 @@ import MenuItem from '@mui/material/MenuItem';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
 //
+import CardControllerHT200 from "../components/CardControllerHT200";
 
 
 export default function FasesHT200View() {
@@ -580,7 +581,7 @@ export default function FasesHT200View() {
                     </Button>
                 </ModalFooter>
             </Modal>
-
+            <CardControllerHT200 />
         </>
     )
 }

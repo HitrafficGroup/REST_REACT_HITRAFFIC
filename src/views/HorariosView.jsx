@@ -359,15 +359,7 @@ export default function HorariosView() {
             return 'Apagado'
         }
     }
-    const formatearTipoDia = (data) => {
-        if (data === 'dia_ordinario') {
-            return 0
-        } else if (data === 'fin_semana') {
-            return 1
-        } else {
-            return 2
-        }
-    }
+
     const LeerParamOperativos = async () => {
         try {
             setDeshabilitar4(true);
@@ -877,7 +869,6 @@ export default function HorariosView() {
                 <CircularProgress color="inherit" />
             </Backdrop>
             <CardController />
-
         </>
     );
 

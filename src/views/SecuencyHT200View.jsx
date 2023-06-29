@@ -29,6 +29,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import EditIcon from '@mui/icons-material/Edit';
+// card controller
+import CardControllerHT200 from "../components/CardControllerHT200";
 export default function SecuencyHT200View() {  
     const controlerState = useSelector(state => state.controlerht200)
     const [secuencias, setSecuencias] = useState(controlerState.secuencias);
@@ -358,6 +360,7 @@ export default function SecuencyHT200View() {
                     </Button>
                 </ModalFooter>
             </Modal>
+            <CardControllerHT200 />
         </>
 
     );

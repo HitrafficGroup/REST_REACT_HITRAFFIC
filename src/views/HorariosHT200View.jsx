@@ -31,7 +31,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
-
+import CardControllerHT200 from "../components/CardControllerHT200";
 export default function HorariosHT200View(){
 
     const controlerState = useSelector(state => state.controlerht200);
@@ -1024,7 +1024,7 @@ export default function HorariosHT200View(){
                 </ModalFooter>
             </Modal>
 
-
+            <CardControllerHT200 />
            
         </>
     )

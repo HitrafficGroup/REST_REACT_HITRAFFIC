@@ -13,6 +13,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import CardControllerHT200 from "../components/CardControllerHT200";
 export default function RegistroErroresHT200View() {
     const controlerState = useSelector(state => state.controlerht200);
     const [data, setData] = useState([{}]);
@@ -138,7 +139,7 @@ export default function RegistroErroresHT200View() {
         </Container>
 
 
-
+        <CardControllerHT200 />
 
 
 

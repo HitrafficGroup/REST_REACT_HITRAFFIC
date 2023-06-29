@@ -29,6 +29,7 @@ import '../css/beautifulCard.scss';
 import { generatePhaseFrame,generateSeqFrame,generateSplitFrame,generatePatternFrame,generateActionFrame,generatePlanFrame, generateChannelFrame } from "../js/generateFrameApiHT200";
 import {setBasicPlan } from "../js/apiFunctionsHT200";
 import { useSelector, useDispatch } from 'react-redux';
+import CardControllerHT200 from "../components/CardControllerHT200";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
         backgroundColor: theme.palette.common.black,
@@ -267,7 +268,7 @@ export default function BasicSettingsHT200View() {
    
     return (
         <>
-            <Container maxWidth="lg" sx={{ paddingTop: 15 }}>
+            <Container maxWidth="md" sx={{ paddingTop: 15 }}>
                 <Grid container spacing={3}>
                    
                     <Grid item xs={12} md={3}>
@@ -487,6 +488,7 @@ export default function BasicSettingsHT200View() {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      <CardControllerHT200 />
         </>
     )
 }

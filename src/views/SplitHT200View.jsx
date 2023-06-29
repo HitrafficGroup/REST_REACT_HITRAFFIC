@@ -35,6 +35,7 @@ import TableRow from '@mui/material/TableRow';
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 //
+import CardControllerHT200 from "../components/CardControllerHT200";
 export default function SplitHT200View() {
     const controlerState = useSelector(state => state.controlerht200)
     const [splitTab, setSplitTab] = useState("split-1");
@@ -546,6 +547,7 @@ export default function SplitHT200View() {
                     </Button>
                 </ModalFooter>
             </Modal>
+            <CardControllerHT200 />
         </>
     );
 }

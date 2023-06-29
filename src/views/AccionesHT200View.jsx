@@ -25,6 +25,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from '../firebase/firebase-config';
 import { updateParamsHT200 } from '../features/controlerht200/controlerHT200Slice';
+import CardControllerHT200 from '../components/CardControllerHT200';
 export default function AccionesHT200View(){
     const controlerState = useSelector(state => state.controlerht200)
     const [page, setPage] = useState(0);
@@ -487,6 +488,7 @@ export default function AccionesHT200View(){
                     </Button>
                 </ModalFooter>
             </Modal>
+            <CardControllerHT200 />
         </>
     )
 }

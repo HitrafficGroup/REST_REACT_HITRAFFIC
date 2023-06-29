@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import { getUnitHT200,PostUnitHT200 } from '../js/apiFunctionsHT200';
 import { updateParamsHT200 } from '../features/controlerht200/controlerHT200Slice';
 import { useSelector,useDispatch } from 'react-redux';
+import CardControllerHT200 from '../components/CardControllerHT200';
 export default function UnidadHT200View() {
     const controlerState = useSelector(state => state.controlerht200)
     const [state, setState] = useState({
@@ -201,6 +202,7 @@ export default function UnidadHT200View() {
                     </Grid>
                 </Grid>
             </Container>
+            <CardControllerHT200 />
         </>
     )
 
