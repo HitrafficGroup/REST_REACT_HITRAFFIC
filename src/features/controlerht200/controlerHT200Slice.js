@@ -17,11 +17,11 @@ export const controlerHT200Slice = createSlice({
         //datos de las config
         semaforos:[],
         fases:[],
-        secuencias:[],
-        split:[],
-        pattern:[],
+        secuencias:[{ring1:[{id: "paso-1",value: 0,ring: 1},],ring2:[{id: "paso-1",value: 0,ring: 1}],ring3:[{id: "paso-1",value: 0,ring: 1}],ring4:[{id: "paso-1",value: 0,ring: 1}]}],
+        split:[{data:[]}],
+        pattern:[{}],
         acciones:[],
-        plan:[],
+        plan:[{data:[]}],
         horarios:[],
         channel:[],
         unit:{
@@ -56,7 +56,7 @@ export const controlerHT200Slice = createSlice({
             state.nombre = action.payload.nombre;
             state.online = action.payload.online;
             state.ultima_conexion = action.payload.ultima_conexion;
-            state.historial_conexiones = action.payload.historial_conexiones;
+
      
         },
         setControllerDataHT200:(state,action)=>{
@@ -69,18 +69,56 @@ export const controlerHT200Slice = createSlice({
             state.plan = action.payload.plan;
             state.horarios = action.payload.horarios;
             state.channel = action.payload.channel;
-            state.basic_info = action.payload.basic_info;
             state.planificacion = action.payload.planificacion;
             state.unit = action.payload.unit;
+            state.historial_conexiones = action.payload.historial_conexiones;
         },
         updateParamsHT200:(state,action)=>{
             state[action.payload.target] = action.payload.data 
             
+        },
+        resetParamsHT200:(state)=>{
+            state.canton = "";
+            state.id = "";
+            state.ip = "";
+            state.latitud = -2.876428;
+            state.longitud = -78.965342;
+            state.mac = "";
+            state.modelo = "";
+            state.nombre = "";
+            state.online = false;
+            state.ultima_conexion = "";
+            state.historial_conexiones=[];
+            state.semaforos = []
+            state.fases = []
+            state.secuencias = [{ring1:[{id: "paso-1",value: 0,ring: 1},],ring2:[{id: "paso-1",value: 0,ring: 1}],ring3:[{id: "paso-1",value: 0,ring: 1}],ring4:[{id: "paso-1",value: 0,ring: 1}]}];
+            state.split =[{data:[]}];
+            state.pattern = [{}];
+            state.acciones = [];
+            state.plan = [{data:[]}];
+            state.horarios = [];
+            state.channel = [];
+            state.unit = {
+                StartupFlash: "0",
+                StartupAllRed: "0",
+                AutomaticPedClear: false,
+                RedRevert: "0",
+                BackupTime: "0",
+                BackupTime2:"0",
+                FlowCycle: "0",
+                FlashStatus: "0",
+                Status: "0",
+                GreenConflictDetectFlag: false,
+                RedGreenConflictDetectFlag: false,
+                RedFailedDetectFlag: false,
+            }
+            state.planificacion = [{ id: "prueba",hora:0,minuto:0, data: [{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }] }]
+
         }
 
 
     }
 })
-export const {addFases,setInitialStateControllerHT200,setControllerDataHT200,updateParamsHT200} = controlerHT200Slice.actions
+export const {addFases,setInitialStateControllerHT200,setControllerDataHT200,updateParamsHT200,resetParamsHT200} = controlerHT200Slice.actions
 export default controlerHT200Slice.reducer
 

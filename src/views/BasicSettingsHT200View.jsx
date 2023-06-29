@@ -424,7 +424,7 @@ export default function BasicSettingsHT200View() {
                         </Paper>
                     </Grid>
                     {
-                        planificacion.map(item => (
+                        planificacion.filter(item=> item.id !== "prueba").map(item => (
                             <Grid item xs={12} >
                                 <Typography variant="h6" gutterBottom>
                                     Hora: {item.hora} Minuto: {item.minuto} {"              "}

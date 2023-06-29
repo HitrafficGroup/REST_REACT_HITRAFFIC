@@ -141,7 +141,7 @@ export default function ErroresView() {
                                                      {row.hour}:{row.minute}:{row.seconds}
                                                 </TableCell> 
                                                 <TableCell  align={"center"}>
-                                                     Se Encendio
+                                                     Se Encendido
                                                      </TableCell>
                                                 </TableRow>
                                             );

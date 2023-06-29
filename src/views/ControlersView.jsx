@@ -141,6 +141,8 @@ export default function ControlersView() {
         console.log(currentController)
         const ref = doc(db, "historial_controladores", currentController.id);
         await updateDoc(ref, currentController);
+        const ref2 = doc(db, "controladores", currentController.id);
+        await updateDoc(ref2, currentController);
         setEditarModal(false)
 
     }
@@ -153,7 +155,7 @@ export default function ControlersView() {
             console.log("Document data:", docSnap.data());
             let aux_equipo = JSON.parse(JSON.stringify(_equipo))
             let equipo_info = docSnap.data()
-            let conexiones = aux_equipo.historial_conexiones;
+            let conexiones = equipo_info.historial_conexiones;
             let fecha = new Date().toLocaleString('es-CO', { dateStyle: 'full', timeStyle: 'medium' })
             conexiones.push({
                 id: userState.id,
@@ -162,14 +164,20 @@ export default function ControlersView() {
                 lastname: userState.lastname,
                 fecha: fecha
             })
-            aux_equipo['historial_conexiones'] = conexiones
+            equipo_info['historial_conexiones'] = conexiones
   
             if (_equipo.modelo === "HT-200") {
                 dispatch(setInitialStateControllerHT200(aux_equipo));
-                dispatch(setControllerDataHT200(equipo_info));
+                if(equipo_info.fases.length > 0 && equipo_info.secuencias.length > 0  && equipo_info.split.length > 0  && equipo_info.pattern.length > 0  && equipo_info.acciones.length > 0  && equipo_info.plan.length >0 && equipo_info.horarios.length > 0   ){
+                    dispatch(setControllerDataHT200(equipo_info));
+                }
+              
                 const ref = doc(db, "historial_controladores", _equipo.id);
                 await updateDoc(ref, {
                     ultima_conexion: fecha,
+                });
+                const ref2 = doc(db, "controladores", _equipo.id);
+                await updateDoc(ref2, {
                     historial_conexiones: conexiones,
                 });
                 navigate('/controlador_HT200/home')
@@ -180,6 +188,9 @@ export default function ControlersView() {
                 const ref = doc(db, "historial_controladores", _equipo.id);
                 await updateDoc(ref, {
                     ultima_conexion: fecha,
+                });
+                const ref2 = doc(db, "controladores", _equipo.id);
+                await updateDoc(ref2, {
                     historial_conexiones: conexiones,
                 });
                 navigate('/controlador_SW12/home')

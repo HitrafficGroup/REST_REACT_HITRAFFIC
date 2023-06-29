@@ -15,7 +15,20 @@ import { updateParamsHT200 } from '../features/controlerht200/controlerHT200Slic
 import { useSelector,useDispatch } from 'react-redux';
 export default function UnidadHT200View() {
     const controlerState = useSelector(state => state.controlerht200)
-    const [state, setState] = useState(controlerState.unit);
+    const [state, setState] = useState({
+        StartupFlash: "0",
+        StartupAllRed: "0",
+        AutomaticPedClear: false,
+        RedRevert: "0",
+        BackupTime: "0",
+        BackupTime2:"0",
+        FlowCycle: "0",
+        FlashStatus: "0",
+        Status: "0",
+        GreenConflictDetectFlag: false,
+        RedGreenConflictDetectFlag: false,
+        RedFailedDetectFlag: false,
+    });
     const dispatch = useDispatch();
    
     const uploadData = async() =>{

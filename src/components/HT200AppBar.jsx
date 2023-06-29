@@ -10,7 +10,7 @@ import Drawer from '@mui/material/Drawer';
 import { useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Button from '@mui/material/Button';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 import "../css/ButtonAppBar.css"
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -18,6 +18,7 @@ import ListItemText from '@mui/material/ListItemText';
 import SettingsIcon from '@mui/icons-material/Settings';
 //iconos
 import FlagIcon from '@mui/icons-material/Flag';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
 import SsidChartIcon from '@mui/icons-material/SsidChart';
 import AnimationIcon from '@mui/icons-material/Animation';
 import LoopIcon from '@mui/icons-material/Loop';
@@ -29,14 +30,14 @@ import WifiChannelIcon from '@mui/icons-material/WifiChannel';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import HomeIcon from '@mui/icons-material/Home';
 import BugReportIcon from '@mui/icons-material/BugReport';
-
+import { resetParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
 export default  function HT200AppBar(){
     const [drawerHT,setDrawerHT] = useState({left:false});
     const navigate = useNavigate(); // hook para navegar entre urls o vistas
-
+    const dispatch = useDispatch();
     const menuState = useSelector(state => state.menu);
     const userState = useSelector(state => state.auth);
-
+    const controlerState = useSelector(state => state.controlerht200);
       // funcion para hacer funcionar el drawer
       const toggleDrawer = (anchor, open) => (event) => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -47,7 +48,10 @@ export default  function HT200AppBar(){
       const cerrarSesion = ()=>{
         navigate('/');
     }
-
+    const cambiarControlador = ()=>{
+      dispatch(resetParamsHT200())
+      navigate('/equipos');
+    }
     return(
     <>
         <AppBar position="static" sx={{ backgroundColor: "#34495E" }}>
@@ -63,7 +67,7 @@ export default  function HT200AppBar(){
                 <MenuIcon />
             </IconButton>
             <Typography sx={{ display: { md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
-            {menuState.menu}
+            {controlerState.ip} 
           </Typography>
             <Typography  sx={{ display: { xs: 'none', md: 'flex' } }}variant="h6" component="div">
                    Bienvenido {userState.name} {userState.lastname} !
@@ -87,7 +91,7 @@ export default  function HT200AppBar(){
           </ListSubheader>
           }
         >
-             <ListItemButton onClick={()=>{navigate('/equipos')}} >
+             <ListItemButton onClick={cambiarControlador} >
                         <ListItemIcon>
                             <MenuOpenIcon fontSize='large' />
                         </ListItemIcon>
@@ -111,12 +115,18 @@ export default  function HT200AppBar(){
                         </ListItemIcon>
                         <ListItemText primary="Config"/>
             </ListItemButton>
-            {/* <ListItemButton onClick={()=>{navigate('pruebas')}} >
+            <ListItemButton onClick={()=>{navigate('clonacion')}} >
+                        <ListItemIcon>
+                            <FileCopyIcon fontSize='large' />
+                        </ListItemIcon>
+                        <ListItemText primary="Clonacion"/>
+            </ListItemButton>
+            <ListItemButton onClick={()=>{navigate('errores')}} >
                         <ListItemIcon>
                             <BugReportIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Pruebas"/>
-            </ListItemButton> */}
+                        <ListItemText primary="Registro Errores"/>
+            </ListItemButton>
             </List>
             <List
           sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
@@ -178,12 +188,7 @@ export default  function HT200AppBar(){
                         </ListItemIcon>
                         <ListItemText primary="channel"/>
             </ListItemButton>
-            <ListItemButton onClick={()=>{navigate('errores')}} >
-                        <ListItemIcon>
-                            <BugReportIcon fontSize='large' />
-                        </ListItemIcon>
-                        <ListItemText primary="Registro Errores"/>
-            </ListItemButton>
+         
          
         </List>
 

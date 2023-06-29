@@ -31,6 +31,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
+
 export default function HorariosHT200View(){
 
     const controlerState = useSelector(state => state.controlerht200);
@@ -505,15 +506,36 @@ export default function HorariosHT200View(){
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
-                                        {columns.map((column) => (
-                                            <TableCell
-                                                key={column.id}
-                                                align={column.align}
-                                                style={{ minWidth: column.minWidth }}
+                                              <TableCell
+                                                align={"center"}
+                                                style={{ minWidth: 100 }}
                                             >
-                                                {column.label}
+                                                Id
                                             </TableCell>
-                                        ))}
+                                            <TableCell
+                                                align={"center"}
+                                                style={{ minWidth: 100 }}
+                                            >
+                                                Plan
+                                            </TableCell>
+                                            <TableCell
+                                                align={"center"}
+                                                style={{ minWidth: 100 }}
+                                            >
+                                                Mes
+                                            </TableCell>
+                                            <TableCell
+                                                align={"center"}
+                                                style={{ minWidth: 100 }}
+                                            >
+                                                Fecha
+                                            </TableCell>
+                                            <TableCell
+                                                align={"center"}
+                                                style={{ minWidth: 100 }}
+                                            >
+                                                Dia
+                                            </TableCell>
                                             <TableCell
                                                 key={"acciones"}
                                                 align={"center"}
@@ -1010,15 +1032,7 @@ export default function HorariosHT200View(){
 
 }
 
-const columns = [
-    { id: 'id', label: 'id', minWidth: 100 },
-    { id: 'day_plan', label: 'Plan', minWidth: 100 },
-    { id: 'month', label: 'Mes', minWidth: 100 },
-    { id: 'date', label: 'fecha', minWidth: 100 },
-    { id: 'day', label: 'dia', minWidth: 100 },
-    // { id: 'special', label: 'Especial', minWidth: 100 },
-    // { id: 'auxiliary', label: 'Auxiliar', minWidth: 100 },
-];
+
 let mes_byte1 = ['julio','junio','mayo','abril','marzo','febrero','enero','']
 let mes_byte2 = ['','','','diciembre','noviembre','octubre','septiembre','agosto']
 let date_byte1 = ["7","6","5","4","3","2","1","0"]

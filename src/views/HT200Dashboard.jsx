@@ -14,6 +14,7 @@ import ChannelHT200View from "./ChannelHT200View";
 import BasicSettingsHT200View from "./BasicSettingsHT200View";
 import PruebasView from "./PruebasView";
 import RegistroErroresHT200View from "./RegistroErroresHT200View";
+import ClonacionHT200View from "./ClonacionHT200View";
 export default function HT200Dashboard(){
     return (
         <>
@@ -32,6 +33,7 @@ export default function HT200Dashboard(){
                 <Route path="channel" element={<ChannelHT200View />} />
                 <Route path="pruebas" element={<PruebasView />} />
                 <Route path="errores" element={<RegistroErroresHT200View />} />
+                <Route path="clonacion" element={<ClonacionHT200View />} />
             </Routes>   
         </>
       );

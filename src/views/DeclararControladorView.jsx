@@ -228,12 +228,17 @@ export default function DeclararControladorView() {
                         plan_8:[],
                         latitud: parseFloat(latitud),
                         longitud:parseFloat(longitud),
+                        //nuevos parametros agregados
+                        nombre:nombreControlador,
+                        ip:ipControlador,
+                        historial_conexiones:[],
+                        modelo:model,
+                        planificacion:[],
     
                     }
                     let historialControladorData = {
                         id:id_controller,
                         nombre:nombreControlador,
-                        historial_conexiones:[],
                         ultima_conexion:'',
                         latitud:parseFloat(latitud),
                         longitud:parseFloat(longitud),
@@ -242,6 +247,7 @@ export default function DeclararControladorView() {
                         canton:canton,
                         online:true,
                         modelo:model,
+
                     }
                 
                 
@@ -283,12 +289,17 @@ export default function DeclararControladorView() {
                         plan:[],
                         horarios:[],
                         channel:[],
-                        basic_info:[],
+                        //nuevos parametros
+                        ip:ipControlador,
+                        historial_conexiones:[],
+                        modelo:model,
+                        planificacion:[],
+                        nombre:nombreControlador,
+                        
                     }
                     let historialControladorData = {
                         id:id_controller,
                         nombre:nombreControlador,
-                        historial_conexiones:[],
                         ultima_conexion:'',
                         latitud:parseFloat(latitud),
                         longitud:parseFloat(longitud),
