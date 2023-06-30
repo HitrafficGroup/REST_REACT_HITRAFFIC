@@ -92,11 +92,11 @@ export default function UnidadHT200View() {
         <>
             <Container maxWidth="md" style={{paddingTop:15}}>
                 <Grid container spacing={3}>
-                    <Grid item xs={12} md={6} >
-                        <Button color='verde' variant="contained"  onClick={readData} >leer datos</Button>
+                    <Grid item xs={6} md={4} >
+                        <Button color='verde' variant="contained" fullWidth onClick={readData} >leer datos</Button>
                     </Grid>
-                    <Grid item xs={12} md={6} >
-                        <Button color='oscuro' variant="contained" onClick={uploadData} >cargar datos</Button>
+                    <Grid item xs={6} md={4} >
+                        <Button color='oscuro' variant="contained" fullWidth onClick={uploadData} >cargar datos</Button>
                     </Grid>
                     <Grid item xs={12} md={6} >
                         <TextField

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef,useMemo,useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
@@ -13,14 +13,13 @@ import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { MapContainer, TileLayer, Marker, Popup,FeatureGroup,Polygon } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, FeatureGroup, Polygon } from "react-leaflet";
 //iconos
 import BackspaceOutlinedIcon from '@mui/icons-material/BackspaceOutlined';
 import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
-import LogoutIcon from '@mui/icons-material/Logout';
-import ReplyAllOutlinedIcon from '@mui/icons-material/ReplyAllOutlined';
+import { useSelector, useDispatch } from 'react-redux';
 //dependencias para los select
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -33,10 +32,9 @@ import { setNameMenu } from '../features/menu/menuSlice';
 import { reloadIps } from '../features/controlers/controlerSlice';
 
 import Swal from 'sweetalert2';
-import { doc, setDoc } from "firebase/firestore"; 
+import { doc, setDoc } from "firebase/firestore";
 
 import Backdrop from '@mui/material/Backdrop';
-import { useDispatch  } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
@@ -44,25 +42,47 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
+//
+import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
+import Menu from '@mui/material/Menu';
+//
+import IconButton from '@mui/material/IconButton';
+import Avatar from '@mui/material/Avatar';
+import Stack from '@mui/material/Stack';
 
 export default function DeclararControladorView() {
     const center = [-2.876428, -78.965342];
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
     const [position, setPosition] = useState(center);
-    const [reloadMap,setReloadMap] = useState(false);
-    const [latitud,setLatitud] = useState(-2.876428);
-    const [longitud,setLongitud] = useState(-78.965342)
+    const [reloadMap, setReloadMap] = useState(false);
+    const [latitud, setLatitud] = useState(-2.876428);
+    const [longitud, setLongitud] = useState(-78.965342)
     const [model, setModel] = useState('');
-    const [areas,setAreas] = useState([]);
+    const [areas, setAreas] = useState([]);
     const [draggable, setDraggable] = useState(false)
-    const [nombreControlador,setNombreControlador]  = useState("");
-    const [ipControlador,setIpControlador] = useState("");
-    const [macControlador,setMacControlador] = useState("");
-    const [pointsArea,setPointsArea] = useState([]);
-    const [canton,setCanton] = useState('')
+    const [nombreControlador, setNombreControlador] = useState("");
+    const [ipControlador, setIpControlador] = useState("");
+    const [macControlador, setMacControlador] = useState("");
+    const [pointsArea, setPointsArea] = useState([]);
+    const [canton, setCanton] = useState('')
+    const menuState = useSelector(state => state.menu);
+    const userState = useSelector(state => state.auth);
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+        navigate('/');
+    };
+
+    // funcion para hacer funcionar el drawer
+
     //banderas para los botones 
-    const [flagCargando,setFlagCargando] = useState(false);
-    const [botonCrear,setBotonCrear] = useState(true);
+    const [flagCargando, setFlagCargando] = useState(false);
+    const [botonCrear, setBotonCrear] = useState(true);
     // variables para los semaforos
     const [newSemaforo, setNewSemaforo] = useState({
         nombre: "",
@@ -81,7 +101,7 @@ export default function DeclararControladorView() {
         dispatch(reloadIps())
         navigate(referencia);
     }
-    const limpiarPuntos = () =>{
+    const limpiarPuntos = () => {
         setBotonCrear(true);
         setPointsArea([])
     }
@@ -93,7 +113,7 @@ export default function DeclararControladorView() {
             }
         )
     }
-   
+
     const selectModel = (event) => {
         setModel(event.target.value);
     };
@@ -125,9 +145,9 @@ export default function DeclararControladorView() {
                     icon: point,
                     position: item.position
                 }))
-            
+
         }
-        if(puntos.length === 4){
+        if (puntos.length === 4) {
             setBotonCrear(false)
         }
         setPointsArea(data)
@@ -151,7 +171,7 @@ export default function DeclararControladorView() {
         setAreas([])
         let areas_temp = JSON.parse(JSON.stringify(areas))
         console.log(pointsArea)
-        let posiciones = pointsArea.map(item=> ( {pos:item.position}))
+        let posiciones = pointsArea.map(item => ({ pos: item.position }))
         console.log(posiciones)
         let newArea = {
             rojo: 10,
@@ -168,13 +188,13 @@ export default function DeclararControladorView() {
         setBotonCrear(true)
         setModalCrearSemaforo(false)
         setNewSemaforo({
-            nombre:"",
-            grupo:"",
+            nombre: "",
+            grupo: "",
         })
 
     }
 
-    const declararControlador = async()=>{
+    const declararControlador = async () => {
         Swal.fire({
             title: 'Creacion de controlador',
             text: "Se va a crear el siguiente controlador",
@@ -183,252 +203,306 @@ export default function DeclararControladorView() {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Si'
-          }).then(async(result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
-            let  ip = ipControlador
-            if(ip === "" || ip === undefined ){
-                Swal.fire(
-                    'Error No Ip',
-                    'Asigne la ip ',
-                    'error'
+                let ip = ipControlador
+                if (ip === "" || ip === undefined) {
+                    Swal.fire(
+                        'Error No Ip',
+                        'Asigne la ip ',
+                        'error'
                     )
-            }else{
-                if(nombreControlador !== "" && model === "SW-12"){
+                } else {
+                    if (nombreControlador !== "" && model === "SW-12") {
 
-        
-                    let areas_aux = JSON.parse(JSON.stringify(areas)) 
-                    console.log(areas_aux)
-                    
 
-                    let id_controller = uuidv4()
-                    let parametrosIniciales = {
-                        // parametros inicializados por defecto
-                        id:id_controller,
-                        t_fases:1667372400000,
-                        t_horarios: 1667372400000,
-                        t_peticion: 1667372400000,
-                        t_planes: 1667372400000,
-                        // parametros que se iran llenando conforme actualice el controlador
-                        conflictos_verdes:{},
-                        dias_especiales:{},
-                        fases:{},
-                        grupos:{},
-                        horario_ordinario:[],
-                        horario_finsemana:[],
-                        horario_festivo:[],
-                        semaforos:areas_aux,
-                        otros_parametros:{},
-                        plan_1:[],
-                        plan_2:[],
-                        plan_3:[],
-                        plan_4:[],
-                        plan_5:[],
-                        plan_6:[],
-                        plan_7:[],
-                        plan_8:[],
-                        latitud: parseFloat(latitud),
-                        longitud:parseFloat(longitud),
-                        //nuevos parametros agregados
-                        nombre:nombreControlador,
-                        ip:ipControlador,
-                        historial_conexiones:[],
-                        modelo:model,
-                        planificacion:[],
-    
-                    }
-                    let historialControladorData = {
-                        id:id_controller,
-                        nombre:nombreControlador,
-                        ultima_conexion:'',
-                        latitud:parseFloat(latitud),
-                        longitud:parseFloat(longitud),
-                        ip:ipControlador,
-                        mac:macControlador,
-                        canton:canton,
-                        online:true,
-                        modelo:model,
+                        let areas_aux = JSON.parse(JSON.stringify(areas))
+                        console.log(areas_aux)
 
-                    }
-                
-                
-                    try {
-                        setFlagCargando(true);
-                        await setDoc(doc(db, "controladores",id_controller, ), parametrosIniciales);
-                        await setDoc(doc(db, "historial_controladores",id_controller, ), historialControladorData);
-                        Swal.fire(
-                            'Exito',
-                            'Controlador Declarado! ',
-                            'success'
-                            )
-                        setFlagCargando(false);
-                        Changeview('/equipos')
-                    } catch (error) {
-                        Swal.fire(
-                            'Error',
-                            `Error: ${error}`,
-                            'error'
+
+                        let id_controller = uuidv4()
+                        let parametrosIniciales = {
+                            // parametros inicializados por defecto
+                            id: id_controller,
+                            t_fases: 1667372400000,
+                            t_horarios: 1667372400000,
+                            t_peticion: 1667372400000,
+                            t_planes: 1667372400000,
+                            // parametros que se iran llenando conforme actualice el controlador
+                            conflictos_verdes: {},
+                            dias_especiales: {},
+                            fases: {},
+                            grupos: {},
+                            horario_ordinario: [],
+                            horario_finsemana: [],
+                            horario_festivo: [],
+                            semaforos: areas_aux,
+                            otros_parametros: {},
+                            plan_1: [],
+                            plan_2: [],
+                            plan_3: [],
+                            plan_4: [],
+                            plan_5: [],
+                            plan_6: [],
+                            plan_7: [],
+                            plan_8: [],
+                            latitud: parseFloat(latitud),
+                            longitud: parseFloat(longitud),
+                            //nuevos parametros agregados
+                            nombre: nombreControlador,
+                            ip: ipControlador,
+                            historial_conexiones: [],
+                            modelo: model,
+                            planificacion: [],
+
+                        }
+                        let historialControladorData = {
+                            id: id_controller,
+                            nombre: nombreControlador,
+                            ultima_conexion: '',
+                            latitud: parseFloat(latitud),
+                            longitud: parseFloat(longitud),
+                            ip: ipControlador,
+                            mac: macControlador,
+                            canton: canton,
+                            online: true,
+                            modelo: model,
+
+                        }
+
+
+                        try {
+                            setFlagCargando(true);
+                            await setDoc(doc(db, "controladores", id_controller,), parametrosIniciales);
+                            await setDoc(doc(db, "historial_controladores", id_controller,), historialControladorData);
+                            Swal.fire(
+                                'Exito',
+                                'Controlador Declarado! ',
+                                'success'
                             )
                             setFlagCargando(false);
-                    }
-                }
-                else if(nombreControlador !== "" && model === "HT-200"){
-                    let areas_aux = JSON.parse(JSON.stringify(areas)) 
-                    let id_controller = uuidv4()
-                    let parametrosIniciales = {
-                        // parametros inicializados por defecto
-                        latitud: parseFloat(latitud),
-                        longitud:parseFloat(longitud),
-                        id:id_controller,
-                        semaforos:areas_aux,
-                        // parametros que se iran llenando conforme actualice el controlador
-                        fases:[],
-                        secuencias:[],
-                        split:[],
-                        pattern:[],
-                        acciones:[],
-                        plan:[],
-                        horarios:[],
-                        channel:[],
-                        //nuevos parametros
-                        ip:ipControlador,
-                        historial_conexiones:[],
-                        modelo:model,
-                        planificacion:[],
-                        nombre:nombreControlador,
-                        
-                    }
-                    let historialControladorData = {
-                        id:id_controller,
-                        nombre:nombreControlador,
-                        ultima_conexion:'',
-                        latitud:parseFloat(latitud),
-                        longitud:parseFloat(longitud),
-                        ip:ipControlador,
-                        mac:macControlador,
-                        canton:canton,
-                        online:true,
-                        modelo:model,
-                    }
-                    try {
-                        setFlagCargando(true);
-                        await setDoc(doc(db, "controladores",id_controller, ), parametrosIniciales);
-                        await setDoc(doc(db, "historial_controladores",id_controller, ), historialControladorData);
-                        Swal.fire(
-                            'Exito',
-                            'Controlador Declarado! ',
-                            'success'
-                            )
-                        setFlagCargando(false);
-                        Changeview('/equipos')
-                    } catch (error) {
-                        Swal.fire(
-                            'Error',
-                            `Error: ${error}`,
-                            'error'
+                            Changeview('/equipos')
+                        } catch (error) {
+                            Swal.fire(
+                                'Error',
+                                `Error: ${error}`,
+                                'error'
                             )
                             setFlagCargando(false);
+                        }
                     }
+                    else if (nombreControlador !== "" && model === "HT-200") {
+                        let areas_aux = JSON.parse(JSON.stringify(areas))
+                        let id_controller = uuidv4()
+                        let parametrosIniciales = {
+                            // parametros inicializados por defecto
+                            latitud: parseFloat(latitud),
+                            longitud: parseFloat(longitud),
+                            id: id_controller,
+                            semaforos: areas_aux,
+                            // parametros que se iran llenando conforme actualice el controlador
+                            fases: [],
+                            secuencias: [],
+                            split: [],
+                            pattern: [],
+                            acciones: [],
+                            plan: [],
+                            horarios: [],
+                            channel: [],
+                            //nuevos parametros
+                            ip: ipControlador,
+                            historial_conexiones: [],
+                            modelo: model,
+                            planificacion: [],
+                            nombre: nombreControlador,
 
-                }
-                else{
-                      Swal.fire(
-                        'Falta el Nombre',
-                        'Llene el nombre del Controlador ! ',
-                        'warning'
+                        }
+                        let historialControladorData = {
+                            id: id_controller,
+                            nombre: nombreControlador,
+                            ultima_conexion: '',
+                            latitud: parseFloat(latitud),
+                            longitud: parseFloat(longitud),
+                            ip: ipControlador,
+                            mac: macControlador,
+                            canton: canton,
+                            online: true,
+                            modelo: model,
+                        }
+                        try {
+                            setFlagCargando(true);
+                            await setDoc(doc(db, "controladores", id_controller,), parametrosIniciales);
+                            await setDoc(doc(db, "historial_controladores", id_controller,), historialControladorData);
+                            Swal.fire(
+                                'Exito',
+                                'Controlador Declarado! ',
+                                'success'
+                            )
+                            setFlagCargando(false);
+                            Changeview('/equipos')
+                        } catch (error) {
+                            Swal.fire(
+                                'Error',
+                                `Error: ${error}`,
+                                'error'
+                            )
+                            setFlagCargando(false);
+                        }
+
+                    }
+                    else {
+                        Swal.fire(
+                            'Falta el Nombre',
+                            'Llene el nombre del Controlador ! ',
+                            'warning'
                         )
+                    }
                 }
             }
-            }
-          })
-        }
-        const cerrarSesion = ()=>{
-            navigate('/');
-        }
-        const encontrarUbicacion =()=>{
-            let aux = [latitud,longitud]
-            setPosition(aux)
-            setReloadMap(!reloadMap)
-        }
-        const eliminarArea = async (_data) => {
-            let aux = JSON.parse(JSON.stringify(areas))
-            let semaforosActualizados = aux.filter(item => item.nombre !== _data.nombre)
-            setAreas(semaforosActualizados)
-        }
-        const eventHandlers = useMemo(
-            () => ({
-                dragend() {
-                    const marker = markerRef.current
-                    if (marker != null) {
-                        console.log(marker.getLatLng())
-                        let aux = [marker.getLatLng().lat,marker.getLatLng().lng]
-                        
-                        setPosition(aux)
-                        
-                    } else {
-                        
-                    }
-                },
-            }),
-            [],
+        })
+    }
+
+    const encontrarUbicacion = () => {
+        let aux = [latitud, longitud]
+        setPosition(aux)
+        setReloadMap(!reloadMap)
+    }
+    const eliminarArea = async (_data) => {
+        let aux = JSON.parse(JSON.stringify(areas))
+        let semaforosActualizados = aux.filter(item => item.nombre !== _data.nombre)
+        setAreas(semaforosActualizados)
+    }
+    const eventHandlers = useMemo(
+        () => ({
+            dragend() {
+                const marker = markerRef.current
+                if (marker != null) {
+                    console.log(marker.getLatLng())
+                    let aux = [marker.getLatLng().lat, marker.getLatLng().lng]
+
+                    setPosition(aux)
+
+                } else {
+
+                }
+            },
+        }),
+        [],
+    )
+    const toggleDraggable = useCallback(() => {
+        setDraggable((d) => !d)
+    }, [])
+    const DraggableMarker = () => {
+        return (
+            <Marker
+                icon={ubi}
+                draggable={true}
+                eventHandlers={eventHandlers}
+                position={position}
+                ref={markerRef}>
+
+                <Popup minWidth={90}>
+                    <span onClick={toggleDraggable}>
+                        {draggable ? 'Marker is draggable' : 'Click here to make marker draggable'}
+                    </span>
+                </Popup>
+            </Marker>
         )
-        const toggleDraggable = useCallback(() => {
-            setDraggable((d) => !d)
-        }, [])
-        const DraggableMarker = () => {
-            return (
-                <Marker
-                    icon={ubi}
-                    draggable={true}
-                    eventHandlers={eventHandlers}
-                    position={position}
-                    ref={markerRef}>
-    
-                    <Popup minWidth={90}>
-                        <span onClick={toggleDraggable}>
-                            {draggable ? 'Marker is draggable': 'Click here to make marker draggable'}
-                        </span>
-                    </Popup>
-                </Marker>
-            )
+    }
+    function stringToColor(string) {
+        let hash = 0;
+        let i;
+
+        /* eslint-disable no-bitwise */
+        for (i = 0; i < string.length; i += 1) {
+            hash = string.charCodeAt(i) + ((hash << 5) - hash);
         }
+
+        let color = '#';
+
+        for (i = 0; i < 3; i += 1) {
+            const value = (hash >> (i * 8)) & 0xff;
+            color += `00${value.toString(16)}`.slice(-2);
+        }
+        /* eslint-enable no-bitwise */
+
+        return color;
+    }
+
+    function stringAvatar(name) {
+        return {
+            sx: {
+                bgcolor: stringToColor(name),
+            },
+            children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+        };
+    }
+
     useEffect(() => {
-       
+
     }, []);
     return (
         <>
-            <AppBar position="static" sx={{ backgroundColor: "#34495E" }}>
+            <AppBar position="static" sx={{ backgroundColor: "#273444" }}>
+                <Toolbar>
+                    <Typography sx={{ display: { md: 'flex' }, flexGrow: 1 }} variant="h6" component="div">
+                        {menuState.menu}
+                    </Typography>
+                    <IconButton aria-label="delete" color="anaranjado1" size="medium" onClick={() => {navigate("/equipos") }}>
+                        <SettingsRemoteIcon fontSize="inherit" />
+                    </IconButton>
+                    <Stack direction="row" spacing={2}>
+                        <div>
+                            <Button
+                                id="basic-button"
+                                aria-controls={open ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? 'true' : undefined}
+                                onClick={handleClick}
+                            >
+                                <Avatar {...stringAvatar(`${userState.name} ${userState.lastname}`)} />
+                            </Button>
 
-            <Toolbar>
-            <Button variant="text" sx={{color:"white",marginRight:4}}  onClick={()=>{navigate('/equipos')}} endIcon={<ReplyAllOutlinedIcon/>} >Volver</Button>
-            <Typography sx={{ display: { xs: 'none', md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
-                Registro de Nuevo Controlador
-            </Typography>
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                <MenuItem onClick={handleClose}>My account</MenuItem>
+                                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                            </Menu>
+                        </div>
 
-            <Button variant="text" sx={{color:"white"}} onClick={cerrarSesion} endIcon={<LogoutIcon />} >Cerrar Sesion</Button>
-            </Toolbar>
+                    </Stack>
+                </Toolbar>
             </AppBar>
             <Container maxWidth="md" >
-                <div style={{marginBottom:10,marginTop:20}}>
+                <div style={{ marginBottom: 10, marginTop: 20 }}>
                     <h4>Formulario de Registro</h4>
-            
+
                 </div>
                 <Grid container spacing={2}>
 
                     <Grid item xs={12} md={12}>
-                        
+
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <TextField id="outlined"  fullWidth onChange={(e) =>{setMacControlador(e.target.value)}} label="Mac" variant="outlined"  />
+                        <TextField id="outlined" fullWidth onChange={(e) => { setMacControlador(e.target.value) }} label="Mac" variant="outlined" />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <TextField id="outlined" value={ipControlador}  onChange={(e) =>{setIpControlador(e.target.value)}} fullWidth   label="Ip:" variant="outlined"  />
+                        <TextField id="outlined" value={ipControlador} onChange={(e) => { setIpControlador(e.target.value) }} fullWidth label="Ip:" variant="outlined" />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <TextField id="outlined"  value={nombreControlador}  label="Nombre del Controlador"variant="outlined" onChange={(e)=>{setNombreControlador(e.target.value)}}  fullWidth   />
+                        <TextField id="outlined" value={nombreControlador} label="Nombre del Controlador" variant="outlined" onChange={(e) => { setNombreControlador(e.target.value) }} fullWidth />
                     </Grid>
-                    <Grid item xs={12} md={6}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Modelo</InputLabel>
+                    <Grid item xs={6} md={6}>
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Modelo</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
@@ -439,159 +513,160 @@ export default function DeclararControladorView() {
                                 <MenuItem value={"HT-200"}>HT-200</MenuItem>
                                 <MenuItem value={"SW-12"}>SW-12</MenuItem>
                                 <MenuItem value={"HT-216"}>HT-216</MenuItem>
-                        </Select>
+                            </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={12} md={4}>
-                        <TextField id="outlined" value={latitud}  label="Latitud" variant="outlined"  onChange={(e)=>{setLatitud(e.target.value)}}   fullWidth />
-                    </Grid>
-                    
-                    <Grid item xs={12} md={4}>
-                        <TextField id="outlined"  value={longitud} label="Longitud" variant="outlined"  onChange={(e)=>{setLongitud(e.target.value)}} fullWidth />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={6} md={4}>
                         <Autocomplete
                             disablePortal
                             id="combo-box-demo"
                             options={cantones}
-                            onChange={(event,newValue)=>{setCanton(newValue)}}
+                            onChange={(event, newValue) => { setCanton(newValue) }}
                             renderInput={(params) => <TextField {...params} label="cantones" />}
                         />
 
                     </Grid>
+                    <Grid item xs={6} md={4}>
+                        <TextField id="outlined" value={latitud} label="Latitud" variant="outlined" onChange={(e) => { setLatitud(e.target.value) }} fullWidth />
+                    </Grid>
+
+                    <Grid item xs={6} md={4}>
+                        <TextField id="outlined" value={longitud} label="Longitud" variant="outlined" onChange={(e) => { setLongitud(e.target.value) }} fullWidth />
+                    </Grid>
+                    
                     <Grid item xs={12} md={12}>
                         <h4>Mapa del controlador</h4>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                    
-                    <MapContainer center={[position[0], position[1]]} zoom={19} key={reloadMap} scrollWheelZoom={false} className='map-container leaflet-container-2'>
-                                <TileLayer
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                    url="https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=b08eb869c89646fa8accf539b81e80de"
-                                />
-                                <DraggableMarker />
-                                {pointsArea.map((item, index) => (
-                                    <Marker position={item.position} icon={item.icon}>
-                                    </Marker>
-                                ))}
-                                {areas.map((item, index) => (
-                                    <FeatureGroup pathOptions={item.color}>
-                                        <Popup>
-                                            <p style={{ margin: 0, fontStyle: "italic" }}><strong>Area: </strong>{item.nombre} <strong>Grupo: </strong>{item.grupo}</p>
-                                            <Button color='rojo' sx={{ marginTop: 2 }} onClick={() => { eliminarArea(item) }} variant="contained">Eliminar</Button>
-                                        </Popup>
-                                        <Polygon positions={[item.points[0].pos,item.points[1].pos,item.points[2].pos,item.points[3].pos]} />
-                                    </FeatureGroup>
-                                ))}
-                                <Fab onClick={encontrarUbicacion} color="oscuro" aria-label="add" sx={{ position: "absolute", top: 50, right: 30 }}>
-                                    <MyLocationOutlinedIcon  />
-                                </Fab>
-                                <Fab    onClick={() => { obtenerCoordenadas() }} color="verde" aria-label="add" sx={{ position: "absolute", top: 130, right: 30 }}>
-                                    <CheckOutlinedIcon  />
-                                </Fab>
-                                <Fab   onClick={limpiarPuntos}  color="rojo" aria-label="add" sx={{ position: "absolute", top: 210, right: 30 }}>
-                                    <BackspaceOutlinedIcon  />
-                                </Fab>
-                                <Fab      disabled={botonCrear}  onClick={() => { setModalCrearSemaforo(true) }} color="oscuro" aria-label="add" sx={{ position: "absolute", top: 290, right: 30 }}>
-                                    <SaveIcon  />
-                                </Fab>
 
-                               
-                                <div  style={{ zIndex:1070 ,position: "absolute", top: 30, left: 70}}>
-                                    <p>
-                                        <strong style={{marginLeft:5,marginRight:5}}>Longitud del semaforo:</strong>{position[0]} <strong style={{marginLeft:5,marginRight:5}}>Latitud del semaforo:</strong>{position[1]}
-                                    </p>
-                                </div>
-                            </MapContainer>
+                        <MapContainer center={[position[0], position[1]]} zoom={19} key={reloadMap} scrollWheelZoom={false} className='map-container leaflet-container-2'>
+                            <TileLayer
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                url="https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=b08eb869c89646fa8accf539b81e80de"
+                            />
+                            <DraggableMarker />
+                            {pointsArea.map((item, index) => (
+                                <Marker position={item.position} icon={item.icon}>
+                                </Marker>
+                            ))}
+                            {areas.map((item, index) => (
+                                <FeatureGroup pathOptions={item.color}>
+                                    <Popup>
+                                        <p style={{ margin: 0, fontStyle: "italic" }}><strong>Area: </strong>{item.nombre} <strong>Grupo: </strong>{item.grupo}</p>
+                                        <Button color='rojo' sx={{ marginTop: 2 }} onClick={() => { eliminarArea(item) }} variant="contained">Eliminar</Button>
+                                    </Popup>
+                                    <Polygon positions={[item.points[0].pos, item.points[1].pos, item.points[2].pos, item.points[3].pos]} />
+                                </FeatureGroup>
+                            ))}
+                            <Fab onClick={encontrarUbicacion} color="oscuro" aria-label="add" sx={{ position: "absolute", top: 50, right: 30 }}>
+                                <MyLocationOutlinedIcon />
+                            </Fab>
+                            <Fab onClick={() => { obtenerCoordenadas() }} color="verde" aria-label="add" sx={{ position: "absolute", top: 130, right: 30 }}>
+                                <CheckOutlinedIcon />
+                            </Fab>
+                            <Fab onClick={limpiarPuntos} color="rojo" aria-label="add" sx={{ position: "absolute", top: 210, right: 30 }}>
+                                <BackspaceOutlinedIcon />
+                            </Fab>
+                            <Fab disabled={botonCrear} onClick={() => { setModalCrearSemaforo(true) }} color="oscuro" aria-label="add" sx={{ position: "absolute", top: 290, right: 30 }}>
+                                <SaveIcon />
+                            </Fab>
+
+
+                            <div style={{ zIndex: 1070, position: "absolute", top: 30, left: 70 }}>
+                                <p>
+                                    <strong style={{ marginLeft: 5, marginRight: 5 }}>Longitud del semaforo:</strong>{position[0]} <strong style={{ marginLeft: 5, marginRight: 5 }}>Latitud del semaforo:</strong>{position[1]}
+                                </p>
+                            </div>
+                        </MapContainer>
                     </Grid>
-               
+
                     <Grid item xs={12} md={12}>
-                    <div style={{display:"flex",justifyContent:"center"}}>
-                            <Button sx={{height:60}} variant="outlined" onClick={declararControlador}>CREAR CONTROLADOR</Button>
+                        <div style={{ display: "flex", justifyContent: "center" }}>
+                            <Button sx={{ height: 60 }} variant="outlined" onClick={declararControlador}>CREAR CONTROLADOR</Button>
                         </div>
                     </Grid>
                     <Grid item xs={12} md={12}>
-          
-                         
-                            <Table  aria-label="customized table">
-                                <TableHead>
+
+
+                        <Table aria-label="customized table">
+                            <TableHead>
                                 <TableRow>
-                                 
+
                                     <StyledTableCell align="left">#</StyledTableCell>
                                     <StyledTableCell align="left">Nombre</StyledTableCell>
                                     <StyledTableCell align="right">Grupo</StyledTableCell>
-                               
+
                                 </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                {areas.map((row,index) => (
+                            </TableHead>
+                            <TableBody>
+                                {areas.map((row, index) => (
                                     <StyledTableRow key={index}>
-                                    <StyledTableCell align="left">{index+1}</StyledTableCell>
-                                    <StyledTableCell align="left">{row.nombre}</StyledTableCell>
-                                    <StyledTableCell align="left">{row.grupo}</StyledTableCell>
+                                        <StyledTableCell align="left">{index + 1}</StyledTableCell>
+                                        <StyledTableCell align="left">{row.nombre}</StyledTableCell>
+                                        <StyledTableCell align="left">{row.grupo}</StyledTableCell>
 
                                     </StyledTableRow>
                                 ))}
-                                </TableBody>
-                            </Table>
-                
+                            </TableBody>
+                        </Table>
+
                     </Grid>
-                   
+
                 </Grid>
-                <div style={{height:100}}>
+                <div style={{ height: 100 }}>
 
                 </div>
                 <Modal isOpen={modalCrearSemaforo} >
-                <ModalHeader>
-                    <div>
-                        <h1>
-                            Crear Semaforo
-                        </h1>
-                    </div>
-                </ModalHeader>
-                <ModalBody>
-                    <Grid container spacing={4}>
-                        <Grid item xs={12}>
-                            <TextField
-                                id="outlined"
-                                value={newSemaforo.nombre}
-                                name='nombre'
-                                onChange={handleNewSemaforo}
-                                label="Nombre del Semaforo"
-                                variant="outlined"
-                                fullWidth
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Grupos</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    label="Grupos"
-                                    name='grupo'
-                                    value={newSemaforo.grupo}
+                    <ModalHeader>
+                        <div>
+                            <h1>
+                                Crear Semaforo
+                            </h1>
+                        </div>
+                    </ModalHeader>
+                    <ModalBody>
+                        <Grid container spacing={4}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    id="outlined"
+                                    value={newSemaforo.nombre}
+                                    name='nombre'
                                     onChange={handleNewSemaforo}
-                                >
-                                    <MenuItem value={''}>None</MenuItem>
-                                    <MenuItem value={'g1'}>Grupo 1</MenuItem>
-                                    <MenuItem value={'g2'}>Grupo 2</MenuItem>
-                                    <MenuItem value={'g3'}>Grupo 3</MenuItem>
-                                    <MenuItem value={'g4'}>Grupo 4</MenuItem>
-                                </Select>
-                            </FormControl>
+                                    label="Nombre del Semaforo"
+                                    variant="outlined"
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Grupos</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        label="Grupos"
+                                        name='grupo'
+                                        value={newSemaforo.grupo}
+                                        onChange={handleNewSemaforo}
+                                    >
+                                        <MenuItem value={''}>None</MenuItem>
+                                        <MenuItem value={'g1'}>Grupo 1</MenuItem>
+                                        <MenuItem value={'g2'}>Grupo 2</MenuItem>
+                                        <MenuItem value={'g3'}>Grupo 3</MenuItem>
+                                        <MenuItem value={'g4'}>Grupo 4</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </ModalBody>
-                <ModalFooter >
-                    <Button variant="contained" onClick={agregarSemaforo} sx={{ backgroundColor: "#F0B27A", marginLeft: 1 }}>
-                        Aplicar
-                    </Button>
-                    <Button variant="contained" onClick={() => { setModalCrearSemaforo(false) }} sx={{ backgroundColor: "red", marginLeft: 1 }}>
-                        cancelar
-                    </Button>
-                </ModalFooter>
-            </Modal>
+                    </ModalBody>
+                    <ModalFooter >
+                        <Button variant="contained" onClick={agregarSemaforo} sx={{ backgroundColor: "#F0B27A", marginLeft: 1 }}>
+                            Aplicar
+                        </Button>
+                        <Button variant="contained" onClick={() => { setModalCrearSemaforo(false) }} sx={{ backgroundColor: "red", marginLeft: 1 }}>
+                            cancelar
+                        </Button>
+                    </ModalFooter>
+                </Modal>
             </Container>
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={flagCargando}>
                 <CircularProgress color="inherit" />
@@ -634,27 +709,27 @@ const grupo_4 = { color: 'orange' }
 //estilos para las tablas
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
+        backgroundColor: theme.palette.common.black,
+        color: theme.palette.common.white,
     },
     [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
+        fontSize: 14,
     },
-  }));
-  
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
+        backgroundColor: theme.palette.action.hover,
     },
     // hide last border
     '&:last-child td, &:last-child th': {
-      border: 0,
+        border: 0,
     },
-  }));
-  
+}));
+
 let cantones = [
-    "CUENCA","GIRON","GUALACEO","NABON","PAUTE","PUCARA","SAN FERNANDO","SANTA ISABEL","SIGSIG","OÑA","CHORDELEG",
-    "CHILLANES","GUARANDA","CHIMBO","SAN MIGUEL","AZOGUES","BIBLIÁN","CAÑAR","LA TRONCAL","EL TAMBO","TULCAN","BOLIVAR",
-    "ESPEJO","LATACUNGA","PUJILI","SALCEDO","RIOBAMBA","ALAUSI","MACHALA","ARENILLAS","ATAHUALPA","BALSAS","EL GUABO","HUAQUILLAS",
-    "PASAJE","PIÑAS","PORTOVELO","SANTA ROSA","ZARUMA","ESMERALDAS","ATACAMES","GUAYAQUIL","QUITO","LOJA","CALVAS","CATAMAYO"
+    "CUENCA", "GIRON", "GUALACEO", "NABON", "PAUTE", "PUCARA", "SAN FERNANDO", "SANTA ISABEL", "SIGSIG", "OÑA", "CHORDELEG",
+    "CHILLANES", "GUARANDA", "CHIMBO", "SAN MIGUEL", "AZOGUES", "BIBLIÁN", "CAÑAR", "LA TRONCAL", "EL TAMBO", "TULCAN", "BOLIVAR",
+    "ESPEJO", "LATACUNGA", "PUJILI", "SALCEDO", "RIOBAMBA", "ALAUSI", "MACHALA", "ARENILLAS", "ATAHUALPA", "BALSAS", "EL GUABO", "HUAQUILLAS",
+    "PASAJE", "PIÑAS", "PORTOVELO", "SANTA ROSA", "ZARUMA", "ESMERALDAS", "ATACAMES", "GUAYAQUIL", "QUITO", "LOJA", "CALVAS", "CATAMAYO"
 ]

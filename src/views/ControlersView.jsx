@@ -19,7 +19,7 @@ import Button from '@mui/material/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { setInitialStateController, setControllerData } from "../features/controlers/controlerSlice";
-import { setInitialStateControllerHT200,setControllerDataHT200 } from "../features/controlerht200/controlerHT200Slice";
+import { setInitialStateControllerHT200, setControllerDataHT200 } from "../features/controlerht200/controlerHT200Slice";
 import Swal from 'sweetalert2';
 import { collection, updateDoc, doc, onSnapshot, query, deleteDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
@@ -67,9 +67,9 @@ export default function ControlersView() {
     const [infoModal, setInfoModal] = useState(false);
     const [controlers, setControlers] = useState(dataTest);
     const [currentController, setCurrentController] = useState({});
-    const [reload,setReload] = useState(true);
-    const [model,setModel] = useState('');
-    const [canton,setCanton] = useState('');
+    const [reload, setReload] = useState(true);
+    const [model, setModel] = useState('');
+    const [canton, setCanton] = useState('');
     const userState = useSelector(state => state.auth);
     const [deshabilitar, setDeshabilitar] = useState(false);
     const respaldoData = useRef([])
@@ -93,12 +93,12 @@ export default function ControlersView() {
 
 
     const handleChangePage = (event, newPage) => {
-      setPage(newPage);
+        setPage(newPage);
     };
-  
+
     const handleChangeRowsPerPage = (event) => {
-      setRowsPerPage(+event.target.value);
-      setPage(0);
+        setRowsPerPage(+event.target.value);
+        setPage(0);
     };
 
     const Changeview = (referencia) => {
@@ -115,29 +115,29 @@ export default function ControlersView() {
         setModel("")
     }
 
-    const filterByCanton =(item)=>{
-        if(canton !== ""){
-            if(item.canton === canton){
+    const filterByCanton = (item) => {
+        if (canton !== "") {
+            if (item.canton === canton) {
                 return item;
-            }else{
+            } else {
                 return null;
             }
-        }else{
+        } else {
             return item;
         }
-        
+
     }
-    const filterByModel =(item)=>{
-        if(model !== ""){
-            if(item.modelo === model){
+    const filterByModel = (item) => {
+        if (model !== "") {
+            if (item.modelo === model) {
                 return item;
-            }else{
+            } else {
                 return null;
             }
-        }else{
+        } else {
             return item;
         }
-        
+
     }
     const abrirModalinformacion = (_data) => {
         let aux_data = JSON.parse(JSON.stringify(_data))
@@ -151,7 +151,7 @@ export default function ControlersView() {
         setEditarModal(true);
     }
     const guardarAjustes = async () => {
-        
+
         const ref = doc(db, "historial_controladores", currentController.id);
         await updateDoc(ref, currentController);
         const ref2 = doc(db, "controladores", currentController.id);
@@ -165,7 +165,7 @@ export default function ControlersView() {
         const docRef = doc(db, "controladores", _equipo.id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-           
+
             let aux_equipo = JSON.parse(JSON.stringify(_equipo))
             let equipo_info = docSnap.data()
             let conexiones = equipo_info.historial_conexiones;
@@ -178,13 +178,13 @@ export default function ControlersView() {
                 fecha: fecha
             })
             equipo_info['historial_conexiones'] = conexiones
-  
+
             if (_equipo.modelo === "HT-200") {
                 dispatch(setInitialStateControllerHT200(aux_equipo));
-                if(equipo_info.fases.length > 0 && equipo_info.secuencias.length > 0  && equipo_info.split.length > 0  && equipo_info.pattern.length > 0  && equipo_info.acciones.length > 0  && equipo_info.plan.length >0 && equipo_info.horarios.length > 0   ){
+                if (equipo_info.fases.length > 0 && equipo_info.secuencias.length > 0 && equipo_info.split.length > 0 && equipo_info.pattern.length > 0 && equipo_info.acciones.length > 0 && equipo_info.plan.length > 0 && equipo_info.horarios.length > 0) {
                     dispatch(setControllerDataHT200(equipo_info));
                 }
-              
+
                 const ref = doc(db, "historial_controladores", _equipo.id);
                 await updateDoc(ref, {
                     ultima_conexion: fecha,
@@ -294,7 +294,7 @@ export default function ControlersView() {
                     <Typography sx={{ display: { md: 'flex' }, flexGrow: 1 }} variant="h6" component="div">
                         Listado de Dispositivos
                     </Typography>
-                   
+
                     <Stack direction="row" spacing={2}>
                         <div>
                             <Button
@@ -323,54 +323,19 @@ export default function ControlersView() {
                         </div>
 
                     </Stack>
-                   
+
                 </Toolbar>
             </AppBar>
             <Container maxWidth="lg" sx={{ paddingTop: 3 }}>
                 <Grid container spacing={2}>
-                    <Grid md={4} xs={12}>
-                        <div className="card-admin">
-                            <div className="header">
-                                <p className="nombre-card">Acciones</p>
-                            </div>
-                            <div className="card-body-controler">
-                                <Grid container >
-                                    <Grid item xs={12} md={12}>
-                                        <Button variant="contained" size="medium" onClick={() => { Changeview('/crear_equipo') }}  >+ CONTROLADOR</Button>
-                                    </Grid>
-                                </Grid>
-                            </div>
-                        </div>
-                    </Grid>
-                    {/* <Grid md={2.5} xs={6}>
-                        <div className="card-admin">
-                            <div className="header">
-                                <p className="nombre-card">Activos</p>
-                            </div>
-                            <div className="card-body-indicador">
-                                <h5 className="number-indicador">10</h5> <PowerIcon fontSize="large" sx={{ color: "#A3E4D7" }} />
-                            </div>
-                        </div>
-                    </Grid>
-                    <Grid md={2.5} xs={6}>
-                        <div className="card-admin">
-                            <div className="header">
-                                <p className="nombre-card">Inactivos</p>
-                            </div>
-                            <div className="card-body-indicador">
-                                <h5 className="number-indicador">2</h5> <PowerOffIcon fontSize="large" sx={{ color: "#F5B7B1" }} />
-                            </div>
-                        </div>
-                    </Grid> */}
-                    <Grid md={8} xs={12}>
+                    <Grid xs={12} md={8}>
                         <div className="card-controller-filter">
                             <div className="header-controller-filter">
                                 <p className="nombre-card">Filtros</p>
                             </div>
                             <div className="card-body-controler">
-
                                 <Grid container >
-                                    <Grid item xs={12} md={5}>
+                                    <Grid item xs={6} md={2}>
                                         <Autocomplete
                                             id="size-small-outlined"
                                             size="small"
@@ -379,13 +344,12 @@ export default function ControlersView() {
                                             onChange={(event, newValue) => {
                                                 setCanton(newValue)
                                             }}
-
                                             renderInput={(params) => (
                                                 <TextField {...params} label="Canton" placeholder="canton" />
                                             )}
                                         />
                                     </Grid>
-                                    <Grid item xs={12} md={4}>
+                                    <Grid item xs={6} md={2}>
                                         <Autocomplete
                                             id="size-small-outlined"
                                             size="small"
@@ -394,30 +358,18 @@ export default function ControlersView() {
                                             onChange={(event, newValue) => {
                                                 setModel(newValue)
                                             }}
-
                                             renderInput={(params) => (
                                                 <TextField {...params} label="Modelo" placeholder="modelo" />
                                             )}
                                         />
                                     </Grid>
-                                    {/* <Grid item xs={12} md={3.5}>
-                                        <RadioGroup
-                                            row
-                                            aria-labelledby="demo-row-radio-buttons-group-label"
-                                            name="row-radio-buttons-group"
-                                        >
-                                            <FormControlLabel value="female" control={<Radio />} label="activo" />
-                                            <FormControlLabel value="male" control={<Radio />} label="Inactivo" />
-
-
-                                        </RadioGroup>
-                                    </Grid> */}
-                                    <Grid item xs={12} md={2}>
-                                        <Button variant="contained" size="medium" onClick={filtrarLosDatos}  >FILTRAR</Button>
+                                    <Grid item xs={12} md={4}>
+                                        <Button variant="contained" size="medium" fullWidth onClick={filtrarLosDatos}  >FILTRAR</Button>
                                     </Grid>
-
+                                    <Grid item xs={12} md={4}>
+                                        <Button variant="contained" size="medium" fullWidth onClick={() => { Changeview('/crear_equipo') }}  >+ CONTROLADOR</Button>
+                                    </Grid>
                                 </Grid>
-
                             </div>
                         </div>
                     </Grid>
@@ -425,109 +377,109 @@ export default function ControlersView() {
 
 
                     <Grid md={12}>
-                    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                        <TableContainer sx={{ maxHeight: 440 }}>
-                        <Table stickyHeader aria-label="sticky table">
+                        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                            <TableContainer sx={{ maxHeight: 440 }}>
+                                <Table stickyHeader aria-label="sticky table">
                                     <TableHead>
                                         <TableRow>
-                                        <TableCell
+                                            <TableCell
                                                 key={"last"}
                                                 align={"left"}
                                                 style={{ minWidth: 200 }}
-                                                >
+                                            >
                                                 Ultima Conexion
                                             </TableCell>
                                             <TableCell
                                                 key={"Name"}
                                                 align={"left"}
                                                 style={{ minWidth: 200 }}
-                                                >
+                                            >
                                                 Name
                                             </TableCell>
                                             <TableCell
                                                 key={"ip"}
                                                 align={"left"}
                                                 style={{ minWidth: 100 }}
-                                                >
+                                            >
                                                 Ip
                                             </TableCell>
                                             <TableCell
                                                 key={"modelo"}
                                                 align={"left"}
                                                 style={{ minWidth: 100 }}
-                                                >
+                                            >
                                                 Modelo
                                             </TableCell>
                                             <TableCell
                                                 key={"canton"}
                                                 align={"left"}
                                                 style={{ minWidth: 100 }}
-                                                >
+                                            >
                                                 Canton
                                             </TableCell>
                                             <TableCell
                                                 key={"acciones"}
                                                 align={"left"}
                                                 style={{ minWidth: 100 }}
-                                                >
+                                            >
                                                 Acciones
                                             </TableCell>
-                                      
+
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                    {controlers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((row,index) => {
-                                        return (
-                                            <TableRow key={index}>
-                                                 <TableCell align="left">
-                                                    {row.ultima_conexion}
-                                                </TableCell>
-                                                <TableCell align="left">
-                                                    {row.nombre}
-                                                </TableCell>
-                                                <TableCell align="left">
-                                                    {row.ip}
-                                                </TableCell>
-                                                <TableCell align="left">
-                                                    {row.modelo}
-                                                </TableCell>
-                                                <TableCell align="left">
-                                                    {row.canton}
-                                                </TableCell>
-                                                {/* <TableCell align="center">
+                                        {controlers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                            .map((row, index) => {
+                                                return (
+                                                    <TableRow key={index}>
+                                                        <TableCell align="left">
+                                                            {row.ultima_conexion}
+                                                        </TableCell>
+                                                        <TableCell align="left">
+                                                            {row.nombre}
+                                                        </TableCell>
+                                                        <TableCell align="left">
+                                                            {row.ip}
+                                                        </TableCell>
+                                                        <TableCell align="left">
+                                                            {row.modelo}
+                                                        </TableCell>
+                                                        <TableCell align="left">
+                                                            {row.canton}
+                                                        </TableCell>
+                                                        {/* <TableCell align="center">
                                                     <Chip color={row.estado ? 'verde' : 'anaranjado1'} size="small" label={row.estado ? 'conectado' : 'desconectado'} icon={<CableIcon />} />
                                                 </TableCell> */}
-                                                <TableCell align="center">
-                                                    <Stack direction="row" spacing={1}>
-                                                        <IconButton color="rojo" aria-label="eliminar" onClick={() => { eliminarController(row) }} >
-                                                            <DeleteIcon />
-                                                        </IconButton>
-                                                        <IconButton color="gris" aria-label="editar" onClick={() => { abrirModalEditar(row) }} >
-                                                            <SettingsIcon />
-                                                        </IconButton>
-                                                        <IconButton color="azulm" aria-label="info" onClick={() => { abrirModalinformacion(row) }}>
-                                                            <InfoIcon />
-                                                        </IconButton>
-                                                        <Button variant="contained" color="oscuro" onClick={() => { programarControlador(row) }} >Programar</Button>
-                                                    </Stack>
-                                                </TableCell>
+                                                        <TableCell align="center">
+                                                            <Stack direction="row" spacing={1}>
+                                                                <IconButton color="rojo" aria-label="eliminar" onClick={() => { eliminarController(row) }} >
+                                                                    <DeleteIcon />
+                                                                </IconButton>
+                                                                <IconButton color="gris" aria-label="editar" onClick={() => { abrirModalEditar(row) }} >
+                                                                    <SettingsIcon />
+                                                                </IconButton>
+                                                                <IconButton color="azulm" aria-label="info" onClick={() => { abrirModalinformacion(row) }}>
+                                                                    <InfoIcon />
+                                                                </IconButton>
+                                                                <Button variant="contained" color="oscuro" onClick={() => { programarControlador(row) }} >Programar</Button>
+                                                            </Stack>
+                                                        </TableCell>
 
-                                            </TableRow>);
-                                        })}
+                                                    </TableRow>);
+                                            })}
                                     </TableBody>
-                                 
+
                                 </Table>
                             </TableContainer>
                             <TablePagination
-                                        rowsPerPageOptions={[10, 25, 100]}
-                                        component="div"
-                                        count={controlers.length}
-                                        rowsPerPage={rowsPerPage}
-                                        page={page}
-                                        onPageChange={handleChangePage}
-                                        onRowsPerPageChange={handleChangeRowsPerPage}
-                                    />
+                                rowsPerPageOptions={[10, 25, 100]}
+                                component="div"
+                                count={controlers.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                            />
                         </Paper>
                     </Grid>
                 </Grid>
@@ -631,12 +583,12 @@ export default function ControlersView() {
     )
 }
 let cantones = [
-    "CUENCA","GIRON","GUALACEO","NABON","PAUTE","PUCARA","SAN FERNANDO","SANTA ISABEL","SIGSIG","OÑA","CHORDELEG",
-    "CHILLANES","GUARANDA","CHIMBO","SAN MIGUEL","AZOGUES","BIBLIÁN","CAÑAR","LA TRONCAL","EL TAMBO","TULCAN","BOLIVAR",
-    "ESPEJO","LATACUNGA","PUJILI","SALCEDO","RIOBAMBA","ALAUSI","MACHALA","ARENILLAS","ATAHUALPA","BALSAS","EL GUABO","HUAQUILLAS",
-    "PASAJE","PIÑAS","PORTOVELO","SANTA ROSA","ZARUMA","ESMERALDAS","ATACAMES","GUAYAQUIL","QUITO","LOJA","CALVAS","CATAMAYO"
+    "CUENCA", "GIRON", "GUALACEO", "NABON", "PAUTE", "PUCARA", "SAN FERNANDO", "SANTA ISABEL", "SIGSIG", "OÑA", "CHORDELEG",
+    "CHILLANES", "GUARANDA", "CHIMBO", "SAN MIGUEL", "AZOGUES", "BIBLIÁN", "CAÑAR", "LA TRONCAL", "EL TAMBO", "TULCAN", "BOLIVAR",
+    "ESPEJO", "LATACUNGA", "PUJILI", "SALCEDO", "RIOBAMBA", "ALAUSI", "MACHALA", "ARENILLAS", "ATAHUALPA", "BALSAS", "EL GUABO", "HUAQUILLAS",
+    "PASAJE", "PIÑAS", "PORTOVELO", "SANTA ROSA", "ZARUMA", "ESMERALDAS", "ATACAMES", "GUAYAQUIL", "QUITO", "LOJA", "CALVAS", "CATAMAYO"
 ]
 
 let controladores = [
-    "HT-200","SW-12"
+    "HT-200", "SW-12"
 ]

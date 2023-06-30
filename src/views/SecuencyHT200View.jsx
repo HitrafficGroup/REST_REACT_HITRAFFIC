@@ -184,7 +184,7 @@ export default function SecuencyHT200View() {
                                         <TableCell key={"ring"} align={'center'} style={{ minWidth: 40 }}>
                                             Ring
                                         </TableCell>
-                                        <TableCell key={"secuencia"} align={'left'} style={{ minWidth: 240 }}>
+                                        <TableCell key={"secuencia"} align={'left'} style={{ minWidth: 120 }}>
                                         Secuencia de Fases
                                         </TableCell>
                                         <TableCell key={"acciones"} align={'left'} style={{ minWidth: 40 }}>
@@ -267,26 +267,6 @@ export default function SecuencyHT200View() {
                                 </TableBody>
                             </Table>
                         </TableContainer>
-
-                        {/* <div className="seq-div">
-                            {secuencias.map((seq, index) => {
-                                return (<div className="seq-container">
-                                    <p key={index}>{seq.id}</p>
-                                    <ul className="seq-list">
-                                        <li className="list" >
-                                            <IconButton aria-label="delete" color="oscuro"  onClick={()=>{configurarSecuencia(seq)}}  >
-                                                <SettingsIcon />
-                                            </IconButton>
-                                        </li>
-                                        {seq.data.map((item, index) => {
-                                            return (
-                                                <li className="list" key={index}>{item.value}</li>
-                                            );
-                                        })}
-                                    </ul>
-                                </div>);
-                            })}
-                        </div> */}
                     </Grid>
                     <Grid item xs={8}>
 
