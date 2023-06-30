@@ -48,10 +48,10 @@ export default function SecuencyHT200View() {
             let aux_data = element.data
             let dictionario = {
                 id: element.id,
-                ring1: aux_data[0],
-                ring2: aux_data[1],
-                ring3: aux_data[2],
-                ring4: aux_data[3]
+                ring1: aux_data[0].filter(item=> item.value !== 0),
+                ring2: aux_data[1].filter(item=> item.value !== 0),
+                ring3: aux_data[2].filter(item=> item.value !== 0),
+                ring4: aux_data[3].filter(item=> item.value !== 0)
             }
             data_formated.push(dictionario)
         });
@@ -90,7 +90,7 @@ export default function SecuencyHT200View() {
         let aux_total = JSON.parse(JSON.stringify(secuencias))
         let aux_seq = JSON.parse(JSON.stringify(seqTarget))
         let formated_seq = JSON.parse(JSON.stringify(currentSeq))
-        for (let i = 0; i <= 16; i++) {
+        for (let i = 0; i <= currentSeq.length; i++) {
             if (formated_seq.length < i) {
                 let custom_data = {
                     id: 'paso-' + i,
@@ -197,7 +197,7 @@ export default function SecuencyHT200View() {
                                         <TableCell align={"center"}>1</TableCell>
                                         <TableCell align={"left"}>
                                             <Stack direction="row" spacing={2}>
-                                                {seqTarget.ring1.filter(item => item.value !== 0).map(item => (
+                                                {seqTarget.ring1.map(item => (
                                                     <div className="seq-item">
                                                         {item.value}
                                                     </div>
@@ -215,7 +215,7 @@ export default function SecuencyHT200View() {
                                         <TableCell align={"center"}>2</TableCell>
                                         <TableCell align={"left"}>
                                             <Stack direction="row" spacing={2}>
-                                                {seqTarget.ring2.filter(item => item.value !== 0).map(item => (
+                                                {seqTarget.ring2.map(item => (
                                                     <div className="seq-item">
                                                         {item.value}
                                                     </div>
@@ -232,7 +232,7 @@ export default function SecuencyHT200View() {
                                         <TableCell align={"center"}>3</TableCell>
                                         <TableCell align={"left"}>
                                             <Stack direction="row" spacing={2}>
-                                                {seqTarget.ring3.filter(item => item.value !== 0).map(item => (
+                                                {seqTarget.ring3.map(item => (
                                                     <div className="seq-item">
                                                         {item.value}
                                                     </div>
@@ -250,7 +250,7 @@ export default function SecuencyHT200View() {
                                         <TableCell align={"center"}>4</TableCell>
                                         <TableCell align={"left"}>
                                             <Stack direction="row" spacing={2}>
-                                                {seqTarget.ring4.filter(item => item.value !== 0).map(item => (
+                                                {seqTarget.ring4.map(item => (
                                                     <div className="seq-item">
                                                         {item.value}
                                                     </div>

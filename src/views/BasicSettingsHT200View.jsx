@@ -128,7 +128,6 @@ export default function BasicSettingsHT200View() {
         setDisabledFlag(true)
     }
 
-
     const eliminarHorario = (__data) => {
        
         let aux_data = JSON.parse(JSON.stringify(planificacion))
@@ -230,8 +229,17 @@ export default function BasicSettingsHT200View() {
                     new_plan.data[i].minute = data_aux[i].minuto;
                 }
             // filtramos los datos con valor 0
-                
-           
+        
+            // let seq_modify = seq_aux
+                let temp_seq  = JSON.parse(JSON.stringify(seq_aux))
+                let seq_modify = temp_seq.map((item)=>{
+                    item.ring1 = item.ring1.filter(item => item.value !== 0 )
+                    item.ring2 = item.ring2.filter(item => item.value !== 0 )
+                    item.ring3 = item.ring3.filter(item => item.value !== 0 )
+                    item.ring4 = item.ring4.filter(item => item.value !== 0 )
+                    return item
+                })
+
                 let split_modify = split_aux.map((item)=>{
                     item.data = item.data.filter(item => item.fase !== 0 )
                     return item
@@ -243,10 +251,11 @@ export default function BasicSettingsHT200View() {
                     item.data = item.data.filter(item => item.action !== 0 )
                     return item
                 })
-          
+              
+                console.log(seq_modify)
             // // generamos las tramas
             let fases_frame = generatePhaseFrame(fases_aux);
-            let seq_frame = generateSeqFrame(seq_aux);
+            let seq_frame = generateSeqFrame(seq_modify);
             let split_frame = generateSplitFrame(split_modify);
             let pattern_frame = generatePatternFrame(pattern_modify);
             let action_frame = generateActionFrame(accion_modify);
@@ -266,7 +275,7 @@ export default function BasicSettingsHT200View() {
             setFlagLoad(false)
             await updateFirebase('planificacion',data_aux)
             await updateFirebase('fases',fases_aux)
-            await updateFirebase('secuencias',seq_aux)
+            await updateFirebase('secuencias',seq_modify)
             await updateFirebase('split',split_modify)
             await updateFirebase('pattern',pattern_modify)
             await updateFirebase('acciones',accion_modify)
@@ -274,7 +283,7 @@ export default function BasicSettingsHT200View() {
             await updateFirebase('channel',channel_aux)
             dispatch(updateParamsHT200({target:'planificacion',data:data_aux}))
             dispatch(updateParamsHT200({target:'fases',data:fases_aux}))
-            dispatch(updateParamsHT200({target:'secuencias',data:seq_aux}))
+            dispatch(updateParamsHT200({target:'secuencias',data:seq_modify}))
             dispatch(updateParamsHT200({target:'split',data:split_modify}))
             dispatch(updateParamsHT200({target:'pattern',data:pattern_modify}))
             dispatch(updateParamsHT200({target:'acciones',data:accion_modify}))
@@ -358,13 +367,11 @@ export default function BasicSettingsHT200View() {
                                                 align={"center"}
                                                 style={{ minWidth: 30 }}
                                             >
-                                                Tiempo
+                                                Duracion
                                             </TableCell>
 
                                             <TableCell
-                                             
                                                 align={"center"}
-
                                             >
                                             </TableCell>
 
@@ -395,9 +402,9 @@ export default function BasicSettingsHT200View() {
                                                         <TableCell align={"center"}>
                                                             <TextField
                                                                 id="outlined-number"
-                                                                label="Tiempo"
+                                                                label="Duracion"
                                                                 type="number"
-                                                               
+                                                                defaultValue={10}
                                                                 sx={{ width: 100 }}
                                                                 onChange={(event) => { row.duracion = parseInt(event.target.value) }}
                                                                 size="small"

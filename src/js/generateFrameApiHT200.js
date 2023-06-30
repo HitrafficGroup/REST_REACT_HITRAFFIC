@@ -41,22 +41,39 @@ function generateSeqFrame(secuencias){
                     if (x === 0) {
                         data_formated.push(1)
                         for (let y = 0; y < 16; y++) {
+                            if(seq_target.ring1.length > y){
                             data_formated.push(seq_target.ring1[y].value)
+                            }
+                            else{
+                                data_formated.push(0)
+                            }
                         }
                     } else if(x=== 1) {
                         data_formated.push(2)
                         for (let y = 0; y < 16; y++) {
-                            data_formated.push(seq_target.ring2[y].value)
+                            if(seq_target.ring2.length > y){
+                                data_formated.push(seq_target.ring2[y].value)
+                            }else{
+                                data_formated.push(0)
+                            }
                         }
                     } else if(x=== 2) {
                         data_formated.push(3)
                         for (let y = 0; y < 16; y++) {
+                            if(seq_target.ring3.length > y){
                             data_formated.push(seq_target.ring3[y].value)
+                            }else{
+                                data_formated.push(0)
+                            }
                         }
                     }else{
                         data_formated.push(4)
                         for (let y = 0; y < 16; y++) {
+                            if(seq_target.ring4.length > y){
                             data_formated.push(seq_target.ring4[y].value)
+                            }else{
+                                data_formated.push(0)
+                            }
                         }
                     }
                 }

@@ -33,7 +33,7 @@ import '../css/HomeView.css';
 import '../css/beautifulCard.scss';
 import Swal from 'sweetalert2';
 import RelogActual from "../components/RelogActual";
-import { getTimeHT200,PostTimeHT200 } from '../js/apiFunctionsHT200';
+import { getTimeHT200,PostTimeHT200,getWorkStateHT200 } from '../js/apiFunctionsHT200';
 const InitialTime = {
     day: "00",
     hours: "00",
@@ -447,129 +447,136 @@ export default function HomeView() {
         return new_horarios
     }
     
-    const parametrosCorriendo = () => {
-        let datos_controlador = JSON.parse(JSON.stringify(controlerState))
+    const parametrosCorriendo = async() => {
+        let data = await getWorkStateHT200(controlerState.ip)
+        let splits_aux = controlerState.split.filter(item=> item.id === "split-"+data.split)
+        let sequency_aux = controlerState.secuencias.filter(item=> item.id === "seq-"+data.seq)
+       
+        console.log(splits_aux)
+        console.log(sequency_aux)
+        // console.log("parametros corriendo")
+        // let datos_controlador = JSON.parse(JSON.stringify(controlerState))
 
-        let dia_ordinario = datos_controlador.horario_ordinario
-        let parametros_operativos = datos_controlador.otros_parametros
-        tiempo_amarillo.current = parseInt(parametros_operativos.tiempo_amarillo_vehicular)
+        // let dia_ordinario = datos_controlador.horario_ordinario
+        // let parametros_operativos = datos_controlador.otros_parametros
+        // tiempo_amarillo.current = parseInt(parametros_operativos.tiempo_amarillo_vehicular)
 
-        let dias_ordenados = JSON.parse(JSON.stringify(dia_ordinario))
+        // let dias_ordenados = JSON.parse(JSON.stringify(dia_ordinario))
 
-        dias_ordenados.sort(function (a, b) {
-            let a_aux = parseInt(a.horas)
-            let a_aux2 = parseInt(a.minutos)
-            let b_aux = parseInt(b.horas)
-            let b_aux2 = parseInt(b.minutos)
-            a = a_aux * 100 + a_aux2
-            b = b_aux * 100 + b_aux2
-            return b - a
-        })
-        let dias_ordenados_filtrados = dias_ordenados.filter(item => item.mod !== 0)
-        let horarios_actuales = calcularHorario(dias_ordenados_filtrados)
-        let horario_activo = horarios_actuales.actual
-        let horario_siguiente = horarios_actuales.siguiente
-        let modo = returnModo(horario_activo.mod)
-        modoControlador.current = modo
-        let plan_activo = horario_activo.plan
-        let planname = `plan_${plan_activo}`
-        let plan_filter = datos_controlador[planname]
-        var pasos_habilitados = plan_filter.filter((item) => {
-            if (item.duracion > 0) {
-                return item;
-            } else {
-                return null;
-            }
-        })
-        let fases = datos_controlador.fases
-        var pasos_temp = JSON.parse(JSON.stringify(pasos_habilitados))
-        var fases_pasos = pasos_temp.map((item) => {
-            let aux2 = fases.find(_item => _item.faseNum === item.fase)
-            let obj_mod = {
-                duracion: item.duracion,
-                fase: item.fase,
-                grupos: item.grupos,
-                name: item.id
-            }
-            let grupos_aux = aux2.grupos
-            if (modo === 'Destello') {
-                grupos_aux = aux2.grupos.map(item => ({
-                    colorDescripcion: "amarillo",
-                    faseNum: item.faseNum,
-                    id: item.id,
-                    grupoNum: item.grupoNum,
-                    color: item.color
-                }))
-                obj_mod['grupos'] = grupos_aux
+        // dias_ordenados.sort(function (a, b) {
+        //     let a_aux = parseInt(a.horas)
+        //     let a_aux2 = parseInt(a.minutos)
+        //     let b_aux = parseInt(b.horas)
+        //     let b_aux2 = parseInt(b.minutos)
+        //     a = a_aux * 100 + a_aux2
+        //     b = b_aux * 100 + b_aux2
+        //     return b - a
+        // })
+        // let dias_ordenados_filtrados = dias_ordenados.filter(item => item.mod !== 0)
+        // let horarios_actuales = calcularHorario(dias_ordenados_filtrados)
+        // let horario_activo = horarios_actuales.actual
+        // let horario_siguiente = horarios_actuales.siguiente
+        // let modo = returnModo(horario_activo.mod)
+        // modoControlador.current = modo
+        // let plan_activo = horario_activo.plan
+        // let planname = `plan_${plan_activo}`
+        // let plan_filter = datos_controlador[planname]
+        // var pasos_habilitados = plan_filter.filter((item) => {
+        //     if (item.duracion > 0) {
+        //         return item;
+        //     } else {
+        //         return null;
+        //     }
+        // })
+        // let fases = datos_controlador.fases
+        // var pasos_temp = JSON.parse(JSON.stringify(pasos_habilitados))
+        // var fases_pasos = pasos_temp.map((item) => {
+        //     let aux2 = fases.find(_item => _item.faseNum === item.fase)
+        //     let obj_mod = {
+        //         duracion: item.duracion,
+        //         fase: item.fase,
+        //         grupos: item.grupos,
+        //         name: item.id
+        //     }
+        //     let grupos_aux = aux2.grupos
+        //     if (modo === 'Destello') {
+        //         grupos_aux = aux2.grupos.map(item => ({
+        //             colorDescripcion: "amarillo",
+        //             faseNum: item.faseNum,
+        //             id: item.id,
+        //             grupoNum: item.grupoNum,
+        //             color: item.color
+        //         }))
+        //         obj_mod['grupos'] = grupos_aux
 
-            } else if (modo === 'Todo en Rojo') {
-                grupos_aux = aux2.grupos.map(item => ({
-                    colorDescripcion: "rojo",
-                    faseNum: item.faseNum,
-                    id: item.id,
-                    grupoNum: item.grupoNum,
-                    color: item.color
-                }))
-                obj_mod['grupos'] = grupos_aux
-            }
-            else {
+        //     } else if (modo === 'Todo en Rojo') {
+        //         grupos_aux = aux2.grupos.map(item => ({
+        //             colorDescripcion: "rojo",
+        //             faseNum: item.faseNum,
+        //             id: item.id,
+        //             grupoNum: item.grupoNum,
+        //             color: item.color
+        //         }))
+        //         obj_mod['grupos'] = grupos_aux
+        //     }
+        //     else {
 
-                obj_mod['grupos'] = grupos_aux
-            }
-            return obj_mod
+        //         obj_mod['grupos'] = grupos_aux
+        //     }
+        //     return obj_mod
 
-        })
-        let datos_amarillo = []
-        fases_pasos_aux.current = fases_pasos
-        //console.log("todo bien hasta aca", fases_pasos)
-        //esta parte del codigo se encarga de animar los ciclos en amarillo
-        if (tiempo_amarillo.current > 0 && modo === "Tiempo Fijo") {
-            let fases_pasos_aux2 = JSON.parse(JSON.stringify(fases_pasos))
-            let fases_pasos_aux = JSON.parse(JSON.stringify(fases_pasos))
-            let aux_copias = fases_pasos.length * 2
-            let nuevos_pasos = fases_pasos_aux.map((item) => {
-                let grupos_aux = item.grupos.map(item2 => {
-                    let grupo_temp = {}
-                    if (item2.colorDescripcion === "rojo") {
-                        grupo_temp = { faseNum: item2.faseNum, colorDescripcion: item2.colorDescripcion, color: item2.color, grupoNum: item2.grupoNum, id: item2.id }
-                    } else {
-                        grupo_temp = { faseNum: item2.faseNum, colorDescripcion: "amarillo", color: 2, grupoNum: item2.grupoNum, id: item2.id }
-                    }
-                    return grupo_temp
-                })
-                let paso_editado = {
-                    duracion: tiempo_amarillo.current,
-                    fase: item.fase,
-                    grupos: grupos_aux,
-                    name: item.name,
-                }
-                return paso_editado
-            })
+        // })
+        // let datos_amarillo = []
+        // fases_pasos_aux.current = fases_pasos
+        // //console.log("todo bien hasta aca", fases_pasos)
+        // //esta parte del codigo se encarga de animar los ciclos en amarillo
+        // if (tiempo_amarillo.current > 0 && modo === "Tiempo Fijo") {
+        //     let fases_pasos_aux2 = JSON.parse(JSON.stringify(fases_pasos))
+        //     let fases_pasos_aux = JSON.parse(JSON.stringify(fases_pasos))
+        //     let aux_copias = fases_pasos.length * 2
+        //     let nuevos_pasos = fases_pasos_aux.map((item) => {
+        //         let grupos_aux = item.grupos.map(item2 => {
+        //             let grupo_temp = {}
+        //             if (item2.colorDescripcion === "rojo") {
+        //                 grupo_temp = { faseNum: item2.faseNum, colorDescripcion: item2.colorDescripcion, color: item2.color, grupoNum: item2.grupoNum, id: item2.id }
+        //             } else {
+        //                 grupo_temp = { faseNum: item2.faseNum, colorDescripcion: "amarillo", color: 2, grupoNum: item2.grupoNum, id: item2.id }
+        //             }
+        //             return grupo_temp
+        //         })
+        //         let paso_editado = {
+        //             duracion: tiempo_amarillo.current,
+        //             fase: item.fase,
+        //             grupos: grupos_aux,
+        //             name: item.name,
+        //         }
+        //         return paso_editado
+        //     })
 
-            let nuevos_pasos_2 = fases_pasos_aux2.map(item => (
-                {
-                    duracion: item.duracion - tiempo_amarillo.current,
-                    fase: item.fase,
-                    grupos: item.grupos,
-                    name: item.name,
-                }
-            ))
-            let index_aux = 0
-            let index_aux2 = 0
-            for (let i = 0; i < aux_copias; i++) {
-                let aux_resi = i % 2
-                if (aux_resi !== 0) {
-                    datos_amarillo.push(nuevos_pasos[index_aux])
-                    index_aux += 1
-                } else {
-                    datos_amarillo.push(nuevos_pasos_2[index_aux2])
-                    index_aux2 += 1
-                }
-            }
-            datos_amarillo.map((item, index) => (item.name = `Paso ${index + 1}`))
-        }
+        //     let nuevos_pasos_2 = fases_pasos_aux2.map(item => (
+        //         {
+        //             duracion: item.duracion - tiempo_amarillo.current,
+        //             fase: item.fase,
+        //             grupos: item.grupos,
+        //             name: item.name,
+        //         }
+        //     ))
+        //     let index_aux = 0
+        //     let index_aux2 = 0
+        //     for (let i = 0; i < aux_copias; i++) {
+        //         let aux_resi = i % 2
+        //         if (aux_resi !== 0) {
+        //             datos_amarillo.push(nuevos_pasos[index_aux])
+        //             index_aux += 1
+        //         } else {
+        //             datos_amarillo.push(nuevos_pasos_2[index_aux2])
+        //             index_aux2 += 1
+        //         }
+        //     }
+        //     datos_amarillo.map((item, index) => (item.name = `Paso ${index + 1}`))
+        // }
 
-        datos_amarillo_aux.current = datos_amarillo
+        // datos_amarillo_aux.current = datos_amarillo
         // let resumen = {
         //     horas: horario_activo.horas,
         //     minutos: horario_activo.minutos,
@@ -579,27 +586,27 @@ export default function HomeView() {
         // }
         // dispatch(setResumen(resumen));
 
-        timer1.current = 0
+        // timer1.current = 0
 
         // dispatch(setPasosActivos(fases_pasos));
         // // aqui haremos el calculo para los indicadores 
 
         // //setPasosActivos(fases_pasos)
 
-        let segundos_pasos = []
-        if (horarios_actuales.flag) {
-            const fecha = new Date()
-            let horas_1 = parseInt(horario_siguiente.horas)
-            if (fecha.getHours() >= horas_1) {
-                segundos_pasos = devolverSegundosPaso(horario_activo, { minutos: 0, horas: 24 })
-            } else {
-                segundos_pasos = devolverSegundosPaso({ minutos: 0, horas: 0, horario_siguiente })
-            }
-        } else {
-            segundos_pasos = devolverSegundosPaso(horario_activo, horario_siguiente)
-        }
-        informacionDelIndicador()
-        calculoEjecucion.current = segundos_pasos
+        // let segundos_pasos = []
+        // if (horarios_actuales.flag) {
+        //     const fecha = new Date()
+        //     let horas_1 = parseInt(horario_siguiente.horas)
+        //     if (fecha.getHours() >= horas_1) {
+        //         segundos_pasos = devolverSegundosPaso(horario_activo, { minutos: 0, horas: 24 })
+        //     } else {
+        //         segundos_pasos = devolverSegundosPaso({ minutos: 0, horas: 0, horario_siguiente })
+        //     }
+        // } else {
+        //     segundos_pasos = devolverSegundosPaso(horario_activo, horario_siguiente)
+        // }
+        // informacionDelIndicador()
+        // calculoEjecucion.current = segundos_pasos
     }
     const eliminarArea = async (_data) => {
         Swal.fire({
@@ -900,9 +907,12 @@ export default function HomeView() {
                                             <Polygon positions={[item.points[0].pos, item.points[1].pos, item.points[2].pos, item.points[3].pos]} />
                                         </FeatureGroup>
                                     ))}
-                                    <Fab color={simulacion.current ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={iniciarSimulacion}>
+                                    <Fab color={simulacion.current ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={parametrosCorriendo}>
                                         {simulacion.current ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
                                     </Fab>
+                                    {/* <Fab color={simulacion.current ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={iniciarSimulacion}>
+                                        {simulacion.current ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
+                                    </Fab> */}
                                     <Fab color='verde2' disabled={btnAgregar} sx={{ position: "absolute", bottom: 150, right: 30 }} onClick={() => { obtenerCoordenadas() }} >
                                         <CheckSharpIcon />
                                     </Fab>

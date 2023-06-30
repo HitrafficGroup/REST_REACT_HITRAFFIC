@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-const BASE_HT200 = 'https://www.hitraffic-group.com';
-// const BASE_HT200 = 'http://127.0.0.1:8000';
+// const BASE_HT200 = 'https://www.hitraffic-group.com';
+const BASE_HT200 = 'http://127.0.0.1:8000';
 
 
 
@@ -494,6 +494,23 @@ async function getRegErrores(ip) {
 	return res
 }
 
+async function getWorkStateHT200(ip) {
+	var res;
+	await axios.get(`${BASE_HT200}/rest/getWorkStateHT200?ip=${ip}`).then(response => {
+		res = response.data
+
+	}).catch(function (error) {
+		console.log(res);
+		Swal.fire({
+			icon: 'error',
+			title: 'Error de Conexión',
+			text: `${error}`,
+
+		  })
+	})
+	return res
+}
+
 
 export { 
 	getUnitHT200,PostUnitHT200,
@@ -505,6 +522,6 @@ export {
 	getPlanHT200,PostPlanHT200,
 	getHorarioHT200,PostHorariosHT200,
 	getChannelHT200,PostChannelHT200,
-	getTimeHT200,PostTimeHT200,setBasicPlan,getRegErrores,setClonacion
+	getTimeHT200,PostTimeHT200,setBasicPlan,getRegErrores,setClonacion,getWorkStateHT200
 
 }
