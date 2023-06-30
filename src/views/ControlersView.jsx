@@ -34,10 +34,11 @@ import InfoIcon from '@mui/icons-material/Info';
 import Autocomplete from '@mui/material/Autocomplete';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Backdrop from '@mui/material/Backdrop';
-import LogoutIcon from '@mui/icons-material/Logout';
 import CircularProgress from '@mui/material/CircularProgress';
-
-
+//
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Avatar from '@mui/material/Avatar';
 
 const dataTest = [
     { nombre: 'nombre 1', ip: '192.168.1.2', mac: 'h3:ft:a2:l2', canton: 'cuenca', estado: true },
@@ -78,7 +79,19 @@ export default function ControlersView() {
 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+        navigate('/');
+    };
+
+
+
     const handleChangePage = (event, newPage) => {
       setPage(newPage);
     };
@@ -203,10 +216,7 @@ export default function ControlersView() {
         }
 
     }
-    //Funciones de los botones
-    const cerrarSesion = () => {
-        navigate('/');
-    }
+
     //funciones de la tabla
 
     const dataFromFirebase = async () => {
@@ -242,6 +252,34 @@ export default function ControlersView() {
             }
         })
     }
+    function stringToColor(string) {
+        let hash = 0;
+        let i;
+
+        /* eslint-disable no-bitwise */
+        for (i = 0; i < string.length; i += 1) {
+            hash = string.charCodeAt(i) + ((hash << 5) - hash);
+        }
+
+        let color = '#';
+
+        for (i = 0; i < 3; i += 1) {
+            const value = (hash >> (i * 8)) & 0xff;
+            color += `00${value.toString(16)}`.slice(-2);
+        }
+        /* eslint-enable no-bitwise */
+
+        return color;
+    }
+
+    function stringAvatar(name) {
+        return {
+            sx: {
+                bgcolor: stringToColor(name),
+            },
+            children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+        };
+    }
     // CON RESPECTO A LA DISTANCIA DEL SERVIDOR Y LA INFORMACION TRANSMITIDA HACIA EL DISPOSITIVO DE BORDE DEL CONTROLADOR
     // LA INFORMACION PODRIA LLEGAR MAL DEBIDO AL GRAN TRAYECTO QUE DEBE REALIZAR PARA LLEGAR AL CONTROLADOR.
     // SEGUNDO SI SE QUISIERA IMPLEMENTAR EL SISTEMA DE CAMARAS VA SER MAS COMPLEJO IMPLEMENTARLO EN UN ROUTER MIKROTIK
@@ -250,16 +288,42 @@ export default function ControlersView() {
     }, []);
     return (
         <>
-            <AppBar position="static" sx={{ backgroundColor: "#34495E" }}>
+            <AppBar position="static" sx={{ backgroundColor: "#273444" }}>
 
                 <Toolbar>
                     <Typography sx={{ display: { md: 'flex' }, flexGrow: 1 }} variant="h6" component="div">
                         Listado de Dispositivos
                     </Typography>
-                    <Typography sx={{ display: { xs: 'none', md: 'flex' } }} variant="h6" component="div">
-                        Bienvenido {userState.name} {userState.lastname} !
-                    </Typography>
-                    <Button sx={{ marginLeft: 2 }} variant="contained" color='error' onClick={cerrarSesion} endIcon={<LogoutIcon />} >SALIR</Button>
+                   
+                    <Stack direction="row" spacing={2}>
+                        <div>
+                            <Button
+                                id="basic-button"
+                                aria-controls={open ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? 'true' : undefined}
+                                onClick={handleClick}
+                            >
+                                <Avatar {...stringAvatar(`${userState.name} ${userState.lastname}`)} />
+                            </Button>
+
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                <MenuItem onClick={handleClose}>My account</MenuItem>
+                                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                            </Menu>
+                        </div>
+
+                    </Stack>
+                   
                 </Toolbar>
             </AppBar>
             <Container maxWidth="lg" sx={{ paddingTop: 3 }}>

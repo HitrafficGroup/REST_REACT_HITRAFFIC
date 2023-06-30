@@ -20,10 +20,16 @@ import ResumenMenu from '../components/content/ResumenMenu';
 import SalirMenu from '../components/content/SalirMenu';
 import HomeMenu from './content/HomeMenu';
 import { useNavigate } from 'react-router-dom';
-import LogoutIcon from '@mui/icons-material/Logout';
+import HomeIcon from '@mui/icons-material/Home';
 import GruposMenu from './content/GruposMenu.jsx'
 import Button from '@mui/material/Button';
 import { useSelector } from 'react-redux';
+import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+//
+import Avatar from '@mui/material/Avatar';
+import Stack from '@mui/material/Stack';
 import "../css/ButtonAppBar.css"
 export default function ButtonAppBar(props) {
 
@@ -34,7 +40,15 @@ export default function ButtonAppBar(props) {
 
   const menuState = useSelector(state => state.menu);
   const userState = useSelector(state => state.auth);
-
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+      setAnchorEl(null);
+      navigate('/');
+  };
   const menuData = [
     {
       child: <SalirMenu />,
@@ -104,10 +118,35 @@ export default function ButtonAppBar(props) {
 
     setState({ ...state, [anchor]: open });
   };
-  const cerrarSesion = ()=>{
-    navigate('/');
+
+function stringToColor(string) {
+  let hash = 0;
+  let i;
+
+  /* eslint-disable no-bitwise */
+  for (i = 0; i < string.length; i += 1) {
+      hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = '#';
+
+  for (i = 0; i < 3; i += 1) {
+      const value = (hash >> (i * 8)) & 0xff;
+      color += `00${value.toString(16)}`.slice(-2);
+  }
+  /* eslint-enable no-bitwise */
+
+  return color;
 }
-  
+
+function stringAvatar(name) {
+  return {
+      sx: {
+          bgcolor: stringToColor(name),
+      },
+      children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+  };
+}
 
   //drawer a mostrar
   const list = (anchor) => (
@@ -124,7 +163,7 @@ export default function ButtonAppBar(props) {
 
   return (
     <>
-      <AppBar  style={{height:"10vh"}} position="static" sx={{ backgroundColor: "#34495E" }}>
+      <AppBar  style={{height:"10vh"}} position="static" sx={{ backgroundColor: "#273444" }}>
 
         <Toolbar>
 
@@ -141,10 +180,40 @@ export default function ButtonAppBar(props) {
           <Typography sx={{ display: { md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
             {menuState.menu}
           </Typography>
-          <Typography  sx={{ display: { xs: 'none', md: 'flex' } }}variant="h6" component="div">
-                   Bienvenido {userState.name} {userState.lastname} !
-                </Typography>
-          <Button sx={{marginLeft:2}} variant="contained" color='error' onClick={cerrarSesion} endIcon={<LogoutIcon />} >SALIR</Button>
+          <IconButton aria-label="delete" color="verde2" size="medium">
+                        <HomeIcon fontSize="inherit" />
+                    </IconButton>
+                    <IconButton aria-label="delete" color="anaranjado1" size="medium">
+                        <SettingsRemoteIcon fontSize="inherit" />
+                    </IconButton>
+                    <Stack direction="row" spacing={2}>
+                        <div>
+                            <Button
+                                id="basic-button"
+                                aria-controls={open ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? 'true' : undefined}
+                                onClick={handleClick}
+                            >
+                                <Avatar {...stringAvatar(`${userState.name} ${userState.lastname}`)} />
+                            </Button>
+
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                <MenuItem onClick={handleClose}>My account</MenuItem>
+                                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                            </Menu>
+                        </div>
+
+                    </Stack>
         </Toolbar>
       </AppBar>
       <div style={{height:"90vh",overflowY:"scroll" }}>

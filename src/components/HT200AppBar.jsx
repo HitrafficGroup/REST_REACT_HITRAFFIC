@@ -1,5 +1,5 @@
 import AppBar from '@mui/material/AppBar';
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -8,14 +8,16 @@ import List from '@mui/material/List';
 import ListSubheader from '@mui/material/ListSubheader';
 import Drawer from '@mui/material/Drawer';
 import { useNavigate } from 'react-router-dom';
-import LogoutIcon from '@mui/icons-material/Logout';
 import Button from '@mui/material/Button';
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import "../css/ButtonAppBar.css"
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import SettingsIcon from '@mui/icons-material/Settings';
+//
+import Avatar from '@mui/material/Avatar';
+import Stack from '@mui/material/Stack';
 //iconos
 import FlagIcon from '@mui/icons-material/Flag';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
@@ -32,172 +34,239 @@ import HomeIcon from '@mui/icons-material/Home';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import { resetParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
 import { setNameMenu } from '../features/menu/menuSlice';
-export default  function HT200AppBar(){
-    const [drawerHT,setDrawerHT] = useState({left:false});
+import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+export default function HT200AppBar() {
+    const [drawerHT, setDrawerHT] = useState({ left: false });
     const navigate = useNavigate(); // hook para navegar entre urls o vistas
     const dispatch = useDispatch();
     const menuState = useSelector(state => state.menu);
     const userState = useSelector(state => state.auth);
- 
-      // funcion para hacer funcionar el drawer
-      const toggleDrawer = (anchor, open) => (event) => {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+        navigate('/');
+    };
+
+    // funcion para hacer funcionar el drawer
+    const toggleDrawer = (anchor, open) => (event) => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-          return;
+            return;
         }
         setDrawerHT({ ...drawerHT, [anchor]: open });
-      };
-      const cerrarSesion = ()=>{
-        navigate('/');
+    };
+ 
+    const cambiarControlador = () => {
+        dispatch(resetParamsHT200())
+        navigate('/equipos');
     }
-    const cambiarControlador = ()=>{
-      dispatch(resetParamsHT200())
-      navigate('/equipos');
+    const cambiarVista = (__name, __target) => {
+        dispatch(setNameMenu(__name))
+        navigate(__target);
     }
-    const cambiarVista =(__name,__target)=>{
-      dispatch(setNameMenu(__name))
-      navigate(__target);
+    function stringToColor(string) {
+        let hash = 0;
+        let i;
+
+        /* eslint-disable no-bitwise */
+        for (i = 0; i < string.length; i += 1) {
+            hash = string.charCodeAt(i) + ((hash << 5) - hash);
+        }
+
+        let color = '#';
+
+        for (i = 0; i < 3; i += 1) {
+            const value = (hash >> (i * 8)) & 0xff;
+            color += `00${value.toString(16)}`.slice(-2);
+        }
+        /* eslint-enable no-bitwise */
+
+        return color;
     }
-    return(
-    <>
-        <AppBar position="static" sx={{ backgroundColor: "#34495E" }}>
-            <Toolbar>
-            <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                onClick={toggleDrawer('left', true)}
-                sx={{ mr: 2 }}
+
+    function stringAvatar(name) {
+        return {
+            sx: {
+                bgcolor: stringToColor(name),
+            },
+            children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+        };
+    }
+    return (
+        <>
+            <AppBar position="static" sx={{ backgroundColor: "#273444" }}>
+                <Toolbar>
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        onClick={toggleDrawer('left', true)}
+                        sx={{ mr: 2 }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography sx={{ display: { md: 'flex' }, flexGrow: 1 }} variant="h6" component="div">
+                        {menuState.menu}
+                    </Typography>
+                    <IconButton aria-label="delete" color="verde2" size="medium">
+                        <HomeIcon fontSize="inherit" />
+                    </IconButton>
+                    <IconButton aria-label="delete" color="anaranjado1" size="medium">
+                        <SettingsRemoteIcon fontSize="inherit" />
+                    </IconButton>
+                    <Stack direction="row" spacing={2}>
+                        <div>
+                            <Button
+                                id="basic-button"
+                                aria-controls={open ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? 'true' : undefined}
+                                onClick={handleClick}
+                            >
+                                <Avatar {...stringAvatar(`${userState.name} ${userState.lastname}`)} />
+                            </Button>
+
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                <MenuItem onClick={handleClose}>My account</MenuItem>
+                                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                            </Menu>
+                        </div>
+
+                    </Stack>
+                </Toolbar>
+            </AppBar>
+            <Drawer
+                anchor={'left'}
+                open={drawerHT['left']}
+                onClose={toggleDrawer('left', false)}
             >
-                <MenuIcon />
-            </IconButton>
-            <Typography sx={{ display: { md: 'flex' },flexGrow: 1 }} variant="h6" component="div">
-            {menuState.menu} 
-          </Typography>
-            <Typography  sx={{ display: { xs: 'none', md: 'flex' } }}variant="h6" component="div">
-                   Bienvenido {userState.name} {userState.lastname} !
-                </Typography>
-          <Button sx={{marginLeft:2}} variant="contained" color='error' onClick={cerrarSesion} endIcon={<LogoutIcon />} >SALIR</Button>
-            </Toolbar>
-        </AppBar>
-        <Drawer
-        anchor={'left'}
-        open={drawerHT['left']}
-        onClose={toggleDrawer('left', false)}
-      >
-        
-        <List
-          sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-          component="nav"
-          aria-labelledby="nested-list-subheader"
-          subheader={
-            <ListSubheader component="div" id="nested-list-subheader">
-              Configuracion Basica
-          </ListSubheader>
-          }
-        >
-             <ListItemButton onClick={cambiarControlador} >
+
+                <List
+                    sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                    component="nav"
+                    aria-labelledby="nested-list-subheader"
+                    subheader={
+                        <ListSubheader component="div" id="nested-list-subheader">
+                            Configuracion Basica
+                        </ListSubheader>
+                    }
+                >
+                    <ListItemButton onClick={cambiarControlador} >
                         <ListItemIcon>
                             <MenuOpenIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Controladores"/>
-            </ListItemButton>
-            <ListItemButton onClick={()=>{cambiarVista('Dashboard Hitraffic','home')}} >
+                        <ListItemText primary="Controladores" />
+                    </ListItemButton>
+                    <ListItemButton onClick={() => { cambiarVista('Dashboard Hitraffic', 'home') }} >
                         <ListItemIcon>
                             <HomeIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Home"/>
-            </ListItemButton>
-            <ListItemButton onClick={()=>{cambiarVista('Configuracion Inicial','unit')}} >
+                        <ListItemText primary="Home" />
+                    </ListItemButton>
+                    <ListItemButton onClick={() => { cambiarVista('Configuracion Inicial', 'unit') }} >
                         <ListItemIcon>
                             <FlagIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Unit"/>
-            </ListItemButton>
-            <ListItemButton onClick={()=>{cambiarVista('Configuracion Basica','config')}} >
+                        <ListItemText primary="Unit" />
+                    </ListItemButton>
+                    <ListItemButton onClick={() => { cambiarVista('Configuracion Basica', 'config') }} >
                         <ListItemIcon>
                             <SettingsIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Config"/>
-            </ListItemButton>
-            <ListItemButton onClick={()=>{cambiarVista('Clonacion de Equipos','clonacion')}} >
+                        <ListItemText primary="Config" />
+                    </ListItemButton>
+                    <ListItemButton onClick={() => { cambiarVista('Clonacion de Equipos', 'clonacion') }} >
                         <ListItemIcon>
                             <FileCopyIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Clonacion"/>
-            </ListItemButton>
-            <ListItemButton onClick={()=>{cambiarVista('Registro de Errores','errores')}} >
+                        <ListItemText primary="Clonacion" />
+                    </ListItemButton>
+                    <ListItemButton onClick={() => { cambiarVista('Registro de Errores', 'errores') }} >
                         <ListItemIcon>
                             <BugReportIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Registro Errores"/>
-            </ListItemButton>
-            </List>
-            <List
-          sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-          component="nav"
-          aria-labelledby="nested-list-subheader"
-          subheader={
-            <ListSubheader component="div" id="nested-list-subheader">
-            Configuracion Avanzada
-          </ListSubheader>
-          }
-        >
-           
-            <ListItemButton onClick={()=>{cambiarVista('Prgramacion de Fases','fases')}} >
+                        <ListItemText primary="Registro Errores" />
+                    </ListItemButton>
+                </List>
+                <List
+                    sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                    component="nav"
+                    aria-labelledby="nested-list-subheader"
+                    subheader={
+                        <ListSubheader component="div" id="nested-list-subheader">
+                            Configuracion Avanzada
+                        </ListSubheader>
+                    }
+                >
+                    <ListItemButton onClick={() => { cambiarVista('Prgramacion de Fases', 'fases') }} >
                         <ListItemIcon>
                             <SsidChartIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Fases"/>
-            </ListItemButton>
-            <ListItemButton onClick={()=>{cambiarVista('Programacion de Secuencias','sequency')}} >
+                        <ListItemText primary="Fases" />
+                    </ListItemButton>
+                    <ListItemButton onClick={() => { cambiarVista('Programacion de Secuencias', 'sequency') }} >
                         <ListItemIcon>
                             <AnimationIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Secuencias"/>
-            </ListItemButton>
+                        <ListItemText primary="Secuencias" />
+                    </ListItemButton>
 
-            <ListItemButton onClick={()=>{cambiarVista('Programacion de Split','split')}} >
+                    <ListItemButton onClick={() => { cambiarVista('Programacion de Split', 'split') }} >
                         <ListItemIcon>
                             <LoopIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Ciclo"/>
-            </ListItemButton>
-            <ListItemButton onClick={()=>{cambiarVista('Programacion de pattern','pattern')}} >
+                        <ListItemText primary="Ciclo" />
+                    </ListItemButton>
+                    <ListItemButton onClick={() => { cambiarVista('Programacion de pattern', 'pattern') }} >
                         <ListItemIcon>
                             <PatternIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Pattern"/>
-            </ListItemButton>
-            <ListItemButton onClick={()=>{cambiarVista('Programacion de accion','action')}} >
+                        <ListItemText primary="Pattern" />
+                    </ListItemButton>
+                    <ListItemButton onClick={() => { cambiarVista('Programacion de accion', 'action') }} >
                         <ListItemIcon>
                             <SportsMartialArtsIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Action"/>
-            </ListItemButton>
-            <ListItemButton onClick={()=>{cambiarVista('Programacion de plan','plan')}} >
+                        <ListItemText primary="Action" />
+                    </ListItemButton>
+                    <ListItemButton onClick={() => { cambiarVista('Programacion de plan', 'plan') }} >
                         <ListItemIcon>
                             <BallotIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Plan"/>
-            </ListItemButton>
-            <ListItemButton onClick={()=>{cambiarVista('Programacion de Horario','horario')}} >
+                        <ListItemText primary="Plan" />
+                    </ListItemButton>
+                    <ListItemButton onClick={() => { cambiarVista('Programacion de Horario', 'horario') }} >
                         <ListItemIcon>
                             <ScheduleIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="Horario"/>
-            </ListItemButton>
-            <ListItemButton onClick={()=>{cambiarVista('Programacion de Channel','channel')}} >
+                        <ListItemText primary="Horario" />
+                    </ListItemButton>
+                    <ListItemButton onClick={() => { cambiarVista('Programacion de Channel', 'channel') }} >
                         <ListItemIcon>
                             <WifiChannelIcon fontSize='large' />
                         </ListItemIcon>
-                        <ListItemText primary="channel"/>
-            </ListItemButton>
-         
-         
-        </List>
+                        <ListItemText primary="channel" />
+                    </ListItemButton>
 
-      </Drawer>
-    </>
+
+                </List>
+
+            </Drawer>
+        </>
     );
 }
