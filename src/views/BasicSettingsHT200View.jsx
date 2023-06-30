@@ -229,16 +229,30 @@ export default function BasicSettingsHT200View() {
                     new_plan.data[i].hour = data_aux[i].hora;
                     new_plan.data[i].minute = data_aux[i].minuto;
                 }
-         
-            // generamos las tramas
+            // filtramos los datos con valor 0
+                
+           
+                let split_modify = split_aux.map((item)=>{
+                    item.data = item.data.filter(item => item.fase !== 0 )
+                    return item
+                })
+                let pattern_modify = pattern_aux.filter(item=> item.number !==0)
+                let accion_modify = accion_aux.filter(item=> item.number !==0)
+
+                let plan_modify = plan_aux.map((item)=>{
+                    item.data = item.data.filter(item => item.action !== 0 )
+                    return item
+                })
+          
+            // // generamos las tramas
             let fases_frame = generatePhaseFrame(fases_aux);
             let seq_frame = generateSeqFrame(seq_aux);
-            let split_frame = generateSplitFrame(split_aux);
-            let pattern_frame = generatePatternFrame(pattern_aux);
-            let action_frame = generateActionFrame(accion_aux);
-            let plan_frame =  generatePlanFrame(plan_aux)
-            let channel_frame = generateChannelFrame(channel_aux)
-            // cargar Datos
+            let split_frame = generateSplitFrame(split_modify);
+            let pattern_frame = generatePatternFrame(pattern_modify);
+            let action_frame = generateActionFrame(accion_modify);
+            let plan_frame =  generatePlanFrame(plan_modify);
+            let channel_frame = generateChannelFrame(channel_aux);
+            // // cargar Datos
             await setBasicPlan({
                 fases:fases_frame,
                 secuencias:seq_frame,
@@ -251,7 +265,21 @@ export default function BasicSettingsHT200View() {
             })
             setFlagLoad(false)
             await updateFirebase('planificacion',data_aux)
+            await updateFirebase('fases',fases_aux)
+            await updateFirebase('secuencias',seq_aux)
+            await updateFirebase('split',split_modify)
+            await updateFirebase('pattern',pattern_modify)
+            await updateFirebase('acciones',accion_modify)
+            await updateFirebase('plan',plan_modify)
+            await updateFirebase('channel',channel_aux)
             dispatch(updateParamsHT200({target:'planificacion',data:data_aux}))
+            dispatch(updateParamsHT200({target:'fases',data:fases_aux}))
+            dispatch(updateParamsHT200({target:'secuencias',data:seq_aux}))
+            dispatch(updateParamsHT200({target:'split',data:split_modify}))
+            dispatch(updateParamsHT200({target:'pattern',data:pattern_modify}))
+            dispatch(updateParamsHT200({target:'acciones',data:accion_modify}))
+            dispatch(updateParamsHT200({target:'plan',data:plan_modify}))
+            dispatch(updateParamsHT200({target:'channel',data:channel_aux}))
            
         }else{
             Swal.fire({
@@ -271,40 +299,16 @@ export default function BasicSettingsHT200View() {
             <Container maxWidth="md" style={{paddingTop:15}}>
                 <Grid container spacing={3}>
                    
-                    <Grid item xs={12} md={3}>
-                        <TextField
-                            id="outlined-number"
-                            label="hora"
-                            type="number"
-                            size="small"
-                            value={hora}
-                            fullWidth
-                            onChange={(event) => { setHora(parseInt(event.target.value)) }}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                        />
+                    <Grid item xs={6} md={2}>
+                
+                    </Grid>
+                    <Grid item xs={6} md={2}>
+                 
                     </Grid>
                     <Grid item xs={12} md={3}>
-                        <TextField
-                            id="outlined-number"
-                            label="minuto"
-                            value={minuto}
-                            onChange={(event) => { setMinuto(parseInt(event.target.value)) }}
-                            type="number"
-                            size="small"
-                            fullWidth
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                        />
+                     
                     </Grid>
-                    <Grid item xs={12} md={3}>
-                        <Button fullWidth variant="outlined" sx={{ height: '100%' }} disabled={disabledFlag} onClick={agregarPlan}>CREAR PLAN</Button>
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                        <Button fullWidth variant="contained" onClick={cargarDatos}  >CARGAR DATOS</Button>
-                    </Grid>
+               
                     <Grid item xs={12}>
                         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                             <TableContainer sx={{ maxHeight: 440 }}  >
@@ -403,7 +407,7 @@ export default function BasicSettingsHT200View() {
                                                                 }}
                                                             />
                                                         </TableCell>
-
+                                                    
 
                                                         <TableCell align={"center"}>
                                                             <IconButton aria-label="delete" onClick={() => { eliminarPlan(row) }} color="rojo">
@@ -415,9 +419,43 @@ export default function BasicSettingsHT200View() {
                                                 );
                                             })}
                                         <TableRow hover role="checkbox" tabIndex={-1} key={"buttom"} >
-                                            <TableCell colSpan={8} align={"center"}>
+                                            <TableCell colSpan={3} align={"center"}>
+                                                <div style={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                                                <TextField
+                                                id="outlined-number"
+                                                label="hora"
+                                                type="number"
+                                                size="small"
+                                                value={hora}
+                                                sx={{marginRight:2}}
+                                                onChange={(event) => { setHora(parseInt(event.target.value)) }}
+                                                InputLabelProps={{
+                                                    shrink: true,
+                                                }}
+                                            />
+                                             <TextField
+                                                            id="outlined-number"
+                                                            label="minuto"
+                                                            value={minuto}
+                                                            onChange={(event) => { setMinuto(parseInt(event.target.value)) }}
+                                                            type="number"
+                                                            size="small"
+                                                            
+                                                            InputLabelProps={{
+                                                                shrink: true,
+                                                            }}
+                                                        />
+                                                </div>
+                                           
+
+                                            </TableCell>
+                                            <TableCell colSpan={2} align={"center"}>
+                                            <Button fullWidth variant="outlined" sx={{ height: '100%' }} disabled={disabledFlag} onClick={agregarPlan}>CREAR PLAN</Button>
+                                            </TableCell>
+                                            <TableCell colSpan={2} align={"center"}>
                                                 <Button variant="outlined" endIcon={<AddIcon />} onClick={agregarPaso}  >AGREGAR PASO</Button>
                                             </TableCell>
+                                           
                                         </TableRow>
                                     </TableBody>
                                 </Table>
@@ -476,7 +514,9 @@ export default function BasicSettingsHT200View() {
                             </Grid>
                         ))
                     }
-
+                 <Grid item xs={12} md={12}>
+                        <Button  variant="contained" onClick={cargarDatos}  >CARGAR DATOS</Button>
+                </Grid>
                 </Grid>
                 <div style={{ height: 40 }}>
 
