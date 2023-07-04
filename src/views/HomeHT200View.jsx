@@ -7,13 +7,11 @@ import SaveIcon from '@mui/icons-material/Save';
 import { updateDoc, doc} from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import CheckSharpIcon from '@mui/icons-material/CheckSharp';
 import TextField from '@mui/material/TextField';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import "../css/HomeView.css"
 import "../css/SyncTimeView.css"
-import CustomProgress from "../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -21,7 +19,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
 import Fab from '@mui/material/Fab';
-import { setSemaforos } from "../features/controlers/controlerSlice";
+import  { setSemaforos } from "../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Backdrop from '@mui/material/Backdrop';
@@ -55,23 +53,22 @@ export default function HomeView() {
     const [flagsimu, setFlagsimu] = useState(false);
     const [deshabilitar, setDeshabilitar] = useState(false);
     const [deshabilitar2, setDeshabilitar2] = useState(false);
-    const modoControlador = useRef('Tiempo Fijo');
     const [areas, setAreas] = useState(controlerState.semaforos);
+    const [btnPlay,setBtnPlay] = useState(false)
     const simulacion = useRef(false);
     const timer1 = useRef(0);
-    const fases_pasos_aux = useRef([])
-    const faseActual = useRef(0);
-    const calculoEjecucion = useRef([]);
-    const tiempo_amarillo = useRef(0)
-    const datos_amarillo_aux = useRef(0)
+    const color_flag = useRef(""); // estas variables sirve para solo mandar a actualizar cuando se genere un cambio de fase
+
+    const indice_grupos =  useRef(0);
+    const datos_grupos = useRef([{amarillo:2,verde:15,rojo:10}])
     const [pointsArea, setPointsArea] = useState([]);
     const [draggable, setDraggable] = useState(false)
     const [position, setPosition] = useState([controlerState.latitud, controlerState.longitud])
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
     const [btnAgregar, setBtnAgregar] = useState(true);
-    const [reloadMap, setReloadMap] = useState(true);
+
     const dispatch = useDispatch();
-    const [indicadorData, setIndicadorData] = useState(initialData.resumen);
+   
     //banderas para los botones 
     const [botonCrear, setBotonCrear] = useState(true);
 
@@ -110,7 +107,20 @@ export default function HomeView() {
     }
 
 
+    const updateAreas =(__data)=>{
+        let areas_temp = JSON.parse(JSON.stringify(areas))
+        let dataUpdated = areas_temp.map((item) => {
+            if (item.grupo === __data.grupo) {
+                item['color'] = {color:__data.color};
+            }else{
+                item['color'] = {color:'red'}
+            }
+            return item
+        })
+      
 
+        setAreas(dataUpdated);
+    }
     const toggleDraggable = useCallback(() => {
         setDraggable((d) => !d)
     }, [])
@@ -119,28 +129,10 @@ export default function HomeView() {
 
     
 
- 
-    /*funcion encargada  de devolvernos el estado en el que se encuentra tal semaforo*/
-    const returnModo = (data) => {
-        if (data === 1) {
-            return 'Tiempo Fijo'
-        }
-        else if (data === 2) {
-            return 'Pulsante'
-        }
-        else if (data === 3) {
-            return 'Destello'
-        }
-        else if (data === 4) {
-            return 'Todo en Rojo'
-        }
-        else {
-            return 'Apagado'
-        }
-    }
     const DraggableMarker = () => {
         return (
             <Marker
+                
                 icon={ubi}
                 draggable={!flagsimu}
                 eventHandlers={eventHandlers}
@@ -223,390 +215,86 @@ export default function HomeView() {
     /*
         funcion para poder estructurar la informacion que deben mostrar los indicadores
     */
-    const informacionDelIndicador = () => {
-        let temp = JSON.parse(JSON.stringify(faseActual.current))
-        let auxg1;
-        let auxg2;
-        let auxg3;
-        let auxg4;
-        let objg1 = { verde: 0, rojo: 0 }
-        let objg2 = { verde: 0, rojo: 0 }
-        let objg3 = { verde: 0, rojo: 0 }
-        let objg4 = { verde: 0, rojo: 0 }
+ 
 
-        for (let i1 = 0; i1 < temp.length; i1++) {
-            auxg1 = temp[i1].grupos[0].color
-            auxg2 = temp[i1].grupos[1].color
-            auxg3 = temp[i1].grupos[2].color
-            auxg4 = temp[i1].grupos[3].color
-            if (auxg1 === 1) {
-                objg1.verde = objg1.verde + temp[i1].duracion
-            } else {
-                objg1.rojo = objg1.rojo + temp[i1].duracion
-            }
-            if (auxg2 === 1) {
-                objg2.verde = objg2.verde + temp[i1].duracion
-            } else {
-                objg2.rojo = objg2.rojo + temp[i1].duracion
-            }
-            if (auxg3 === 1) {
-                objg3.verde = objg3.verde + temp[i1].duracion
-            } else {
-                objg3.rojo = objg3.rojo + temp[i1].duracion
-            }
-            if (auxg4 === 1) {
-                objg4.verde = objg4.verde + temp[i1].duracion
-            } else {
-                objg4.rojo = objg4.rojo + temp[i1].duracion
-            }
-        }
-        let ejemplo = indicadorData
-        var newDataUpdate = ejemplo.map((item) => {
-            if (item.grupo === 'g1') {
-                item['rojo'] = objg1.rojo - tiempo_amarillo.current
-                item['verde'] = objg1.verde
-                item['amarillo'] = tiempo_amarillo.current
-                item['modo'] = modoControlador.current
-            } else if (item.grupo === 'g2') {
-                item['rojo'] = objg2.rojo - tiempo_amarillo.current
-                item['verde'] = objg2.verde
-                item['amarillo'] = tiempo_amarillo.current
-                item['modo'] = modoControlador.current
-            } else if (item.grupo === 'g3') {
-                item['rojo'] = objg3.rojo - tiempo_amarillo.current
-                item['verde'] = objg3.verde
-                item['amarillo'] = tiempo_amarillo.current
-                item['modo'] = modoControlador.current
-            } else {
-                item['rojo'] = objg4.rojo - tiempo_amarillo.current
-                item['verde'] = objg4.verde
-                item['amarillo'] = tiempo_amarillo.current
-                item['modo'] = modoControlador.current
-            }
-            item['icon'] = {}
-            return item
-        })
-        setIndicadorData(newDataUpdate)
-    }
 
-    /* funcion encargada de actualizar el valor del useRef con la finalidad de permitir que se 
-    inicie la simulacion debido a que maneja un valor booleano que activa una funcion en el hook
-    useEffect */
-    const iniciarSimulacion = () => {
-        simulacion.current = !simulacion.current;
-        if (simulacion.current) {
 
-            parametrosCorriendo()
-        }
-        setFlagsimu(!flagsimu);
-        setBtnAgregar(simulacion.current)
-
-    }
-    /*
-        devolvercolor recibe como parametro el nombre del color y nos devuelve el icono leaflet
-        paracolocarlo en el semaforo cada vez que cambia de paso , esta funcion es importante para actualizar
-        la imagen del semaforo y que se realice la animacion
-    */
-    const devolverColor = (_data) => {
-        if (_data === "verde") {
-            return { color: 'green' }
-        } else if (_data === "rojo") {
-            return { color: 'red' }
-        } else if (_data === "apagado") {
-            return { color: 'black' }
-        } else if (_data === "destello") {
-            return { color: 'cyan' }
-        } else {
-            return { color: 'yellow' }
-        }
-    }
-
-    /*
-        debido a que determinamos el paso en el que estamos a partir de un arreglo con cada uno de los segundos 
-    en los cuales debe estar activado ese paso , creamos una funcion de busqueda que a partir del segundo que recibe
-    en el valor de referencia este lo buscara dentro de los arreglos que existe por cada paso del controlador y nos
-    dira a que paso pertenece ese preciso segundo
-    */
-    const devolverPaso = () => {
-        const referencia = new Date().getHours() * 3600 + new Date().getMinutes() * 60 + new Date().getSeconds()
-        let datos_interes = calculoEjecucion.current
-        let paso_actual
-        for (let i = 0; i < datos_interes.length; i++) {
-            let temp = datos_interes[i].valores
-            let busqueda = temp.find(element => element === referencia)
-            if (busqueda === referencia) {
-                paso_actual = datos_interes[i].paso
-            }
-        }
-        return paso_actual
-    }
-
-    /* 
-        funcion encargada de devolver los segundos en los cuales va estar activo cada paso
-    */
-    const devolverSegundosPaso = (horario_activo, horario_siguiente) => {
-        let horas_1 = parseInt(horario_activo.horas)
-        let minutos_1 = parseInt(horario_activo.minutos)
-        let horas_2 = parseInt(horario_siguiente.horas)
-        let minutos_2 = parseInt(horario_siguiente.minutos)
-        let t_inicio = horas_1 * 3600 + minutos_1 * 60 + 5
-        let t_final = horas_2 * 3600 + minutos_2 * 60 + 5
-        let ciclo = 0
-        let segundos_pasos = []
-        let pasos_duracion = []
-        let pas_activos = []
-        if (tiempo_amarillo.current > 0 && modoControlador.current === "Tiempo Fijo") {
-            pas_activos = JSON.parse(JSON.stringify(datos_amarillo_aux.current))
-            faseActual.current = datos_amarillo_aux.current
-        }
-        else if (modoControlador.current === "Destello") {
-            pas_activos = JSON.parse(JSON.stringify(pasosDestello))
-            faseActual.current = pasosDestello
-        }
-        else {
-            pas_activos = JSON.parse(JSON.stringify(fases_pasos_aux.current))
-            faseActual.current = fases_pasos_aux.current
-        }
-        for (let i = 0; i < pas_activos.length; i++) {
-            let aux = pas_activos[i].duracion
-            pasos_duracion.push(aux)
-            ciclo += aux
-        }
-
-        let seguntos_totales = t_final - t_inicio
-        // let desfase = seguntos_totales % ciclo
-
-        let frequencia = parseInt(seguntos_totales / ciclo)
-        // let index_periodicidad = 0
-        let temp_i = t_inicio
-
-        for (let i = 0; i < pas_activos.length; i++) {
-            let aux = {
-                paso: i,
-                name: `Paso ${i + 1}`,
-                valores: []
-            }
-            segundos_pasos.push(aux)
-        }
-
-        for (let i1 = 0; i1 < frequencia; i1++) {
-            for (let j1 = 0; j1 < pasos_duracion.length; j1++) {
-                let aux_7 = pasos_duracion[j1]
-                for (let k = 0; k < aux_7; k++) {
-                    temp_i += 1
-                    segundos_pasos[j1].valores.push(temp_i)
-                }
-            }
-        }
-        return segundos_pasos
-    }
-
-    /* 
-        Funcion encargada de cargar los datos necesarios para animar los semaforos
-        del mapa.
-     */
-    const calcularHorario = (horario)=>{
-        //esta funcion nos devuelve el horario actual y siguiente
-        let aux
-        let aux2
-        let temp
-        let new_horarios = {
-            actual:"",
-            siguiente:"",
-            flag:false
-        }
-        let hora_actual = new Date();
-        let horas = hora_actual.getHours();
-        let minutos = hora_actual.getMinutes();
-        let ref = horas * 100 + minutos
-        let ultimo_horario = horario[0]
-        let primer_horario = horario[horario.length - 1]
-        let temp_primer = parseInt(primer_horario.horas) * 100 + parseInt(primer_horario.minutos)
-        let temp_ultimo = parseInt(ultimo_horario.horas) * 100 + parseInt(ultimo_horario.minutos)
-        if(ref>temp_ultimo){
-            new_horarios.actual = ultimo_horario
-            new_horarios.siguiente = primer_horario
-            new_horarios.flag = true
-        }else if(temp_primer>ref){
-            new_horarios.actual = ultimo_horario
-            new_horarios.siguiente = primer_horario
-            new_horarios.flag = true
-        }else{
-            for (let i = 0; i < horario.length; i++) {
-                aux = parseInt(horario[i].horas)
-                aux2 = parseInt(horario[i].minutos)
-                temp = aux * 100 + aux2
-                if(temp<ref || temp === ref){
-                    new_horarios.actual = horario[i]
-                    new_horarios.siguiente = horario[i-1]
-                    new_horarios.flag = false
-                    break
-                }
-            }
-        }
-        return new_horarios
-    }
-    
+   
     const parametrosCorriendo = async() => {
-        let data = await getWorkStateHT200(controlerState.ip)
-        let splits_aux = controlerState.split.filter(item=> item.id === "split-"+data.split)
-        let sequency_aux = controlerState.secuencias.filter(item=> item.id === "seq-"+data.seq)
+        setBtnPlay(!btnPlay)
+        setFlagsimu(!flagsimu);
+        try {
+            let data = await getWorkStateHT200(controlerState.ip)
+            let splits_aux = controlerState.split.filter(item=> item.id === "split-"+data.split)[0].data
+            let sequency_aux = controlerState.secuencias.filter(item=> item.id === "seq-"+data.seq)[0]
+            let sequency_formated = []
+            for(let j = 0; j<4 ;j++)
+            if(sequency_aux[`ring${j+1}`].length > 0){
+                let long = sequency_aux[`ring${j+1}`].length
+                for(let i=0;i<long;i++){
+                    if(i<long-1){
+                        let fase = sequency_aux[`ring${j+1}`][i].value
+                        let fase_sig = sequency_aux[`ring${j+1}`][i+1].value
+                        let duracion = splits_aux.filter(temp=> temp.fase === fase)[0].tiempo
+                        let aux_data = {
+                            paso: i,
+                            fase: sequency_aux[`ring${j+1}`][i].value,
+                            fase_sig: fase_sig,
+                            duracion:duracion,
+                            amarillo:3,
+                            rojo:2,
+                            verde: duracion -5,
+                            trama:generarCiclo({rojo:2,verde:duracion-5,amarillo:3})
+                        }
+                        sequency_formated.push(aux_data);
+                    }else{
+                        let fase = sequency_aux[`ring${j+1}`][i].value
+                        let fase_sig = sequency_aux[`ring${j+1}`][0].value
+                        let duracion = splits_aux.filter(temp=> temp.fase === fase)[0].tiempo
+                        let aux_data = {
+                            paso: i,
+                            fase: sequency_aux[`ring${j+1}`][i].value,
+                            fase_sig: fase_sig,
+                            duracion:duracion,
+                            amarillo:3,
+                            rojo:2,
+                            verde: duracion -5,
+                            trama:generarCiclo({rojo:2,verde:duracion-5,amarillo:3})
+                        }
+                        sequency_formated.push(aux_data)
+                    }
+                    
+                }
+            }
+            datos_grupos.current = sequency_formated
+            let index = sequency_formated.findIndex(function(el){
+                return el.fase === data.ring1_fase; // or el.nombre=='T NORTE';
+            });
+            let value_timer = sequency_formated[index].duracion - data.ring1_remain
+            console.log(value_timer) 
+            indice_grupos.current = index
+            timer1.current = value_timer
+            simulacion.current =   !simulacion.current
+        
+        } catch (error) {
        
-        console.log(splits_aux)
-        console.log(sequency_aux)
-        // console.log("parametros corriendo")
-        // let datos_controlador = JSON.parse(JSON.stringify(controlerState))
-
-        // let dia_ordinario = datos_controlador.horario_ordinario
-        // let parametros_operativos = datos_controlador.otros_parametros
-        // tiempo_amarillo.current = parseInt(parametros_operativos.tiempo_amarillo_vehicular)
-
-        // let dias_ordenados = JSON.parse(JSON.stringify(dia_ordinario))
-
-        // dias_ordenados.sort(function (a, b) {
-        //     let a_aux = parseInt(a.horas)
-        //     let a_aux2 = parseInt(a.minutos)
-        //     let b_aux = parseInt(b.horas)
-        //     let b_aux2 = parseInt(b.minutos)
-        //     a = a_aux * 100 + a_aux2
-        //     b = b_aux * 100 + b_aux2
-        //     return b - a
-        // })
-        // let dias_ordenados_filtrados = dias_ordenados.filter(item => item.mod !== 0)
-        // let horarios_actuales = calcularHorario(dias_ordenados_filtrados)
-        // let horario_activo = horarios_actuales.actual
-        // let horario_siguiente = horarios_actuales.siguiente
-        // let modo = returnModo(horario_activo.mod)
-        // modoControlador.current = modo
-        // let plan_activo = horario_activo.plan
-        // let planname = `plan_${plan_activo}`
-        // let plan_filter = datos_controlador[planname]
-        // var pasos_habilitados = plan_filter.filter((item) => {
-        //     if (item.duracion > 0) {
-        //         return item;
-        //     } else {
-        //         return null;
-        //     }
-        // })
-        // let fases = datos_controlador.fases
-        // var pasos_temp = JSON.parse(JSON.stringify(pasos_habilitados))
-        // var fases_pasos = pasos_temp.map((item) => {
-        //     let aux2 = fases.find(_item => _item.faseNum === item.fase)
-        //     let obj_mod = {
-        //         duracion: item.duracion,
-        //         fase: item.fase,
-        //         grupos: item.grupos,
-        //         name: item.id
-        //     }
-        //     let grupos_aux = aux2.grupos
-        //     if (modo === 'Destello') {
-        //         grupos_aux = aux2.grupos.map(item => ({
-        //             colorDescripcion: "amarillo",
-        //             faseNum: item.faseNum,
-        //             id: item.id,
-        //             grupoNum: item.grupoNum,
-        //             color: item.color
-        //         }))
-        //         obj_mod['grupos'] = grupos_aux
-
-        //     } else if (modo === 'Todo en Rojo') {
-        //         grupos_aux = aux2.grupos.map(item => ({
-        //             colorDescripcion: "rojo",
-        //             faseNum: item.faseNum,
-        //             id: item.id,
-        //             grupoNum: item.grupoNum,
-        //             color: item.color
-        //         }))
-        //         obj_mod['grupos'] = grupos_aux
-        //     }
-        //     else {
-
-        //         obj_mod['grupos'] = grupos_aux
-        //     }
-        //     return obj_mod
-
-        // })
-        // let datos_amarillo = []
-        // fases_pasos_aux.current = fases_pasos
-        // //console.log("todo bien hasta aca", fases_pasos)
-        // //esta parte del codigo se encarga de animar los ciclos en amarillo
-        // if (tiempo_amarillo.current > 0 && modo === "Tiempo Fijo") {
-        //     let fases_pasos_aux2 = JSON.parse(JSON.stringify(fases_pasos))
-        //     let fases_pasos_aux = JSON.parse(JSON.stringify(fases_pasos))
-        //     let aux_copias = fases_pasos.length * 2
-        //     let nuevos_pasos = fases_pasos_aux.map((item) => {
-        //         let grupos_aux = item.grupos.map(item2 => {
-        //             let grupo_temp = {}
-        //             if (item2.colorDescripcion === "rojo") {
-        //                 grupo_temp = { faseNum: item2.faseNum, colorDescripcion: item2.colorDescripcion, color: item2.color, grupoNum: item2.grupoNum, id: item2.id }
-        //             } else {
-        //                 grupo_temp = { faseNum: item2.faseNum, colorDescripcion: "amarillo", color: 2, grupoNum: item2.grupoNum, id: item2.id }
-        //             }
-        //             return grupo_temp
-        //         })
-        //         let paso_editado = {
-        //             duracion: tiempo_amarillo.current,
-        //             fase: item.fase,
-        //             grupos: grupos_aux,
-        //             name: item.name,
-        //         }
-        //         return paso_editado
-        //     })
-
-        //     let nuevos_pasos_2 = fases_pasos_aux2.map(item => (
-        //         {
-        //             duracion: item.duracion - tiempo_amarillo.current,
-        //             fase: item.fase,
-        //             grupos: item.grupos,
-        //             name: item.name,
-        //         }
-        //     ))
-        //     let index_aux = 0
-        //     let index_aux2 = 0
-        //     for (let i = 0; i < aux_copias; i++) {
-        //         let aux_resi = i % 2
-        //         if (aux_resi !== 0) {
-        //             datos_amarillo.push(nuevos_pasos[index_aux])
-        //             index_aux += 1
-        //         } else {
-        //             datos_amarillo.push(nuevos_pasos_2[index_aux2])
-        //             index_aux2 += 1
-        //         }
-        //     }
-        //     datos_amarillo.map((item, index) => (item.name = `Paso ${index + 1}`))
-        // }
-
-        // datos_amarillo_aux.current = datos_amarillo
-        // let resumen = {
-        //     horas: horario_activo.horas,
-        //     minutos: horario_activo.minutos,
-        //     plan: horario_activo.plan,
-        //     pasos: fases_pasos,
-        //     modo: modo,
-        // }
-        // dispatch(setResumen(resumen));
-
-        // timer1.current = 0
-
-        // dispatch(setPasosActivos(fases_pasos));
-        // // aqui haremos el calculo para los indicadores 
-
-        // //setPasosActivos(fases_pasos)
-
-        // let segundos_pasos = []
-        // if (horarios_actuales.flag) {
-        //     const fecha = new Date()
-        //     let horas_1 = parseInt(horario_siguiente.horas)
-        //     if (fecha.getHours() >= horas_1) {
-        //         segundos_pasos = devolverSegundosPaso(horario_activo, { minutos: 0, horas: 24 })
-        //     } else {
-        //         segundos_pasos = devolverSegundosPaso({ minutos: 0, horas: 0, horario_siguiente })
-        //     }
-        // } else {
-        //     segundos_pasos = devolverSegundosPaso(horario_activo, horario_siguiente)
-        // }
-        // informacionDelIndicador()
-        // calculoEjecucion.current = segundos_pasos
+        }
+   
+       
+      
+    }
+    const generarCiclo = (__data)=>{
+        let ciclo = []
+        for(let i=0;i<__data.verde;i++){
+            ciclo.push("green")
+        }for(let i=0;i<__data.amarillo;i++){
+            ciclo.push("yellow")
+     
+   
+        } for(let i=0;i<__data.rojo;i++){
+            ciclo.push("red")
+        }
+        return ciclo
     }
     const eliminarArea = async (_data) => {
         Swal.fire({
@@ -647,39 +335,9 @@ export default function HomeView() {
     }
     /* esta  funcion se encarga de animar el mapa segun el paso en el que se encuentre*/
 
-    const iniciarAnimacion = () => {
-        let g1;
-        let g2;
-        let g3;
-        let g4;
-        let dataUpdated;
-        let aux ;
-        let paso_actual = devolverPaso()
-        g1 = devolverColor(faseActual.current[paso_actual].grupos[0].colorDescripcion);
-        g2 = devolverColor(faseActual.current[paso_actual].grupos[1].colorDescripcion);
-        g3 = devolverColor(faseActual.current[paso_actual].grupos[2].colorDescripcion);
-        g4 = devolverColor(faseActual.current[paso_actual].grupos[3].colorDescripcion);
-        aux =  JSON.parse(JSON.stringify(semaforos2.current))
-        dataUpdated = aux.map((item) => {
-            if (item.grupo === "g1") {
-                item['color'] = g1;
-            } else if (item.grupo === "g2") {
-                item['color'] = g2;
-            } else if (item.grupo === "g3") {
-                item['color'] = g3;
-            } else if (item.grupo === "g4") {
-                item['color'] = g4;
-            }
-            return item
-        })
-
-        setAreas(dataUpdated);
-
-    }
-    // funcion que compara los datos almacenados en la store
-    const verifyDataSemaforos = () => {
     
-    }
+    // funcion que compara los datos almacenados en la store
+
     const obtenerCoordenadas = () => {
         let puntos = JSON.parse(JSON.stringify(pointsArea))
        
@@ -790,21 +448,38 @@ export default function HomeView() {
     /* use effect es un hook que nos permite ejecutar nuestro temporizador en tiempo real
     como un sub procesos y de este modo generar las animaciones del semaforo
     */
+   
 
     useEffect(() => {
-  
         const interval = setInterval(() => {
-
+            
             if (simulacion.current) {
                 //cambiarSemaforo();
-                iniciarAnimacion();
-                timer1.current = timer1.current + 1;
-
+                let grupo = datos_grupos.current[indice_grupos.current]
+                timer1.current =  timer1.current+1;
+                let color = grupo.trama[timer1.current]
+                if(timer1.current <grupo.trama.length){
+                   
+                    if(color !== color_flag.current){
+                        color_flag.current = color
+                        updateAreas({grupo:`g${grupo.fase}`,color:color})
+                    }
+                    
+                }else{
+                    indice_grupos.current = indice_grupos.current+1
+                    if(indice_grupos.current === 4){
+                        indice_grupos.current = 0
+                    }
+                    timer1.current = 0
+                    //console.log(g1_datos.current[timer1.current])
+                }
+                
+                
             }
 
         }, 1000);
 
-        verifyDataSemaforos()
+        // verifyDataSemaforos()
         return () => clearInterval(interval);
         // eslint-disable-next-line
     }, []);
@@ -888,12 +563,12 @@ export default function HomeView() {
                             <h2 className="title">Map de los semaforos</h2>
 
                             <div className="map">
-                                <MapContainer center={[controlerState.latitud, controlerState.longitud]} zoom={19} key={reloadMap} scrollWheelZoom={false} className='map-container leaflet-container-2'>
+                                <MapContainer center={[controlerState.latitud, controlerState.longitud]} zoom={19}  scrollWheelZoom={false} className='map-container leaflet-container-2'>
                                     <TileLayer
                                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                         url="https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=b08eb869c89646fa8accf539b81e80de"
                                     />
-                                    <DraggableMarker />
+                                    <DraggableMarker  />
                                     {pointsArea.map((item, index) => (
                                         <Marker key={index} position={item.position} icon={item.icon}>
                                         </Marker>
@@ -907,19 +582,16 @@ export default function HomeView() {
                                             <Polygon positions={[item.points[0].pos, item.points[1].pos, item.points[2].pos, item.points[3].pos]} />
                                         </FeatureGroup>
                                     ))}
-                                    <Fab color={simulacion.current ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={parametrosCorriendo}>
-                                        {simulacion.current ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
+                                    <Fab color={btnPlay ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={parametrosCorriendo}>
+                                        {btnPlay ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
                                     </Fab>
-                                    {/* <Fab color={simulacion.current ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={iniciarSimulacion}>
-                                        {simulacion.current ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
-                                    </Fab> */}
                                     <Fab color='verde2' disabled={btnAgregar} sx={{ position: "absolute", bottom: 150, right: 30 }} onClick={() => { obtenerCoordenadas() }} >
                                         <CheckSharpIcon />
                                     </Fab>
                                     <Fab variant="contained" color='anaranjado1' disabled={btnAgregar} sx={{ position: "absolute", bottom: 250, right: 30 }} onClick={limpiarPuntos}>
                                         <CleaningServicesSharpIcon />
                                     </Fab>
-                                    <Fab disabled={botonCrear} color="azulm" sx={{ position: "absolute", bottom: 350, right: 30 }} onClick={() => { setModalCrearSemaforo(true) }} >
+                                    <Fab  disabled={botonCrear} color="azulm" sx={{ position: "absolute", bottom: 350, right: 30 }} onClick={() => { setModalCrearSemaforo(true) }} >
                                         <SaveIcon />
                                     </Fab>
                                     <div  style={{ zIndex: 1070, position: "absolute", top: 30, left: 70,display: modalCrearSemaforo? 'none':'flex' }}>
@@ -931,36 +603,7 @@ export default function HomeView() {
                             </div>
                         </article>
                     </Grid>
-                    <Grid item xs={12}>
-                        <article className="information [ card ]">
-                            <Table className='home-t'>
-                                <Thead>
-                                    <Tr>
-                                        <Th className='home-t-th'>#</Th>
-
-                                        <Th className='home-t-th'>Grupo</Th>
-                                        <Th className='home-t-th'>Indicador en Segundos</Th>
-
-                                    </Tr>
-                                </Thead>
-                                <Tbody>
-                                    {indicadorData.map((dato, index) => (
-                                        <Tr className="tablas-focus" key={index} >
-                                            <Td>
-                                                {index + 1}
-                                            </Td>
-                                            <Td >
-                                                {dato.grupo}
-                                            </Td>
-                                            <Td style={{ marginBottom: 10 }}>
-                                                <CustomProgress red={dato.rojo} yellow={dato.amarillo} green={dato.verde} modo={dato.modo} />
-                                            </Td>
-                                        </Tr>
-                                    ))}
-                                </Tbody>
-                            </Table>
-                        </article>
-                    </Grid>
+                
 
                     <Grid item xs={12}>
                         <div className="home-view-footer">
@@ -1055,101 +698,17 @@ const ubi = new L.Icon({
 
 });
 
-const semaforo = new L.Icon({
-    iconUrl: require('../assets/semaforo3.png'),
-    iconRetinaUrl: require('../assets/semaforo3.png'),
-    iconSize: [50, 50], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76]
-
-});
 
 
 
 
 
-const initialData = {
-    conflictos_verdes: {},
-    dias_especiales: {},
-    entradas: {},
-    fases: {},
-    grupos: {},
-    hora_controlador: {},
-    horarios: {},
-    ip: "",
-    mac: "",
-    otros_parametros: {},
-    planes: {},
-    version: {},
-    resumen: [
-        {
-            nombre: "sin nombre",
-            rojo: 10,
-            amarillo: 4,
-            verde: 20,
-            grupo: "g1",
-            position: [-2.8771059724090122, -78.96612703800203],
-            icon: semaforo
-        },
-        {
-            nombre: "sin nombre",
-            rojo: 10,
-            amarillo: 4,
-            verde: 20,
-            grupo: "g2",
-            position: [-2.8773367771587526, -78.96582663059236],
-            icon: semaforo
-        },
-        {
-            nombre: "sin nombre",
-            rojo: 10,
-            amarillo: 4,
-            verde: 20,
-            grupo: "g3",
-            position: [-2.877974763491086, -78.96494686603546],
-            icon: semaforo
-        },
-        {
-            nombre: "sin nombre",
-            rojo: 10,
-            amarillo: 4,
-            verde: 20,
-            grupo: "g4",
-            position: [-2.876842450523782, -78.9654189348221],
-            icon: semaforo
-        }
-    ]
-}
 
 
 
 
-//pasos modo destello
-let pasosDestello = [
-    {
-        duracion: 1,
-        fase: 1,
-        grupos: [
-            { colorDescripcion: 'amarillo', faseNum: 1, id: 'g1_fase_1', grupoNum: 1, color: 0 },
-            { colorDescripcion: 'amarillo', faseNum: 1, id: 'g2_fase_1', grupoNum: 2, color: 0 },
-            { colorDescripcion: 'amarillo', faseNum: 1, id: 'g3_fase_1', grupoNum: 3, color: 0 },
-            { colorDescripcion: 'amarillo', faseNum: 1, id: 'g4_fase_1', grupoNum: 4, color: 0 }],
-        name: 'Paso 1'
-    },
-    {
-        duracion: 1,
-        fase: 2,
-        grupos: [
-            { colorDescripcion: 'apagado', faseNum: 2, id: 'g1_fase_2', grupoNum: 1, color: 3 },
-            { colorDescripcion: 'apagado', faseNum: 2, id: 'g2_fase_2', grupoNum: 2, color: 3 },
-            { colorDescripcion: 'apagado', faseNum: 2, id: 'g3_fase_2', grupoNum: 3, color: 3 },
-            { colorDescripcion: 'apagado', faseNum: 2, id: 'g4_fase_2', grupoNum: 4, color: 3 }],
-        name: 'Paso 2'
-    }
 
-]
+
 const grupo_1 = { color: 'purple' }
 const grupo_2 = { color: 'blue' }
 const grupo_3 = { color: 'black' }

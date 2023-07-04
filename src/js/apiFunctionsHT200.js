@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-// const BASE_HT200 = 'https://www.hitraffic-group.com';
+//const BASE_HT200 = 'https://www.hitraffic-group.com';
 const BASE_HT200 = 'http://127.0.0.1:8000';
 
 

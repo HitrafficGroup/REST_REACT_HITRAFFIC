@@ -252,7 +252,8 @@ export default function BasicSettingsHT200View() {
                     return item
                 })
               
-                console.log(seq_modify)
+           
+
             // // generamos las tramas
             let fases_frame = generatePhaseFrame(fases_aux);
             let seq_frame = generateSeqFrame(seq_modify);
@@ -261,7 +262,8 @@ export default function BasicSettingsHT200View() {
             let action_frame = generateActionFrame(accion_modify);
             let plan_frame =  generatePlanFrame(plan_modify);
             let channel_frame = generateChannelFrame(channel_aux);
-            // // cargar Datos
+            // // // cargar Datos
+            console.log(split_frame)
             await setBasicPlan({
                 fases:fases_frame,
                 secuencias:seq_frame,
