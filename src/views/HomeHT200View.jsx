@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import CleaningServicesSharpIcon from '@mui/icons-material/CleaningServicesSharp';
 import Container from '@mui/material/Container';
@@ -18,6 +17,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
+import Typography from '@mui/material/Typography';
 import Fab from '@mui/material/Fab';
 import  { setSemaforos } from "../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
@@ -31,7 +31,23 @@ import '../css/HomeView.css';
 import '../css/beautifulCard.scss';
 import Swal from 'sweetalert2';
 import RelogActual from "../components/RelogActual";
-import { getTimeHT200,PostTimeHT200,getWorkStateHT200 } from '../js/apiFunctionsHT200';
+import { getTimeHT200,PostTimeHT200,getWorkStateHT200,setModoManual } from '../js/apiFunctionsHT200';
+import Paper from '@mui/material/Paper';
+import Chip from '@mui/material/Chip';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred';
+import OnlinePredictionIcon from '@mui/icons-material/OnlinePrediction';
+import PowerOffIcon from '@mui/icons-material/PowerOff';
+import SkipNextIcon from '@mui/icons-material/SkipNext';
+import PanToolIcon from '@mui/icons-material/PanTool';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import { styled } from '@mui/material/styles';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 const InitialTime = {
     day: "00",
     hours: "00",
@@ -42,13 +58,29 @@ const InitialTime = {
     zone: "00",
     year: "00"
 }
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+        backgroundColor: theme.palette.common.black,
+        color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+        fontSize: 14,
+    },
+}));
 
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+        backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+        border: 0,
+    },
+}));
 
 export default function HomeView() {
-
     const controlerState = useSelector(state => state.controlerht200)
     const [tiempoController, setTiempoController] = useState(InitialTime)
-    //const [fechaController, setFechaController] = useState('Datos de fecha aun no Cargados')
     const [fechaActual, setFechaActual] = useState(new Date().toLocaleString("es-EC", { dateStyle: 'full' }))
     const [flagsimu, setFlagsimu] = useState(false);
     const [deshabilitar, setDeshabilitar] = useState(false);
@@ -57,7 +89,9 @@ export default function HomeView() {
     const [btnPlay,setBtnPlay] = useState(false)
     const simulacion = useRef(false);
     const timer1 = useRef(0);
+    const [tiempo,setTiempo] = useState(30)
     const color_flag = useRef(""); // estas variables sirve para solo mandar a actualizar cuando se genere un cambio de fase
+    const [currentFase,setCurrentFase] = useState([{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 },{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 },{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }])
 
     const indice_grupos =  useRef(0);
     const datos_grupos = useRef([{amarillo:2,verde:15,rojo:10}])
@@ -121,6 +155,7 @@ export default function HomeView() {
 
         setAreas(dataUpdated);
     }
+
     const toggleDraggable = useCallback(() => {
         setDraggable((d) => !d)
     }, [])
@@ -147,8 +182,6 @@ export default function HomeView() {
             </Marker>
         )
     }
-
-
     /*
     esta funcion agrega y actualiza el semaforo que se selecciona en los grupos
     ,nos permite desplazar elsemaforo dentro del mapa actualizando su latitud y longitud
@@ -448,7 +481,56 @@ export default function HomeView() {
     /* use effect es un hook que nos permite ejecutar nuestro temporizador en tiempo real
     como un sub procesos y de este modo generar las animaciones del semaforo
     */
-   
+    const modoManual = async(__param)=>{
+        let aux_p = 49
+        if(__param === 0){
+            aux_p = 48
+        }
+        let tiempo_modo = parseInt(tiempo)
+        let aux_1 = tiempo_modo & 0xff
+        let aux_2  = (tiempo_modo>>8)&0xff
+        let array_data =  [15,1,aux_p,__param,0,0,aux_1,aux_2]
+        await setModoManual({trama:array_data,ip:controlerState.ip});
+       
+    }
+    const cargarMapa= async()=>{
+        
+        let data = await getWorkStateHT200(controlerState.ip)
+        let splits_aux = controlerState.split.filter(item=> item.id === "split-"+data.split)[0].data
+        let sequency_aux = controlerState.secuencias.filter(item=> item.id === "seq-"+data.seq)[0]
+        console.log(splits_aux)
+        console.log(sequency_aux)
+
+        let aux_long = 0
+        let domain_seq = []
+        for(let j = 0; j<4 ;j++){
+            let long = sequency_aux[`ring${j+1}`].length
+            if(long > aux_long){
+                aux_long = long
+                domain_seq = sequency_aux[`ring${j+1}`]
+            }
+        }
+        let data_formated = domain_seq.map((item,index)=>{
+            let duracion = splits_aux.filter(temp=> temp.fase === item.value)[0].tiempo
+            let fases = [sequency_aux.ring1[index],sequency_aux.ring2[index],sequency_aux.ring3[index],sequency_aux.ring4[index]].filter(item=> item !== undefined)
+            let values = fases.map(item=>(item.value))
+            let aux_data = {
+                paso: index+1,
+                fase: values,
+                duracion:duracion,
+                amarillo:3,
+                rojo:2,
+                verde: duracion -5,
+                trama:generarCiclo({rojo:2,verde:duracion-5,amarillo:3})
+            }
+
+            return aux_data
+        })
+        console.log(data_formated)
+        console.log(data)
+
+    }
+    
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -560,8 +642,7 @@ export default function HomeView() {
 
                     <Grid item xs={12} md={12}>
                         <article className="information [ card ]">
-                            <h2 className="title">Map de los semaforos</h2>
-
+                            <h2 className="title">Mapa de los semaforos</h2>
                             <div className="map">
                                 <MapContainer center={[controlerState.latitud, controlerState.longitud]} zoom={19}  scrollWheelZoom={false} className='map-container leaflet-container-2'>
                                     <TileLayer
@@ -603,7 +684,115 @@ export default function HomeView() {
                             </div>
                         </article>
                     </Grid>
-                
+                    <Grid item xs={12} md={12}>
+                    <article className="information [ card ]">
+
+                                            <Typography variant="h4" gutterBottom>
+                                                Control Manual
+                                            </Typography>
+                                
+                                           <Grid container spacing={2}>
+                                           <Grid item xs={12} md={4}>
+                                            <Grid container spacing={2}>
+                                                {/* <Grid item xs={12} >
+                                                <Button variant="contained" onClick={()=>{cargarMapa()}}   color='amarillo' startIcon={<OnlinePredictionIcon />}>
+                                                    Cargar Tabla
+                                                </Button>
+                                                </Grid> */}
+                                                <Grid item xs={12} >
+                                                <TextField
+                                                    id="outlined-number"
+                                                    label="Tiempo para finalizar modo Manual"
+                                                    type="number"
+                                                    onChange={(event)=>{setTiempo(event.target.value)}}
+                                                    value={tiempo}
+                                                    fullWidth
+                                                    InputLabelProps={{
+                                                        shrink: true,
+                                                    }}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                <Button variant="contained" onClick={()=>{modoManual(48)}}  fullWidth color='amarillo' startIcon={<OnlinePredictionIcon />}>
+                                                    Destello
+                                                </Button>
+                                                </Grid>
+                                                <Grid item xs={12} >
+                                                <Button variant="contained" onClick={()=>{modoManual(49)}} fullWidth color='rojo' startIcon={<ReportGmailerrorredIcon />}>
+                                                   Todo en Rojo
+                                                </Button>
+                                                </Grid>
+                                                <Grid item xs={12} >
+                                                <Button variant="contained" onClick={()=>{modoManual(50)}} fullWidth color ="oscuro" startIcon={<PowerOffIcon />}>
+                                                    Apagado
+                                                </Button>
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                <Button variant="contained" onClick={()=>{modoManual(51)}} color ="oscuro" fullWidth startIcon={<SkipNextIcon />}>
+                                                    Siguiente Paso
+                                                </Button>
+                                                </Grid>
+                                                <Grid item xs={12} >
+                                                <Button variant="contained" onClick={()=>{modoManual(52)}} color = "oscuro"fullWidth startIcon={<PanToolIcon />}>
+                                                    Mantenerse el Paso
+                                                </Button>
+                                               
+                                                </Grid>
+                                                <Grid item xs={12} >
+                                                <Button variant="contained"  onClick={()=>{modoManual(0)}} color = "oscuro" fullWidth startIcon={<SmartToyIcon />}>
+                                                    Pasar a  automatico
+                                                </Button>
+                                                </Grid>
+                                            </Grid>
+                                           </Grid>
+                                           <Grid item xs={12} md={8}>
+                                           <TableContainer component={Paper}>
+                                    <Table sx={{ height:370 }} aria-label="customized table">
+                                        <TableHead>
+                                            <TableRow>
+                                                <StyledTableCell align="left">Paso</StyledTableCell>
+                                                <StyledTableCell align="center">Grupo 1</StyledTableCell>
+                                                <StyledTableCell align="center">Grupo 2</StyledTableCell>
+                                                <StyledTableCell align="center">Grupo 3</StyledTableCell>
+                                                <StyledTableCell align="center">Grupo 4</StyledTableCell>
+                                                <StyledTableCell align="center">Duracion</StyledTableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {currentFase.map((row, index) => (
+                                                <StyledTableRow key={index}>
+                                                    <StyledTableCell align="center">
+                                                        <div className="basic-paso">
+                                                            <strong>{index + 1}</strong>
+                                                        </div>
+                                                    </StyledTableCell>
+                                                    <StyledTableCell align="center">
+                                                        <Chip label={row.g1 ? "VERDE" : "ROJO"} color={row.g1 ? "verde" : "rojo"} icon={<LightModeIcon />} sx={{ width: '90%' }} />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell align="center">
+                                                        <Chip label={row.g2 ? "VERDE" : "ROJO"} color={row.g2 ? "verde" : "rojo"} icon={<LightModeIcon />} sx={{ width: '90%' }} />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell align="center">
+                                                        <Chip label={row.g3 ? "VERDE" : "ROJO"} color={row.g3 ? "verde" : "rojo"} icon={<LightModeIcon />} sx={{ width: '90%' }} />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell align="center">
+                                                        <Chip label={row.g4 ? "VERDE" : "ROJO"} color={row.g4 ? "verde" : "rojo"} icon={<LightModeIcon />} sx={{ width: '90%' }} />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell align="center">
+                                                        {row.duracion}
+                                                    </StyledTableCell>
+
+                                                </StyledTableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                       
+                                           </Grid>
+                                           </Grid>
+                                           
+                                            </article>
+                    </Grid>
 
                     <Grid item xs={12}>
                         <div className="home-view-footer">
@@ -666,6 +855,7 @@ export default function HomeView() {
                 </ModalFooter>
             </Modal>
 
+                
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar}>
                 <CircularProgress color="inherit" />
             </Backdrop>

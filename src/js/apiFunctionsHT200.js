@@ -511,6 +511,27 @@ async function getWorkStateHT200(ip) {
 	return res
 }
 
+async function setModoManual(jsonData) {
+	await axios.post(`${BASE_HT200}/rest/setControlManualHT200?ip=${jsonData['ip']}`,jsonData)
+		.then(response => {
+			Swal.fire({
+				title: "Completado!",
+				text: "Datos Cargados Con Éxito",
+				icon: "success",
+			});
+			
+		})
+		.catch(function (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error de Conexión',
+				text: `${error}`,
+			  })
+		});
+}
+
+
 
 export { 
 	getUnitHT200,PostUnitHT200,
@@ -522,6 +543,7 @@ export {
 	getPlanHT200,PostPlanHT200,
 	getHorarioHT200,PostHorariosHT200,
 	getChannelHT200,PostChannelHT200,
-	getTimeHT200,PostTimeHT200,setBasicPlan,getRegErrores,setClonacion,getWorkStateHT200
-
+	getTimeHT200,PostTimeHT200,setBasicPlan,
+	getRegErrores,setClonacion,
+	getWorkStateHT200,setModoManual
 }
