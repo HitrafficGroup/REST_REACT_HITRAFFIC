@@ -359,17 +359,16 @@ export default function ClonacionHT200View() {
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <div style={{ height: 8 }}>
-
                         </div>
                     </Grid>
                 </Grid>
+                </Container>
                 <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={flagLoad}
-      >
+                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    open={flagLoad}
+                >
         <CircularProgress color="inherit" />
       </Backdrop>
-            </Container>
             <CardControllerHT200 />
         </>
     )

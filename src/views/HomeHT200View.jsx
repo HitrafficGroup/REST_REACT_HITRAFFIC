@@ -91,7 +91,7 @@ export default function HomeView() {
     const timer1 = useRef(0);
     const [tiempo,setTiempo] = useState(30)
     const color_flag = useRef(""); // estas variables sirve para solo mandar a actualizar cuando se genere un cambio de fase
-    const [currentFase,setCurrentFase] = useState([{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 },{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 },{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }])
+    const [currentPasos,setCurrentPasos] = useState([{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 },{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 },{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }])
 
     const indice_grupos =  useRef(0);
     const datos_grupos = useRef([{amarillo:2,verde:15,rojo:10}])
@@ -142,17 +142,21 @@ export default function HomeView() {
 
 
     const updateAreas =(__data)=>{
-        let areas_temp = JSON.parse(JSON.stringify(areas))
+        let areas_temp = JSON.parse(JSON.stringify(semaforos2.current))
+
         let dataUpdated = areas_temp.map((item) => {
-            if (item.grupo === __data.grupo) {
-                item['color'] = {color:__data.color};
-            }else{
-                item['color'] = {color:'red'}
+            for(let i = 0; i<__data.grupo.length ;i++){
+                let aux_grupo = `g${__data.grupo[i]}`
+                if (item.grupo === aux_grupo) {
+                    item['color'] = {color:__data.color};
+                }
+                
             }
             return item
-        })
+        }
+        )
       
-
+        semaforos2.current = dataUpdated
         setAreas(dataUpdated);
     }
 
@@ -256,61 +260,59 @@ export default function HomeView() {
     const parametrosCorriendo = async() => {
         setBtnPlay(!btnPlay)
         setFlagsimu(!flagsimu);
+
         try {
+            let areas_temp = JSON.parse(JSON.stringify(semaforos2.current))
+            let areas_init = areas_temp.map(item=> {
+                item.color = {color:"red"}
+                return item
+        })
+            semaforos2.current = areas_init
+          
             let data = await getWorkStateHT200(controlerState.ip)
             let splits_aux = controlerState.split.filter(item=> item.id === "split-"+data.split)[0].data
             let sequency_aux = controlerState.secuencias.filter(item=> item.id === "seq-"+data.seq)[0]
-            let sequency_formated = []
-            for(let j = 0; j<4 ;j++)
-            if(sequency_aux[`ring${j+1}`].length > 0){
+            let aux_long = 0
+            let domain_ring = 1
+            let domain_seq = []
+            for(let j = 0; j<4 ;j++){
                 let long = sequency_aux[`ring${j+1}`].length
-                for(let i=0;i<long;i++){
-                    if(i<long-1){
-                        let fase = sequency_aux[`ring${j+1}`][i].value
-                        let fase_sig = sequency_aux[`ring${j+1}`][i+1].value
-                        let duracion = splits_aux.filter(temp=> temp.fase === fase)[0].tiempo
-                        let aux_data = {
-                            paso: i,
-                            fase: sequency_aux[`ring${j+1}`][i].value,
-                            fase_sig: fase_sig,
-                            duracion:duracion,
-                            amarillo:3,
-                            rojo:2,
-                            verde: duracion -5,
-                            trama:generarCiclo({rojo:2,verde:duracion-5,amarillo:3})
-                        }
-                        sequency_formated.push(aux_data);
-                    }else{
-                        let fase = sequency_aux[`ring${j+1}`][i].value
-                        let fase_sig = sequency_aux[`ring${j+1}`][0].value
-                        let duracion = splits_aux.filter(temp=> temp.fase === fase)[0].tiempo
-                        let aux_data = {
-                            paso: i,
-                            fase: sequency_aux[`ring${j+1}`][i].value,
-                            fase_sig: fase_sig,
-                            duracion:duracion,
-                            amarillo:3,
-                            rojo:2,
-                            verde: duracion -5,
-                            trama:generarCiclo({rojo:2,verde:duracion-5,amarillo:3})
-                        }
-                        sequency_formated.push(aux_data)
-                    }
-                    
+                if(long > aux_long){
+                    aux_long = long
+                    domain_seq = sequency_aux[`ring${j+1}`]
+                    domain_ring = j+1
                 }
             }
-            datos_grupos.current = sequency_formated
-            let index = sequency_formated.findIndex(function(el){
-                return el.fase === data.ring1_fase; // or el.nombre=='T NORTE';
+            let data_formated = domain_seq.map((item,index)=>{
+                let duracion = splits_aux.filter(temp=> temp.fase === item.value)[0].tiempo
+                let fases = [sequency_aux.ring1[index],sequency_aux.ring2[index],sequency_aux.ring3[index],sequency_aux.ring4[index]].filter(item=> item !== undefined)
+                let values = fases.map(item=>(item.value))
+                let aux_data = {
+                    paso: index+1,
+                    fase: item.value,
+                    fases:values,
+                    duracion:duracion,
+                    amarillo:3,
+                    rojo:2,
+                    verde: duracion -5,
+                    trama:generarCiclo({rojo:2,verde:duracion-5,amarillo:3})
+                }
+    
+                return aux_data
+            })
+
+            datos_grupos.current = data_formated
+            let index = data_formated.findIndex(function(el){
+                return el.fase === data[`ring${domain_ring}_fase`]; // or el.nombre=='T NORTE';
             });
-            let value_timer = sequency_formated[index].duracion - data.ring1_remain
-            console.log(value_timer) 
+            let value_timer = data_formated[index].duracion - data.ring1_remain
+     
             indice_grupos.current = index
             timer1.current = value_timer
             simulacion.current =   !simulacion.current
         
         } catch (error) {
-       
+            console.log(error)
         }
    
        
@@ -491,6 +493,7 @@ export default function HomeView() {
         let aux_2  = (tiempo_modo>>8)&0xff
         let array_data =  [15,1,aux_p,__param,0,0,aux_1,aux_2]
         await setModoManual({trama:array_data,ip:controlerState.ip});
+        cargarMapa()
        
     }
     const cargarMapa= async()=>{
@@ -498,9 +501,6 @@ export default function HomeView() {
         let data = await getWorkStateHT200(controlerState.ip)
         let splits_aux = controlerState.split.filter(item=> item.id === "split-"+data.split)[0].data
         let sequency_aux = controlerState.secuencias.filter(item=> item.id === "seq-"+data.seq)[0]
-        console.log(splits_aux)
-        console.log(sequency_aux)
-
         let aux_long = 0
         let domain_seq = []
         for(let j = 0; j<4 ;j++){
@@ -526,8 +526,22 @@ export default function HomeView() {
 
             return aux_data
         })
-        console.log(data_formated)
-        console.log(data)
+        let table_data = data_formated.map((item,index)=>{
+            let paso_data ={
+                g1:false,
+                g2:false,
+                g3:false,
+                g4:false,
+                duracion:item.duracion,
+                id:index+1,
+            }
+            item.fase.forEach((fas)=>{
+                paso_data[`g${fas}`] =true
+            })
+            return paso_data
+        })
+        setCurrentPasos(table_data)
+     
 
     }
     
@@ -544,14 +558,18 @@ export default function HomeView() {
                    
                     if(color !== color_flag.current){
                         color_flag.current = color
-                        updateAreas({grupo:`g${grupo.fase}`,color:color})
+                        updateAreas({grupo:grupo.fases,color:color})
                     }
                     
                 }else{
+      
                     indice_grupos.current = indice_grupos.current+1
-                    if(indice_grupos.current === 4){
+                   
+                    if(indice_grupos.current === datos_grupos.current.length){
                         indice_grupos.current = 0
+                        
                     }
+                    updateAreas({grupo:datos_grupos.current[indice_grupos.current].fases,color:"green"})
                     timer1.current = 0
                     //console.log(g1_datos.current[timer1.current])
                 }
@@ -736,7 +754,6 @@ export default function HomeView() {
                                                 <Button variant="contained" onClick={()=>{modoManual(52)}} color = "oscuro"fullWidth startIcon={<PanToolIcon />}>
                                                     Mantenerse el Paso
                                                 </Button>
-                                               
                                                 </Grid>
                                                 <Grid item xs={12} >
                                                 <Button variant="contained"  onClick={()=>{modoManual(0)}} color = "oscuro" fullWidth startIcon={<SmartToyIcon />}>
@@ -759,7 +776,7 @@ export default function HomeView() {
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {currentFase.map((row, index) => (
+                                            {currentPasos.map((row, index) => (
                                                 <StyledTableRow key={index}>
                                                     <StyledTableCell align="center">
                                                         <div className="basic-paso">

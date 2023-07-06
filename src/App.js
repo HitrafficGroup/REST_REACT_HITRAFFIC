@@ -4,6 +4,7 @@ import Sw12Dashboard from "./views/Sw12Dashboard.jsx"
 import HT200Dashboard from "./views/HT200Dashboard";
 import DeclararControladorView from "./views/DeclararControladorView";
 import ControlersView from "./views/ControlersView";
+import VistaMaestraView from "./views/VistaMaestraView";
 function App() {
   return (
     <div className="App">
@@ -13,6 +14,7 @@ function App() {
           <Route path="/crear_equipo" element={<DeclararControladorView/>} />
           <Route path="/controlador_SW12/*" element={<Sw12Dashboard/>} />
           <Route path="/controlador_HT200/*" element={<HT200Dashboard/>} />
+          <Route path="/vista_maestra" element={<VistaMaestraView/>} />
         </Routes>
     </div>
   );

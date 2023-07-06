@@ -328,7 +328,7 @@ export default function ControlersView() {
             </AppBar>
             <Container maxWidth="lg" sx={{ paddingTop: 3 }}>
                 <Grid container spacing={2}>
-                    <Grid xs={12} md={8}>
+                    <Grid xs={12} md={12}>
                         <div className="card-controller-filter">
                             <div className="header-controller-filter">
                                 <p className="nombre-card">Filtros</p>
@@ -363,11 +363,14 @@ export default function ControlersView() {
                                             )}
                                         />
                                     </Grid>
-                                    <Grid item xs={12} md={4}>
+                                    <Grid item xs={12} md={2}>
                                         <Button variant="contained" size="medium" fullWidth onClick={filtrarLosDatos}  >FILTRAR</Button>
                                     </Grid>
-                                    <Grid item xs={12} md={4}>
+                                    <Grid item xs={12} md={3}>
                                         <Button variant="contained" size="medium" fullWidth onClick={() => { Changeview('/crear_equipo') }}  >+ CONTROLADOR</Button>
+                                    </Grid>
+                                    <Grid item xs={12} md={3}>
+                                        <Button variant="contained" size="medium" fullWidth onClick={() => { Changeview('/vista_maestra') }}  >MASTER CONFIGURATION</Button>
                                     </Grid>
                                 </Grid>
                             </div>

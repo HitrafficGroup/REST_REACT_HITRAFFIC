@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-//const BASE_HT200 = 'https://www.hitraffic-group.com';
+// const BASE_HT200 = 'https://www.hitraffic-group.com';
 const BASE_HT200 = 'http://127.0.0.1:8000';
 
 
@@ -514,20 +514,12 @@ async function getWorkStateHT200(ip) {
 async function setModoManual(jsonData) {
 	await axios.post(`${BASE_HT200}/rest/setControlManualHT200?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
-			Swal.fire({
-				title: "Completado!",
-				text: "Datos Cargados Con Éxito",
-				icon: "success",
-			});
+			
 			
 		})
 		.catch(function (error) {
 			console.error(error);
-			Swal.fire({
-				icon: 'error',
-				title: 'Error de Conexión',
-				text: `${error}`,
-			  })
+			
 		});
 }
 
