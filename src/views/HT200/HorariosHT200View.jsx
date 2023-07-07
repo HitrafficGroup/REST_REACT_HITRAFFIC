@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import { getHorarioHT200,PostHorariosHT200 } from "../js/apiFunctionsHT200";
+import { getHorarioHT200,PostHorariosHT200 } from "../../js/apiFunctionsHT200";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 import Table from '@mui/material/Table';
@@ -29,9 +29,9 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateDoc, doc } from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
-import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
-import CardControllerHT200 from "../components/CardControllerHT200";
+import { db } from "../../firebase/firebase-config";
+import { updateParamsHT200 } from "../../features/controlerht200/controlerHT200Slice";
+import CardControllerHT200 from "../../components/CardControllerHT200";
 export default function HorariosHT200View(){
 
     const controlerState = useSelector(state => state.controlerht200);

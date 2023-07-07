@@ -1,4 +1,4 @@
-import CardController from "../components/CardController";
+import CardController from "../../components/CardController";
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
@@ -12,16 +12,16 @@ import FormControl from '@mui/material/FormControl';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { db } from "../firebase/firebase-config";
+import { db } from "../../firebase/firebase-config";
 import { updateDoc, doc } from "firebase/firestore";
 import {
     getPlan1SW12, getPlan2SW12, getPlan3SW12, getPlan4SW12, getPlan5SW12,
     getPlan6SW12, getPlan7SW12, getPlan8SW12, getOperativeParamsSW12,
     postPlanesSW12, postOtrosParametrosSW12
-} from '../js/apiFunctionsSW12';
-import '../css/PlanesView.css'
+} from '../../js/apiFunctionsSW12';
+import '../../css/PlanesView.css'
 import { useSelector, useDispatch } from 'react-redux';
-import { addPlan1, addPlan2, addPlan3, addPlan4, addPlan5, addPlan6, addPlan7, addPlan8, addParametros } from "../features/controlers/controlerSlice";
+import { addPlan1, addPlan2, addPlan3, addPlan4, addPlan5, addPlan6, addPlan7, addPlan8, addParametros } from "../../features/controlers/controlerSlice";
 import IconButton from '@mui/material/IconButton';
 //mitze rodriguez
 // import { updatePlanesSamplingTime, getCheckDataPlanes } from '../js/gestionSolicitudes';

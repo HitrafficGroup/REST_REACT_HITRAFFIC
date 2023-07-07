@@ -1,6 +1,6 @@
-import CardController from "../components/CardController";
+import CardController from "../../components/CardController";
 import React, { useState } from 'react';
-import { db } from "../firebase/firebase-config";
+import { db } from "../../firebase/firebase-config";
 import { updateDoc, doc } from "firebase/firestore";
 import Container from '@mui/material/Container';
 import Select from '@mui/material/Select';
@@ -12,11 +12,11 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import '../css/GruposView.css'
+import '../../css/GruposView.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { setGruposControllers } from "../features/controlers/controlerSlice";
+import { setGruposControllers } from "../../features/controlers/controlerSlice";
 import { useSelector,useDispatch } from 'react-redux';
-import { getGruposSW12,getGreenConflictSW12,postGruposSW12,postGreenConflictSW12 } from '../js/apiFunctionsSW12';
+import { getGruposSW12,getGreenConflictSW12,postGruposSW12,postGreenConflictSW12 } from '../../js/apiFunctionsSW12';
 import IconButton from '@mui/material/IconButton';
 import Collapse from '@mui/material/Collapse';
 import EditIcon from '@mui/icons-material/Edit';
@@ -24,7 +24,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Swal from 'sweetalert2';
 import Alert from '@mui/material/Alert';
-import { CheckAndLinkBits } from '../js/manageData';
+import { CheckAndLinkBits } from '../../js/manageData';
 // tablas dependencias
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';

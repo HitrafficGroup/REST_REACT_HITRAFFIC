@@ -1,0 +1,40 @@
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import HT200AppBar from "../../components/HT200AppBar";
+import HomeHT200View from "./HomeHT200View";
+import UnidadHT200View from "./UnidadHT200View";
+import FasesHT200View from "./FasesHT200View";
+import SecuencyHT200View from "./SecuencyHT200View";
+import SplitHT200View from "./SplitHT200View";
+import PatternHT200View from "./PatternHT200View";
+import AccionesHT200View from "./AccionesHT200View";
+import PlanHT200View from "./PlanHT200View";
+import HorariosHT200View from "./HorariosHT200View";
+import ChannelHT200View from "./ChannelHT200View";
+import BasicSettingsHT200View from "./BasicSettingsHT200View";
+import PruebasView from "../PruebasView";
+import RegistroErroresHT200View from "./RegistroErroresHT200View";
+import ClonacionHT200View from "./ClonacionHT200View";
+export default function HT200Dashboard(){
+    return (
+        <>
+        <HT200AppBar />
+            <Routes>
+                <Route path="home" element={<HomeHT200View />} />
+                <Route path="config" element={<BasicSettingsHT200View />} />
+                <Route path="unit" element={<UnidadHT200View />} />
+                <Route path="fases" element={<FasesHT200View />} />
+                <Route path="sequency" element={<SecuencyHT200View />} />
+                <Route path="split" element={<SplitHT200View />} />
+                <Route path="pattern" element={<PatternHT200View />} />
+                <Route path="action" element={<AccionesHT200View />} />
+                <Route path="plan" element={<PlanHT200View />} />
+                <Route path="horario" element={<HorariosHT200View />} />
+                <Route path="channel" element={<ChannelHT200View />} />
+                <Route path="pruebas" element={<PruebasView />} />
+                <Route path="errores" element={<RegistroErroresHT200View />} />
+                <Route path="clonacion" element={<ClonacionHT200View />} />
+            </Routes>   
+        </>
+      );
+}

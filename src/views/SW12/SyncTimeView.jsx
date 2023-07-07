@@ -1,17 +1,17 @@
 
 import { React, useEffect, useState } from "react"
 import Container from '@mui/material/Container';
-import { db } from "../firebase/firebase-config";
+import { db } from "../../firebase/firebase-config";
 import { collection, updateDoc, onSnapshot, doc } from "firebase/firestore";
 import Grid from '@mui/material/Unstable_Grid2';
 import Button from '@mui/material/Button';
-import RelogActual from "../components/RelogActual";
+import RelogActual from "../../components/RelogActual";
 import Swal from 'sweetalert2';
 
 import { useSelector, useDispatch } from 'react-redux';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import "../css/SyncTimeView.css"
+import "../../css/SyncTimeView.css"
 export default function SyncTimeView() {
     
     const [tiempoController,setTiempoController] = useState(InitialTime)

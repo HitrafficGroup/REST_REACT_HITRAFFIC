@@ -1,7 +1,7 @@
-import CardInformation from '../components/CardInformation';
-import CardController from "../components/CardController";
+import CardInformation from '../../components/CardInformation';
+import CardController from "../../components/CardController";
 import Container from '@mui/material/Container';
-import "../css/ClonacionView.css";
+import "../../css/ClonacionView.css";
 
 import { useSelector } from 'react-redux';
 import * as React from 'react';
@@ -17,7 +17,7 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { db } from "../firebase/firebase-config";
+import { db } from "../../firebase/firebase-config";
 import { getDoc, doc,updateDoc } from "firebase/firestore";
 import Swal from 'sweetalert2';
 

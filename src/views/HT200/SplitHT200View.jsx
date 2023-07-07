@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-import { generateSplitFrame } from "../js/generateFrameApiHT200";
+import { generateSplitFrame } from "../../js/generateFrameApiHT200";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Button from '@mui/material/Button';
-import { getSplitHT200,PostSplitHT200} from "../js/apiFunctionsHT200";
+import { getSplitHT200,PostSplitHT200} from "../../js/apiFunctionsHT200";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -22,7 +22,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector,useDispatch } from 'react-redux';
-import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
+import { updateParamsHT200 } from "../../features/controlerht200/controlerHT200Slice";
 //
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -32,9 +32,9 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { updateDoc, doc } from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
+import { db } from "../../firebase/firebase-config";
 //
-import CardControllerHT200 from "../components/CardControllerHT200";
+import CardControllerHT200 from "../../components/CardControllerHT200";
 export default function SplitHT200View() {
     const controlerState = useSelector(state => state.controlerht200)
     const [splitTab, setSplitTab] = useState("split-1");

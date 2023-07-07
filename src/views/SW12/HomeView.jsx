@@ -6,15 +6,15 @@ import Button from '@mui/material/Button';
 import SaveIcon from '@mui/icons-material/Save';
 
 import { updateDoc, doc} from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
+import { db } from "../../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import CheckSharpIcon from '@mui/icons-material/CheckSharp';
 import TextField from '@mui/material/TextField';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
-import "../css/HomeView.css"
-import "../css/SyncTimeView.css"
-import CustomProgress from "../components/CustomProgress";
+import "../../css/HomeView.css"
+import "../../css/SyncTimeView.css"
+import CustomProgress from "../../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -22,7 +22,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
 import Fab from '@mui/material/Fab';
-import { setSemaforos } from "../features/controlers/controlerSlice";
+import { setSemaforos } from "../../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Backdrop from '@mui/material/Backdrop';
@@ -30,11 +30,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { MapContainer, TileLayer, Marker, Popup, Polygon, FeatureGroup } from "react-leaflet";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import '../css/HomeView.css';
-import '../css/beautifulCard.scss';
+import '../../css/beautifulCard.scss';
 import Swal from 'sweetalert2';
-import RelogActual from "../components/RelogActual";
-import { getTimeControllerSW12, postTimeSW12 } from '../js/apiFunctionsSW12';
+import RelogActual from "../../components/RelogActual";
+import { getTimeControllerSW12, postTimeSW12 } from '../../js/apiFunctionsSW12';
 
 const InitialTime = {
     day: "00",
@@ -1027,8 +1026,8 @@ export default function HomeView() {
 
 
 const point = new L.Icon({
-    iconUrl: require('../assets/point2.png'),
-    iconRetinaUrl: require('../assets/point2.png'),
+    iconUrl: require('../../assets/point2.png'),
+    iconRetinaUrl: require('../../assets/point2.png'),
     iconSize: [8, 8], // size of the icon
     shadowSize: [50, 64], // size of the shadow
     iconAnchor: [3, 4], // point of the icon which will correspond to marker's location
@@ -1037,8 +1036,8 @@ const point = new L.Icon({
 
 });
 const ubi = new L.Icon({
-    iconUrl: require('../assets/ubica.png'),
-    iconRetinaUrl: require('../assets/ubica.png'),
+    iconUrl: require('../../assets/ubica.png'),
+    iconRetinaUrl: require('../../assets/ubica.png'),
     iconSize: [20, 30], // size of the icon
     shadowSize: [50, 64], // size of the shadow
     iconAnchor: [9, 30], // point of the icon which will correspond to marker's location
@@ -1048,8 +1047,8 @@ const ubi = new L.Icon({
 });
 
 const semaforo = new L.Icon({
-    iconUrl: require('../assets/semaforo3.png'),
-    iconRetinaUrl: require('../assets/semaforo3.png'),
+    iconUrl: require('../../assets/semaforo3.png'),
+    iconRetinaUrl: require('../../assets/semaforo3.png'),
     iconSize: [50, 50], // size of the icon
     shadowSize: [50, 64], // size of the shadow
     iconAnchor: [22, 94], // point of the icon which will correspond to marker's location

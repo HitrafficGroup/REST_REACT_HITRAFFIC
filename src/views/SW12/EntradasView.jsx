@@ -1,5 +1,5 @@
 
-import CardController from "../components/CardController";
+import CardController from "../../components/CardController";
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
@@ -7,13 +7,13 @@ import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { db } from "../firebase/firebase-config";
+import { db } from "../../firebase/firebase-config";
 import { updateDoc, doc } from "firebase/firestore";
 
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { getEntradasSW12,postEntradasSW12 } from '../js/apiFunctionsSW12';
-import "../css/EntradasView.css";
+import { getEntradasSW12,postEntradasSW12 } from '../../js/apiFunctionsSW12';
+import "../../css/EntradasView.css";
 import { useSelector} from 'react-redux';
 import Swal from 'sweetalert2';
 export default function EntradasView() {

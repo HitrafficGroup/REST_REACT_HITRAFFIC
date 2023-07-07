@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Button from '@mui/material/Button';
-import { getAccionHT200 ,PostActionHT200} from '../js/apiFunctionsHT200';
+import { getAccionHT200 ,PostActionHT200} from '../../js/apiFunctionsHT200';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -20,12 +20,12 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Swal from 'sweetalert2';
 import Select from '@mui/material/Select';
-import { generateActionFrame } from '../js/generateFrameApiHT200';
+import { generateActionFrame } from '../../js/generateFrameApiHT200';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateDoc, doc } from "firebase/firestore";
-import { db } from '../firebase/firebase-config';
-import { updateParamsHT200 } from '../features/controlerht200/controlerHT200Slice';
-import CardControllerHT200 from '../components/CardControllerHT200';
+import { db } from '../../firebase/firebase-config';
+import { updateParamsHT200 } from '../../features/controlerht200/controlerHT200Slice';
+import CardControllerHT200 from '../../components/CardControllerHT200';
 export default function AccionesHT200View(){
     const controlerState = useSelector(state => state.controlerht200)
     const [page, setPage] = useState(0);

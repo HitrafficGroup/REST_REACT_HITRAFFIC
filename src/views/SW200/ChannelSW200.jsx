@@ -31,7 +31,7 @@ import { db } from '../firebase/firebase-config';
 import { updateParamsHT200 } from '../features/controlerht200/controlerHT200Slice';
 import { generateChannelFrame } from '../js/generateFrameApiHT200';
 import CardControllerHT200 from '../components/CardControllerHT200';
-export default function ChannelHT200View(){
+export default function ChannelSW200(){
     const controlerState = useSelector(state => state.controlerht200);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);

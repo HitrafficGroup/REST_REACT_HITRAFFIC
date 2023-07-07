@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import ButtonAppBar from "../components/ButtonAppBar";
+import ButtonAppBar from "../../components/ButtonAppBar";
 import ClonacionView from "./ClonacionView";
 import ResumenView from "./ResumenView";
 import HomeView from "./HomeView"
@@ -10,10 +10,10 @@ import HorariosView from "./HorariosView";
 import PlanesView from "./PlanesView";
 import ErroresView from "./ErroresView";
 import SyncTimeView from "./SyncTimeView";
-import MapaUniversalView from "./MapaUniversalView";
-import DeclararControladorView from "./DeclararControladorView";
-import PruebasView from "./PruebasView";
-import ControlersView from "./ControlersView";
+import MapaUniversalView from "../MapaUniversalView";
+import DeclararControladorView from "../DeclararControladorView";
+import PruebasView from "../PruebasView";
+import ControlersView from "../ControlersView";
 export default function Sw12Dashboard() {
 
     return (

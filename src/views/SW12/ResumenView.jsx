@@ -1,14 +1,14 @@
 
-import CardController from "../components/CardController";
+import CardController from "../../components/CardController";
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import React, { useState, useRef } from 'react';
-import "../css/ResumenView.css";
+import "../../css/ResumenView.css";
 
 import CloudIcon from '@mui/icons-material/Cloud';
 import Button from '@mui/material/Button';
 
-import { db } from "../firebase/firebase-config";
+import { db } from "../../firebase/firebase-config";
 import { getDoc, doc } from "firebase/firestore";
 import { useSelector } from 'react-redux';
 import Box from '@mui/material/Box';

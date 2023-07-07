@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import { getSecuencyHT200, PostSecuenciasHT200 } from "../js/apiFunctionsHT200";
-import { generateSeqFrame } from "../js/generateFrameApiHT200";
+import { getSecuencyHT200, PostSecuenciasHT200 } from "../../js/apiFunctionsHT200";
+import { generateSeqFrame } from "../../js/generateFrameApiHT200";
 import Button from '@mui/material/Button';
-import "../css/SecuencyHT200View.scss";
+import "../../css/SecuencyHT200View.scss";
 import IconButton from '@mui/material/IconButton';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import TextField from '@mui/material/TextField';
@@ -14,8 +14,8 @@ import Stack from '@mui/material/Stack';
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateDoc, doc } from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
-import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
+import { db } from "../../firebase/firebase-config";
+import { updateParamsHT200 } from "../../features/controlerht200/controlerHT200Slice";
 //tablas
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -30,7 +30,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import EditIcon from '@mui/icons-material/Edit';
 // card controller
-import CardControllerHT200 from "../components/CardControllerHT200";
+import CardControllerHT200 from "../../components/CardControllerHT200";
 export default function SecuencyHT200View() {  
     const controlerState = useSelector(state => state.controlerht200)
     const [secuencias, setSecuencias] = useState(controlerState.secuencias);

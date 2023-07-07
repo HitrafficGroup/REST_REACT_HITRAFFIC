@@ -8,13 +8,13 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Switch from '@mui/material/Switch';
 import { updateDoc, doc } from "firebase/firestore";
-import { db } from '../firebase/firebase-config';
+import { db } from '../../firebase/firebase-config';
 import Button from '@mui/material/Button';
-import { getUnitHT200,PostUnitHT200 } from '../js/apiFunctionsHT200';
-import { updateParamsHT200 } from '../features/controlerht200/controlerHT200Slice';
+import { getUnitHT200,PostUnitHT200 } from '../../js/apiFunctionsHT200';
+import { updateParamsHT200 } from '../../features/controlerht200/controlerHT200Slice';
 import { useSelector,useDispatch } from 'react-redux';
-import CardControllerHT200 from '../components/CardControllerHT200';
-export default function UnidadHT200View() {
+import CardControllerHT200 from '../../components/CardControllerHT200';
+export default function UnidadSW200View() {
     const controlerState = useSelector(state => state.controlerht200)
     const [state, setState] = useState({
         StartupFlash: "0",

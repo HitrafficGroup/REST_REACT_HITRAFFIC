@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { getRegErrores } from "../js/apiFunctionsHT200";
+import { getRegErrores } from "../../js/apiFunctionsHT200";
 import { useSelector } from 'react-redux';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -13,7 +13,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import CardControllerHT200 from "../components/CardControllerHT200";
+import CardControllerHT200 from "../../components/CardControllerHT200";
 export default function RegistroErroresHT200View() {
     const controlerState = useSelector(state => state.controlerht200);
     const [data, setData] = useState([{}]);

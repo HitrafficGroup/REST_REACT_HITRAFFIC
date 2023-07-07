@@ -14,12 +14,12 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Swal from 'sweetalert2';
-import { getFasesHT200,PostFasesHT200 } from "../js/apiFunctionsHT200";
+import { getFasesHT200,PostFasesHT200 } from "../../js/apiFunctionsHT200";
 import { useSelector, useDispatch } from 'react-redux';
 import { updateDoc, doc } from "firebase/firestore";
-import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
-import { generatePhaseFrame } from "../js/generateFrameApiHT200";
-import { db } from "../firebase/firebase-config";
+import { updateParamsHT200 } from "../../features/controlerht200/controlerHT200Slice";
+import { generatePhaseFrame } from "../../js/generateFrameApiHT200";
+import { db } from "../../firebase/firebase-config";
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
@@ -28,7 +28,7 @@ import MenuItem from '@mui/material/MenuItem';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
 //
-import CardControllerHT200 from "../components/CardControllerHT200";
+import CardControllerHT200 from "../../components/CardControllerHT200";
 
 
 export default function FasesHT200View() {

@@ -1,4 +1,4 @@
-import CardController from "../components/CardController";
+import CardController from "../../components/CardController";
 import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import Chip from '@mui/material/Chip';
@@ -10,16 +10,16 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { updateDoc,doc } from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
+import { db } from "../../firebase/firebase-config";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 // import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
-import { getFasesSW12,postFasesSW12 } from '../js/apiFunctionsSW12';
+import { getFasesSW12,postFasesSW12 } from '../../js/apiFunctionsSW12';
 import { useSelector, useDispatch } from 'react-redux';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Swal from 'sweetalert2';
-import '../css/FasesView.css';
-import { addFases } from "../features/controlers/controlerSlice";
+import '../../css/FasesView.css';
+import { addFases } from "../../features/controlers/controlerSlice";
 //fases 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';

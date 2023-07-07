@@ -5,10 +5,10 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { getPlanHT200,PostPlanHT200 } from '../js/apiFunctionsHT200';
+import { getPlanHT200,PostPlanHT200 } from '../../js/apiFunctionsHT200';
 import Button from '@mui/material/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { generatePlanFrame } from '../js/generateFrameApiHT200';
+import { generatePlanFrame } from '../../js/generateFrameApiHT200';
 import TextField from '@mui/material/TextField';
 import Swal from 'sweetalert2';
 //
@@ -24,9 +24,9 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { updateDoc, doc } from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
-import { updateParamsHT200 } from "../features/controlerht200/controlerHT200Slice";
-import CardControllerHT200 from '../components/CardControllerHT200';
+import { db } from "../../firebase/firebase-config";
+import { updateParamsHT200 } from "../../features/controlerht200/controlerHT200Slice";
+import CardControllerHT200 from '../../components/CardControllerHT200';
 export default function PlanHT200View(){
     const controlerState = useSelector(state => state.controlerht200);
     const [planTab,setPlanTab] = useState("plan-1");

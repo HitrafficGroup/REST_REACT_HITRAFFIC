@@ -4,13 +4,13 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import SaveIcon from '@mui/icons-material/Save';
 import { updateDoc, doc} from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
+import { db } from "../../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
 import CheckSharpIcon from '@mui/icons-material/CheckSharp';
 import TextField from '@mui/material/TextField';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
-import "../css/HomeView.css"
-import "../css/SyncTimeView.css"
+import "../../css/HomeView.css"
+import "../../css/SyncTimeView.css"
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -19,7 +19,7 @@ import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import Fab from '@mui/material/Fab';
-import  { setSemaforos } from "../features/controlers/controlerSlice";
+import  { setSemaforos } from "../../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Backdrop from '@mui/material/Backdrop';
@@ -27,11 +27,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { MapContainer, TileLayer, Marker, Popup, Polygon, FeatureGroup } from "react-leaflet";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import '../css/HomeView.css';
-import '../css/beautifulCard.scss';
+import '../../css/beautifulCard.scss';
 import Swal from 'sweetalert2';
-import RelogActual from "../components/RelogActual";
-import { getTimeHT200,PostTimeHT200,getWorkStateHT200,setModoManual } from '../js/apiFunctionsHT200';
+import RelogActual from "../../components/RelogActual";
+import { getTimeHT200,PostTimeHT200,getWorkStateHT200,setModoManual } from '../../js/apiFunctionsHT200';
 import Paper from '@mui/material/Paper';
 import Chip from '@mui/material/Chip';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -218,6 +217,7 @@ export default function HomeView() {
                 semaforos: areas_temp
             });
             setAreas(areas_temp)
+            semaforos2.current = areas_temp
             setPointsArea([])
             setModalCrearSemaforo(false)
 
@@ -885,8 +885,8 @@ export default function HomeView() {
 
 
 const point = new L.Icon({
-    iconUrl: require('../assets/point2.png'),
-    iconRetinaUrl: require('../assets/point2.png'),
+    iconUrl: require('../../assets/point2.png'),
+    iconRetinaUrl: require('../../assets/point2.png'),
     iconSize: [8, 8], // size of the icon
     shadowSize: [50, 64], // size of the shadow
     iconAnchor: [3, 4], // point of the icon which will correspond to marker's location
@@ -895,8 +895,8 @@ const point = new L.Icon({
 
 });
 const ubi = new L.Icon({
-    iconUrl: require('../assets/ubica.png'),
-    iconRetinaUrl: require('../assets/ubica.png'),
+    iconUrl: require('../../assets/ubica.png'),
+    iconRetinaUrl: require('../../assets/ubica.png'),
     iconSize: [20, 30], // size of the icon
     shadowSize: [50, 64], // size of the shadow
     iconAnchor: [9, 30], // point of the icon which will correspond to marker's location
