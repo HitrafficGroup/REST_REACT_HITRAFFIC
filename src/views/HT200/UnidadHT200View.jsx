@@ -29,6 +29,8 @@ export default function UnidadHT200View() {
         GreenConflictDetectFlag: false,
         RedGreenConflictDetectFlag: false,
         RedFailedDetectFlag: false,
+        GoiaSync:false,
+        SemaforoFlag:false
     });
     const dispatch = useDispatch();
    
@@ -49,7 +51,9 @@ export default function UnidadHT200View() {
             parseInt(state.Status),
             state.GreenConflictDetectFlag ? 1:0,
             state.RedGreenConflictDetectFlag ? 1:0,
-            state.RedFailedDetectFlag ? 1:0
+            state.RedFailedDetectFlag ? 1:0,
+            state.GoiaSync ? 1:0,
+            state.SemaforoFlag ? 1:0,
         ]
         
     
@@ -65,6 +69,8 @@ export default function UnidadHT200View() {
         data["RedGreenConflictDetectFlag"] =  data["RedGreenConflictDetectFlag"] === 1 ? true:false;
         data["RedFailedDetectFlag"] =  data["RedFailedDetectFlag"] === 1 ? true:false;
         data["AutomaticPedClear"] =  data["AutomaticPedClear"] === 2 ? true:false;
+        data["GoiaSync"] =  data["GoiaSync"] === 1 ? true:false;
+        data["SemaforoFlag"] =  data["SemaforoFlag"] === 1 ? true:false;
         setState(data);
         updateFirebase('unit',data)
         dispatch(updateParamsHT200({target:'unit',data:data}))
@@ -194,6 +200,18 @@ export default function UnidadHT200View() {
                                     value="top"
                                     control={<Switch checked={state.RedFailedDetectFlag} color="primary" onChange={handleSwitch} name='RedFailedDetectFlag' />}
                                     label="Activacion de falla de luz Roja: "
+                                    labelPlacement="start"
+                                />
+                                   <FormControlLabel
+                                    value="top"
+                                    control={<Switch checked={state.GoiaSync} color="primary" onChange={handleSwitch} name='GoiaSync' />}
+                                    label="Syncronizar con Goia: "
+                                    labelPlacement="start"
+                                />
+                                   <FormControlLabel
+                                    value="top"
+                                    control={<Switch checked={state.SemaforoFlag} color="primary" onChange={handleSwitch} name='SemaforoFlag' />}
+                                    label="Deteccion de Desconexion de Semaforos: "
                                     labelPlacement="start"
                                 />
                             </FormGroup>

@@ -258,8 +258,7 @@ export default function ChannelHT200View(){
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {data
-                                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    {data.filter(item=> item.number <5).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((row,index) => {
                                             return (
                                                 <TableRow hover role="checkbox" tabIndex={-1} key={index}>
