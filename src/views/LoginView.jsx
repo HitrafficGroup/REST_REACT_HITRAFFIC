@@ -171,6 +171,7 @@ export default function LoginView() {
             <Button
               type="submit"
               fullWidth
+              color='anaranjado1'
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >

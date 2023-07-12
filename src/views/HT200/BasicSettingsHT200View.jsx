@@ -30,6 +30,9 @@ import { generatePhaseFrame,generateSeqFrame,generateSplitFrame,generatePatternF
 import {setBasicPlan } from "../../js/apiFunctionsHT200";
 import { useSelector, useDispatch } from 'react-redux';
 import CardControllerHT200 from "../../components/CardControllerHT200";
+import { IpControllerCard } from '../../components/ip-controller-card';
+import { CantonControllerCard } from '../../components/canton-controller-card';
+import { NombreControllerCard } from '../../components/nombre-controller-card';
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
         backgroundColor: theme.palette.common.black,
@@ -307,17 +310,26 @@ export default function BasicSettingsHT200View() {
    
     return (
         <>
-            <Container maxWidth="md" style={{paddingTop:15}}>
+            <Container maxWidth="lg" style={{paddingTop:15}}>
                 <Grid container spacing={3}>
                    
-                    <Grid item xs={6} md={2}>
-                
+                    <Grid item xs={12} md={4} >
+                      <NombreControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.nombre}
+                        />
                     </Grid>
-                    <Grid item xs={6} md={2}>
-                 
+                    <Grid item xs={12} md={4} >
+                      <CantonControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.canton}
+                        />
                     </Grid>
-                    <Grid item xs={12} md={3}>
-                     
+                    <Grid item xs={12} md={4} >
+                      <IpControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.ip}
+                        />
                     </Grid>
                
                     <Grid item xs={12}>
@@ -537,7 +549,6 @@ export default function BasicSettingsHT200View() {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-      <CardControllerHT200 />
         </>
     )
 }

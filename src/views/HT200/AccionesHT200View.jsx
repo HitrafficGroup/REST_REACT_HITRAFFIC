@@ -25,7 +25,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from '../../firebase/firebase-config';
 import { updateParamsHT200 } from '../../features/controlerht200/controlerHT200Slice';
-import CardControllerHT200 from '../../components/CardControllerHT200';
+import { IpControllerCard } from '../../components/ip-controller-card';
+import { CantonControllerCard } from '../../components/canton-controller-card';
+import { NombreControllerCard } from '../../components/nombre-controller-card';
 export default function AccionesHT200View(){
     const controlerState = useSelector(state => state.controlerht200)
     const [page, setPage] = useState(0);
@@ -182,9 +184,27 @@ export default function AccionesHT200View(){
     }
     return(
         <>
-            <Container maxWidth="md">
+            <Container maxWidth="lg">
                
                 <Grid container spacing={2} style={{paddingTop:15}}>
+                <Grid item xs={12} md={4} >
+                      <NombreControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.nombre}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={4} >
+                      <CantonControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.canton}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={4} >
+                      <IpControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.ip}
+                        />
+                    </Grid>
                 <Grid item xs={12} md={4} >
                         <Button color='azulm' variant="contained"  fullWidth onClick={abrirModalCrear}  >crear Accion</Button>
                     </Grid>
@@ -488,7 +508,7 @@ export default function AccionesHT200View(){
                     </Button>
                 </ModalFooter>
             </Modal>
-            <CardControllerHT200 />
+         
         </>
     )
 }

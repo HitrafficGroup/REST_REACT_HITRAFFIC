@@ -15,11 +15,13 @@ import BasicSettingsHT200View from "./BasicSettingsHT200View";
 import PruebasView from "../PruebasView";
 import RegistroErroresHT200View from "./RegistroErroresHT200View";
 import ClonacionHT200View from "./ClonacionHT200View";
+import { Layout } from "../../dashboard/layout";
 export default function HT200Dashboard(){
     return (
         <>
-        <HT200AppBar />
-            <Routes>
+ 
+        <Layout>
+        <Routes>
                 <Route path="home" element={<HomeHT200View />} />
                 <Route path="config" element={<BasicSettingsHT200View />} />
                 <Route path="unit" element={<UnidadHT200View />} />
@@ -34,7 +36,11 @@ export default function HT200Dashboard(){
                 <Route path="pruebas" element={<PruebasView />} />
                 <Route path="errores" element={<RegistroErroresHT200View />} />
                 <Route path="clonacion" element={<ClonacionHT200View />} />
-            </Routes>   
+            </Routes>  
+        </Layout>
+         
+       
+           
         </>
       );
 }

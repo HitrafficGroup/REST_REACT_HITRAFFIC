@@ -33,8 +33,10 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
-//
-import CardControllerHT200 from "../../components/CardControllerHT200";
+import { IpControllerCard } from '../../components/ip-controller-card';
+import { CantonControllerCard } from '../../components/canton-controller-card';
+import { NombreControllerCard } from '../../components/nombre-controller-card';
+
 export default function SplitHT200View() {
     const controlerState = useSelector(state => state.controlerht200)
     const [splitTab, setSplitTab] = useState("split-1");
@@ -242,10 +244,27 @@ export default function SplitHT200View() {
 
     return (
         <>
-            <Container maxWidth="md" style={{paddingTop:15}}>
+            <Container maxWidth="lg" style={{paddingTop:15}}>
         
                 <Grid container spacing={2} >
-            
+                <Grid item xs={12} md={4} >
+                      <NombreControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.nombre}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={4} >
+                      <CantonControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.canton}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={4} >
+                      <IpControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.ip}
+                        />
+                    </Grid>
                 <Grid item  xs={12}>
                 </Grid>
                     <Grid item md={3} xs={12}>
@@ -543,7 +562,7 @@ export default function SplitHT200View() {
                     </Button>
                 </ModalFooter>
             </Modal>
-            <CardControllerHT200 />
+       
         </>
     );
 }

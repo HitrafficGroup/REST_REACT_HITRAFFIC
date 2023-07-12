@@ -29,6 +29,9 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import EditIcon from '@mui/icons-material/Edit';
+import { IpControllerCard } from '../../components/ip-controller-card';
+import { CantonControllerCard } from '../../components/canton-controller-card';
+import { NombreControllerCard } from '../../components/nombre-controller-card';
 // card controller
 import CardControllerHT200 from "../../components/CardControllerHT200";
 export default function SecuencyHT200View() {  
@@ -143,9 +146,26 @@ export default function SecuencyHT200View() {
     return (
 
         <>
-            <Container maxWidth="md" style={{paddingTop:15}}>
+            <Container maxWidth="lg" style={{paddingTop:15}}>
                 <Grid container spacing={2}>
-               
+                    <Grid item xs={12} md={4} >
+                        <NombreControllerCard  
+                        sx={{ height: '100%' }}
+                            value={controlerState.nombre}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4} >
+                        <CantonControllerCard  
+                        sx={{ height: '100%' }}
+                            value={controlerState.canton}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4} >
+                        <IpControllerCard  
+                        sx={{ height: '100%' }}
+                            value={controlerState.ip}
+                            />
+                    </Grid>
                     <Grid item xs={12} md={3} >
                         <Button color='verde' variant="contained"  fullWidth onClick={readData}  >leer datos</Button>
                     </Grid>
@@ -336,7 +356,7 @@ export default function SecuencyHT200View() {
                     </Button>
                 </ModalFooter>
             </Modal>
-            <CardControllerHT200 />
+          
         </>
 
     );

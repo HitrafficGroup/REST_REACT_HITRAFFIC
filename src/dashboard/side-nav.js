@@ -1,8 +1,7 @@
-import NextLink from 'next/link';
-import { usePathname } from 'next/navigation';
+
+import {  useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ArrowTopRightOnSquareIcon from '@heroicons/react/24/solid/ArrowTopRightOnSquareIcon';
-import ChevronUpDownIcon from '@heroicons/react/24/solid/ChevronUpDownIcon';
 import {
   Box,
   Button,
@@ -13,15 +12,20 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material';
-import { Logo } from 'src/components/logo';
-import { Scrollbar } from 'src/components/scrollbar';
+import { useNavigate } from 'react-router-dom';
+import logo from "../assets/logov2.png"
 import { items } from './config';
+import { items_views } from './config-views';
 import { SideNavItem } from './side-nav-item';
-
+import { Scrollbar } from '../components/scrollbar';
 export const SideNav = (props) => {
   const { open, onClose } = props;
-  const pathname = usePathname();
+  const location = useLocation();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
+
+
+
+
 
   const content = (
     <Scrollbar
@@ -43,17 +47,7 @@ export const SideNav = (props) => {
         }}
       >
         <Box sx={{ p: 3 }}>
-          <Box
-            component={NextLink}
-            href="/"
-            sx={{
-              display: 'inline-flex',
-              height: 32,
-              width: 32
-            }}
-          >
-            <Logo />
-          </Box>
+        
           <Box
             sx={{
               alignItems: 'center',
@@ -66,26 +60,7 @@ export const SideNav = (props) => {
               p: '12px'
             }}
           >
-            <div>
-              <Typography
-                color="inherit"
-                variant="subtitle1"
-              >
-                Devias
-              </Typography>
-              <Typography
-                color="neutral.400"
-                variant="body2"
-              >
-                Production
-              </Typography>
-            </div>
-            <SvgIcon
-              fontSize="small"
-              sx={{ color: 'neutral.500' }}
-            >
-              <ChevronUpDownIcon />
-            </SvgIcon>
+          <img src={logo} alt='logo de la empresa' height={55} width={200}/> 
           </Box>
         </Box>
         <Divider sx={{ borderColor: 'neutral.700' }} />
@@ -107,7 +82,42 @@ export const SideNav = (props) => {
             }}
           >
             {items.map((item) => {
-              const active = item.path ? (pathname === item.path) : false;
+              const active = item.path ? (location.pathname === item.path) : false;
+
+              return (
+                <SideNavItem
+                  active={active}
+                  disabled={item.disabled}
+                  external={item.external}
+                  icon={item.icon}
+                  key={item.title}
+                  path={item.path}
+                  title={item.title}
+                />
+              );
+            })}
+          </Stack>
+        </Box>
+        <Divider sx={{ borderColor: 'neutral.700' }} />
+        <Box
+          component="nav"
+          sx={{
+            flexGrow: 1,
+            px: 2,
+            py: 3
+          }}
+        >
+          <Stack
+            component="ul"
+            spacing={0.5}
+            sx={{
+              listStyle: 'none',
+              p: 0,
+              m: 0
+            }}
+          >
+            {items_views.map((item) => {
+              const active = item.path ? (location.pathname === item.path) : false;
 
               return (
                 <SideNavItem
@@ -134,30 +144,15 @@ export const SideNav = (props) => {
             color="neutral.100"
             variant="subtitle2"
           >
-            Need more features?
+           Quieres Conocer Nuestros Productos?
           </Typography>
           <Typography
             color="neutral.500"
             variant="body2"
           >
-            Check out our Pro solution template.
+            Visita nuestro Sitio Web
           </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              mt: 2,
-              mx: 'auto',
-              width: '160px',
-              '& img': {
-                width: '100%'
-              }
-            }}
-          >
-            <img
-              alt="Go to pro"
-              src="/assets/devias-kit-pro.png"
-            />
-          </Box>
+      
           <Button
             component="a"
             endIcon={(
@@ -171,7 +166,7 @@ export const SideNav = (props) => {
             target="_blank"
             variant="contained"
           >
-            Pro Live Preview
+            Pagina Official
           </Button>
         </Box>
       </Box>
@@ -201,7 +196,7 @@ export const SideNav = (props) => {
     <Drawer
       anchor="left"
       onClose={onClose}
-      open={open}
+      open={false}
       PaperProps={{
         sx: {
           backgroundColor: 'neutral.800',

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-//  const BASE_HT200 = 'https://www.hitraffic-group.com';
-const BASE_HT200 = 'http://127.0.0.1:8000';
+ const BASE_HT200 = 'https://www.hitraffic-group.com';
+// const BASE_HT200 = 'http://127.0.0.1:8000';
 
 
 
@@ -524,6 +524,27 @@ async function setModoManual(jsonData) {
 }
 
 
+async function getBasicInfoHT200(ip) {
+	var res;
+	await axios.get(`${BASE_HT200}/rest/getBasicInfoHT200?ip=${ip}`).then(response => {
+		res = response.data
+		
+	}).catch(function (error) {
+		console.log(res);
+	})
+	return res
+}
+async function getDeviceInfoHT200(ip) {
+	var res;
+	await axios.get(`${BASE_HT200}/rest/getDeviceInfoHT200?ip=${ip}`).then(response => {
+		res = response.data
+		
+	}).catch(function (error) {
+		console.log(res);
+	})
+	return res
+}
+
 
 export { 
 	getUnitHT200,PostUnitHT200,
@@ -537,5 +558,6 @@ export {
 	getChannelHT200,PostChannelHT200,
 	getTimeHT200,PostTimeHT200,setBasicPlan,
 	getRegErrores,setClonacion,
-	getWorkStateHT200,setModoManual
+	getWorkStateHT200,setModoManual,
+	getBasicInfoHT200,getDeviceInfoHT200
 }

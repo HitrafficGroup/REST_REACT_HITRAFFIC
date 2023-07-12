@@ -30,7 +30,9 @@ import { updateDoc, doc } from "firebase/firestore";
 import { db } from '../../firebase/firebase-config';
 import { updateParamsHT200 } from '../../features/controlerht200/controlerHT200Slice';
 import { generateChannelFrame } from '../../js/generateFrameApiHT200';
-import CardControllerHT200 from '../../components/CardControllerHT200';
+import { IpControllerCard } from '../../components/ip-controller-card';
+import { CantonControllerCard } from '../../components/canton-controller-card';
+import { NombreControllerCard } from '../../components/nombre-controller-card';
 export default function ChannelHT200View(){
     const controlerState = useSelector(state => state.controlerht200);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -176,8 +178,26 @@ export default function ChannelHT200View(){
     };
     return(
     <>
-      <Container maxWidth="md" style={{paddingTop:15}}> 
+      <Container maxWidth="lg" style={{paddingTop:15}}> 
                 <Grid container spacing={2}>
+                <Grid item xs={12} md={4} >
+                      <NombreControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.nombre}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={4} >
+                      <CantonControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.canton}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={4} >
+                      <IpControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.ip}
+                        />
+                    </Grid>
                 <Grid item md={3} xs={12}>
                         <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={readData}  >Leer Datos</Button>
                     </Grid>
@@ -452,7 +472,7 @@ export default function ChannelHT200View(){
                     </Button>
                 </ModalFooter>
             </Modal>
-            <CardControllerHT200 />
+          
     </>
     );
 }

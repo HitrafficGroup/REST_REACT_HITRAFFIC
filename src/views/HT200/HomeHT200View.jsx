@@ -3,7 +3,7 @@ import CleaningServicesSharpIcon from '@mui/icons-material/CleaningServicesSharp
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import SaveIcon from '@mui/icons-material/Save';
-import { updateDoc, doc} from "firebase/firestore";
+import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
 import CheckSharpIcon from '@mui/icons-material/CheckSharp';
@@ -19,7 +19,7 @@ import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import Fab from '@mui/material/Fab';
-import  { setSemaforos } from "../../features/controlers/controlerSlice";
+import { setSemaforos } from "../../features/controlers/controlerSlice";
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Backdrop from '@mui/material/Backdrop';
@@ -30,7 +30,7 @@ import 'leaflet/dist/leaflet.css';
 import '../../css/beautifulCard.scss';
 import Swal from 'sweetalert2';
 import RelogActual from "../../components/RelogActual";
-import { getTimeHT200,PostTimeHT200,getWorkStateHT200,setModoManual } from '../../js/apiFunctionsHT200';
+import { getTimeHT200, getWorkStateHT200, setModoManual } from '../../js/apiFunctionsHT200';
 import Paper from '@mui/material/Paper';
 import Chip from '@mui/material/Chip';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -47,6 +47,7 @@ import TableRow from '@mui/material/TableRow';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
+import Popover from '@mui/material/Popover';
 const InitialTime = {
     day: "00",
     hours: "00",
@@ -85,15 +86,15 @@ export default function HomeView() {
     const [deshabilitar, setDeshabilitar] = useState(false);
     const [deshabilitar2, setDeshabilitar2] = useState(false);
     const [areas, setAreas] = useState(controlerState.semaforos);
-    const [btnPlay,setBtnPlay] = useState(false)
+    const [btnPlay, setBtnPlay] = useState(false)
     const simulacion = useRef(false);
     const timer1 = useRef(0);
-    const [tiempo,setTiempo] = useState(30)
+    const [tiempo, setTiempo] = useState(30)
     const color_flag = useRef(""); // estas variables sirve para solo mandar a actualizar cuando se genere un cambio de fase
-    const [currentPasos,setCurrentPasos] = useState([{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 },{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 },{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }])
+    const [currentPasos, setCurrentPasos] = useState([{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }, { g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }, { g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }])
 
-    const indice_grupos =  useRef(0);
-    const datos_grupos = useRef([{amarillo:2,verde:15,rojo:10}])
+    const indice_grupos = useRef(0);
+    const datos_grupos = useRef([{ amarillo: 2, verde: 15, rojo: 10 }])
     const [pointsArea, setPointsArea] = useState([]);
     const [draggable, setDraggable] = useState(false)
     const [position, setPosition] = useState([controlerState.latitud, controlerState.longitud])
@@ -101,7 +102,7 @@ export default function HomeView() {
     const [btnAgregar, setBtnAgregar] = useState(true);
 
     const dispatch = useDispatch();
-   
+
     //banderas para los botones 
     const [botonCrear, setBotonCrear] = useState(true);
 
@@ -116,6 +117,27 @@ export default function HomeView() {
         icon: {},
         grupo: '',
     });
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [anchor2, setAnchor2] = useState(null);
+    const [anchor3, setAnchor3] = useState(null);
+    const [anchor4, setAnchor4] = useState(null);
+    // funciones para los pop over
+    const handlePopoverOpen = (event) => { setAnchorEl(event.currentTarget); };
+    const handlePopoverClose = () => { setAnchorEl(null); };
+    const open = Boolean(anchorEl);
+
+    const handlePopoverOpen2 = (event) => { setAnchor2(event.currentTarget); };
+    const handlePopoverClose2 = () => { setAnchor2(null); };
+    const open2 = Boolean(anchor2);
+
+    const handlePopoverOpen3 = (event) => { setAnchor3(event.currentTarget); };
+    const handlePopoverClose3 = () => { setAnchor3(null); };
+    const open3 = Boolean(anchor3);
+
+    const handlePopoverOpen4 = (event) => { setAnchor4(event.currentTarget); };
+    const handlePopoverClose4 = () => { setAnchor4(null); };
+    const open4 = Boolean(anchor4);
+    // termina las funciones para los popover
     const eventHandlers = useMemo(
         () => ({
             dragend() {
@@ -140,21 +162,21 @@ export default function HomeView() {
     }
 
 
-    const updateAreas =(__data)=>{
+    const updateAreas = (__data) => {
         let areas_temp = JSON.parse(JSON.stringify(semaforos2.current))
 
         let dataUpdated = areas_temp.map((item) => {
-            for(let i = 0; i<__data.grupo.length ;i++){
+            for (let i = 0; i < __data.grupo.length; i++) {
                 let aux_grupo = `g${__data.grupo[i]}`
                 if (item.grupo === aux_grupo) {
-                    item['color'] = {color:__data.color};
+                    item['color'] = { color: __data.color };
                 }
-                
+
             }
             return item
         }
         )
-      
+
         semaforos2.current = dataUpdated
         setAreas(dataUpdated);
     }
@@ -165,26 +187,9 @@ export default function HomeView() {
     const markerRef = useRef(null)
 
 
-    
 
-    const DraggableMarker = () => {
-        return (
-            <Marker
-                
-                icon={ubi}
-                draggable={!flagsimu}
-                eventHandlers={eventHandlers}
-                position={position}
-                ref={markerRef}>
 
-                <Popup minWidth={90}>
-                    <span onClick={toggleDraggable}>
-                        {draggable ? 'Marker is draggable' : 'Click here to make marker draggable'}
-                    </span>
-                </Popup>
-            </Marker>
-        )
-    }
+ 
     /*
     esta funcion agrega y actualiza el semaforo que se selecciona en los grupos
     ,nos permite desplazar elsemaforo dentro del mapa actualizando su latitud y longitud
@@ -252,81 +257,81 @@ export default function HomeView() {
     /*
         funcion para poder estructurar la informacion que deben mostrar los indicadores
     */
- 
 
 
 
-   
-    const parametrosCorriendo = async() => {
+
+
+    const parametrosCorriendo = async () => {
         setBtnPlay(!btnPlay)
         setFlagsimu(!flagsimu);
 
         try {
             let areas_temp = JSON.parse(JSON.stringify(semaforos2.current))
-            let areas_init = areas_temp.map(item=> {
-                item.color = {color:"red"}
+            let areas_init = areas_temp.map(item => {
+                item.color = { color: "red" }
                 return item
-        })
+            })
             semaforos2.current = areas_init
-          
+
             let data = await getWorkStateHT200(controlerState.ip)
-            let splits_aux = controlerState.split.filter(item=> item.id === "split-"+data.split)[0].data
-            let sequency_aux = controlerState.secuencias.filter(item=> item.id === "seq-"+data.seq)[0]
+            let splits_aux = controlerState.split.filter(item => item.id === "split-" + data.split)[0].data
+            let sequency_aux = controlerState.secuencias.filter(item => item.id === "seq-" + data.seq)[0]
             let aux_long = 0
             let domain_ring = 1
             let domain_seq = []
-            for(let j = 0; j<4 ;j++){
-                let long = sequency_aux[`ring${j+1}`].length
-                if(long > aux_long){
+            for (let j = 0; j < 4; j++) {
+                let long = sequency_aux[`ring${j + 1}`].length
+                if (long > aux_long) {
                     aux_long = long
-                    domain_seq = sequency_aux[`ring${j+1}`]
-                    domain_ring = j+1
+                    domain_seq = sequency_aux[`ring${j + 1}`]
+                    domain_ring = j + 1
                 }
             }
-            let data_formated = domain_seq.map((item,index)=>{
-                let duracion = splits_aux.filter(temp=> temp.fase === item.value)[0].tiempo
-                let fases = [sequency_aux.ring1[index],sequency_aux.ring2[index],sequency_aux.ring3[index],sequency_aux.ring4[index]].filter(item=> item !== undefined)
-                let values = fases.map(item=>(item.value))
+            let data_formated = domain_seq.map((item, index) => {
+                let duracion = splits_aux.filter(temp => temp.fase === item.value)[0].tiempo
+                let fases = [sequency_aux.ring1[index], sequency_aux.ring2[index], sequency_aux.ring3[index], sequency_aux.ring4[index]].filter(item => item !== undefined)
+                let values = fases.map(item => (item.value))
                 let aux_data = {
-                    paso: index+1,
+                    paso: index + 1,
                     fase: item.value,
-                    fases:values,
-                    duracion:duracion,
-                    amarillo:3,
-                    rojo:2,
-                    verde: duracion -5,
-                    trama:generarCiclo({rojo:2,verde:duracion-5,amarillo:3})
+                    fases: values,
+                    duracion: duracion,
+                    amarillo: 3,
+                    rojo: 2,
+                    verde: duracion - 5,
+                    trama: generarCiclo({ rojo: 2, verde: duracion - 5, amarillo: 3 })
                 }
-    
+
                 return aux_data
             })
 
             datos_grupos.current = data_formated
-            let index = data_formated.findIndex(function(el){
+            let index = data_formated.findIndex(function (el) {
                 return el.fase === data[`ring${domain_ring}_fase`]; // or el.nombre=='T NORTE';
             });
             let value_timer = data_formated[index].duracion - data.ring1_remain
-     
+
             indice_grupos.current = index
             timer1.current = value_timer
-            simulacion.current =   !simulacion.current
-        
+            simulacion.current = !simulacion.current
+
         } catch (error) {
             console.log(error)
         }
-   
-       
-      
+
+
+
     }
-    const generarCiclo = (__data)=>{
+    const generarCiclo = (__data) => {
         let ciclo = []
-        for(let i=0;i<__data.verde;i++){
+        for (let i = 0; i < __data.verde; i++) {
             ciclo.push("green")
-        }for(let i=0;i<__data.amarillo;i++){
+        } for (let i = 0; i < __data.amarillo; i++) {
             ciclo.push("yellow")
-     
-   
-        } for(let i=0;i<__data.rojo;i++){
+
+
+        } for (let i = 0; i < __data.rojo; i++) {
             ciclo.push("red")
         }
         return ciclo
@@ -370,12 +375,12 @@ export default function HomeView() {
     }
     /* esta  funcion se encarga de animar el mapa segun el paso en el que se encuentre*/
 
-    
+
     // funcion que compara los datos almacenados en la store
 
     const obtenerCoordenadas = () => {
         let puntos = JSON.parse(JSON.stringify(pointsArea))
-       
+
         let data;
 
         let newPoint = {
@@ -430,8 +435,8 @@ export default function HomeView() {
     const obtenerTiempoFromRestApi = async () => {
         try {
             setDeshabilitar(true);
-            const response = await getTimeHT200(controlerState.ip);        
-            let data_formated={
+            const response = await getTimeHT200(controlerState.ip);
+            let data_formated = {
                 seconds: formatData(response['segundos']),
                 minutes: formatData(response['minutos']),
                 hours: formatData(response['hour']),
@@ -453,128 +458,102 @@ export default function HomeView() {
         }
     }
 
-    const sincronizarTiempoFromRest = async () => {
-
-
-        try {
-
-            Swal.fire({
-                title: 'Deseas Continuar ?',
-                text: 'Estos Cambios se guardaran en el Controlador',
-                icon: 'warning',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Si, actualizar!',
-                showDenyButton: true,
-                denyButtonText: 'Cancelar',
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    setDeshabilitar(true);
-                    await PostTimeHT200({ ip:controlerState.ip });
-                    setDeshabilitar(false);
-
-                }
-            })
-
-
-        } catch (e) {
-
-        }
-    }
+   
     /* use effect es un hook que nos permite ejecutar nuestro temporizador en tiempo real
     como un sub procesos y de este modo generar las animaciones del semaforo
     */
-    const modoManual = async(__param)=>{
+    const modoManual = async (__param) => {
         let aux_p = 49
-        if(__param === 0){
+        if (__param === 0) {
             aux_p = 48
         }
         let tiempo_modo = parseInt(tiempo)
         let aux_1 = tiempo_modo & 0xff
-        let aux_2  = (tiempo_modo>>8)&0xff
-        let array_data =  [15,1,aux_p,__param,0,0,aux_1,aux_2]
-        await setModoManual({trama:array_data,ip:controlerState.ip});
+        let aux_2 = (tiempo_modo >> 8) & 0xff
+        let array_data = [15, 1, aux_p, __param, 0, 0, aux_1, aux_2]
+        await setModoManual({ trama: array_data, ip: controlerState.ip });
         cargarMapa()
-       
+
     }
-    const cargarMapa= async()=>{
-        
+    const cargarMapa = async () => {
+
         let data = await getWorkStateHT200(controlerState.ip)
-        let splits_aux = controlerState.split.filter(item=> item.id === "split-"+data.split)[0].data
-        let sequency_aux = controlerState.secuencias.filter(item=> item.id === "seq-"+data.seq)[0]
+        let splits_aux = controlerState.split.filter(item => item.id === "split-" + data.split)[0].data
+        let sequency_aux = controlerState.secuencias.filter(item => item.id === "seq-" + data.seq)[0]
         let aux_long = 0
         let domain_seq = []
-        for(let j = 0; j<4 ;j++){
-            let long = sequency_aux[`ring${j+1}`].length
-            if(long > aux_long){
+        for (let j = 0; j < 4; j++) {
+            let long = sequency_aux[`ring${j + 1}`].length
+            if (long > aux_long) {
                 aux_long = long
-                domain_seq = sequency_aux[`ring${j+1}`]
+                domain_seq = sequency_aux[`ring${j + 1}`]
             }
         }
-        let data_formated = domain_seq.map((item,index)=>{
-            let duracion = splits_aux.filter(temp=> temp.fase === item.value)[0].tiempo
-            let fases = [sequency_aux.ring1[index],sequency_aux.ring2[index],sequency_aux.ring3[index],sequency_aux.ring4[index]].filter(item=> item !== undefined)
-            let values = fases.map(item=>(item.value))
+        let data_formated = domain_seq.map((item, index) => {
+            let duracion = splits_aux.filter(temp => temp.fase === item.value)[0].tiempo
+            let fases = [sequency_aux.ring1[index], sequency_aux.ring2[index], sequency_aux.ring3[index], sequency_aux.ring4[index]].filter(item => item !== undefined)
+            let values = fases.map(item => (item.value))
             let aux_data = {
-                paso: index+1,
+                paso: index + 1,
                 fase: values,
-                duracion:duracion,
-                amarillo:3,
-                rojo:2,
-                verde: duracion -5,
-                trama:generarCiclo({rojo:2,verde:duracion-5,amarillo:3})
+                duracion: duracion,
+                amarillo: 3,
+                rojo: 2,
+                verde: duracion - 5,
+                trama: generarCiclo({ rojo: 2, verde: duracion - 5, amarillo: 3 })
             }
 
             return aux_data
         })
-        let table_data = data_formated.map((item,index)=>{
-            let paso_data ={
-                g1:false,
-                g2:false,
-                g3:false,
-                g4:false,
-                duracion:item.duracion,
-                id:index+1,
+        let table_data = data_formated.map((item, index) => {
+            let paso_data = {
+                g1: false,
+                g2: false,
+                g3: false,
+                g4: false,
+                duracion: item.duracion,
+                id: index + 1,
             }
-            item.fase.forEach((fas)=>{
-                paso_data[`g${fas}`] =true
+            item.fase.forEach((fas) => {
+                paso_data[`g${fas}`] = true
             })
             return paso_data
         })
         setCurrentPasos(table_data)
-     
+
 
     }
-    
+
 
     useEffect(() => {
         const interval = setInterval(() => {
-            
+
             if (simulacion.current) {
                 //cambiarSemaforo();
                 let grupo = datos_grupos.current[indice_grupos.current]
-                timer1.current =  timer1.current+1;
+                timer1.current = timer1.current + 1;
                 let color = grupo.trama[timer1.current]
-                if(timer1.current <grupo.trama.length){
-                   
-                    if(color !== color_flag.current){
+                if (timer1.current < grupo.trama.length) {
+
+                    if (color !== color_flag.current) {
                         color_flag.current = color
-                        updateAreas({grupo:grupo.fases,color:color})
+                        updateAreas({ grupo: grupo.fases, color: color })
                     }
-                    
-                }else{
-      
-                    indice_grupos.current = indice_grupos.current+1
-                   
-                    if(indice_grupos.current === datos_grupos.current.length){
+
+                } else {
+
+                    indice_grupos.current = indice_grupos.current + 1
+
+                    if (indice_grupos.current === datos_grupos.current.length) {
                         indice_grupos.current = 0
-                        
+
                     }
-                    updateAreas({grupo:datos_grupos.current[indice_grupos.current].fases,color:"green"})
+                    updateAreas({ grupo: datos_grupos.current[indice_grupos.current].fases, color: "green" })
                     timer1.current = 0
                     //console.log(g1_datos.current[timer1.current])
                 }
-                
-                
+
+
             }
 
         }, 1000);
@@ -626,9 +605,6 @@ export default function HomeView() {
                                 <Button variant="outlined" sx={{ margin: 0 }} onClick={obtenerTiempoFromRestApi} disabled={deshabilitar2} color='verde' >
                                     LEER
                                 </Button>
-                                <Button variant="outlined" sx={{ margin: 0 }} onClick={sincronizarTiempoFromRest} disabled={deshabilitar} color='primary' >
-                                    CARGAR
-                                </Button>
                             </div>
 
                             <dl className="details">
@@ -654,7 +630,7 @@ export default function HomeView() {
 
                             </dl>
                         </article>
-                    
+
 
                     </Grid>
 
@@ -662,12 +638,28 @@ export default function HomeView() {
                         <article className="information [ card ]">
                             <h2 className="title">Mapa de los semaforos</h2>
                             <div className="map">
-                                <MapContainer center={[controlerState.latitud, controlerState.longitud]} zoom={19}  scrollWheelZoom={false} className='map-container leaflet-container-2'>
+                                <MapContainer center={[controlerState.latitud, controlerState.longitud]} zoom={19} scrollWheelZoom={false} className='map-container leaflet-container-2'>
                                     <TileLayer
                                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                         url="https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=b08eb869c89646fa8accf539b81e80de"
                                     />
-                                    <DraggableMarker  />
+                                   
+                                        <Marker
+                                        icon={ubi}
+                                    
+                                        draggable={!flagsimu}
+                                        eventHandlers={eventHandlers}
+                                        position={flagsimu ?[-2.9802500085884533, -79.42810591531138]:position}
+                                        ref={markerRef}>
+                                        
+                                        <Popup minWidth={90}>
+                                            <span onClick={toggleDraggable}>
+                                                {draggable ? 'Marker is draggable' : 'Click here to make marker draggable'}
+                                            </span>
+                                        </Popup>
+                                        </Marker>
+                             
+                                  
                                     {pointsArea.map((item, index) => (
                                         <Marker key={index} position={item.position} icon={item.icon}>
                                         </Marker>
@@ -681,140 +673,214 @@ export default function HomeView() {
                                             <Polygon positions={[item.points[0].pos, item.points[1].pos, item.points[2].pos, item.points[3].pos]} />
                                         </FeatureGroup>
                                     ))}
-                                    <Fab color={btnPlay ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={parametrosCorriendo}>
+                                    <Fab onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} color={btnPlay ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }}  onClick={parametrosCorriendo}>
                                         {btnPlay ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
                                     </Fab>
-                                    <Fab color='verde2' disabled={btnAgregar} sx={{ position: "absolute", bottom: 150, right: 30 }} onClick={() => { obtenerCoordenadas() }} >
+                                    <Popover
+                                        id="mouse-over-popover"
+                                        sx={{
+                                            pointerEvents: 'none',
+                                        }}
+                                        open={open}
+                                        anchorEl={anchorEl}
+                                        anchorOrigin={{
+                                            vertical: 'center',
+                                            horizontal: 'left',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'center',
+                                            horizontal: 'right',
+                                        }}
+                                        onClose={handlePopoverClose}
+                                        disableRestoreFocus
+                                    >
+                                        <Typography sx={{ p: 1 }}>Clic para Iniciar la Animación</Typography>
+                                    </Popover>
+                                    <Fab hidden={flagsimu} onMouseEnter={handlePopoverOpen2} onMouseLeave={handlePopoverClose2} color='primary' disabled={btnAgregar} sx={{ position: "absolute", bottom: 150, right: 30 }} onClick={() => { obtenerCoordenadas() }} >
                                         <CheckSharpIcon />
                                     </Fab>
-                                    <Fab variant="contained" color='anaranjado1' disabled={btnAgregar} sx={{ position: "absolute", bottom: 250, right: 30 }} onClick={limpiarPuntos}>
+                                    <Popover
+                                        id="mouse-over-popover"
+                                        sx={{
+                                            pointerEvents: 'none',
+                                        }}
+                                        open={open2}
+                                        anchorEl={anchor2}
+                                        anchorOrigin={{
+                                            vertical: 'center',
+                                            horizontal: 'left',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'center',
+                                            horizontal: 'right',
+                                        }}
+                                        onClose={handlePopoverClose2}
+                                        disableRestoreFocus
+                                    >
+                                        <Typography sx={{ p: 1 }}>Posicionar punto en el mapa</Typography>
+                                    </Popover>
+                                    <Fab hidden={flagsimu} onMouseEnter={handlePopoverOpen3} onMouseLeave={handlePopoverClose3} variant="contained" color='secondary' disabled={btnAgregar} sx={{ position: "absolute", bottom: 250, right: 30 }} onClick={limpiarPuntos}>
                                         <CleaningServicesSharpIcon />
                                     </Fab>
-                                    <Fab  disabled={botonCrear} color="azulm" sx={{ position: "absolute", bottom: 350, right: 30 }} onClick={() => { setModalCrearSemaforo(true) }} >
+                                    <Popover
+                                        id="mouse-over-popover"
+                                        sx={{
+                                            pointerEvents: 'none',
+                                        }}
+                                        open={open3}
+                                        anchorEl={anchor3}
+                                        anchorOrigin={{
+                                            vertical: 'center',
+                                            horizontal: 'left',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'center',
+                                            horizontal: 'right',
+                                        }}
+                                        onClose={handlePopoverClose3}
+                                        disableRestoreFocus
+                                    >
+                                        <Typography sx={{ p: 1 }}>Limpiar Puntos Creados</Typography>
+                                    </Popover>
+                                    <Fab hidden={flagsimu} onMouseEnter={handlePopoverOpen4} onMouseLeave={handlePopoverClose4} disabled={botonCrear} color="info" sx={{ position: "absolute", bottom: 350, right: 30 }} onClick={() => { setModalCrearSemaforo(true) }} >
                                         <SaveIcon />
                                     </Fab>
-                                    <div  style={{ zIndex: 1070, position: "absolute", top: 30, left: 70,display: modalCrearSemaforo? 'none':'flex' }}>
+                                    <Popover
+                                        id="mouse-over-popover"
+                                        sx={{
+                                            pointerEvents: 'none',
+                                        }}
+                                        open={open4}
+                                        anchorEl={anchor4}
+                                        anchorOrigin={{
+                                            vertical: 'center',
+                                            horizontal: 'left',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'center',
+                                            horizontal: 'right',
+                                        }}
+                                        onClose={handlePopoverClose4}
+                                        disableRestoreFocus
+                                    >
+                                        <Typography sx={{ p: 1 }}>Guardar Área de Interés</Typography>
+                                    </Popover>
+
+                                    {/* <div style={{ zIndex: 1070, position: "absolute", top: 30, left: 70, display: modalCrearSemaforo ? 'none' : 'flex' }}>
                                         <p>
                                             <strong style={{ marginLeft: 5, marginRight: 5 }}>Longitud del semaforo:</strong>{position.lat} <strong style={{ marginLeft: 5, marginRight: 5 }}>Latitud del semaforo:</strong>{position.lng}
                                         </p>
-                                    </div>
+                                    </div> */}
                                 </MapContainer>
                             </div>
                         </article>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                    <article className="information [ card ]">
+                        <article className="information [ card ]">
 
-                                            <Typography variant="h4" gutterBottom>
-                                                Control Manual
-                                            </Typography>
-                                
-                                           <Grid container spacing={2}>
-                                           <Grid item xs={12} md={4}>
-                                            <Grid container spacing={2}>
-                                                {/* <Grid item xs={12} >
-                                                <Button variant="contained" onClick={()=>{cargarMapa()}}   color='amarillo' startIcon={<OnlinePredictionIcon />}>
-                                                    Cargar Tabla
-                                                </Button>
-                                                </Grid> */}
-                                                <Grid item xs={12} >
-                                                <TextField
-                                                    id="outlined-number"
-                                                    label="Tiempo para finalizar modo Manual"
-                                                    type="number"
-                                                    onChange={(event)=>{setTiempo(event.target.value)}}
-                                                    value={tiempo}
-                                                    fullWidth
-                                                    InputLabelProps={{
-                                                        shrink: true,
-                                                    }}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={12}>
-                                                <Button variant="contained" onClick={()=>{modoManual(48)}}  fullWidth color='amarillo' startIcon={<OnlinePredictionIcon />}>
-                                                    Destello
-                                                </Button>
-                                                </Grid>
-                                                <Grid item xs={12} >
-                                                <Button variant="contained" onClick={()=>{modoManual(49)}} fullWidth color='rojo' startIcon={<ReportGmailerrorredIcon />}>
-                                                   Todo en Rojo
-                                                </Button>
-                                                </Grid>
-                                                <Grid item xs={12} >
-                                                <Button variant="contained" onClick={()=>{modoManual(50)}} fullWidth color ="oscuro" startIcon={<PowerOffIcon />}>
-                                                    Apagado
-                                                </Button>
-                                                </Grid>
-                                                <Grid item xs={12}>
-                                                <Button variant="contained" onClick={()=>{modoManual(51)}} color ="oscuro" fullWidth startIcon={<SkipNextIcon />}>
-                                                    Siguiente Paso
-                                                </Button>
-                                                </Grid>
-                                                <Grid item xs={12} >
-                                                <Button variant="contained" onClick={()=>{modoManual(52)}} color = "oscuro"fullWidth startIcon={<PanToolIcon />}>
-                                                    Mantenerse el Paso
-                                                </Button>
-                                                </Grid>
-                                                <Grid item xs={12} >
-                                                <Button variant="contained"  onClick={()=>{modoManual(0)}} color = "oscuro" fullWidth startIcon={<SmartToyIcon />}>
-                                                    Pasar a  automatico
-                                                </Button>
-                                                </Grid>
-                                            </Grid>
-                                           </Grid>
-                                           <Grid item xs={12} md={8}>
-                                           <TableContainer component={Paper}>
-                                    <Table sx={{ height:370 }} aria-label="customized table">
-                                        <TableHead>
-                                            <TableRow>
-                                                <StyledTableCell align="left">Paso</StyledTableCell>
-                                                <StyledTableCell align="center">Grupo 1</StyledTableCell>
-                                                <StyledTableCell align="center">Grupo 2</StyledTableCell>
-                                                <StyledTableCell align="center">Grupo 3</StyledTableCell>
-                                                <StyledTableCell align="center">Grupo 4</StyledTableCell>
-                                                <StyledTableCell align="center">Duracion</StyledTableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {currentPasos.map((row, index) => (
-                                                <StyledTableRow key={index}>
-                                                    <StyledTableCell align="center">
-                                                        <div className="basic-paso">
-                                                            <strong>{index + 1}</strong>
-                                                        </div>
-                                                    </StyledTableCell>
-                                                    <StyledTableCell align="center">
-                                                        <Chip label={row.g1 ? "VERDE" : "ROJO"} color={row.g1 ? "verde" : "rojo"} icon={<LightModeIcon />} sx={{ width: '90%' }} />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell align="center">
-                                                        <Chip label={row.g2 ? "VERDE" : "ROJO"} color={row.g2 ? "verde" : "rojo"} icon={<LightModeIcon />} sx={{ width: '90%' }} />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell align="center">
-                                                        <Chip label={row.g3 ? "VERDE" : "ROJO"} color={row.g3 ? "verde" : "rojo"} icon={<LightModeIcon />} sx={{ width: '90%' }} />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell align="center">
-                                                        <Chip label={row.g4 ? "VERDE" : "ROJO"} color={row.g4 ? "verde" : "rojo"} icon={<LightModeIcon />} sx={{ width: '90%' }} />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell align="center">
-                                                        {row.duracion}
-                                                    </StyledTableCell>
+                            <Typography variant="h4" gutterBottom>
+                                Control Manual
+                            </Typography>
 
-                                                </StyledTableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                       
-                                           </Grid>
-                                           </Grid>
-                                           
-                                            </article>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={4}>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12} >
+                                            <TextField
+                                                id="outlined-number"
+                                                label="Tiempo para finalizar modo Manual"
+                                                type="number"
+                                                onChange={(event) => { setTiempo(event.target.value) }}
+                                                value={tiempo}
+                                                fullWidth
+                                                InputLabelProps={{
+                                                    shrink: true,
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Button variant="contained" onClick={() => { modoManual(48) }} fullWidth color='amarillo' startIcon={<OnlinePredictionIcon />}>
+                                                Destello
+                                            </Button>
+                                        </Grid>
+                                        <Grid item xs={12} >
+                                            <Button variant="contained" onClick={() => { modoManual(49) }} fullWidth color='rojo' startIcon={<ReportGmailerrorredIcon />}>
+                                                Todo en Rojo
+                                            </Button>
+                                        </Grid>
+                                        <Grid item xs={12} >
+                                            <Button variant="contained" onClick={() => { modoManual(50) }} fullWidth color="oscuro" startIcon={<PowerOffIcon />}>
+                                                Apagado
+                                            </Button>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Button variant="contained" onClick={() => { modoManual(51) }} color="oscuro" fullWidth startIcon={<SkipNextIcon />}>
+                                                Siguiente Paso
+                                            </Button>
+                                        </Grid>
+                                        <Grid item xs={12} >
+                                            <Button variant="contained" onClick={() => { modoManual(52) }} color="oscuro" fullWidth startIcon={<PanToolIcon />}>
+                                                Mantenerse el Paso
+                                            </Button>
+                                        </Grid>
+                                        <Grid item xs={12} >
+                                            <Button variant="contained" onClick={() => { modoManual(0) }} color="oscuro" fullWidth startIcon={<SmartToyIcon />}>
+                                                Pasar a  automatico
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={12} md={8}>
+                                    <TableContainer component={Paper}>
+                                        <Table sx={{ height: 370 }} aria-label="customized table">
+                                            <TableHead>
+                                                <TableRow>
+                                                    <StyledTableCell align="left">Paso</StyledTableCell>
+                                                    <StyledTableCell align="center">Grupo 1</StyledTableCell>
+                                                    <StyledTableCell align="center">Grupo 2</StyledTableCell>
+                                                    <StyledTableCell align="center">Grupo 3</StyledTableCell>
+                                                    <StyledTableCell align="center">Grupo 4</StyledTableCell>
+                                                    <StyledTableCell align="center">Duracion</StyledTableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {currentPasos.map((row, index) => (
+                                                    <StyledTableRow key={index}>
+                                                        <StyledTableCell align="center">
+                                                            <div className="basic-paso">
+                                                                <strong>{index + 1}</strong>
+                                                            </div>
+                                                        </StyledTableCell>
+                                                        <StyledTableCell align="center">
+                                                            <Chip label={row.g1 ? "VERDE" : "ROJO"} color={row.g1 ? "verde" : "rojo"} icon={<LightModeIcon />} sx={{ width: '90%' }} />
+                                                        </StyledTableCell>
+                                                        <StyledTableCell align="center">
+                                                            <Chip label={row.g2 ? "VERDE" : "ROJO"} color={row.g2 ? "verde" : "rojo"} icon={<LightModeIcon />} sx={{ width: '90%' }} />
+                                                        </StyledTableCell>
+                                                        <StyledTableCell align="center">
+                                                            <Chip label={row.g3 ? "VERDE" : "ROJO"} color={row.g3 ? "verde" : "rojo"} icon={<LightModeIcon />} sx={{ width: '90%' }} />
+                                                        </StyledTableCell>
+                                                        <StyledTableCell align="center">
+                                                            <Chip label={row.g4 ? "VERDE" : "ROJO"} color={row.g4 ? "verde" : "rojo"} icon={<LightModeIcon />} sx={{ width: '90%' }} />
+                                                        </StyledTableCell>
+                                                        <StyledTableCell align="center">
+                                                            {row.duracion}
+                                                        </StyledTableCell>
+
+                                                    </StyledTableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+
+                                </Grid>
+                            </Grid>
+
+                        </article>
                     </Grid>
 
                     <Grid item xs={12}>
-                        <div className="home-view-footer">
 
-                        </div>
                     </Grid>
                 </Grid>
 
@@ -872,7 +938,7 @@ export default function HomeView() {
                 </ModalFooter>
             </Modal>
 
-                
+
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar}>
                 <CircularProgress color="inherit" />
             </Backdrop>

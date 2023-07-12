@@ -6,6 +6,9 @@ import DeclararControladorView from "./views/DeclararControladorView";
 import ControlersView from "./views/ControlersView";
 import VistaMaestraView from "./views/VistaMaestraView";
 import PruebasInterfaz from "./views/PruebasInterfaz";
+
+
+
 function App() {
   return (
     <div className="App">

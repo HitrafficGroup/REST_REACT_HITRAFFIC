@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import '../css/ControlersView.css';
-
+import { v4 as uuidv4 } from 'uuid';
 //
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -20,8 +20,9 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { setInitialStateController, setControllerData } from "../features/controlers/controlerSlice";
 import { setInitialStateControllerHT200, setControllerDataHT200 } from "../features/controlerht200/controlerHT200Slice";
+import { getBasicInfoHT200, getDeviceInfoHT200 } from "../js/apiFunctionsHT200";
 import Swal from 'sweetalert2';
-import { collection, updateDoc, doc, onSnapshot, query, deleteDoc, getDoc } from "firebase/firestore";
+import { collection, updateDoc, doc, onSnapshot, query, deleteDoc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -39,6 +40,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar';
+import { styled } from '@mui/material/styles';
+import Switch from '@mui/material/Switch';
+//dependencias para los select
 
 const dataTest = [
     { nombre: 'nombre 1', ip: '192.168.1.2', mac: 'h3:ft:a2:l2', canton: 'cuenca', estado: true },
@@ -72,14 +76,17 @@ export default function ControlersView() {
     const [canton, setCanton] = useState('');
     const userState = useSelector(state => state.auth);
     const [deshabilitar, setDeshabilitar] = useState(false);
+    const [modalCrear, setModalCrear] = useState(false);
     const respaldoData = useRef([])
     const ipControlador = useRef('')
     const navigate = useNavigate(); // hook para navegar entre urls o vistas
     const dispatch = useDispatch();
-
+    const [nombreControlador, setNombreControlador] = useState("");
+    const [ip, setIp] = useState("");
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [anchorEl, setAnchorEl] = useState(null);
+
     const open = Boolean(anchorEl);
 
     const handleClick = (event) => {
@@ -89,8 +96,54 @@ export default function ControlersView() {
         setAnchorEl(null);
         navigate('/');
     };
+    function validateIp(ip) {
+        var patronIp = new RegExp("^([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3})$");
+        var valores;
 
+        // early return si la ip no tiene el formato correcto.
+        if (ip.search(patronIp) !== 0) {
+            return false
+        }
 
+        valores = ip.split(".");
+
+        return valores[0] <= 255 && valores[1] <= 255 && valores[2] <= 255 && valores[3] <= 255
+    }
+    const Android12Switch = styled(Switch)(({ theme }) => ({
+        padding: 8,
+        '& .MuiSwitch-track': {
+            backgroundColor: theme.palette.rojo.main,
+            borderRadius: 22 / 2,
+            '&:before, &:after': {
+                content: '""',
+                position: 'absolute',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: 16,
+                height: 16,
+
+            },
+            '&:before': {
+                left: 12,
+
+            },
+            '& + .MuiSwitch-track': {
+                backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be',
+            },
+            '&:after': {
+
+                right: 12,
+
+            },
+        },
+        '& .MuiSwitch-thumb': {
+            boxShadow: 'none',
+            width: 16,
+            height: 16,
+            margin: 2,
+
+        },
+    }));
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -139,6 +192,7 @@ export default function ControlersView() {
         }
 
     }
+
     const abrirModalinformacion = (_data) => {
         let aux_data = JSON.parse(JSON.stringify(_data))
         setCurrentController(aux_data)
@@ -280,9 +334,191 @@ export default function ControlersView() {
             children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
         };
     }
-    // CON RESPECTO A LA DISTANCIA DEL SERVIDOR Y LA INFORMACION TRANSMITIDA HACIA EL DISPOSITIVO DE BORDE DEL CONTROLADOR
-    // LA INFORMACION PODRIA LLEGAR MAL DEBIDO AL GRAN TRAYECTO QUE DEBE REALIZAR PARA LLEGAR AL CONTROLADOR.
-    // SEGUNDO SI SE QUISIERA IMPLEMENTAR EL SISTEMA DE CAMARAS VA SER MAS COMPLEJO IMPLEMENTARLO EN UN ROUTER MIKROTIK
+    //logica de declaracion del controlador
+    const declararControlador = async () => {
+        Swal.fire({
+            title: 'Creacion de controlador',
+            text: "Se va a crear el siguiente controlador",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                let ip_target = validateIp(ip);
+                let existe_controlador = controlers.find(item => item.ip === ip)
+               
+                if (ip_target === false || existe_controlador !== undefined) {
+                    Swal.fire(
+                        'Ip Error',
+                        'Ip ya Declarada o digite corectamente la Ip!',
+                        'error'
+                    )
+                } else {
+                    if (nombreControlador !== "" && model === "SW-12") {
+                        let id_controller = uuidv4()
+                        let parametrosIniciales = {
+                            // parametros inicializados por defecto
+                            id: id_controller,
+                            t_fases: 1667372400000,
+                            t_horarios: 1667372400000,
+                            t_peticion: 1667372400000,
+                            t_planes: 1667372400000,
+                            // parametros que se iran llenando conforme actualice el controlador
+                            conflictos_verdes: {},
+                            dias_especiales: {},
+                            fases: {},
+                            grupos: {},
+                            horario_ordinario: [],
+                            horario_finsemana: [],
+                            horario_festivo: [],
+                            semaforos: [],
+                            otros_parametros: {},
+                            plan_1: [],
+                            plan_2: [],
+                            plan_3: [],
+                            plan_4: [],
+                            plan_5: [],
+                            plan_6: [],
+                            plan_7: [],
+                            plan_8: [],
+                            latitud: parseFloat(-2.876428),
+                            longitud: parseFloat(-78.965342),
+                            //nuevos parametros agregados
+                            nombre: nombreControlador,
+                            ip: ip,
+                            historial_conexiones: [],
+                            modelo: model,
+                            planificacion: [],
+                        }
+                        let historialControladorData = {
+                            id: id_controller,
+                            nombre: nombreControlador,
+                            ultima_conexion: '',
+                            latitud: parseFloat(-2.876428),
+                            longitud: parseFloat(-78.965342),
+                            ip: ip,
+                            mac: "",
+                            canton: canton,
+                            online: true,
+                            modelo: model,
+
+                        }
+
+
+                        try {
+                      
+                      
+                            await setDoc(doc(db, "controladores", id_controller), parametrosIniciales);
+                            await setDoc(doc(db, "historial_controladores", id_controller), historialControladorData);
+                            Swal.fire(
+                                'Exito',
+                                'Controlador Declarado! ',
+                                'success'
+                            )
+                      
+                        } catch (error) {
+                            Swal.fire(
+                                'Error',
+                                `Error: ${error}`,
+                                'error'
+                            )
+                       
+                        }
+                    }
+                    else if (nombreControlador !== "" && model === "HT-200") {
+                        try {
+                            setDeshabilitar(true)
+                            let params_iniciales = await getBasicInfoHT200(ip);
+                            let pos_inicial = await getDeviceInfoHT200(ip);
+                            console.log(pos_inicial)
+                            let id_controller = uuidv4()
+                            let parametrosIniciales = {
+                                // parametros inicializados por defecto
+                                latitud: parseFloat(pos_inicial.latitud),
+                                longitud: parseFloat(pos_inicial.longitud),
+                                id: id_controller,
+                                semaforos: [],
+                                // parametros que se iran llenando conforme actualice el controlador
+                                fases: [],
+                                secuencias: [],
+                                split: [],
+                                pattern: [],
+                                acciones: [],
+                                plan: [],
+                                horarios: [],
+                                channel: [],
+                                //nuevos parametros
+                                ip: ip,
+                                historial_conexiones: [],
+                                modelo: model,
+                                planificacion: [],
+                                nombre: nombreControlador,
+
+                            }
+                            let historialControladorData = {
+                                id: id_controller,
+                                nombre: nombreControlador,
+                                ultima_conexion: 'Dispositivo creado recientemente',
+                                latitud: parseFloat(pos_inicial.latitud),
+                                longitud: parseFloat(pos_inicial.longitud),
+                                ip: ip,
+                                mac: params_iniciales.mac_target,
+                                canton: canton,
+                                online: false,
+                                modelo: model,
+                            }
+                           
+                            try {
+                                console.log(historialControladorData)
+                            
+                                await setDoc(doc(db, "controladores", id_controller,), parametrosIniciales);
+                                await setDoc(doc(db, "historial_controladores", id_controller,), historialControladorData);
+                                setDeshabilitar(false);
+                                setModalCrear(false);
+                                Swal.fire(
+                                    'Exito',
+                                    'Controlador Declarado! ',
+                                    'success'
+                                )
+                                
+
+                            } catch (error) {
+                                setDeshabilitar(false)
+                                Swal.fire(
+                                    'Error',
+                                    `Error: No se puede conectar con la base de datos`,
+                                    'error'
+                                )
+                                
+                            }
+                        } catch (error) {
+                            setDeshabilitar(false)
+                            Swal.fire(
+                                'Error',
+                                `Controlador sin respuesta de conexión`,
+                                'error'
+                            )
+                        }
+
+
+
+
+
+                    }
+                    else {
+                        Swal.fire(
+                            'Faltan campos',
+                            'Llene todos los campos del controlador ! ',
+                            'warning'
+                        )
+                    }
+                }
+            }
+        })
+    }
+
     useEffect(() => {
         dataFromFirebase();
     }, []);
@@ -367,10 +603,10 @@ export default function ControlersView() {
                                         <Button variant="contained" size="medium" fullWidth onClick={filtrarLosDatos}  >FILTRAR</Button>
                                     </Grid>
                                     <Grid item xs={12} md={3}>
-                                        <Button variant="contained" size="medium" fullWidth onClick={() => { Changeview('/crear_equipo') }}  >+ CONTROLADOR</Button>
+                                        <Button variant="contained" size="medium" fullWidth onClick={() => { setModalCrear(true) }}  >CREAR CONTROLADOR</Button>
                                     </Grid>
                                     <Grid item xs={12} md={3}>
-                                        <Button variant="contained" size="medium" fullWidth onClick={() => { Changeview('/vista_maestra') }}  >MASTER CONFIGURATION</Button>
+                                        <Button variant="contained" size="medium" fullWidth onClick={() => { Changeview('/vista_maestra') }}  >CONFIGURACIÓN MAESTRA</Button>
                                     </Grid>
                                 </Grid>
                             </div>
@@ -390,14 +626,21 @@ export default function ControlersView() {
                                                 align={"left"}
                                                 style={{ minWidth: 200 }}
                                             >
-                                                Ultima Conexion
+                                                Último acceso al dispositivo
                                             </TableCell>
                                             <TableCell
                                                 key={"Name"}
                                                 align={"left"}
                                                 style={{ minWidth: 200 }}
                                             >
-                                                Name
+                                                Nombre
+                                            </TableCell>
+                                            <TableCell
+                                                key={"online"}
+                                                align={"left"}
+                                                style={{ minWidth: 100 }}
+                                            >
+                                                Online
                                             </TableCell>
                                             <TableCell
                                                 key={"ip"}
@@ -406,6 +649,7 @@ export default function ControlersView() {
                                             >
                                                 Ip
                                             </TableCell>
+
                                             <TableCell
                                                 key={"modelo"}
                                                 align={"left"}
@@ -418,7 +662,7 @@ export default function ControlersView() {
                                                 align={"left"}
                                                 style={{ minWidth: 100 }}
                                             >
-                                                Canton
+                                                CANTÓN
                                             </TableCell>
                                             <TableCell
                                                 key={"acciones"}
@@ -442,6 +686,9 @@ export default function ControlersView() {
                                                             {row.nombre}
                                                         </TableCell>
                                                         <TableCell align="left">
+                                                            <Android12Switch color="verde2" checked={row.online} />
+                                                        </TableCell>
+                                                        <TableCell align="left">
                                                             {row.ip}
                                                         </TableCell>
                                                         <TableCell align="left">
@@ -450,18 +697,16 @@ export default function ControlersView() {
                                                         <TableCell align="left">
                                                             {row.canton}
                                                         </TableCell>
-                                                        {/* <TableCell align="center">
-                                                    <Chip color={row.estado ? 'verde' : 'anaranjado1'} size="small" label={row.estado ? 'conectado' : 'desconectado'} icon={<CableIcon />} />
-                                                </TableCell> */}
+
                                                         <TableCell align="center">
                                                             <Stack direction="row" spacing={1}>
                                                                 <IconButton color="rojo" aria-label="eliminar" onClick={() => { eliminarController(row) }} >
                                                                     <DeleteIcon />
                                                                 </IconButton>
-                                                                <IconButton color="gris" aria-label="editar" onClick={() => { abrirModalEditar(row) }} >
+                                                                <IconButton aria-label="editar" onClick={() => { abrirModalEditar(row) }} >
                                                                     <SettingsIcon />
                                                                 </IconButton>
-                                                                <IconButton color="azulm" aria-label="info" onClick={() => { abrirModalinformacion(row) }}>
+                                                                <IconButton color="anaranjado1" aria-label="info" onClick={() => { abrirModalinformacion(row) }}>
                                                                     <InfoIcon />
                                                                 </IconButton>
                                                                 <Button variant="contained" color="oscuro" onClick={() => { programarControlador(row) }} >Programar</Button>
@@ -512,7 +757,7 @@ export default function ControlersView() {
                         <Button variant="contained" color='primary' onClick={guardarAjustes} sx={{ marginLeft: 1 }}>
                             Guardar
                         </Button>
-                        <Button variant="contained" color='rojo' onClick={() => { setEditarModal(false) }} sx={{ marginLeft: 1 }}>
+                        <Button variant="contained" color="rojo" onClick={() => { setEditarModal(false) }} sx={{ marginLeft: 1 }}>
                             Cancelar
                         </Button>
                     </ModalFooter>
@@ -570,11 +815,97 @@ export default function ControlersView() {
 
                     </ModalBody>
                     <ModalFooter >
-                        <Button variant="contained" color='anaranjado1' onClick={() => { setInfoModal(false) }} sx={{ marginLeft: 1 }}>
-                            Aplicar
+
+                        <Button variant="contained" color="rojo" onClick={() => { setInfoModal(false) }} sx={{ marginLeft: 1 }}>
+                            salir
                         </Button>
-                        <Button variant="contained" color='rojo' onClick={() => { setInfoModal(false) }} sx={{ marginLeft: 1 }}>
-                            cancelar
+                    </ModalFooter>
+                </Modal>
+
+                <Modal isOpen={editarModal} >
+                    <ModalHeader>
+                        <div>
+                            <h1>
+                                Ajustes Basicos
+                            </h1>
+                        </div>
+                    </ModalHeader>
+                    <ModalBody>
+                        <Grid container spacing={4}>
+                            <Grid item xs={12}>
+                                <TextField id="outlined-basic" label="Nombre:" value={currentController.nombre} onChange={(e) => setCurrentController({ ...currentController, nombre: e.target.value })} fullWidth helperText="Nombre" variant="outlined" />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField id="outlined-basic" label="Ip:" value={currentController.ip} onChange={(e) => setCurrentController({ ...currentController, ip: e.target.value })} fullWidth helperText="Ip" variant="outlined" />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField id="outlined-basic" label="Canton:" value={currentController.canton} onChange={(e) => setCurrentController({ ...currentController, canton: e.target.value })} fullWidth helperText="Canton o Ciudad" variant="outlined" />
+                            </Grid>
+                        </Grid>
+                    </ModalBody>
+                    <ModalFooter >
+                        <Button variant="contained" color='primary' onClick={guardarAjustes} sx={{ marginLeft: 1 }}>
+                            Guardar
+                        </Button>
+                        <Button variant="contained" color="rojo" onClick={() => { setEditarModal(false) }} sx={{ marginLeft: 1 }}>
+                            Cancelar
+                        </Button>
+                    </ModalFooter>
+                </Modal>
+
+                <Modal isOpen={modalCrear} >
+                    <ModalHeader>
+                        <div>
+                            <h5>
+                                Formulario de declaración de controladores
+                            </h5>
+                        </div>
+                    </ModalHeader>
+                    <ModalBody>
+                        <Grid container spacing={1}>
+                            <Grid item xs={6}>
+                                <TextField fullWidth label="Ip" name="ip" required onChange={(e) => { setIp(e.target.value) }} value={ip} />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField fullWidth label="Nombre del Controlador" name="nombre" required onChange={(e) => { setNombreControlador(e.target.value) }} value={nombreControlador} />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Autocomplete
+                                    id="size-small-outlined"
+                                    size="medium"
+                                    options={controladores}
+                                    key={reload}
+                                    onChange={(event, newValue) => {
+                                        setModel(newValue)
+                                    }}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Modelo" placeholder="modelo" />
+                                    )}
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Autocomplete
+                                    id="size-small-outlined"
+                                    size="medium"
+                                    options={cantones}
+                                    key={reload}
+                                    onChange={(event, newValue) => {
+                                        setCanton(newValue)
+                                    }}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Canton" placeholder="canton" />
+                                    )}
+                                />
+                            </Grid>
+
+                        </Grid>
+                    </ModalBody>
+                    <ModalFooter >
+                        <Button variant="contained" color="primary" onClick={() => { declararControlador() }} sx={{ marginLeft: 1 }}>
+                            crear
+                        </Button>
+                        <Button variant="contained" color="error" onClick={() => { setModalCrear(false) }} sx={{ marginLeft: 1 }}>
+                            salir
                         </Button>
                     </ModalFooter>
                 </Modal>
@@ -593,5 +924,6 @@ let cantones = [
 ]
 
 let controladores = [
-    "HT-200", "SW-12"
+    "HT-200"
 ]
+// de momento solo se crearan controladores HT200 hasta terminar de configurar la vista HT200

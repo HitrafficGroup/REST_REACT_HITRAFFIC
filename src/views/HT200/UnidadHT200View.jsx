@@ -6,6 +6,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import { Stack } from '@mui/material';
 import Switch from '@mui/material/Switch';
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from '../../firebase/firebase-config';
@@ -13,7 +14,9 @@ import Button from '@mui/material/Button';
 import { getUnitHT200,PostUnitHT200 } from '../../js/apiFunctionsHT200';
 import { updateParamsHT200 } from '../../features/controlerht200/controlerHT200Slice';
 import { useSelector,useDispatch } from 'react-redux';
-import CardControllerHT200 from '../../components/CardControllerHT200';
+import { IpControllerCard } from '../../components/ip-controller-card';
+import { CantonControllerCard } from '../../components/canton-controller-card';
+import { NombreControllerCard } from '../../components/nombre-controller-card';
 export default function UnidadHT200View() {
     const controlerState = useSelector(state => state.controlerht200)
     const [state, setState] = useState({
@@ -96,15 +99,33 @@ export default function UnidadHT200View() {
     };
     return (
         <>
-            <Container maxWidth="md" style={{paddingTop:15}}>
+            <Container maxWidth="lg" style={{paddingTop:15}}>
                 <Grid container spacing={3}>
-                    <Grid item xs={6} md={4} >
-                        <Button color='verde' variant="contained" fullWidth onClick={readData} >leer datos</Button>
+                    <Grid item xs={12} md={4} >
+                      <NombreControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.nombre}
+                        />
                     </Grid>
-                    <Grid item xs={6} md={4} >
-                        <Button color='oscuro' variant="contained" fullWidth onClick={uploadData} >cargar datos</Button>
+                    <Grid item xs={12} md={4} >
+                      <CantonControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.canton}
+                        />
                     </Grid>
-                    <Grid item xs={12} md={6} >
+                    <Grid item xs={12} md={4} >
+                      <IpControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.ip}
+                        />
+                    </Grid>
+                    <Grid item xs={6} md={12} >
+                        <Stack direction="row" spacing={2}>
+                        <Button color='verde' variant="contained"  onClick={readData} >leer datos</Button>
+                        <Button color='oscuro' variant="contained"  onClick={uploadData} >cargar datos</Button>
+                        </Stack>
+                    </Grid>
+                    <Grid item xs={12} md={3} >
                         <TextField
                             id="outlined-controlled"
                             label="Tiempo de Inicio de destello en Amarillo"
@@ -118,7 +139,7 @@ export default function UnidadHT200View() {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={2.5}>
                         <TextField
                             id="outlined-controlled"
                             label="Tiempo de Inicio Todo en Rojo"
@@ -132,7 +153,7 @@ export default function UnidadHT200View() {
                             name='StartupAllRed'
                         />
                     </Grid>
-                    <Grid item xs={12} md={4} >
+                    <Grid item xs={12} md={2} >
                         <TextField
                             id="outlined-controlled"
                             label="Tiempo de degradacion"
@@ -146,7 +167,7 @@ export default function UnidadHT200View() {
                             name='BackupTime'
                         />
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={2}>
                         <TextField
                             id="outlined-controlled"
                             label="Tiempo de Todo en Rojo"
@@ -160,7 +181,7 @@ export default function UnidadHT200View() {
                             name='RedRevert'
                         />
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={2.5}>
                         <TextField
                             id="outlined-controlled"
                             label="Ciclo de recoleccion de Flujo"
@@ -174,9 +195,9 @@ export default function UnidadHT200View() {
                             name='FlowCycle'
                         />
                     </Grid>
-                    <Grid item xs={12} md={12}>
+                    <Grid item xs={12} md={6}>
                         <FormControl component="fieldset">
-                            <FormLabel component="legend">Label placement</FormLabel>
+                        <FormLabel component="legend">Banderas de configuración</FormLabel>
                             <FormGroup aria-label="position" column="true" >
                                 <FormControlLabel
                                     value="top"
@@ -196,6 +217,15 @@ export default function UnidadHT200View() {
                                     label="Activacion de Falla de Rojo y Verde de un grupo: "
                                     labelPlacement="start"
                                 />
+                            
+                            </FormGroup>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <FormControl component="fieldset">
+                            <FormLabel component="legend">Banderas de configuración</FormLabel>
+                            <FormGroup aria-label="position" column="true" >
+                              
                                 <FormControlLabel
                                     value="top"
                                     control={<Switch checked={state.RedFailedDetectFlag} color="primary" onChange={handleSwitch} name='RedFailedDetectFlag' />}
@@ -219,7 +249,9 @@ export default function UnidadHT200View() {
                     </Grid>
                 </Grid>
             </Container>
-            <CardControllerHT200 />
+            <div style={{height:70}}>
+
+            </div>
         </>
     )
 

@@ -13,7 +13,9 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import CardControllerHT200 from "../../components/CardControllerHT200";
+import { IpControllerCard } from '../../components/ip-controller-card';
+import { CantonControllerCard } from '../../components/canton-controller-card';
+import { NombreControllerCard } from '../../components/nombre-controller-card';
 export default function RegistroErroresHT200View() {
     const controlerState = useSelector(state => state.controlerht200);
     const [data, setData] = useState([{}]);
@@ -68,14 +70,33 @@ export default function RegistroErroresHT200View() {
     };
 
     return (<>
-        <Container maxWidth="md" sx={{ paddingTop: 6 }}>
+        <Container maxWidth="lg" sx={{ paddingTop: 6 }}>
             <Grid container spacing={3}>
+            <Grid item xs={12} md={4} >
+                      <NombreControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.nombre}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={4} >
+                      <CantonControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.canton}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={4} >
+                      <IpControllerCard  
+                      sx={{ height: '100%' }}
+                        value={controlerState.ip}
+                        />
+                    </Grid>
                 <Grid item xs={12} md={4}>
                     <Button variant="contained"  fullWidth color="verde2" sx={{ height: '100%' }} onClick={readData}>LEER DATOS</Button>
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <Button variant="contained" endIcon={<PictureAsPdfIcon/>} fullWidth color="rojo" sx={{ height: '100%' }} onClick={readData}>GENERAR REPORTE</Button>
                 </Grid>
+
                 <Grid item xs={12} md={12}>
                     <TableContainer sx={{ maxHeight: 440 }}>
                         <Table stickyHeader aria-label="sticky table">
@@ -139,7 +160,6 @@ export default function RegistroErroresHT200View() {
         </Container>
 
 
-        <CardControllerHT200 />
 
 
 
