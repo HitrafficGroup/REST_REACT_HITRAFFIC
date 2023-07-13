@@ -32,6 +32,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { IpControllerCard } from '../../components/ip-controller-card';
 import { CantonControllerCard } from '../../components/canton-controller-card';
 import { NombreControllerCard } from '../../components/nombre-controller-card';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import Stack from '@mui/material/Stack';
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
         backgroundColor: theme.palette.common.black,
@@ -330,7 +332,11 @@ export default function BasicSettingsHT200View() {
                         value={controlerState.ip}
                         />
                     </Grid>
-               
+                    <Grid item xs={12} >
+                    <Typography variant="h6" gutterBottom  color="text.secondary">
+                       Configuración de nuevo plan
+                    </Typography>
+                    </Grid>
                     <Grid item xs={12}>
                         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                             <TableContainer sx={{ maxHeight: 440 }}  >
@@ -482,13 +488,18 @@ export default function BasicSettingsHT200View() {
                             </TableContainer>
                         </Paper>
                     </Grid>
+                    <Grid item xs={12} >
+                    <Typography variant="h6" gutterBottom  color="text.secondary"  >
+                        Planes Creados
+                    </Typography>
+                    </Grid>
                     {
                         planificacion.filter(item=> item.id !== "prueba").map((item,index) => (
                             <Grid item xs={12} key={index} >
-                                <Typography variant="h6" gutterBottom>
-                                    Hora: {item.hora} Minuto: {item.minuto} {"              "}
+                                   <Stack direction="row" spacing={2} marginBottom={2} >
+                                    <Chip icon={<AccessTimeIcon />} size="medium" color="info" label={`Horario de ejecucion del plan: ${item.hora}:${item.minuto}`} />
                                     <Button variant="outlined" color="amarillo" endIcon={<DeleteIcon />} onClick={() => { eliminarHorario(item) }}  >ELIMINAR PLAN</Button>
-                                </Typography>
+                                   </Stack>
 
                                 <TableContainer component={Paper}>
                                     <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -535,7 +546,9 @@ export default function BasicSettingsHT200View() {
                         ))
                     }
                  <Grid item xs={12} md={12}>
+                 <Stack direction="row" spacing={2} justifyContent={"center"} marginBottom={2} >
                         <Button  variant="contained" onClick={cargarDatos}  >CARGAR DATOS</Button>
+                     </Stack>
                 </Grid>
                 </Grid>
                 <div style={{ height: 40 }}>

@@ -16,6 +16,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { IpControllerCard } from '../../components/ip-controller-card';
 import { CantonControllerCard } from '../../components/canton-controller-card';
 import { NombreControllerCard } from '../../components/nombre-controller-card';
+import Stack from '@mui/material/Stack';
 export default function RegistroErroresHT200View() {
     const controlerState = useSelector(state => state.controlerht200);
     const [data, setData] = useState([{}]);
@@ -71,8 +72,8 @@ export default function RegistroErroresHT200View() {
     };
 
     return (<>
-        <Container maxWidth="lg" sx={{ paddingTop: 6 }}>
-            <Grid container spacing={3}>
+        <Container maxWidth="lg" sx={{ paddingTop: 2 }}>
+            <Grid container spacing={2}>
             <Grid item xs={12} md={4} >
                       <NombreControllerCard  
                       sx={{ height: '100%' }}
@@ -91,11 +92,11 @@ export default function RegistroErroresHT200View() {
                         value={controlerState.ip}
                         />
                     </Grid>
-                <Grid item xs={12} md={4}>
-                    <Button variant="contained"  fullWidth color="verde2" sx={{ height: '100%' }} onClick={readData}>LEER DATOS</Button>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                    <Button variant="contained" endIcon={<PictureAsPdfIcon/>} fullWidth color="rojo" sx={{ height: '100%' }} onClick={readData}>GENERAR REPORTE</Button>
+                <Grid item xs={12} >
+                    <Stack direction="row" spacing={2} justifyContent={"center"} marginBottom={2} >
+                        <Button variant="contained"   color="success" sx={{ height: '100%' }} onClick={readData}>LEER DATOS</Button>
+                        <Button variant="contained" endIcon={<PictureAsPdfIcon/>}  color="warning" sx={{ height: '100%' }} onClick={readData}>GENERAR REPORTE</Button>
+                    </Stack >
                 </Grid>
 
                 <Grid item xs={12} md={12}>
