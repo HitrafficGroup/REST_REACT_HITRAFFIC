@@ -31,7 +31,8 @@ export const TopNav = (props) => {
         component="header"
         sx={{
           backdropFilter: 'blur(6px)',
-          backgroundColor: (theme) => alpha(theme.palette.background.default, 0.8),
+          backgroundColor: (theme) => alpha(theme.palette.background.default, 1),
+          
           position: 'sticky',
           left: {
             lg: `${SIDE_NAV_WIDTH}px`
@@ -40,7 +41,7 @@ export const TopNav = (props) => {
           width: {
             lg: `calc(100% - ${SIDE_NAV_WIDTH}px)`
           },
-          zIndex: (theme) => theme.zIndex.appBar
+          zIndex: 900
         }}
       >
         <Stack

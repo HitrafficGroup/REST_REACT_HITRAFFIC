@@ -21,7 +21,7 @@ export const IpControllerCard = (props) => {
             >
               Ip Controlador
             </Typography>
-            <Typography variant="h4">
+            <Typography variant="h6">
               {value}
             </Typography>
           </Stack>

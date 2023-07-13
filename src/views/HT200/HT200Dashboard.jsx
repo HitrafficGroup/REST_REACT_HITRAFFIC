@@ -1,6 +1,5 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import HT200AppBar from "../../components/HT200AppBar";
 import HomeHT200View from "./HomeHT200View";
 import UnidadHT200View from "./UnidadHT200View";
 import FasesHT200View from "./FasesHT200View";
@@ -16,11 +15,13 @@ import PruebasView from "../PruebasView";
 import RegistroErroresHT200View from "./RegistroErroresHT200View";
 import ClonacionHT200View from "./ClonacionHT200View";
 import { Layout } from "../../dashboard/layout";
+import SimpleBar from 'simplebar-react';
 export default function HT200Dashboard(){
     return (
         <>
  
         <Layout>
+        <SimpleBar style={{ maxHeight: '90vh' }}>
         <Routes>
                 <Route path="home" element={<HomeHT200View />} />
                 <Route path="config" element={<BasicSettingsHT200View />} />
@@ -37,6 +38,7 @@ export default function HT200Dashboard(){
                 <Route path="errores" element={<RegistroErroresHT200View />} />
                 <Route path="clonacion" element={<ClonacionHT200View />} />
             </Routes>  
+            </SimpleBar>
         </Layout>
          
        

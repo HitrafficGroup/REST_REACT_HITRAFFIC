@@ -63,7 +63,6 @@ export default function UnidadHT200View() {
         await PostUnitHT200({trama:trama,ip:controlerState.ip})
         updateFirebase('unit',state)
         dispatch(updateParamsHT200({target:'unit',data:state}))
-       
     }
 
     const readData=async()=>{
@@ -92,10 +91,21 @@ export default function UnidadHT200View() {
         await updateDoc(ref, aux_data);
     }
     const handleTextField = (event) => {
-        setState({
-            ...state,
-            [event.target.name]: event.target.value,
-        });
+ 
+        let value = parseInt(event.target.value);
+        if(value > 20){
+            setState({
+                ...state,
+                [event.target.name]: 20,
+            });
+        }else{
+            setState({
+                ...state,
+                [event.target.name]: event.target.value,
+            });
+        }
+      
+      
     };
     return (
         <>
@@ -120,7 +130,7 @@ export default function UnidadHT200View() {
                         />
                     </Grid>
                     <Grid item xs={6} md={12} >
-                        <Stack direction="row" spacing={2}>
+                        <Stack direction="row" spacing={2} justifyContent={"center"}>
                         <Button color='verde' variant="contained"  onClick={readData} >leer datos</Button>
                         <Button color='oscuro' variant="contained"  onClick={uploadData} >cargar datos</Button>
                         </Stack>
@@ -134,6 +144,7 @@ export default function UnidadHT200View() {
                             onChange={handleTextField}
                             name="StartupFlash"
                             type="number"
+                            InputProps={{ inputProps: { min: 0, max: 20 } }}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -147,6 +158,7 @@ export default function UnidadHT200View() {
                             type="number"
                             value={state.StartupAllRed}
                             onChange={handleTextField}
+                            InputProps={{ inputProps: { min: 0, max: 20 }}}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -174,6 +186,7 @@ export default function UnidadHT200View() {
                             fullWidth={true}
                             type="number"
                             onChange={handleTextField}
+                            InputProps={{ inputProps: { min: 0, max: 20 } }}
                             value={state.RedRevert}
                             InputLabelProps={{
                                 shrink: true,
@@ -188,6 +201,7 @@ export default function UnidadHT200View() {
                             fullWidth={true}
                             type="number"
                             onChange={handleTextField}
+                            InputProps={{ inputProps: { min: 0, max: 20 } }}
                             value={state.FlowCycle}
                             InputLabelProps={{
                                 shrink: true,

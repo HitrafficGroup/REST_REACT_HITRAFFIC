@@ -42,7 +42,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
-//dependencias para los select
+
 
 const dataTest = [
     { nombre: 'nombre 1', ip: '192.168.1.2', mac: 'h3:ft:a2:l2', canton: 'cuenca', estado: true },
@@ -86,7 +86,6 @@ export default function ControlersView() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [anchorEl, setAnchorEl] = useState(null);
-
     const open = Boolean(anchorEl);
 
     const handleClick = (event) => {
@@ -700,8 +699,9 @@ export default function ControlersView() {
 
                                                         <TableCell align="center">
                                                             <Stack direction="row" spacing={1}>
-                                                                <IconButton color="rojo" aria-label="eliminar" onClick={() => { eliminarController(row) }} >
+                                                                <IconButton  color="rojo" aria-label="eliminar" onClick={() => { eliminarController(row) }} >
                                                                     <DeleteIcon />
+                                                                
                                                                 </IconButton>
                                                                 <IconButton aria-label="editar" onClick={() => { abrirModalEditar(row) }} >
                                                                     <SettingsIcon />
@@ -910,7 +910,7 @@ export default function ControlersView() {
                     </ModalFooter>
                 </Modal>
             </Container>
-            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar}>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 10 }} open={deshabilitar}>
                 <CircularProgress color="inherit" />
             </Backdrop>
         </>

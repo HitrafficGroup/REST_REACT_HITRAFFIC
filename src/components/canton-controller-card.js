@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import CurrencyDollarIcon from '@heroicons/react/24/solid/CurrencyDollarIcon';
 import { Avatar, Card, CardContent, Stack, SvgIcon, Typography } from '@mui/material';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 export const CantonControllerCard = (props) => {
@@ -21,7 +20,7 @@ export const CantonControllerCard = (props) => {
             >
               Canton
             </Typography>
-            <Typography variant="h4">
+            <Typography variant="h6">
               {value}
             </Typography>
           </Stack>

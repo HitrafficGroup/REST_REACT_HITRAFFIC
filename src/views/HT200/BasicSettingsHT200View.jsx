@@ -29,7 +29,6 @@ import '../../css/beautifulCard.scss';
 import { generatePhaseFrame,generateSeqFrame,generateSplitFrame,generatePatternFrame,generateActionFrame,generatePlanFrame, generateChannelFrame } from "../../js/generateFrameApiHT200";
 import {setBasicPlan } from "../../js/apiFunctionsHT200";
 import { useSelector, useDispatch } from 'react-redux';
-import CardControllerHT200 from "../../components/CardControllerHT200";
 import { IpControllerCard } from '../../components/ip-controller-card';
 import { CantonControllerCard } from '../../components/canton-controller-card';
 import { NombreControllerCard } from '../../components/nombre-controller-card';
@@ -381,7 +380,7 @@ export default function BasicSettingsHT200View() {
                                                 align={"center"}
                                                 style={{ minWidth: 30 }}
                                             >
-                                                Duracion
+                                                Duracion de Fase
                                             </TableCell>
 
                                             <TableCell

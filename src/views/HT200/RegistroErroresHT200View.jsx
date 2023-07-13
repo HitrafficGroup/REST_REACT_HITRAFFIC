@@ -32,7 +32,8 @@ export default function RegistroErroresHT200View() {
             item.day = devolverDia(item.day)
             return item
         })
-        setData(data_modify)
+        let filter_data = data_modify.filter((item)=> item.month !== 0)
+        setData(filter_data)
     }
     const devolverDia = (__data) => {
         if (__data === 1) {

@@ -788,7 +788,7 @@ export default function HomeView() {
                                         <Grid item xs={12} >
                                             <TextField
                                                 id="outlined-number"
-                                                label="Tiempo para finalizar modo Manual"
+                                                label="Tiempo para desactivación del modo manual"
                                                 type="number"
                                                 onChange={(event) => { setTiempo(event.target.value) }}
                                                 value={tiempo}

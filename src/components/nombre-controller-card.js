@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import CurrencyDollarIcon from '@heroicons/react/24/solid/CurrencyDollarIcon';
+
 import { Avatar, Card, CardContent, Stack, SvgIcon, Typography } from '@mui/material';
 import BadgeIcon from '@mui/icons-material/Badge';
 export const NombreControllerCard = (props) => {
@@ -21,7 +21,7 @@ export const NombreControllerCard = (props) => {
             >
               Nombre
             </Typography>
-            <Typography variant="h4">
+            <Typography variant="h6">
               {value}
             </Typography>
           </Stack>
