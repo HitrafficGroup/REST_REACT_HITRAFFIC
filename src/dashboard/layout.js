@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
-
+import { useLocation } from 'react-router-dom';
 import { SideNav } from './side-nav';
 import { TopNav } from './top-nav';
 
@@ -27,7 +27,7 @@ export const Layout=(props)=>{
   const { children } = props;
 
   const [openNav, setOpenNav] = useState(false);
-
+  const pathname = useLocation();
   const handlePathnameChange = useCallback(
     () => {
       if (openNav) {
@@ -42,7 +42,7 @@ export const Layout=(props)=>{
       handlePathnameChange();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    
+    [pathname]
   );
 
   return (

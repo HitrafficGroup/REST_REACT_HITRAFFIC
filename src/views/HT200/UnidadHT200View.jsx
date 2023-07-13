@@ -129,7 +129,7 @@ export default function UnidadHT200View() {
                         value={controlerState.ip}
                         />
                     </Grid>
-                    <Grid item xs={6} md={12} >
+                    <Grid item xs={12} >
                         <Stack direction="row" spacing={2} justifyContent={"center"}>
                         <Button color='verde' variant="contained"  onClick={readData} >leer datos</Button>
                         <Button color='oscuro' variant="contained"  onClick={uploadData} >cargar datos</Button>

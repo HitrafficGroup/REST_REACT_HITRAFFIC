@@ -418,16 +418,16 @@ export default function FasesHT200View() {
             <Modal isOpen={modalCrear} >
                 <ModalHeader>
                     <div>
-                        <h1>
+                        <h5>
                           Crear Fase
-                        </h1>
+                        </h5>
                     </div>
                 </ModalHeader>
                 <ModalBody>
-                    <Grid container spacing={4}>
+                    <Grid container spacing={1}>
                     <Grid item xs={12} >
-                    <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">Fases Controlador</InputLabel>
+                    <FormControl fullWidth variant="standard">
+                            <InputLabel id="demo-simple-select-label">Fase</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
@@ -458,7 +458,7 @@ export default function FasesHT200View() {
                             fullWidth={true}
                             onChange={handleTextField}
                             name="walk"
-                            label="walk"
+                            label="Paso"
                             type="number"
                             InputLabelProps={{
                                 shrink: true,
@@ -468,7 +468,7 @@ export default function FasesHT200View() {
                         </Grid>
                         <Grid item xs={12} md={4}>
                         <TextField
-                            label="Ped Clear"
+                            label="Destello Peatonal"
                             type="number"
                             id="outlined-controlled"
                             value={currentFase.pedestrianClear}
@@ -544,7 +544,7 @@ export default function FasesHT200View() {
                             fullWidth={true}
                             onChange={handleTextField}
                             name="yellowchange"
-                            label="vehicle yellow"
+                            label="Amarillo"
                             type="number"
                             InputLabelProps={{
                                 shrink: true,
@@ -558,7 +558,7 @@ export default function FasesHT200View() {
                             fullWidth={true}
                             onChange={handleTextField}
                             name="redclear"
-                            label="redclear"
+                            label="Destello Rojo"
                             type="number"
                             InputLabelProps={{
                                 shrink: true,
@@ -572,7 +572,7 @@ export default function FasesHT200View() {
                             fullWidth={true}
                             onChange={handleTextField}
                             name="RedRevert"
-                            label="Red Revert"
+                            label="Rojo Revertido"
                             type="number"
                             InputLabelProps={{
                                 shrink: true,
@@ -586,7 +586,7 @@ export default function FasesHT200View() {
                             fullWidth={true}
                             onChange={handleTextField}
                             name="vehicleclear"
-                            label="vehicleclear"
+                            label="Destello"
                             type="number"
                             InputLabelProps={{
                                 shrink: true,

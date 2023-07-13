@@ -12,7 +12,7 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+
 import logo from "../assets/logov2.png"
 import { items } from './config';
 import { items_views } from './config-views';
@@ -196,7 +196,7 @@ export const SideNav = (props) => {
     <Drawer
       anchor="left"
       onClose={onClose}
-      open={false}
+      open={open}
       PaperProps={{
         sx: {
           backgroundColor: 'neutral.800',

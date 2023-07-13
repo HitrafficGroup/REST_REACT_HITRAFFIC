@@ -2,6 +2,7 @@
 import PropTypes from 'prop-types';
 import { Box, ButtonBase } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+
 export const SideNavItem = (props) => {
   const { active = false, disabled, icon, path, title } = props;
   const navigate = useNavigate(); 
