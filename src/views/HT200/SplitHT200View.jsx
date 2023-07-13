@@ -412,20 +412,20 @@ export default function SplitHT200View() {
             <Modal isOpen={modalConfig} >
                 <ModalHeader>
                     <div>
-                        <h1>
-                            Editar Split
-                        </h1>
+                        <h5>
+                            Configurar modo operativo de la fase {currentSplit.fase}
+                        </h5>
                     </div>
                 </ModalHeader>
                 <ModalBody>
                     <Grid container spacing={4}>
 
                         <Grid item xs={12} md={6}>
-                            <TextField id="outlined-basic" label="Tiempo" variant="outlined" name="tiempo" onChange={handleChange} value={currentSplit.tiempo} type="number" />
+                            <TextField id="outlined-basic" label="Duración de la Fase (segundos)"  name="tiempo" onChange={handleChange} value={currentSplit.tiempo} type="number" />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Modo</InputLabel>
+                            <FormControl fullWidth variant="standard">
+                                <InputLabel id="demo-simple-select-label">Modo de Funcionamiento</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
@@ -447,8 +447,8 @@ export default function SplitHT200View() {
                         </Grid>
 
                         <Grid item xs={12} md={12}>
-                            <FormControl>
-                                <FormLabel id="demo-controlled-radio-buttons-group">Seleccionar Coord</FormLabel>
+                            <FormControl variant="standard" fullWidth>
+                                <FormLabel id="demo-controlled-radio-buttons-group">Tipo de Fase</FormLabel>
                                 <RadioGroup
                                     aria-labelledby="demo-controlled-radio-buttons-group"
                                     name="coord"
@@ -476,21 +476,21 @@ export default function SplitHT200View() {
             <Modal isOpen={modalCrear} >
                 <ModalHeader>
                     <div>
-                        <h1>
-                            Crear Split
-                        </h1>
+                        <h5>
+                            Crear Modo de Operacion de Fase
+                        </h5>
                     </div>
                 </ModalHeader>
                 <ModalBody>
                     <Grid container spacing={4}>
                     <Grid item md={6} xs={12}>
-                        <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">Fases Controlador</InputLabel>
+                        <FormControl fullWidth variant="standard">
+                            <InputLabel id="demo-simple-select-label">Fase</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 value={currentSplit.fase}
-                                label="Fases Controlador"
+                                label="Fase"
                                 name="fase"
                                 onChange={handleChange}
                             >
@@ -510,14 +510,26 @@ export default function SplitHT200View() {
                         </FormControl>
                     </Grid>
                         <Grid item xs={12} md={6}>
-                            <TextField id="outlined-basic" label="Tiempo" variant="outlined" name="tiempo" onChange={handleChange} value={currentSplit.tiempo} type="number" />
+                            <TextField  
+                            id="outlined-controlled"
+                            label="Duración de la Fase (segundos)" 
+                            fullWidth
+                            name="tiempo"
+                            onChange={handleChange} 
+                            value={currentSplit.tiempo} 
+                            type="number"
+                            InputProps={{ inputProps: { min: 0, max: 100 } }}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Modo</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
+                            <FormControl fullWidth variant="standard">
+                            <InputLabel id="demo-customized-select-label">Modo de Funcionamiento</InputLabel>
+                                    <Select
+                                    labelId="demo-customized-select-label"
+                                    id="demo-customized-select"
                                     value={currentSplit.mode}
                                     label="Modo"
                                     name="mode"
@@ -537,7 +549,7 @@ export default function SplitHT200View() {
 
                         <Grid item xs={12} md={12}>
                             <FormControl>
-                                <FormLabel id="demo-controlled-radio-buttons-group">Seleccionar Coord</FormLabel>
+                                <FormLabel id="demo-controlled-radio-buttons-group">Tipo de Fase</FormLabel>
                                 <RadioGroup
                                     aria-labelledby="demo-controlled-radio-buttons-group"
                                     name="coord"
@@ -545,7 +557,7 @@ export default function SplitHT200View() {
                                     onChange={handleChange}
                                     row
                                 >
-                                    <FormControlLabel value={1} control={<Radio />} label="Fase Coord" />
+                                    <FormControlLabel value={1} control={<Radio />} label="Fase Coordinada" />
                                     <FormControlLabel value={2} control={<Radio />} label="Fase Clave" />
                                     <FormControlLabel value={4} control={<Radio />} label="Fase Fija" />
                                 </RadioGroup>

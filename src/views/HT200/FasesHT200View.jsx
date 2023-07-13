@@ -81,6 +81,7 @@ export default function FasesHT200View() {
     const abrirModalConfig =(__data)=>{
         setModalConfig(true);
         let aux_data = JSON.parse(JSON.stringify(__data))
+        console.log(aux_data)
         setCurrentFase(aux_data);
  
     }
@@ -248,9 +249,9 @@ export default function FasesHT200View() {
             <Modal isOpen={modalConfig} >
                 <ModalHeader>
                     <div>
-                        <h1>
-                          Editar Fase
-                        </h1>
+                        <h5>
+                          Configurar Fase {currentFase.number}
+                        </h5>
                     </div>
                 </ModalHeader>
                 <ModalBody>
@@ -350,7 +351,7 @@ export default function FasesHT200View() {
                             fullWidth={true}
                             onChange={handleTextField}
                             name="yellowchange"
-                            label="vehicle yellow"
+                            label="Tiempo en Amarillo"
                             type="number"
                             InputLabelProps={{
                                 shrink: true,
@@ -378,7 +379,7 @@ export default function FasesHT200View() {
                             fullWidth={true}
                             onChange={handleTextField}
                             name="RedRevert"
-                            label="Red Revert"
+                            label="Rojo Revertido"
                             type="number"
                             InputLabelProps={{
                                 shrink: true,
