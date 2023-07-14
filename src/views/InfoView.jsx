@@ -1,0 +1,123 @@
+import React, { useState } from "react"
+import Container from '@mui/material/Container';
+import "../css/infoView.scss";
+import Stack from '@mui/material/Stack';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import { CardActionArea } from '@mui/material';
+import individual from '../assets/individual.jpg';
+import grupal from '../assets/grupal.jpg';
+import simulacion from '../assets/simulacion.jpg';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import { useNavigate } from 'react-router-dom';
+ 
+export default function InfoView() {
+
+    const navigate = useNavigate();
+    const MandarAlInicio =()=>{
+        navigate("/login")
+    }
+
+
+
+
+
+    return (
+
+        <>
+        <div  className="background-home"> 
+            <Container  fixed>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <div className="container-difuminado">
+                            <Typography gutterBottom variant="h1" className="titulo-home" textAlign={"center"}>
+                                Hi-Traffic Centralizacion
+                            </Typography>
+                            <Typography gutterBottom variant="h4" textAlign={"center"} className="subtitulo-home">
+                                Sistema de Centralizacion para el monitoreo y manipulacion de controladores Remotamente
+                            </Typography>
+           
+                        </div>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Stack direction="row" spacing={2} justifyContent={"center"}>
+                            <Card sx={{ maxWidth: 345 }}>
+                                <CardActionArea>
+                                    <CardMedia
+                                        component="img"
+                                        height="140"
+                                        image={individual}
+                                        alt="funcionamiento individual"
+                                    />
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h6" component="div">
+                                        Configuración Individual de Controlador
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                       
+La plataforma de centralización proporciona un acceso sencillo a las configuraciones avanzadas del controlador, a través de una interfaz de usuario amigable. Su objetivo es simplificar el proceso de configuración de cada controlador para el usuario final.
+                                        </Typography>
+                                    </CardContent>
+                                </CardActionArea>
+                            </Card>
+                            <Card sx={{ maxWidth: 345 }}>
+                                <CardActionArea>
+                                    <CardMedia
+                                        component="img"
+                                        height="140"
+                                        image={grupal}
+                                        alt="funcionamiento grupal"
+                                    />
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h6" component="div">
+                                        Configuración Grupal de Controladores
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            La aplicación de centralización cuenta con un módulo de configuración grupal que permite gestionar varios controladores simultáneamente. Esta funcionalidad resulta muy útil cuando se trata de administrar múltiples intersecciones al mismo tiempo.
+                                        </Typography>
+                                    </CardContent>
+                                </CardActionArea>
+                            </Card>
+                            <Card sx={{ maxWidth: 345 }}>
+                                <CardActionArea>
+                                    <CardMedia
+                                        component="img"
+                                        height="140"
+                                        image={simulacion}
+                                        alt="simulacion"
+                                    />
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h6" component="div">
+                                        Simulación de Intersección en Tiempo Real
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+
+                                        La funcionalidad de simulación en tiempo real brinda al usuario la capacidad de visualizar el comportamiento del controlador de un semáforo en una ubicación específica. Esto se logra a través de una animación del área donde se encuentra el semáforo, la cual puede ser editada y ajustada según las necesidades de configuración del usuario final.    </Typography>
+                                    </CardContent>
+                                </CardActionArea>
+                            </Card>
+                        </Stack>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Stack direction="row" justifyContent={"center"}>
+                            <Button variant="contained" onClick={MandarAlInicio} >
+                                ACCEDER A LA PLATAFORMA
+                            </Button>
+                        </Stack>
+                    </Grid>
+                </Grid>
+
+            </Container>
+        </div>
+        </>
+    )
+
+
+
+
+
+
+}
