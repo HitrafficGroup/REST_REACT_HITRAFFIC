@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import Container from '@mui/material/Container';
 import "../css/infoView.scss";
 import Stack from '@mui/material/Stack';
@@ -57,8 +57,7 @@ export default function InfoView() {
                                         Configuración Individual de Controlador
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                       
-La plataforma de centralización proporciona un acceso sencillo a las configuraciones avanzadas del controlador, a través de una interfaz de usuario amigable. Su objetivo es simplificar el proceso de configuración de cada controlador para el usuario final.
+                                        La plataforma de centralización proporciona un acceso sencillo a las configuraciones avanzadas del controlador, a través de una interfaz de usuario amigable. Su objetivo es simplificar el proceso de configuración de cada controlador para el usuario final.
                                         </Typography>
                                     </CardContent>
                                 </CardActionArea>
