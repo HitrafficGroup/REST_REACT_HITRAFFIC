@@ -7,7 +7,7 @@ import ControlersView from "./views/ControlersView";
 import VistaMaestraView from "./views/VistaMaestraView";
 import PruebasInterfaz from "./views/PruebasInterfaz";
 import InfoView from "./views/InfoView";
-
+import MonitoreoView from "./views/MonitoreoView";
 
 function App() {
   return (
@@ -21,6 +21,7 @@ function App() {
           <Route path="/vista_maestra" element={<VistaMaestraView/>} />
           <Route path="/pruebas_interfaz" element={<PruebasInterfaz/>} />
           <Route path="/" element={<InfoView/>} />
+          <Route path="/monitoreo" element={<MonitoreoView />} />
         </Routes>
     </div>
   );

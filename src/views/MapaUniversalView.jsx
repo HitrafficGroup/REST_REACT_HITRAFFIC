@@ -591,9 +591,6 @@ export default function MapaUniversalView() {
                         )
 
                         )}
-
-
-
                     </div>
                 </Grid>
             </Grid>

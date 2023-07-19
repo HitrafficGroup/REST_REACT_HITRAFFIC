@@ -1,12 +1,10 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import CleaningServicesSharpIcon from '@mui/icons-material/CleaningServicesSharp';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import SaveIcon from '@mui/icons-material/Save';
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
-import CheckSharpIcon from '@mui/icons-material/CheckSharp';
 import TextField from '@mui/material/TextField';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import "../../css/HomeView.css"
@@ -19,12 +17,12 @@ import Select from '@mui/material/Select';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import Fab from '@mui/material/Fab';
-import { setSemaforos } from "../../features/controlers/controlerSlice";
+import { updateParamsHT200 } from '../../features/controlerht200/controlerHT200Slice';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { MapContainer, TileLayer, Marker, Popup, Polygon, FeatureGroup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, CircleMarker } from "react-leaflet";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../../css/beautifulCard.scss';
@@ -85,54 +83,37 @@ export default function HomeView() {
     const [flagsimu, setFlagsimu] = useState(false);
     const [deshabilitar, setDeshabilitar] = useState(false);
     const [deshabilitar2, setDeshabilitar2] = useState(false);
-    const [areas, setAreas] = useState(controlerState.semaforos);
     const [btnPlay, setBtnPlay] = useState(false)
     const simulacion = useRef(false);
     const timer1 = useRef(0);
     const [tiempo, setTiempo] = useState(30)
     const color_flag = useRef(""); // estas variables sirve para solo mandar a actualizar cuando se genere un cambio de fase
     const [currentPasos, setCurrentPasos] = useState([{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }, { g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }, { g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }])
-
+    const [semaforos,setSemaforos] = useState(controlerState.semaforos)
     const indice_grupos = useRef(0);
     const datos_grupos = useRef([{ amarillo: 2, verde: 15, rojo: 10 }])
-    const [pointsArea, setPointsArea] = useState([]);
     const [draggable, setDraggable] = useState(false)
     const [position, setPosition] = useState([controlerState.latitud, controlerState.longitud])
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
-    const [btnAgregar, setBtnAgregar] = useState(true);
+
 
     const dispatch = useDispatch();
 
-    //banderas para los botones 
-    const [botonCrear, setBotonCrear] = useState(true);
+
 
     //prueba semaforo
     const semaforos2 = useRef(controlerState.semaforos);
     const [newSemaforo, setNewSemaforo] = useState({
         nombre: "",
         position: [],
-        rojo: 15,
-        amarillo: 5,
-        verde: 30,
-        icon: {},
         grupo: '',
     });
     const [anchorEl, setAnchorEl] = useState(null);
-    const [anchor2, setAnchor2] = useState(null);
-    const [anchor3, setAnchor3] = useState(null);
     const [anchor4, setAnchor4] = useState(null);
     // funciones para los pop over
     const handlePopoverOpen = (event) => { setAnchorEl(event.currentTarget); };
     const handlePopoverClose = () => { setAnchorEl(null); };
     const open = Boolean(anchorEl);
-
-    const handlePopoverOpen2 = (event) => { setAnchor2(event.currentTarget); };
-    const handlePopoverClose2 = () => { setAnchor2(null); };
-    const open2 = Boolean(anchor2);
-
-    const handlePopoverOpen3 = (event) => { setAnchor3(event.currentTarget); };
-    const handlePopoverClose3 = () => { setAnchor3(null); };
-    const open3 = Boolean(anchor3);
 
     const handlePopoverOpen4 = (event) => { setAnchor4(event.currentTarget); };
     const handlePopoverClose4 = () => { setAnchor4(null); };
@@ -144,9 +125,8 @@ export default function HomeView() {
                 const marker = markerRef.current
                 if (marker != null) {
                     setPosition(marker.getLatLng())
-                    setBtnAgregar(false);
                 } else {
-                    setBtnAgregar(true);
+                    
                 }
             },
         }),
@@ -169,7 +149,7 @@ export default function HomeView() {
             for (let i = 0; i < __data.grupo.length; i++) {
                 let aux_grupo = `g${__data.grupo[i]}`
                 if (item.grupo === aux_grupo) {
-                    item['color'] = { color: __data.color };
+                    item['color'] =  __data.color ;
                 }
 
             }
@@ -178,7 +158,7 @@ export default function HomeView() {
         )
 
         semaforos2.current = dataUpdated
-        setAreas(dataUpdated);
+        setSemaforos(dataUpdated);
     }
 
     const toggleDraggable = useCallback(() => {
@@ -196,34 +176,30 @@ export default function HomeView() {
     */
     const agregarSemaforo = async () => {
         setDeshabilitar(true)
-        let areas_temp = JSON.parse(JSON.stringify(areas))
-        if (pointsArea.length === 4) {
-            let newpositions = pointsArea.map((item) => (
-                {
-                    pos: item.position
-                }
-            ))
+        console.log(position.lat)
+  
+        if (newSemaforo.nombre !== "") {
+           
 
 
-            let newArea = {
-                rojo: 10,
-                amarillo: 4,
-                verde: 20,
+            let newData = {
+            
                 nombre: newSemaforo.nombre,
                 grupo: newSemaforo.grupo,
-                points: newpositions,
-                color: devolverColor2(newSemaforo.grupo),
+                position: [position.lat,position.lng],
+                color: devolverColor2(newSemaforo.grupo)
             }
-
-            areas_temp.push(newArea);
-            dispatch(setSemaforos(areas_temp));
+            console.log(newData)
+            let aux_semaforos = JSON.parse(JSON.stringify(semaforos));
+            aux_semaforos.push(newData);
+            setSemaforos(aux_semaforos);
+            dispatch(updateParamsHT200({target:"semaforos",data:aux_semaforos}));
             const ref = doc(db, "controladores", controlerState.id);
             await updateDoc(ref, {
-                semaforos: areas_temp
+                semaforos: aux_semaforos
             });
-            setAreas(areas_temp)
-            semaforos2.current = areas_temp
-            setPointsArea([])
+      
+            semaforos2.current = aux_semaforos
             setModalCrearSemaforo(false)
 
             setNewSemaforo({
@@ -235,7 +211,7 @@ export default function HomeView() {
             setDeshabilitar(false)
             Swal.fire({
                 icon: 'error',
-                title: 'Punos de Area Incompletos',
+                title: 'Faltan Datos',
                 showConfirmButton: false,
                 timer: 900
             })
@@ -245,13 +221,13 @@ export default function HomeView() {
     }
     const devolverColor2 = (_grupo) => {
         if (_grupo === "g1") {
-            return grupo_1
+            return 'purple'
         } else if (_grupo === "g2") {
-            return grupo_2
+            return 'blue'
         } else if (_grupo === "g3") {
-            return grupo_3
+            return 'black'
         } else {
-            return grupo_4
+            return 'orange'
         }
     }
     /*
@@ -269,7 +245,7 @@ export default function HomeView() {
         try {
             let areas_temp = JSON.parse(JSON.stringify(semaforos2.current))
             let areas_init = areas_temp.map(item => {
-                item.color = { color: "red" }
+                item.color = "red"
                 return item
             })
             semaforos2.current = areas_init
@@ -350,25 +326,17 @@ export default function HomeView() {
                 setDeshabilitar(true)
                 let aux = JSON.parse(JSON.stringify(semaforos2.current))
                 let semaforosActualizados = aux.filter(item => item.nombre !== _data.nombre)
-                const ref = doc(db, "controladores", controlerState.mac);
-                let areas_temp = JSON.parse(JSON.stringify(semaforosActualizados))
-                areas_temp.map((item) => {
-                    let puntos_aux = item.points
-                    item.points = puntos_aux.map((_item) => (
-                        { pos: _item }
-                    ))
-                    return null;
-                })
+                const ref = doc(db, "controladores", controlerState.id);
+                
                 try {
                     await updateDoc(ref, {
-                        semaforos: areas_temp
+                        semaforos: semaforosActualizados
                     });
                 } catch (error) {
                     setDeshabilitar(false)
                 }
-
                 semaforos2.current = semaforosActualizados
-                setAreas(semaforosActualizados)
+                setSemaforos(semaforosActualizados)
                 setDeshabilitar(false)
             }
         })
@@ -378,48 +346,9 @@ export default function HomeView() {
 
     // funcion que compara los datos almacenados en la store
 
-    const obtenerCoordenadas = () => {
-        let puntos = JSON.parse(JSON.stringify(pointsArea))
-
-        let data;
-
-        let newPoint = {
-            icon: point,
-            position: [position.lat, position.lng]
-        }
-
-        if (puntos.length < 4) {
-            puntos.push(newPoint)
-            data = puntos.map(item => (
-                {
-
-                    icon: point,
-                    position: item.position
-                }
-            ))
-            setBotonCrear(true)
-        } else {
-            puntos.pop()
-            puntos.push(newPoint)
-            data = puntos.map(item => (
-                {
-                    icon: point,
-                    position: item.position
-                }))
-
-        }
-        if (puntos.length === 4) {
-            setBotonCrear(false)
-        }
-        setPointsArea(data)
-
-    }
+   
 
 
-    const limpiarPuntos = () => {
-        setBotonCrear(true);
-        setPointsArea([])
-    }
     const formatData = (_data) => {
         let data = _data.toString();
         if (data.length < 2) {
@@ -559,7 +488,9 @@ export default function HomeView() {
         }, 1000);
 
         // verifyDataSemaforos()
+        cargarMapa();
         return () => clearInterval(interval);
+      
         // eslint-disable-next-line
     }, []);
 
@@ -660,18 +591,17 @@ export default function HomeView() {
                                         </Marker>
                              
                                   
-                                    {pointsArea.map((item, index) => (
-                                        <Marker key={index} position={item.position} icon={item.icon}>
-                                        </Marker>
-                                    ))}
-                                    {areas.map((item, index) => (
-                                        <FeatureGroup key={index} pathOptions={item.color}>
-                                            <Popup>
-                                                <p style={{ margin: 0, fontStyle: "italic" }}><strong>Area: </strong>{item.nombre} <strong>Grupo: </strong>{item.grupo}</p>
+                                
+                                    {semaforos.map((item, index) => (
+                                   
+                                      
+                                            <CircleMarker center={item.position} pathOptions={{color:item.color}} radius={15}>
+                                                <Popup>
+                                                <p style={{ margin: 0, fontStyle: "italic" }}><strong>Nombre: </strong>{item.nombre} <strong>Grupo: </strong>{item.grupo}</p>
                                                 <Button color='rojo' sx={{ marginTop: 2 }} onClick={() => { eliminarArea(item) }} variant="contained">Eliminar</Button>
                                             </Popup>
-                                            <Polygon positions={[item.points[0].pos, item.points[1].pos, item.points[2].pos, item.points[3].pos]} />
-                                        </FeatureGroup>
+                                            </CircleMarker>
+                                  
                                     ))}
                                     <Fab onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} color={btnPlay ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }}  onClick={parametrosCorriendo}>
                                         {btnPlay ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
@@ -696,53 +626,9 @@ export default function HomeView() {
                                     >
                                         <Typography sx={{ p: 1 }}>Clic para Iniciar la Animación</Typography>
                                     </Popover>
-                                    <Fab hidden={flagsimu} onMouseEnter={handlePopoverOpen2} onMouseLeave={handlePopoverClose2} color='primary' disabled={btnAgregar} sx={{ position: "absolute", bottom: 150, right: 30 }} onClick={() => { obtenerCoordenadas() }} >
-                                        <CheckSharpIcon />
-                                    </Fab>
-                                    <Popover
-                                        id="mouse-over-popover"
-                                        sx={{
-                                            pointerEvents: 'none',
-                                        }}
-                                        open={open2}
-                                        anchorEl={anchor2}
-                                        anchorOrigin={{
-                                            vertical: 'center',
-                                            horizontal: 'left',
-                                        }}
-                                        transformOrigin={{
-                                            vertical: 'center',
-                                            horizontal: 'right',
-                                        }}
-                                        onClose={handlePopoverClose2}
-                                        disableRestoreFocus
-                                    >
-                                        <Typography sx={{ p: 1 }}>Posicionar punto en el mapa</Typography>
-                                    </Popover>
-                                    <Fab hidden={flagsimu} onMouseEnter={handlePopoverOpen3} onMouseLeave={handlePopoverClose3} variant="contained" color='secondary' disabled={btnAgregar} sx={{ position: "absolute", bottom: 250, right: 30 }} onClick={limpiarPuntos}>
-                                        <CleaningServicesSharpIcon />
-                                    </Fab>
-                                    <Popover
-                                        id="mouse-over-popover"
-                                        sx={{
-                                            pointerEvents: 'none',
-                                        }}
-                                        open={open3}
-                                        anchorEl={anchor3}
-                                        anchorOrigin={{
-                                            vertical: 'center',
-                                            horizontal: 'left',
-                                        }}
-                                        transformOrigin={{
-                                            vertical: 'center',
-                                            horizontal: 'right',
-                                        }}
-                                        onClose={handlePopoverClose3}
-                                        disableRestoreFocus
-                                    >
-                                        <Typography sx={{ p: 1 }}>Limpiar Puntos Creados</Typography>
-                                    </Popover>
-                                    <Fab hidden={flagsimu} onMouseEnter={handlePopoverOpen4} onMouseLeave={handlePopoverClose4} disabled={botonCrear} color="info" sx={{ position: "absolute", bottom: 350, right: 30 }} onClick={() => { setModalCrearSemaforo(true) }} >
+                             
+                                    
+                                    <Fab hidden={flagsimu} onMouseEnter={handlePopoverOpen4} onMouseLeave={handlePopoverClose4} disabled={btnPlay} color="info" sx={{ position: "absolute", bottom: 150, right: 30 }} onClick={() => { setModalCrearSemaforo(true) }} >
                                         <SaveIcon />
                                     </Fab>
                                     <Popover
@@ -950,16 +836,7 @@ export default function HomeView() {
 
 
 
-const point = new L.Icon({
-    iconUrl: require('../../assets/point2.png'),
-    iconRetinaUrl: require('../../assets/point2.png'),
-    iconSize: [8, 8], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [3, 4], // point of the icon which will correspond to marker's location
-    shadowAnchor: [10, 100],  // the same for the shadow
-    popupAnchor: [-3, -76]
 
-});
 const ubi = new L.Icon({
     iconUrl: require('../../assets/ubica.png'),
     iconRetinaUrl: require('../../assets/ubica.png'),
@@ -982,7 +859,3 @@ const ubi = new L.Icon({
 
 
 
-const grupo_1 = { color: 'purple' }
-const grupo_2 = { color: 'blue' }
-const grupo_3 = { color: 'black' }
-const grupo_4 = { color: 'orange' }

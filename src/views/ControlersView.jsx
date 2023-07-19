@@ -561,7 +561,7 @@ export default function ControlersView() {
 
                 </Toolbar>
             </AppBar>
-            <Container maxWidth="lg" sx={{ paddingTop: 3 }}>
+            <Container maxWidth="xl" sx={{ paddingTop: 3 }}>
                 <Grid container spacing={2}>
                     <Grid xs={12} md={12}>
                         <div className="card-controller-filter">
@@ -570,7 +570,7 @@ export default function ControlersView() {
                             </div>
                             <div className="card-body-controler">
                                 <Grid container >
-                                    <Grid item xs={6} md={2}>
+                                    <Grid item xs={6} md={1.5}>
                                         <Autocomplete
                                             id="size-small-outlined"
                                             size="small"
@@ -584,7 +584,7 @@ export default function ControlersView() {
                                             )}
                                         />
                                     </Grid>
-                                    <Grid item xs={6} md={2}>
+                                    <Grid item xs={6} md={1.5}>
                                         <Autocomplete
                                             id="size-small-outlined"
                                             size="small"
@@ -601,11 +601,14 @@ export default function ControlersView() {
                                     <Grid item xs={12} md={2}>
                                         <Button variant="contained" size="medium" fullWidth onClick={filtrarLosDatos}  >FILTRAR</Button>
                                     </Grid>
-                                    <Grid item xs={12} md={3}>
+                                    <Grid item xs={12} md={2}>
                                         <Button variant="contained" size="medium" fullWidth onClick={() => { setModalCrear(true) }}  >CREAR CONTROLADOR</Button>
                                     </Grid>
                                     <Grid item xs={12} md={3}>
                                         <Button variant="contained" size="medium" fullWidth onClick={() => { Changeview('/vista_maestra') }}  >CONFIGURACIÓN MAESTRA</Button>
+                                    </Grid>
+                                    <Grid item xs={12} md={2}>
+                                        <Button variant="contained" size="medium" fullWidth onClick={() => { Changeview('/monitoreo') }}  >MONITOREO</Button>
                                     </Grid>
                                 </Grid>
                             </div>

@@ -33,17 +33,17 @@ export default function InfoView() {
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <div className="container-difuminado">
-                            <Typography gutterBottom variant="h1" className="titulo-home" textAlign={"center"}>
+                            <h1  className="titulo-home">
                                 Hi-Traffic Centralizacion
-                            </Typography>
-                            <Typography gutterBottom variant="h4" textAlign={"center"} className="subtitulo-home">
+                            </h1>
+                            <h3  className="subtitulo-home">
                                 Sistema de Centralizacion para el monitoreo y manipulacion de controladores Remotamente
-                            </Typography>
+                            </h3>
            
                         </div>
                     </Grid>
                     <Grid item xs={12}>
-                        <Stack direction="row" spacing={2} justifyContent={"center"}>
+                        <Stack  spacing={2} justifyContent={"center"} alignItems={"center"} direction={{ xs: 'column', md: 'row' }}>
                             <Card sx={{ maxWidth: 345 }}>
                                 <CardActionArea>
                                     <CardMedia
