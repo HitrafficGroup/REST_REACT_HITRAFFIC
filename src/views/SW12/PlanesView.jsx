@@ -19,7 +19,7 @@ import {
     getPlan6SW12, getPlan7SW12, getPlan8SW12, getOperativeParamsSW12,
     postPlanesSW12, postOtrosParametrosSW12
 } from '../../js/apiFunctionsSW12';
-import '../../css/PlanesView.css'
+
 import { useSelector, useDispatch } from 'react-redux';
 import { addPlan1, addPlan2, addPlan3, addPlan4, addPlan5, addPlan6, addPlan7, addPlan8, addParametros } from "../../features/controlers/controlerSlice";
 import IconButton from '@mui/material/IconButton';

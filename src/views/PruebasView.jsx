@@ -3,7 +3,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import { getSecuencyHT200, PostSecuenciasHT200 } from "../js/apiFunctionsHT200";
 import Button from '@mui/material/Button';
-import "../css/SecuencyHT200View.scss";
+
 import IconButton from '@mui/material/IconButton';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import TextField from '@mui/material/TextField';

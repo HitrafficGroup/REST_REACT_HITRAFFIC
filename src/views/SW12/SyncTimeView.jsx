@@ -11,7 +11,6 @@ import Swal from 'sweetalert2';
 import { useSelector, useDispatch } from 'react-redux';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import "../../css/SyncTimeView.css"
 export default function SyncTimeView() {
     
     const [tiempoController,setTiempoController] = useState(InitialTime)

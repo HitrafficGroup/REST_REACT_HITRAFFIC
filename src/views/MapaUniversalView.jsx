@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import { collection, getDocs} from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import Fab from '@mui/material/Fab';
-import "../css/MapaUniversalView.css";
+
 
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';

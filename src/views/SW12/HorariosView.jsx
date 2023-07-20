@@ -17,7 +17,6 @@ import { getOrdinaryScheduleSW12, getWeekendScheduleSW12, getFestivalScheduleSW1
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { addOrdinarios, addFestivo, addFinSemana } from "../../features/controlers/controlerSlice";
 import { useSelector, useDispatch } from 'react-redux';
-import '../../css/HorariosView.css';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';

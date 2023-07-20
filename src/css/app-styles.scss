@@ -547,6 +547,301 @@ padding: 0;
 display: flex;
 }
 
+// estylos de la vista horarios sw12
+.alinear{
+  display:flex;
+  flex-direction: row !important;
+}
+.blank-box{
+  height: 80px;
+}
+
+.h-scroller {
+  height: 400px;
+  overflow-y: scroll;
+  scrollbar-color: rebeccapurple green;
+  scrollbar-width: thin;
+}
+.horarios-card{
+  width: 250px;
+  position: absolute;
+  top: 20%;
+  right: 50px;
+}
+.botones-modal-h{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+.habilited-tabla-horarios{
+  width: 100%;
+  opacity: 1;
+}
+.disabled-tabla-horarios{
+  opacity: 0.6;
+  width: 100%;
+  pointer-events: none;
+
+}
+.titulos-horarios{
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+.horarios-t-buttons{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+
+
+// estylos de la vista info view 
+
+.background-home{
+  height: 100vh;
+  background-image: url("../assets/background_home.jpg");
+  width: 100%;
+  padding: 3rem;
+}
+.titulo-home{
+  color: #d4af37;
+  text-align: center;
+}
+.subtitulo-home{
+  color: aliceblue;
+  text-align: center;
+}
+
+.container-difuminado{
+  background-color:  rgba(28, 37, 54,0.8);
+  padding: 0.6rem;
+  border-radius: 20px;
+  padding: 0.6rem;
+}
+
+
+.rojo{
+  background-color: #EC7063;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+// estylos del mapa universal
+
+.leaflet-container-2{
+  width: 100%;
+  height: 90vh !important;
+}
+.card-structure-universal{
+  background-color: #EBF5FB ;
+  border-radius: 10px;
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+}
+.card-str-mu{
+  background-color: whitesmoke;
+  justify-content: center;
+  align-items: center;
+  padding-left: 3%;
+  padding-right: 3%;
+  width: 90%;
+  margin-top: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
+}
+.mapa-contenedor{
+  overflow-y: scroll;
+}
+
+.container-mu{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.titulo-card-mu{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 2px;
+  width: 100%;
+}
+.title-c-mu{
+font-size: 12px;
+margin: 0;
+}
+.card-body-mu{
+  padding: 15px;
+}
+.contenedor-semaforo-mu{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  
+}
+.g1-mu{
+  background-color: #2ECC71;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.amarillo{
+  background-color: #F4D03F;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.verde{
+  background-color: #2ECC71;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.rojo{
+  background-color: #EC7063;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.apagado{
+  background-color: black;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.text-indicador{
+  margin: 0;
+  padding: 0;
+  font-size: 10px;
+  font-style: italic;
+ 
+  color: #F4F6F7 ;
+}
+
+
+//estylos de la vista planes del controlador sw 12
+
+.blank-box {
+  height: 80px;
+}
+
+.tr-planes {
+  height: 80px;
+}
+
+.scroller {
+  height: 300px;
+  overflow-y: scroll;
+  scrollbar-color: rebeccapurple green;
+  scrollbar-width: thin;
+}
+
+.botones-modal-p {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.disabled-table-p {
+  opacity: 0.6;
+  pointer-events: none;
+
+}
+
+.habilited-table-p {
+  opacity: 1;
+
+}
+
+.habilited-otrosparam {
+  width: 100%;
+  opacity: 1;
+}
+
+.disabled-otrosparam {
+  opacity: 0.6;
+  width: 100%;
+  pointer-events: none;
+
+}
+
+.titulos-planes{
+  margin-top: 20px;
+  margin-bottom: 30px;
+
+}
+
+// estylos de la vista sequency ht200
+
+.seq-div{
+
+  display: flex;
+  flex-direction: row;
+}
+.seq-container{
+  margin-right: 13%;
+}
+
+.seq-list{
+  list-style: none;
+}
+.seq-item{
+  background-color: #2874A6;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  font-weight: bold;
+}
+
+.list-container-seq{
+  width: 100%;
+  padding: 2%;
+  background-color: #F0F3F4 ;
+  overflow-y: scroll;
+  height: 300px;
+  border-radius: 4px;
+}
+.list-items-seq{
+  width: 100%;
+  padding: 1%;
+  background-color: #FBFCFC ;
+  list-style: none;
+  border-radius: 3px;
+  margin-bottom: 8px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.fase-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
 
 
 
@@ -570,5 +865,27 @@ display: flex;
   }
   .b-fases {
     margin-left: 20px;
+  }
+  .horarios-t-buttons{
+    display: flex;
+    flex-direction: column;
+    height: 100px;
+    align-content: space-between;
+  }
+  .mapa-contenedor{
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+
+}
+
+
+
+@media screen and (max-width: 600px) {
+  .titulo-home {
+    font-size: larger;
+  }
+  .subtitulo-home{
+      font-size: medium;
   }
 }

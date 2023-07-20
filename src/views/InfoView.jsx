@@ -1,6 +1,5 @@
 import React from "react"
 import Container from '@mui/material/Container';
-import "../css/infoView.scss";
 import Stack from '@mui/material/Stack';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
