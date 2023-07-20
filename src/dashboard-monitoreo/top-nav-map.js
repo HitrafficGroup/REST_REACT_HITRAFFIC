@@ -57,9 +57,10 @@ export const TopNavMap = (props) => {
     <>
       <Box
         component="header"
+        className='app-bar-gradient'
         sx={{
           backdropFilter: 'blur(6px)',
-          backgroundColor: (theme) => alpha(theme.palette.background.default, 1),
+     
           
           position: 'sticky',
           left: {

@@ -14,13 +14,12 @@ import {
 } from '@mui/material';
 
 import logo from "../assets/logov2.png"
-// import { items } from './config';
-// import { items_views } from './config-views';
-// import { SideNavItem } from './side-nav-item';
+import { items } from './config';
+import { SideNavItem } from './side-nav-item';
 import { Scrollbar } from '../components/scrollbar';
 export const SideNavMap = (props) => {
   const { open, onClose,onCreate ,onExit} = props;
-  // const location = useLocation();
+   const location = useLocation();
 
 
 
@@ -62,6 +61,41 @@ export const SideNavMap = (props) => {
           >
           <img src={logo} alt='logo de la empresa' height={55} width={200}/> 
           </Box>
+        </Box>
+        <Divider sx={{ borderColor: 'neutral.700' }} />
+        <Box
+          component="nav"
+          sx={{
+            flexGrow: 1,
+            px: 2,
+            py: 3
+          }}
+        >
+          <Stack
+            component="ul"
+            spacing={0.5}
+            sx={{
+              listStyle: 'none',
+              p: 0,
+              m: 0
+            }}
+          >
+            {items.map((item) => {
+              const active = item.path ? (location.pathname === item.path) : false;
+
+              return (
+                <SideNavItem
+                  active={active}
+                  disabled={item.disabled}
+                  external={item.external}
+                  icon={item.icon}
+                  key={item.title}
+                  path={item.path}
+                  title={item.title}
+                />
+              );
+            })}
+          </Stack>
         </Box>
         <Divider sx={{ borderColor: 'neutral.700' }} />
        

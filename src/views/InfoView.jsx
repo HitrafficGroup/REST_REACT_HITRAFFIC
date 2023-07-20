@@ -88,7 +88,7 @@ export default function InfoView() {
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
 
-                                        La funcionalidad de simulación en tiempo real brinda al usuario la capacidad de visualizar el comportamiento del controlador de un semáforo en una ubicación específica. Esto se logra a través de una animación del área donde se encuentra el semáforo, la cual puede ser editada y ajustada según las necesidades de configuración del usuario final.    </Typography>
+                                        La funcionalidad de simulación en tiempo real brinda al usuario la capacidad de visualizar el comportamiento del controlador de un semáforo en una ubicación específica. Esto se logra a través de una animación del área donde se encuentra el semáforo.    </Typography>
                                     </CardContent>
                                 </CardActionArea>
                             </Card>

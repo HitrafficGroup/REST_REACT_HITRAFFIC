@@ -61,7 +61,7 @@ export const TopNavEquipos = (props) => {
         component="header"
         sx={{
           backdropFilter: 'blur(6px)',
-          backgroundColor: (theme) => alpha(theme.palette.background.default, 1),
+         
           
           position: 'sticky',
           left: {

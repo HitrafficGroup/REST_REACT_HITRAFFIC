@@ -1,6 +1,8 @@
 
 import {  useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { items } from './config';
+import { SideNavItem } from './side-nav-item';
 import ArrowTopRightOnSquareIcon from '@heroicons/react/24/solid/ArrowTopRightOnSquareIcon';
 import {
   Box,
@@ -18,8 +20,9 @@ import logo from "../assets/logov2.png"
 // import { items_views } from './config-views';
 // import { SideNavItem } from './side-nav-item';
 import { Scrollbar } from '../components/scrollbar';
-export const SideNavMap = (props) => {
+export const SideNavEquipos = (props) => {
   const { open, onClose,onCreate ,onExit} = props;
+  const location = useLocation();
   // const location = useLocation();
 
 
@@ -64,7 +67,6 @@ export const SideNavMap = (props) => {
           </Box>
         </Box>
         <Divider sx={{ borderColor: 'neutral.700' }} />
-       
         <Box
           component="nav"
           sx={{
@@ -82,11 +84,41 @@ export const SideNavMap = (props) => {
               m: 0
             }}
           >
-            <Button variant="outlined" color='info' onClick={onCreate}>AGREGAR CONTROLADOR</Button>
-            <Button variant="outlined" color='info'  >CONTROLADORES ACTIVOS</Button>
-            <Button variant="outlined" color='info'>CONTROLADORES INACTIVOS</Button>
-            <Button variant="outlined" color='info'>CONTROLADORES AGREGADOS</Button>
-            <Button variant="outlined" color='warning' onClick={onExit}>SALIR</Button>
+            {items.map((item) => {
+              const active = item.path ? (location.pathname === item.path) : false;
+
+              return (
+                <SideNavItem
+                  active={active}
+                  disabled={item.disabled}
+                  external={item.external}
+                  icon={item.icon}
+                  key={item.title}
+                  path={item.path}
+                  title={item.title}
+                />
+              );
+            })}
+          </Stack>
+        </Box>
+        <Box
+          component="nav"
+          sx={{
+            flexGrow: 1,
+            px: 2,
+            py: 3
+          }}
+        >
+          <Stack
+            component="ul"
+            spacing={0.5}
+            sx={{
+              listStyle: 'none',
+              p: 0,
+              m: 0
+            }}
+          >
+            
             {/* {items_views.map((item) => {
               const active = item.path ? (location.pathname === item.path) : false;
 
@@ -164,7 +196,7 @@ export const SideNavMap = (props) => {
   );
 };
 
-SideNavMap.propTypes = {
+SideNavEquipos.propTypes = {
   onClose: PropTypes.func,
   onCreate:PropTypes.func,
   onExit:PropTypes.func,

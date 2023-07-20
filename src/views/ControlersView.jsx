@@ -42,7 +42,7 @@ import Avatar from '@mui/material/Avatar';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import { TopNavEquipos } from "../dashboard-equipos/top-nav-equipos";
-
+import { SideNavEquipos } from "../dashboard-equipos/side-nav-equipos";
 const dataTest = [
     { nombre: 'nombre 1', ip: '192.168.1.2', mac: 'h3:ft:a2:l2', canton: 'cuenca', estado: true },
     { nombre: 'nombre 2', ip: '192.168.1.3', mac: 'f3:f1:a2:t2', canton: 'loja', estado: false },
@@ -67,6 +67,7 @@ const dataTest = [
 export default function ControlersView() {
 
     const [editarModal, setEditarModal] = useState(false);
+    const [openNav, setOpenNav] = useState(false);
     const [infoModal, setInfoModal] = useState(false);
     const [controlers, setControlers] = useState(dataTest);
     const [currentController, setCurrentController] = useState({});
@@ -330,6 +331,7 @@ export default function ControlersView() {
             children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
         };
     }
+    
     //logica de declaracion del controlador
     const declararControlador = async () => {
         Swal.fire({
@@ -520,7 +522,8 @@ export default function ControlersView() {
     }, []);
     return (
         <>
-           <TopNavEquipos/>
+           <TopNavEquipos onNavOpen={() => setOpenNav(true)}/>
+           <SideNavEquipos open={openNav} onClose={() => setOpenNav(false)}/>
             <Container maxWidth="xl" sx={{ paddingTop: 3 }}>
                 <Grid container spacing={2}>
                     <Grid xs={12} md={8}>

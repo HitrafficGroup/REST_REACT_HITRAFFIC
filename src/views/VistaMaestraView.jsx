@@ -30,13 +30,15 @@ import PowerOffIcon from '@mui/icons-material/PowerOff';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 import PanToolIcon from '@mui/icons-material/PanTool';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
+import { SideNavMaster } from "../dashboard-master/side-nav-master";
+import { TopNavMaster } from "../dashboard-master/top-nav-master";
 export default function VistaMaestraView() {
     const [tiempo, setTiempo] = useState(30)
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const userState = useSelector(state => state.auth);
     const navigate = useNavigate(); // hook para navegar entre urls o vistas
-
+    const [openNav, setOpenNav] = useState(false);
     const [checked, setChecked] = React.useState([]);
     const [left, setLeft] = useState([]);
     const [right, setRight] = useState([]);
@@ -232,41 +234,9 @@ export default function VistaMaestraView() {
 
     return (
         <>
-            <AppBar position="static" sx={{ backgroundColor: "#273444" }}>
-                <Toolbar>
-                    <Typography sx={{ display: { md: 'flex' }, flexGrow: 1 }} variant="h6" component="div">
-                        Listado de Dispositivos
-                    </Typography>
-
-                    <Stack direction="row" spacing={2}>
-                        <div>
-                            <Button
-                                id="basic-button"
-                                aria-controls={open ? 'basic-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={open ? 'true' : undefined}
-                                onClick={handleClick}
-                            >
-                                <Avatar {...stringAvatar(`${userState.name} ${userState.lastname}`)} />
-                            </Button>
-                            <Menu
-                                id="basic-menu"
-                                anchorEl={anchorEl}
-                                open={open}
-                                onClose={handleClose}
-                                MenuListProps={{
-                                    'aria-labelledby': 'basic-button',
-                                }}
-                            >
-                                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                <MenuItem onClick={handleClose}>My account</MenuItem>
-                                <MenuItem onClick={handleClose}>Logout</MenuItem>
-                            </Menu>
-                        </div>
-
-                    </Stack>
-                </Toolbar>
-            </AppBar>
+                
+            <TopNavMaster onNavOpen={() => setOpenNav(true)}/>
+            <SideNavMaster open={openNav} onClose={() => setOpenNav(false)}/>
             <Container maxWidth="lg" sx={{ paddingTop: 3 }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
