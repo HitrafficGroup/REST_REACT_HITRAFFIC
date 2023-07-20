@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
-import '../css/ControlersView.css';
 import { v4 as uuidv4 } from 'uuid';
 //
 import Paper from '@mui/material/Paper';
@@ -42,7 +41,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
-
+import { TopNavEquipos } from "../dashboard-equipos/top-nav-equipos";
 
 const dataTest = [
     { nombre: 'nombre 1', ip: '192.168.1.2', mac: 'h3:ft:a2:l2', canton: 'cuenca', estado: true },
@@ -153,9 +152,7 @@ export default function ControlersView() {
         setPage(0);
     };
 
-    const Changeview = (referencia) => {
-        navigate(referencia);
-    }
+
 
     const filtrarLosDatos = () => {
 
@@ -523,54 +520,17 @@ export default function ControlersView() {
     }, []);
     return (
         <>
-            <AppBar position="static" sx={{ backgroundColor: "#273444" }}>
-
-                <Toolbar>
-                    <Typography sx={{ display: { md: 'flex' }, flexGrow: 1 }} variant="h6" component="div">
-                        Listado de Dispositivos
-                    </Typography>
-
-                    <Stack direction="row" spacing={2}>
-                        <div>
-                            <Button
-                                id="basic-button"
-                                aria-controls={open ? 'basic-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={open ? 'true' : undefined}
-                                onClick={handleClick}
-                            >
-                                <Avatar {...stringAvatar(`${userState.name} ${userState.lastname}`)} />
-                            </Button>
-
-                            <Menu
-                                id="basic-menu"
-                                anchorEl={anchorEl}
-                                open={open}
-                                onClose={handleClose}
-                                MenuListProps={{
-                                    'aria-labelledby': 'basic-button',
-                                }}
-                            >
-                                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                <MenuItem onClick={handleClose}>My account</MenuItem>
-                                <MenuItem onClick={handleClose}>Logout</MenuItem>
-                            </Menu>
-                        </div>
-
-                    </Stack>
-
-                </Toolbar>
-            </AppBar>
+           <TopNavEquipos/>
             <Container maxWidth="xl" sx={{ paddingTop: 3 }}>
                 <Grid container spacing={2}>
-                    <Grid xs={12} md={12}>
+                    <Grid xs={12} md={8}>
                         <div className="card-controller-filter">
                             <div className="header-controller-filter">
                                 <p className="nombre-card">Filtros</p>
                             </div>
                             <div className="card-body-controler">
                                 <Grid container >
-                                    <Grid item xs={6} md={1.5}>
+                                    <Grid item xs={6} md={2}>
                                         <Autocomplete
                                             id="size-small-outlined"
                                             size="small"
@@ -584,7 +544,7 @@ export default function ControlersView() {
                                             )}
                                         />
                                     </Grid>
-                                    <Grid item xs={6} md={1.5}>
+                                    <Grid item xs={6} md={2}>
                                         <Autocomplete
                                             id="size-small-outlined"
                                             size="small"
@@ -598,17 +558,11 @@ export default function ControlersView() {
                                             )}
                                         />
                                     </Grid>
-                                    <Grid item xs={12} md={2}>
+                                    <Grid item xs={12} md={4}>
                                         <Button variant="contained" size="medium" fullWidth onClick={filtrarLosDatos}  >FILTRAR</Button>
                                     </Grid>
-                                    <Grid item xs={12} md={2}>
+                                    <Grid item xs={12} md={4}>
                                         <Button variant="contained" size="medium" fullWidth onClick={() => { setModalCrear(true) }}  >CREAR CONTROLADOR</Button>
-                                    </Grid>
-                                    <Grid item xs={12} md={3}>
-                                        <Button variant="contained" size="medium" fullWidth onClick={() => { Changeview('/vista_maestra') }}  >CONFIGURACIÓN MAESTRA</Button>
-                                    </Grid>
-                                    <Grid item xs={12} md={2}>
-                                        <Button variant="contained" size="medium" fullWidth onClick={() => { Changeview('/monitoreo') }}  >MONITOREO</Button>
                                     </Grid>
                                 </Grid>
                             </div>
@@ -735,36 +689,7 @@ export default function ControlersView() {
                     </Grid>
                 </Grid>
                 {/*          A partir de esta linea son solo modals            */}
-                <Modal isOpen={editarModal} >
-                    <ModalHeader>
-                        <div>
-                            <h1>
-                                Ajustes Basicos
-                            </h1>
-                        </div>
-                    </ModalHeader>
-                    <ModalBody>
-                        <Grid container spacing={4}>
-                            <Grid item xs={12}>
-                                <TextField id="outlined-basic" label="Nombre:" value={currentController.nombre} onChange={(e) => setCurrentController({ ...currentController, nombre: e.target.value })} fullWidth helperText="Nombre" variant="outlined" />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField id="outlined-basic" label="Ip:" value={currentController.ip} onChange={(e) => setCurrentController({ ...currentController, ip: e.target.value })} fullWidth helperText="Ip" variant="outlined" />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField id="outlined-basic" label="Canton:" value={currentController.canton} onChange={(e) => setCurrentController({ ...currentController, canton: e.target.value })} fullWidth helperText="Canton o Ciudad" variant="outlined" />
-                            </Grid>
-                        </Grid>
-                    </ModalBody>
-                    <ModalFooter >
-                        <Button variant="contained" color='primary' onClick={guardarAjustes} sx={{ marginLeft: 1 }}>
-                            Guardar
-                        </Button>
-                        <Button variant="contained" color="rojo" onClick={() => { setEditarModal(false) }} sx={{ marginLeft: 1 }}>
-                            Cancelar
-                        </Button>
-                    </ModalFooter>
-                </Modal>
+              
 
                 <Modal isOpen={infoModal} >
                     <ModalHeader>
@@ -836,13 +761,13 @@ export default function ControlersView() {
                     <ModalBody>
                         <Grid container spacing={4}>
                             <Grid item xs={12}>
-                                <TextField id="outlined-basic" label="Nombre:" value={currentController.nombre} onChange={(e) => setCurrentController({ ...currentController, nombre: e.target.value })} fullWidth helperText="Nombre" variant="outlined" />
+                                <TextField id="outlined-basic" label="Nombre:" value={currentController.nombre} onChange={(e) => setCurrentController({ ...currentController, nombre: e.target.value })} fullWidth />
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField id="outlined-basic" label="Ip:" value={currentController.ip} onChange={(e) => setCurrentController({ ...currentController, ip: e.target.value })} fullWidth helperText="Ip" variant="outlined" />
+                                <TextField id="outlined-basic" label="Ip:" value={currentController.ip} onChange={(e) => setCurrentController({ ...currentController, ip: e.target.value })} fullWidth  />
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField id="outlined-basic" label="Canton:" value={currentController.canton} onChange={(e) => setCurrentController({ ...currentController, canton: e.target.value })} fullWidth helperText="Canton o Ciudad" variant="outlined" />
+                                <TextField id="outlined-basic" label="Canton:" value={currentController.canton} onChange={(e) => setCurrentController({ ...currentController, canton: e.target.value })} fullWidth />
                             </Grid>
                         </Grid>
                     </ModalBody>

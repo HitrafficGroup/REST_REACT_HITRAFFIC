@@ -1,6 +1,6 @@
 
 import React,{useState,useEffect, useRef} from 'react';
-import '../css/HomeView.css'
+
 
 export default function CustomProgress({red,yellow,green,apagado,destello,modo}) {
     const [porcentRed,setPorcentRed] = useState(20);

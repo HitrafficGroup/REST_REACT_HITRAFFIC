@@ -4,16 +4,12 @@ import CleaningServicesSharpIcon from '@mui/icons-material/CleaningServicesSharp
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import SaveIcon from '@mui/icons-material/Save';
-
 import { updateDoc, doc} from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import CheckSharpIcon from '@mui/icons-material/CheckSharp';
 import TextField from '@mui/material/TextField';
-import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
-import "../../css/HomeView.css"
-import "../../css/SyncTimeView.css"
 import CustomProgress from "../../components/CustomProgress";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import InputLabel from '@mui/material/InputLabel';
@@ -30,7 +26,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { MapContainer, TileLayer, Marker, Popup, Polygon, FeatureGroup } from "react-leaflet";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import '../../css/beautifulCard.scss';
 import Swal from 'sweetalert2';
 import RelogActual from "../../components/RelogActual";
 import { getTimeControllerSW12, postTimeSW12 } from '../../js/apiFunctionsSW12';

@@ -14,14 +14,13 @@ import { useSelector } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import { collection, query, getDocs,updateDoc,doc } from "firebase/firestore";
 import { db } from '../../firebase/firebase-config';
-import "../../css/clonacionHT200.scss";
 import {setClonacion } from "../../js/apiFunctionsHT200";
 import Swal from 'sweetalert2';
 import { generatePhaseFrame,generateSeqFrame,generateSplitFrame,generatePatternFrame,generateActionFrame,generatePlanFrame, generateChannelFrame } from "../../js/generateFrameApiHT200";
 import frameJson from "../../js/ht200Frame.json";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import CardControllerHT200 from '../../components/CardControllerHT200';
+
 export default function ClonacionHT200View() {
     const [checked, setChecked] = React.useState([]);
     const controlerState = useSelector(state => state.controlerht200);
@@ -369,7 +368,7 @@ export default function ClonacionHT200View() {
                 >
         <CircularProgress color="inherit" />
       </Backdrop>
-            <CardControllerHT200 />
+     
         </>
     )
 

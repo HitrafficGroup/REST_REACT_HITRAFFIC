@@ -9,7 +9,7 @@ import { collection, getDocs} from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import Fab from '@mui/material/Fab';
 import "../css/MapaUniversalView.css";
-import '../css/FasesView.css';
+
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup, Polygon, FeatureGroup} from "react-leaflet";

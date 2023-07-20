@@ -8,7 +8,6 @@ import { getErroresSW12 } from '../../js/apiFunctionsSW12';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import "../../css/ErroresView.css";
 import { useSelector} from 'react-redux';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';

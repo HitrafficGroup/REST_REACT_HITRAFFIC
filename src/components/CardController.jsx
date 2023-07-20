@@ -6,7 +6,7 @@ import WifiIcon from '@mui/icons-material/Wifi';
 import FmdGoodIcon from '@mui/icons-material/FmdGood';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import "../css/CardController.css"
+
 
 
 export default function CardController() {

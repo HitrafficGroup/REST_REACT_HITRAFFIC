@@ -18,14 +18,13 @@ import { updateDoc, doc } from "firebase/firestore";
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
-import '../../css/basicSettings.scss';
 import frameJson from "../../js/ht200Frame.json";
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { updateParamsHT200 } from "../../features/controlerht200/controlerHT200Slice";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import '../../css/beautifulCard.scss';
+
 import { generatePhaseFrame,generateSeqFrame,generateSplitFrame,generatePatternFrame,generateActionFrame,generatePlanFrame, generateChannelFrame } from "../../js/generateFrameApiHT200";
 import {setBasicPlan } from "../../js/apiFunctionsHT200";
 import { useSelector, useDispatch } from 'react-redux';

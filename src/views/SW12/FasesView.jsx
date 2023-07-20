@@ -18,7 +18,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Swal from 'sweetalert2';
-import '../../css/FasesView.css';
 import { addFases } from "../../features/controlers/controlerSlice";
 //fases 
 import Table from '@mui/material/Table';

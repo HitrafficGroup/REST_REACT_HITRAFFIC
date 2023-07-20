@@ -1,0 +1,574 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+.app-bar-gradient{
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.home-t{
+    width: 100%;
+}
+.home-t-th{
+    text-align: left;
+}
+.info-controller-home{
+    background-color: #34495E ;
+    display: flex;
+    flex-direction: row;
+    border-radius: 5px;
+
+}
+.titulos-home-view{
+    color: white;
+    font-family: 'Roboto', sans-serif;
+}
+.h-controler-select{
+    display: flex;
+    flex-direction: row;
+    align-items:center;
+}
+.leaflet-container{
+    width: 100%;
+    height: 60vh;
+}
+.b-red{
+    color: white;
+    height: 24px;
+    background-color: #E74C3C;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    justify-content: center;
+    text-align: center;
+}
+.b-green{
+    color: white;
+    height: 24px;
+    background-color: #28B463;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    justify-content: center;
+    text-align: center;
+}
+.b-yellow{
+    color: white;
+    height: 24px;
+    background-color: #F1C40F;
+    justify-content: center;
+    text-align: center;
+
+}
+.b-destello{
+    color: white;
+    height: 24px;
+    background-color: #85C1E9;
+    justify-content: center;
+    text-align: center;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+.b-enrojo{
+    color: white;
+    height: 24px;
+    background-color: #E74C3C;
+    justify-content: center;
+    text-align: center;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+.bar-container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    padding-left: 4px;
+    padding-right: 4px;
+    margin-top: 10px;
+    
+}
+.b-todo-verde{
+    color: white;
+    height: 24px;
+    background-color: #28B463;
+    justify-content: center;
+    text-align: center;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+.home-view-footer{
+    height: 50px;
+}
+.titulos-home{
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+.tablas-focus:hover{
+    background-color: #b4bcbfb9  !important ;
+    margin-top: 5px I !important;
+}
+.h-controler-info{
+    border-radius: 10px 10px 10px 10px;
+    background-color: #F0F3F4;
+    width: 100%;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.h-title{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-radius: 10px 10px 0px 0px;
+    background-color: #34495E;
+    color: white;
+}
+
+.titulos-sync{
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+// estilos de la tarjeta de inicio
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
+}
+
+:root {
+  // Basic
+  --c-white: #fff;
+  --c-black: #000;
+
+  // Greys
+  --c-ash: #eaeef6;
+  --c-charcoal: #a0a0a0;
+  --c-void: #141b22;
+
+  // Beige/Browns
+  --c-fair-pink: #FFEDEC;
+  --c-apricot: #FBC8BE;
+  --c-coffee: #754D42;
+  --c-del-rio: #917072;
+
+  // Greens
+  --c-java: #1FCAC5;
+
+  // Purples
+  --c-titan-white: #f1eeff;
+  --c-cold-purple: #a69fd6;
+  --c-indigo: #6558d3;
+  --c-governor: #4133B7;
+}
+
+body {
+  font-family: "Spline Sans", sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem;
+  width: 90%;
+  height: 100vh;
+  max-width: 1000px;
+  margin: 10vh auto;
+}
+
+.card {
+  border-radius: 16px;
+  box-shadow: 0 30px 30px -25px rgba(#4133B7, .25);
+}
+.h-buttons{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+	margin-bottom: 10px;
+}
+.information {
+  background-color: var(--c-white);
+  padding: 1.5rem;
+  
+
+  .tag {
+    display: inline-block;
+    background-color: var(--c-titan-white);
+    color: var(--c-indigo);
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.5em 0.75em;
+	
+    line-height: 1;
+    border-radius: 6px;
+    & + * {
+      margin-top: 1rem;
+    }
+  }
+
+  .title {
+    font-size: 1.5rem;
+    color: var(--c-void);
+    line-height: 1.25;
+    & + * {
+      margin-top: 1rem;
+    }
+  }
+
+  .info {
+    color: var(--c-charcoal);
+    & + * {
+      margin-top: 1.25rem;
+    }
+  }
+
+
+  
+  .details {
+    display: flex;
+    gap: 1rem;
+    div {
+      padding: .75em 1em;
+      background-color: var(--c-titan-white);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: .125em;
+      flex-basis: 50%;
+    }
+    
+    dt {
+      font-size: .875rem;
+      color: var(--c-cold-purple);
+    }
+    
+    dd {
+      color: var(--c-indigo);
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+  }
+}
+
+
+.plan {
+  padding: 10px;
+  background-color: var(--c-white);
+  color: var(--c-del-rio);
+  
+  strong {
+    font-weight: 600;
+    color: var(--c-coffee);
+  }
+  
+  .inner {
+    padding: 20px;
+    padding-top: 40px;
+    background-color: var(--c-fair-pink);
+    border-radius: 12px;
+  position: relative;
+    overflow: hidden;
+  }
+  
+  .pricing {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: var(--c-apricot);
+    border-radius: 99em 0 0 99em;
+    display: flex;
+    align-items: center;
+    padding: .625em .75em;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--c-coffee);
+    small {
+      color: var(--c-del-rio);
+      font-size: .75em;
+      margin-left: .25em;
+    }
+    
+  }
+  
+  .title {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--c-coffee);
+    & + * {
+      margin-top: .75rem;
+    }
+  }
+  
+
+  .features {
+    display: flex;
+    flex-direction: column;
+    li {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      & + * {
+        margin-top: .75rem;
+      }
+    }
+    
+    .icon {
+      background-color: var(--c-java);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--c-white);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+    
+    & + * {
+      margin-top: 1.25rem;
+    }
+  }
+  
+  
+  
+  
+}
+
+// estylos de la vista basic settings del controlador ht200
+.basic-paso{
+  border: 2px solid;
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 50%;
+  border-color: gainsboro;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  font-size: 18;
+
+}
+// estylos de los componentes de las tarjetas 
+.titulo-card{
+  display: flex;
+  align-items: center;
+  background-color: #34495E ;
+  justify-content: space-between;
+  padding: 10px;
+  width: 100%;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.card-controller{
+  width: 250px;
+  position: absolute;
+  top: 20%;
+  right: 50px;
+}
+.card-structure{
+  background-color: #EBF5FB ;
+  border-radius: 10px;
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+}
+.title-c{
+  margin-right: 5px;
+  margin-bottom: 0;
+}
+.card-body{
+  padding: 15px;
+}
+.card-text{
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}
+.card-actions{
+  padding: 10px;
+
+}
+
+// card information estylos *pendiente revisar y borrar estos estilos
+.card-titulo-i{
+  display: flex;
+  align-items: center;
+  background-color: #34495E ;
+  justify-content: space-between;
+  padding: 10px;
+  width: 100%;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.card-structure-i{
+  background-color: #EBF5FB ;
+  border-radius: 10px;
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+}
+.card-location-i{
+  width: 250px;
+  position: absolute;
+  top: 60%;
+  right: 50px;
+}
+.title-c-i{
+  margin-right: 5px;
+  margin-bottom: 0;
+}
+.card-body-i{
+  padding: 15px;
+}
+.card-text-i{
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}
+.card-actions-i{
+  padding: 10px;
+}
+
+
+
+// estylos vista clonacion de ht200
+.label-clonacion{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+
+// estylos de la vista controlers view ht200 pendiente revisar que estilos se estan usando
+
+.card-admin{
+  height: 100px;
+  background-color: #FBFCFC;
+  border-radius: 5px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+     
+}
+.card-controller-filter{
+ 
+  background-color: #FBFCFC;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.header-controller-filter{
+  height: 40px;
+  background-color: #2C3E50;
+  border-radius: 5px 5px 0px 0px;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  align-content: center;
+}
+.card-body-controler{
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  
+}
+.card-body-indicador{
+  height: 70%;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+.number-indicador{
+  font-size: 40px;
+  color: #CACFD2  ;
+}
+.shadow-table{
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.header{
+  height: 30%;
+  background-color: #2C3E50;
+  border-radius: 5px 5px 0px 0px;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  align-content: center;
+}
+.nombre-card{
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+  font-family: 'Roboto', sans-serif;
+  color: azure;
+  margin-left: 15px;
+}
+
+// estylos de la vista fases del controlador sw 12
+.blank-box{
+  height: 40px;
+}
+.f-scroller {
+  height: 500px;
+  overflow-y: scroll;
+  scrollbar-color: rebeccapurple green;
+  scrollbar-width: thin;
+}
+.botones-modal-f{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+.habilited-fases{
+  width: 100%;
+  opacity: 1;
+}
+.disabled-fases{
+  opacity: 0.6;
+  width: 100%;
+  pointer-events: none;
+
+}
+.titulo-fases{
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+.container-resumen-fases{
+width: fit-content;
+margin: 0;
+padding: 0;
+display: flex;
+}
+
+
+
+
+@media only screen and (max-width: 1260px) {
+  .card-controller{
+      position: initial;
+      width: 90%;
+      margin-left: 5%;
+      margin-right: 5%;
+  }
+  .card-location-i{
+      position: initial;
+      width: 90%;
+      margin:5%;
+      
+  }
+  .titulo-app-bar {
+    visibility: hidden;
+    position: relative;
+    font-size: 1px;
+  }
+  .b-fases {
+    margin-left: 20px;
+  }
+}

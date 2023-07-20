@@ -13,14 +13,14 @@ function App() {
   return (
     <div className="App">
       <Routes>
-          <Route path="/login" element={<LoginView/>} />
+          <Route path="/" element={<LoginView/>} />
           <Route path="/equipos" element={<ControlersView/>} />
           <Route path="/crear_equipo" element={<DeclararControladorView/>} />
           <Route path="/controlador_SW12/*" element={<Sw12Dashboard/>} /> 
           <Route path="/controlador_HT200/*" element={<HT200Dashboard/>} />
-          <Route path="/vista_maestra" element={<VistaMaestraView/>} />
+          <Route path="/group_config" element={<VistaMaestraView/>} />
           <Route path="/pruebas_interfaz" element={<PruebasInterfaz/>} />
-          <Route path="/" element={<InfoView/>} />
+          <Route path="/info" element={<InfoView/>} />
           <Route path="/monitoreo" element={<MonitoreoView />} />
         </Routes>
     </div>

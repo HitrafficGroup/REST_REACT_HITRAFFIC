@@ -11,17 +11,12 @@ import individual from '../assets/individual.jpg';
 import grupal from '../assets/grupal.jpg';
 import simulacion from '../assets/simulacion.jpg';
 import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
+
 import { useNavigate } from 'react-router-dom';
  
 export default function InfoView() {
 
     const navigate = useNavigate();
-    const MandarAlInicio =()=>{
-        navigate("/login")
-    }
-
-
 
 
 
@@ -34,7 +29,7 @@ export default function InfoView() {
                     <Grid item xs={12}>
                         <div className="container-difuminado">
                             <h1  className="titulo-home">
-                                Hi-Traffic Centralizacion
+                                HiTraffic Centralizacion
                             </h1>
                             <h3  className="subtitulo-home">
                                 Sistema de Centralizacion para el monitoreo y manipulacion de controladores Remotamente
@@ -44,7 +39,7 @@ export default function InfoView() {
                     </Grid>
                     <Grid item xs={12}>
                         <Stack  spacing={2} justifyContent={"center"} alignItems={"center"} direction={{ xs: 'column', md: 'row' }}>
-                            <Card sx={{ maxWidth: 345 }}>
+                            <Card sx={{ maxWidth: 345 }} onClick={()=>{navigate('/equipos')}}>
                                 <CardActionArea>
                                     <CardMedia
                                         component="img"
@@ -62,7 +57,7 @@ export default function InfoView() {
                                     </CardContent>
                                 </CardActionArea>
                             </Card>
-                            <Card sx={{ maxWidth: 345 }}>
+                            <Card sx={{ maxWidth: 345 }} onClick={()=>{navigate('/group_config')}}>
                                 <CardActionArea>
                                     <CardMedia
                                         component="img"
@@ -80,7 +75,7 @@ export default function InfoView() {
                                     </CardContent>
                                 </CardActionArea>
                             </Card>
-                            <Card sx={{ maxWidth: 345 }}>
+                            <Card sx={{ maxWidth: 345 }} onClick={()=>{navigate('/monitoreo')}}   >
                                 <CardActionArea>
                                     <CardMedia
                                         component="img"
@@ -100,13 +95,7 @@ export default function InfoView() {
                             </Card>
                         </Stack>
                     </Grid>
-                    <Grid item xs={12}>
-                        <Stack direction="row" justifyContent={"center"}>
-                            <Button variant="contained" onClick={MandarAlInicio} >
-                                ACCEDER A LA PLATAFORMA
-                            </Button>
-                        </Stack>
-                    </Grid>
+                    
                 </Grid>
 
             </Container>

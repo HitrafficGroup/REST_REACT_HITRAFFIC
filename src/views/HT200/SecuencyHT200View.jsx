@@ -33,7 +33,7 @@ import { IpControllerCard } from '../../components/ip-controller-card';
 import { CantonControllerCard } from '../../components/canton-controller-card';
 import { NombreControllerCard } from '../../components/nombre-controller-card';
 // card controller
-import CardControllerHT200 from "../../components/CardControllerHT200";
+
 export default function SecuencyHT200View() {  
     const controlerState = useSelector(state => state.controlerht200)
     const [secuencias, setSecuencias] = useState(controlerState.secuencias);

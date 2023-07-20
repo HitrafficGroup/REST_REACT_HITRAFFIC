@@ -6,14 +6,8 @@ import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
-import "../../css/HomeView.css"
-import "../../css/SyncTimeView.css"
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import Autocomplete from '@mui/material/Autocomplete';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import Fab from '@mui/material/Fab';
@@ -25,7 +19,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { MapContainer, TileLayer, Marker, Popup, CircleMarker } from "react-leaflet";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import '../../css/beautifulCard.scss';
 import Swal from 'sweetalert2';
 import RelogActual from "../../components/RelogActual";
 import { getTimeHT200, getWorkStateHT200, setModoManual } from '../../js/apiFunctionsHT200';
@@ -46,6 +39,7 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import Popover from '@mui/material/Popover';
+
 const InitialTime = {
     day: "00",
     hours: "00",
@@ -89,25 +83,18 @@ export default function HomeView() {
     const [tiempo, setTiempo] = useState(30)
     const color_flag = useRef(""); // estas variables sirve para solo mandar a actualizar cuando se genere un cambio de fase
     const [currentPasos, setCurrentPasos] = useState([{ g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }, { g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }, { g1: false, g2: false, g3: false, g4: false, duracion: 10, id: 1 }])
-    const [semaforos,setSemaforos] = useState(controlerState.semaforos)
+    const [semaforos, setSemaforos] = useState(controlerState.semaforos)
     const indice_grupos = useRef(0);
     const datos_grupos = useRef([{ amarillo: 2, verde: 15, rojo: 10 }])
     const [draggable, setDraggable] = useState(false)
     const [position, setPosition] = useState([controlerState.latitud, controlerState.longitud])
     const [modalCrearSemaforo, setModalCrearSemaforo] = useState(false);
-
-
+    const [nombreSemaforo, setNombreSemaforo] = useState("")
+    const [grupoSemaforo, setGrupoSemaforo] = useState("g1")
     const dispatch = useDispatch();
-
-
-
     //prueba semaforo
     const semaforos2 = useRef(controlerState.semaforos);
-    const [newSemaforo, setNewSemaforo] = useState({
-        nombre: "",
-        position: [],
-        grupo: '',
-    });
+  
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchor4, setAnchor4] = useState(null);
     // funciones para los pop over
@@ -126,20 +113,12 @@ export default function HomeView() {
                 if (marker != null) {
                     setPosition(marker.getLatLng())
                 } else {
-                    
+
                 }
             },
         }),
         [],
     )
-    const handleNewSemaforo = (event) => {
-        setNewSemaforo(
-            {
-                ...newSemaforo,
-                [event.target.name]: event.target.value,
-            }
-        )
-    }
 
 
     const updateAreas = (__data) => {
@@ -149,7 +128,7 @@ export default function HomeView() {
             for (let i = 0; i < __data.grupo.length; i++) {
                 let aux_grupo = `g${__data.grupo[i]}`
                 if (item.grupo === aux_grupo) {
-                    item['color'] =  __data.color ;
+                    item['color'] = __data.color;
                 }
 
             }
@@ -169,7 +148,7 @@ export default function HomeView() {
 
 
 
- 
+
     /*
     esta funcion agrega y actualiza el semaforo que se selecciona en los grupos
     ,nos permite desplazar elsemaforo dentro del mapa actualizando su latitud y longitud
@@ -177,36 +156,32 @@ export default function HomeView() {
     const agregarSemaforo = async () => {
         setDeshabilitar(true)
         console.log(position.lat)
-  
-        if (newSemaforo.nombre !== "") {
-           
+
+        if (nombreSemaforo !== "") {
+
 
 
             let newData = {
-            
-                nombre: newSemaforo.nombre,
-                grupo: newSemaforo.grupo,
-                position: [position.lat,position.lng],
-                color: devolverColor2(newSemaforo.grupo)
+
+                nombre: nombreSemaforo,
+                grupo: grupoSemaforo,
+                position: [position.lat, position.lng],
+                color: devolverColor2(grupoSemaforo)
             }
             console.log(newData)
             let aux_semaforos = JSON.parse(JSON.stringify(semaforos));
             aux_semaforos.push(newData);
             setSemaforos(aux_semaforos);
-            dispatch(updateParamsHT200({target:"semaforos",data:aux_semaforos}));
+            dispatch(updateParamsHT200({ target: "semaforos", data: aux_semaforos }));
             const ref = doc(db, "controladores", controlerState.id);
             await updateDoc(ref, {
                 semaforos: aux_semaforos
             });
-      
+
             semaforos2.current = aux_semaforos
             setModalCrearSemaforo(false)
-
-            setNewSemaforo({
-                nombre: "",
-                grupo: "",
-            })
             setDeshabilitar(false)
+            setNombreSemaforo('')
         } else {
             setDeshabilitar(false)
             Swal.fire({
@@ -327,7 +302,7 @@ export default function HomeView() {
                 let aux = JSON.parse(JSON.stringify(semaforos2.current))
                 let semaforosActualizados = aux.filter(item => item.nombre !== _data.nombre)
                 const ref = doc(db, "controladores", controlerState.id);
-                
+
                 try {
                     await updateDoc(ref, {
                         semaforos: semaforosActualizados
@@ -346,7 +321,7 @@ export default function HomeView() {
 
     // funcion que compara los datos almacenados en la store
 
-   
+
 
 
     const formatData = (_data) => {
@@ -387,7 +362,7 @@ export default function HomeView() {
         }
     }
 
-   
+
     /* use effect es un hook que nos permite ejecutar nuestro temporizador en tiempo real
     como un sub procesos y de este modo generar las animaciones del semaforo
     */
@@ -490,7 +465,7 @@ export default function HomeView() {
         // verifyDataSemaforos()
         cargarMapa();
         return () => clearInterval(interval);
-      
+
         // eslint-disable-next-line
     }, []);
 
@@ -574,36 +549,36 @@ export default function HomeView() {
                                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                         url="https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=b08eb869c89646fa8accf539b81e80de"
                                     />
-                                   
-                                        <Marker
+
+                                    <Marker
                                         icon={ubi}
-                                    
+
                                         draggable={!flagsimu}
                                         eventHandlers={eventHandlers}
-                                        position={flagsimu ?[-2.9802500085884533, -79.42810591531138]:position}
+                                        position={flagsimu ? [-2.9802500085884533, -79.42810591531138] : position}
                                         ref={markerRef}>
-                                        
+
                                         <Popup minWidth={90}>
                                             <span onClick={toggleDraggable}>
                                                 {draggable ? 'Marker is draggable' : 'Click here to make marker draggable'}
                                             </span>
                                         </Popup>
-                                        </Marker>
-                             
-                                  
-                                
+                                    </Marker>
+
+
+
                                     {semaforos.map((item, index) => (
-                                   
-                                      
-                                            <CircleMarker center={item.position} pathOptions={{color:item.color}} radius={15}>
-                                                <Popup>
+
+
+                                        <CircleMarker center={item.position} pathOptions={{ color: item.color }} radius={15}>
+                                            <Popup>
                                                 <p style={{ margin: 0, fontStyle: "italic" }}><strong>Nombre: </strong>{item.nombre} <strong>Grupo: </strong>{item.grupo}</p>
                                                 <Button color='rojo' sx={{ marginTop: 2 }} onClick={() => { eliminarArea(item) }} variant="contained">Eliminar</Button>
                                             </Popup>
-                                            </CircleMarker>
-                                  
+                                        </CircleMarker>
+
                                     ))}
-                                    <Fab onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} color={btnPlay ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }}  onClick={parametrosCorriendo}>
+                                    <Fab onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} color={btnPlay ? "error" : "success"} aria-label="add" sx={{ position: "absolute", bottom: 50, right: 30 }} onClick={parametrosCorriendo}>
                                         {btnPlay ? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
                                     </Fab>
                                     <Popover
@@ -626,8 +601,8 @@ export default function HomeView() {
                                     >
                                         <Typography sx={{ p: 1 }}>Clic para Iniciar la Animación</Typography>
                                     </Popover>
-                             
-                                    
+
+
                                     <Fab hidden={flagsimu} onMouseEnter={handlePopoverOpen4} onMouseLeave={handlePopoverClose4} disabled={btnPlay} color="info" sx={{ position: "absolute", bottom: 150, right: 30 }} onClick={() => { setModalCrearSemaforo(true) }} >
                                         <SaveIcon />
                                     </Fab>
@@ -784,33 +759,26 @@ export default function HomeView() {
                     <Grid container spacing={4}>
                         <Grid item xs={12}>
                             <TextField
-                                id="outlined"
-                                value={newSemaforo.nombre}
+                                value={nombreSemaforo}
                                 name='nombre'
-                                onChange={handleNewSemaforo}
+                                onChange={(event)=>{setNombreSemaforo(event.target.value)}}
                                 label="Nombre del Semaforo"
-                                variant="outlined"
                                 fullWidth
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Grupos</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    label="Grupos"
-                                    name='grupo'
-                                    value={newSemaforo.grupo}
-                                    onChange={handleNewSemaforo}
-                                >
-                                    <MenuItem value={''}>None</MenuItem>
-                                    <MenuItem value={'g1'}>Grupo 1</MenuItem>
-                                    <MenuItem value={'g2'}>Grupo 2</MenuItem>
-                                    <MenuItem value={'g3'}>Grupo 3</MenuItem>
-                                    <MenuItem value={'g4'}>Grupo 4</MenuItem>
-                                </Select>
-                            </FormControl>
+                            <Autocomplete
+                                id="size-small-outlined"
+                                size="small"
+                                options={['g1', 'g2', 'g3', 'g4']}
+                                onChange={(event, newValue) => {
+                                    setGrupoSemaforo(newValue)
+                                }}
+                                name='grupo'
+                                renderInput={(params) => (
+                                    <TextField {...params} label="Grupo" placeholder="Grupo" />
+                                )}
+                            />
                         </Grid>
                     </Grid>
                 </ModalBody>

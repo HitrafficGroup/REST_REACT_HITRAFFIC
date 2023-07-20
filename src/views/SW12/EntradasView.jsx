@@ -9,11 +9,9 @@ import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { db } from "../../firebase/firebase-config";
 import { updateDoc, doc } from "firebase/firestore";
-
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { getEntradasSW12,postEntradasSW12 } from '../../js/apiFunctionsSW12';
-import "../../css/EntradasView.css";
 import { useSelector} from 'react-redux';
 import Swal from 'sweetalert2';
 export default function EntradasView() {

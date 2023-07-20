@@ -1,7 +1,0 @@
-@media only screen and (max-width: 1260px) {
-    .titulo-app-bar {
-      visibility: hidden;
-      position: relative;
-      font-size: 1px;
-    }
-}

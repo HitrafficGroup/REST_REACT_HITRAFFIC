@@ -24,7 +24,6 @@ import MuiAlert from '@mui/material/Alert';
 import { setUser } from '../features/auth/userSlice';
 
 export default function LoginView() {
-
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [validacion,setValidacion] =useState(false);
@@ -65,7 +64,7 @@ export default function LoginView() {
     if (docSnap.exists()) {
       let data = docSnap.data();
       dispatch(setUser(data));
-      navigate("/equipos")
+      navigate("/info")
     }
    
 

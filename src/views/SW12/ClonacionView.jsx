@@ -1,8 +1,5 @@
-import CardInformation from '../../components/CardInformation';
-import CardController from "../../components/CardController";
-import Container from '@mui/material/Container';
-import "../../css/ClonacionView.css";
 
+import Container from '@mui/material/Container';
 import { useSelector } from 'react-redux';
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
@@ -352,8 +349,7 @@ export default function ClonacionView() {
             <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={deshabilitar2}>
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <CardController />
-            <CardInformation />
+
         </>
     );
 }
