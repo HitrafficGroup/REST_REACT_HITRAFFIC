@@ -3,6 +3,7 @@ import BellIcon from '@heroicons/react/24/solid/BellIcon';
 import Bars3Icon from '@heroicons/react/24/solid/Bars3Icon';
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import WebIcon from '@mui/icons-material/Web';
+import { usePopover } from '../hooks/use-popover.js';
 import {
   Avatar,
   Badge,
@@ -44,13 +45,16 @@ function stringAvatar(name) {
   return {
       sx: {
           bgcolor: stringToColor(name),
+          cursor: 'pointer',
+          height: 40,
+          width: 40
       },
       children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
   };
 }
 export const TopNavMaster = (props) => {
   const { onNavOpen } = props;
-
+  const accountPopover = usePopover();
   const userState = useSelector(state => state.auth);
 
   return (
@@ -106,7 +110,7 @@ export const TopNavMaster = (props) => {
             direction="row"
             spacing={2}
           >
-            <Tooltip title="Contacts">
+            <Tooltip title="Inicio">
               <IconButton>
                 <SvgIcon fontSize="small">
                   <WebIcon />
@@ -126,12 +130,19 @@ export const TopNavMaster = (props) => {
                 </Badge>
               </IconButton>
             </Tooltip>
-            <Avatar {...stringAvatar(`${userState.name} ${userState.lastname}`)} />
+            <Avatar 
+            {...stringAvatar(`${userState.name} ${userState.lastname}`)} 
+              onClick={accountPopover.handleOpen}
+              ref={accountPopover.anchorRef}
+           
+              />
           </Stack>
         </Stack>
       </Box>
       <AccountPopover
-
+        anchorEl={accountPopover.anchorRef.current}
+        open={accountPopover.open}
+        onClose={accountPopover.handleClose}
       />
     </>
   );

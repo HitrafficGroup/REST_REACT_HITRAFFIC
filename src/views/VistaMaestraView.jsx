@@ -1,20 +1,15 @@
 import React, { useState } from "react";
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
+
 import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
+
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import { useSelector } from 'react-redux';
+
 import { collection, query, getDocs } from "firebase/firestore";
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import { setModoManual } from '../js/apiFunctionsHT200';
 import { db } from "../firebase/firebase-config";
-import { useNavigate } from 'react-router-dom';
 import List from '@mui/material/List';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -34,10 +29,6 @@ import { SideNavMaster } from "../dashboard-master/side-nav-master";
 import { TopNavMaster } from "../dashboard-master/top-nav-master";
 export default function VistaMaestraView() {
     const [tiempo, setTiempo] = useState(30)
-    const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
-    const userState = useSelector(state => state.auth);
-    const navigate = useNavigate(); // hook para navegar entre urls o vistas
     const [openNav, setOpenNav] = useState(false);
     const [checked, setChecked] = React.useState([]);
     const [left, setLeft] = useState([]);
@@ -58,10 +49,7 @@ export default function VistaMaestraView() {
         }
         setChecked(newChecked);
     };
-    const handleClose = () => {
-        setAnchorEl(null);
-        navigate('/');
-    };
+
     function not(a, b) {
         return a.filter((value) => b.indexOf(value) === -1);
     }
@@ -70,9 +58,7 @@ export default function VistaMaestraView() {
     }
 
     const numberOfChecked = (items) => intersection(checked, items).length;
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+
     const handleCheckedRight = () => {
         setRight(right.concat(leftChecked));
         setLeft(not(left, leftChecked));
@@ -97,25 +83,7 @@ export default function VistaMaestraView() {
         return [...a, ...not(b, a)];
     }
 
-    function stringToColor(string) {
-        let hash = 0;
-        let i;
 
-        /* eslint-disable no-bitwise */
-        for (i = 0; i < string.length; i += 1) {
-            hash = string.charCodeAt(i) + ((hash << 5) - hash);
-        }
-
-        let color = '#';
-
-        for (i = 0; i < 3; i += 1) {
-            const value = (hash >> (i * 8)) & 0xff;
-            color += `00${value.toString(16)}`.slice(-2);
-        }
-        /* eslint-enable no-bitwise */
-
-        return color;
-    }
     const readData = async () => {
         const q = query(collection(db, "controladores"));
         let data_firebase = []
@@ -139,14 +107,7 @@ export default function VistaMaestraView() {
 
 
     }
-    function stringAvatar(name) {
-        return {
-            sx: {
-                bgcolor: stringToColor(name),
-            },
-            children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
-        };
-    }
+
 
     const modoManual = async (__param) => {
         let aux_p = 49

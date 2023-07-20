@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { SideNavMap } from '../dashboard-monitoreo/side-nav-map';
-import { TopNavMap } from '../dashboard-monitoreo/top-nav-map';
+import { SideNavMap } from '../dashboard-monitoreo/side-nav-monitoreo';
+import { TopNavMap } from '../dashboard-monitoreo/top-nav-monitoreo';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
 import Button from '@mui/material/Button';

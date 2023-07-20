@@ -18,7 +18,7 @@ import { alpha } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 
 import { AccountPopover } from './account-popover';
-
+import { usePopover } from '../hooks/use-popover.js';
 const SIDE_NAV_WIDTH = 280;
 const TOP_NAV_HEIGHT = 64;
 function stringToColor(string) {
@@ -45,6 +45,9 @@ function stringAvatar(name) {
   return {
       sx: {
           bgcolor: stringToColor(name),
+          cursor: 'pointer',
+          height: 40,
+          width: 40
       },
       children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
   };
@@ -53,7 +56,7 @@ export const TopNavEquipos = (props) => {
   const { onNavOpen } = props;
 
   const userState = useSelector(state => state.auth);
-
+  const accountPopover = usePopover();
   return (
     <>
       <Box
@@ -107,7 +110,7 @@ export const TopNavEquipos = (props) => {
             direction="row"
             spacing={2}
           >
-            <Tooltip title="Contacts">
+            <Tooltip title="Inicio">
               <IconButton>
                 <SvgIcon fontSize="small">
                   <WebIcon />
@@ -127,12 +130,19 @@ export const TopNavEquipos = (props) => {
                 </Badge>
               </IconButton>
             </Tooltip>
-            <Avatar {...stringAvatar(`${userState.name} ${userState.lastname}`)} />
+            <Avatar 
+            {...stringAvatar(`${userState.name} ${userState.lastname}`)} 
+              onClick={accountPopover.handleOpen}
+              ref={accountPopover.anchorRef}
+            
+              />
           </Stack>
         </Stack>
       </Box>
       <AccountPopover
-
+        anchorEl={accountPopover.anchorRef.current}
+        open={accountPopover.open}
+        onClose={accountPopover.handleClose}
       />
     </>
   );

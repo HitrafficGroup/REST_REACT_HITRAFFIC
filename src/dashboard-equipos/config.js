@@ -3,8 +3,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { SvgIcon } from '@mui/material';
 import WorkspacesIcon from '@mui/icons-material/Workspaces';
 import MonitorIcon from '@mui/icons-material/Monitor';
-import ImportContactsIcon from '@mui/icons-material/ImportContacts';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+
 import AppSettingsAltIcon from '@mui/icons-material/AppSettingsAlt';
 export const items = [
   {

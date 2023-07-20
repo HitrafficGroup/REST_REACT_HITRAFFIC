@@ -1,16 +1,23 @@
 import { useCallback } from 'react';
-
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Box, Divider, MenuItem, MenuList, Popover, Typography } from '@mui/material';
 
+import { useNavigate } from 'react-router-dom';
 
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open } = props;
-
- 
+  const Navigate = useNavigate();
+  const userState = useSelector(state => state.auth);
 
   const handleSignOut = useCallback(
-
+    () => {
+      onClose?.();
+      Navigate('/');
+    },
+    // eslint-disable-next-line
+    [onClose]
+ 
   );
 
   return (
@@ -37,7 +44,7 @@ export const AccountPopover = (props) => {
           color="text.secondary"
           variant="body2"
         >
-          Anika Visser
+         {userState.name} {userState.lastname}
         </Typography>
       </Box>
       <Divider />
