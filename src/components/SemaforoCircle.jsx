@@ -1,6 +1,6 @@
-import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
+import { CircleMarker, Popup } from "react-leaflet";
 import { useEffect, useState } from "react";
-import { getDatabase, ref, set, onValue } from "firebase/database";
+import { getDatabase, ref, onValue } from "firebase/database";
 import PropTypes from 'prop-types';
 export default function SemaforoCircle(props) {
     const { position,id } = props;

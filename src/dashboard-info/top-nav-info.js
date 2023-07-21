@@ -3,6 +3,8 @@ import BellIcon from '@heroicons/react/24/solid/BellIcon';
 import Bars3Icon from '@heroicons/react/24/solid/Bars3Icon';
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import WebIcon from '@mui/icons-material/Web';
+import { usePopover } from '../hooks/use-popover.js';
+
 import {
   Avatar,
   Badge,
@@ -10,13 +12,12 @@ import {
   IconButton,
   Stack,
   SvgIcon,
-  Tooltip,
-  useMediaQuery
+  Tooltip
 } from '@mui/material';
 
 import { useSelector } from 'react-redux';
-import { usePopover } from '../hooks/use-popover.js';
-import { AccountPopover } from './account-popover';
+
+import { AccountPopover } from './account-popover.js';
 
 const SIDE_NAV_WIDTH = 280;
 const TOP_NAV_HEIGHT = 64;
@@ -51,9 +52,9 @@ function stringAvatar(name) {
       children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
   };
 }
-export const TopNav = (props) => {
+export const TopNavInfo = (props) => {
   const { onNavOpen } = props;
-  const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
+
   const userState = useSelector(state => state.auth);
   const accountPopover = usePopover();
   return (
@@ -70,9 +71,7 @@ export const TopNav = (props) => {
             lg: `${SIDE_NAV_WIDTH}px`
           },
           top: 0,
-          width: {
-            lg: `calc(100% - ${SIDE_NAV_WIDTH}px)`
-          },
+          width: "100%",
           zIndex: 900
         }}
       >
@@ -91,13 +90,13 @@ export const TopNav = (props) => {
             direction="row"
             spacing={2}
           >
-            {!lgUp && (
+         
               <IconButton onClick={onNavOpen}>
                 <SvgIcon fontSize="small">
                   <Bars3Icon />
                 </SvgIcon>
               </IconButton>
-            )}
+          
             <Tooltip title="Search">
               <IconButton>
                 <SvgIcon fontSize="small">
@@ -135,7 +134,7 @@ export const TopNav = (props) => {
             {...stringAvatar(`${userState.name} ${userState.lastname}`)} 
               onClick={accountPopover.handleOpen}
               ref={accountPopover.anchorRef}
-          
+            
               />
           </Stack>
         </Stack>
@@ -149,6 +148,6 @@ export const TopNav = (props) => {
   );
 };
 
-TopNav.propTypes = {
+TopNavInfo.propTypes = {
   onNavOpen: PropTypes.func
 };

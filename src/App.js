@@ -6,9 +6,9 @@ import DeclararControladorView from "./views/DeclararControladorView";
 import ControlersView from "./views/ControlersView";
 import VistaMaestraView from "./views/VistaMaestraView";
 import PruebasInterfaz from "./views/PruebasInterfaz";
-import InfoView from "./views/InfoView";
+import HomeView from "./views/HomeView";
 import MonitoreoView from "./views/MonitoreoView";
-
+import InfoView from "./views/InfoView";
 function App() {
   return (
     <div className="App">
@@ -20,8 +20,9 @@ function App() {
           <Route path="/controlador_HT200/*" element={<HT200Dashboard/>} />
           <Route path="/group_config" element={<VistaMaestraView/>} />
           <Route path="/pruebas_interfaz" element={<PruebasInterfaz/>} />
-          <Route path="/info" element={<InfoView/>} />
+          <Route path="/home" element={<HomeView/>} />
           <Route path="/monitoreo" element={<MonitoreoView />} />
+          <Route path="/informacion" element={<InfoView />} />
         </Routes>
     </div>
   );

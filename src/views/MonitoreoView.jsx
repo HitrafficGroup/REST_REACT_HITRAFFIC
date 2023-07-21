@@ -4,7 +4,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { SideNavMap } from '../dashboard-monitoreo/side-nav-monitoreo';
 import { TopNavMap } from '../dashboard-monitoreo/top-nav-monitoreo';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, CircleMarker, Marker } from "react-leaflet";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import L from 'leaflet';
 import c1 from "../assets/c1.png"
 import c2 from "../assets/c2.png"
@@ -69,7 +69,6 @@ export default function MonitoreoView() {
     const [controlers, setControlers] = useState([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [semaforos, setSemaforos] = useState([])
     const navigate = useNavigate();
 
     const handleChangePage = (newPage) => {

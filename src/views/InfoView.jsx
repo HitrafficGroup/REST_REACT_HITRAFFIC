@@ -1,110 +1,18 @@
-import React from "react"
-import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import { CardActionArea } from '@mui/material';
-import individual from '../assets/individual.jpg';
-import grupal from '../assets/grupal.jpg';
-import simulacion from '../assets/simulacion.jpg';
-import Grid from '@mui/material/Grid';
+import React,{useState} from "react"
+import { SideNavInfo } from "../dashboard-info/side-nav-info";
+import { TopNavInfo } from "../dashboard-info/top-nav-info";
+export default function InfoView(){
 
-import { useNavigate } from 'react-router-dom';
- 
-export default function InfoView() {
-
-    const navigate = useNavigate();
+    const [openNav, setOpenNav] = useState(false);
 
 
 
-    return (
-
-        <>
-        <div  className="background-home"> 
-            <Container  fixed>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <div className="container-difuminado">
-                            <h1  className="titulo-home">
-                                HiTraffic Centralizacion
-                            </h1>
-                            <h3  className="subtitulo-home">
-                                Sistema de Centralizacion para el monitoreo y manipulacion de controladores Remotamente
-                            </h3>
-           
-                        </div>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Stack  spacing={2} justifyContent={"center"} alignItems={"center"} direction={{ xs: 'column', md: 'row' }}>
-                            <Card sx={{ maxWidth: 345 }} onClick={()=>{navigate('/equipos')}}>
-                                <CardActionArea>
-                                    <CardMedia
-                                        component="img"
-                                        height="140"
-                                        image={individual}
-                                        alt="funcionamiento individual"
-                                    />
-                                    <CardContent>
-                                        <Typography gutterBottom variant="h6" component="div">
-                                        Configuración Individual de Controlador
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                        La plataforma de centralización proporciona un acceso sencillo a las configuraciones avanzadas del controlador, a través de una interfaz de usuario amigable. Su objetivo es simplificar el proceso de configuración de cada controlador para el usuario final.
-                                        </Typography>
-                                    </CardContent>
-                                </CardActionArea>
-                            </Card>
-                            <Card sx={{ maxWidth: 345 }} onClick={()=>{navigate('/group_config')}}>
-                                <CardActionArea>
-                                    <CardMedia
-                                        component="img"
-                                        height="140"
-                                        image={grupal}
-                                        alt="funcionamiento grupal"
-                                    />
-                                    <CardContent>
-                                        <Typography gutterBottom variant="h6" component="div">
-                                        Configuración Grupal de Controladores
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            La aplicación de centralización cuenta con un módulo de configuración grupal que permite gestionar varios controladores simultáneamente. Esta funcionalidad resulta muy útil cuando se trata de administrar múltiples intersecciones al mismo tiempo.
-                                        </Typography>
-                                    </CardContent>
-                                </CardActionArea>
-                            </Card>
-                            <Card sx={{ maxWidth: 345 }} onClick={()=>{navigate('/monitoreo')}}   >
-                                <CardActionArea>
-                                    <CardMedia
-                                        component="img"
-                                        height="140"
-                                        image={simulacion}
-                                        alt="simulacion"
-                                    />
-                                    <CardContent>
-                                        <Typography gutterBottom variant="h6" component="div">
-                                        Simulación de Intersección en Tiempo Real
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-
-                                        La funcionalidad de simulación en tiempo real brinda al usuario la capacidad de visualizar el comportamiento del controlador de un semáforo en una ubicación específica. Esto se logra a través de una animación del área donde se encuentra el semáforo.    </Typography>
-                                    </CardContent>
-                                </CardActionArea>
-                            </Card>
-                        </Stack>
-                    </Grid>
-                    
-                </Grid>
-
-            </Container>
-        </div>
+    return(
+        <>  
+            <TopNavInfo onNavOpen={() => setOpenNav(true)}/>
+            <SideNavInfo  open={openNav} onClose={() => setOpenNav(false)} />
+            <h1>Configuracion Individual</h1>
         </>
     )
-
-
-
-
-
 
 }
