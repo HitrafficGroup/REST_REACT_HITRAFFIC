@@ -146,9 +146,9 @@ export const amarillo =withAlphas({
   dark: '#f1c33a',
 })
 export const gris=withAlphas({
-  main: '#566573',
+  main: '#616A6B',
   contrastText: '#fff',
-  dark: '#0E6251',
+  dark: '#707B7C',
 })
 
 

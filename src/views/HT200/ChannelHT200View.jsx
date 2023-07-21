@@ -22,7 +22,7 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 //iconos
 import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
+import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
 import { useSelector,useDispatch } from 'react-redux';
@@ -271,7 +271,7 @@ export default function ChannelHT200View(){
                                             <TableCell
                                                 key={"acciones"}
                                                 align={"center"}
-                                        
+                                                style={{ minWidth: 150 }}
                                             >
                                                 Acciones
                                             </TableCell>
@@ -307,8 +307,8 @@ export default function ChannelHT200View(){
                                                         {row.countdown}
                                                     </TableCell>
                                                  <TableCell  align={"center"}>
-                                                         <IconButton color="oscuro" aria-label="add an alarm" onClick={()=>{modificarChannel(row)}}  >
-                                                            <EditIcon />
+                                                         <IconButton color="gris" aria-label="add an alarm" onClick={()=>{modificarChannel(row)}}  >
+                                                            <SettingsIcon />
                                                         </IconButton>
                                                         <IconButton color="rojo" aria-label="add an alarm" >
                                                             <DeleteIcon />

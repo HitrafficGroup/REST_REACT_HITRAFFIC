@@ -13,7 +13,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
+import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -275,8 +275,8 @@ export default function AccionesHT200View(){
                                                             {convertEspecial(row.special)}
                                                             </TableCell>
                                                             <TableCell key={index+33} align={"center"}>
-                                                         <IconButton color="oscuro" aria-label="add an alarm"onClick={()=>{modificarAccion(row)}} >
-                                                            <EditIcon />
+                                                         <IconButton color="gris" aria-label="add an alarm"onClick={()=>{modificarAccion(row)}} >
+                                                            <SettingsIcon />
                                                         </IconButton>
                                                         <IconButton color="rojo" aria-label="add an alarm" onClick={()=>{eliminarAccion(row)}} >
                                                             <DeleteIcon />

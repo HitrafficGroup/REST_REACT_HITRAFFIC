@@ -14,7 +14,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 
 import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
+import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 // tree view
@@ -559,7 +559,7 @@ export default function HorariosHT200View(){
                                             <TableCell
                                                 key={"acciones"}
                                                 align={"center"}
-                                                style={{ minWidth: 100 }}
+                                                style={{ minWidth: 150 }}
                                             >
                                                 Acciones
                                             </TableCell>
@@ -611,8 +611,8 @@ export default function HorariosHT200View(){
                                                                 </ul>
                                                             </TableCell>
                                                     <TableCell  align={"center"}>
-                                                         <IconButton color="oscuro" aria-label="add an alarm" onClick={()=>{modificarHorario(row)}} >
-                                                            <EditIcon />
+                                                         <IconButton color="gris" aria-label="add an alarm" onClick={()=>{modificarHorario(row)}} >
+                                                            <SettingsIcon />
                                                         </IconButton>
                                                         <IconButton color="rojo" aria-label="add an alarm" onClick={()=>{eliminarHorario(row)}}>
                                                             <DeleteIcon />

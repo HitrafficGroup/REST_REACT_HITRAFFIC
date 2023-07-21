@@ -844,6 +844,11 @@ margin: 0;
   align-items: center;
 }
 
+.img-vistainfo{
+  border-radius: 10px;
+  border: solid 3px black;
+  overflow-x: scroll;
+}
 
 
 @media only screen and (max-width: 1260px) {

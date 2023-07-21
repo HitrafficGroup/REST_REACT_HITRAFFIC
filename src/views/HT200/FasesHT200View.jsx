@@ -218,7 +218,7 @@ export default function FasesHT200View() {
                                                     </TableCell>
                                                     <TableCell  align={"center"}>
                                                         <Stack direction="row" spacing={1}>
-                                                            <IconButton aria-label="delete" color="oscuro" onClick={()=>{abrirModalConfig(row)}} >
+                                                            <IconButton aria-label="delete" color="gris" onClick={()=>{abrirModalConfig(row)}} >
                                                                 <SettingsIcon />
                                                             </IconButton>
                                                             <IconButton aria-label="delete" color="rojo" onClick={()=>{eliminarFase(row)}} >

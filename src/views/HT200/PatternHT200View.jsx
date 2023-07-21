@@ -25,7 +25,7 @@ import { updateDoc, doc } from "firebase/firestore";
 import Swal from 'sweetalert2';
 import { db } from "../../firebase/firebase-config";
 import { updateParamsHT200 } from "../../features/controlerht200/controlerHT200Slice";
-
+import SettingsIcon from '@mui/icons-material/Settings';
 import { IpControllerCard } from '../../components/ip-controller-card';
 import { CantonControllerCard } from '../../components/canton-controller-card';
 import { NombreControllerCard } from '../../components/nombre-controller-card';
@@ -260,8 +260,8 @@ export default function PatternHT200View() {
                                                             {convertWorkmode(row.workmode)}
                                                             </TableCell>
                                                          <TableCell  align={"center"}>
-                                                         <IconButton color="oscuro" aria-label="add an alarm" onClick={()=>{modificarPatron(row)}} >
-                                                            <EditIcon />
+                                                         <IconButton color="gris" aria-label="add an alarm" onClick={()=>{modificarPatron(row)}} >
+                                                            <SettingsIcon />
                                                         </IconButton>
                                                         <IconButton color="rojo" aria-label="add an alarm" onClick={()=>{eliminarPatron(row)}} >
                                                             <DeleteIcon />

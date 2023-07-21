@@ -28,7 +28,7 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import EditIcon from '@mui/icons-material/Edit';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { IpControllerCard } from '../../components/ip-controller-card';
 import { CantonControllerCard } from '../../components/canton-controller-card';
 import { NombreControllerCard } from '../../components/nombre-controller-card';
@@ -226,8 +226,8 @@ export default function SecuencyHT200View() {
                                             </Stack>
                                         </TableCell>
                                         <TableCell align={"left"}>
-                                            <IconButton color="amarillo" aria-label="add to shopping cart" onClick={()=>{configurarSecuencia(seqTarget.ring1,'ring1')}} >
-                                                <EditIcon />
+                                            <IconButton color="gris" aria-label="add to shopping cart" onClick={()=>{configurarSecuencia(seqTarget.ring1,'ring1')}} >
+                                                <SettingsIcon />
                                             </IconButton>
                                         </TableCell>
                                     </TableRow>
@@ -243,8 +243,8 @@ export default function SecuencyHT200View() {
                                             </Stack>
                                         </TableCell>
                                         <TableCell align={"left"}>
-                                            <IconButton color="amarillo" aria-label="add to shopping cart" onClick={()=>{configurarSecuencia(seqTarget.ring2,'ring2')}}>
-                                                <EditIcon />
+                                            <IconButton color="gris" aria-label="add to shopping cart" onClick={()=>{configurarSecuencia(seqTarget.ring2,'ring2')}}>
+                                                <SettingsIcon />
                                             </IconButton>
                                         </TableCell>
                                     </TableRow>
@@ -260,8 +260,8 @@ export default function SecuencyHT200View() {
                                             </Stack>
                                         </TableCell>
                                         <TableCell align={"left"}>
-                                            <IconButton color="amarillo" aria-label="add to shopping cart" onClick={()=>{configurarSecuencia(seqTarget.ring3,'ring3')}}>
-                                                <EditIcon />
+                                            <IconButton color="gris" aria-label="add to shopping cart" onClick={()=>{configurarSecuencia(seqTarget.ring3,'ring3')}}>
+                                                <SettingsIcon />
                                             </IconButton>
                                         </TableCell>
                                     </TableRow>
@@ -278,8 +278,8 @@ export default function SecuencyHT200View() {
                                             </Stack>
                                         </TableCell>
                                         <TableCell align={"left"}>
-                                            <IconButton color="amarillo" aria-label="add to shopping cart" onClick={()=>{configurarSecuencia(seqTarget.ring4,'ring4')}} >
-                                                <EditIcon />
+                                            <IconButton color="gris" aria-label="add to shopping cart" onClick={()=>{configurarSecuencia(seqTarget.ring4,'ring4')}} >
+                                                <SettingsIcon />
                                             </IconButton>
                                         </TableCell>
                                     </TableRow>

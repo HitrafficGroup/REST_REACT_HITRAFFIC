@@ -21,7 +21,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { useSelector,useDispatch } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
+import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
@@ -282,8 +282,8 @@ export default function PlanHT200View(){
                                                               {row.action}
                                                             </TableCell>
                                                  <TableCell  align={"center"}>
-                                                         <IconButton color="oscuro" aria-label="add an alarm" onClick={()=>{modificarPlan(row)}} >
-                                                            <EditIcon />
+                                                         <IconButton color="gris" aria-label="add an alarm" onClick={()=>{modificarPlan(row)}} >
+                                                            <SettingsIcon />
                                                         </IconButton>
                                                         <IconButton color="rojo" aria-label="add an alarm" onClick={()=>{eliminarPlan(row)}} >
                                                             <DeleteIcon />

@@ -19,7 +19,7 @@ import IconButton from '@mui/material/IconButton';
 //iconos
 import DoneIcon from '@mui/icons-material/Done';
 import ClearIcon from '@mui/icons-material/Clear';
-import EditIcon from '@mui/icons-material/Edit';
+import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector,useDispatch } from 'react-redux';
 import { updateParamsHT200 } from "../../features/controlerht200/controlerHT200Slice";
@@ -377,8 +377,8 @@ export default function SplitHT200View() {
                                                         {dato.coord === 4 ? <DoneIcon color="verde2" /> : <ClearIcon color="gris" />}
                                                     </TableCell>
                                                     <TableCell  align={"center"}>
-                                                        <IconButton color="oscuro" aria-label="add an alarm" onClick={() => { modficarSplit(dato) }} >
-                                                            <EditIcon />
+                                                        <IconButton color="gris" aria-label="add an alarm" onClick={() => { modficarSplit(dato) }} >
+                                                            <SettingsIcon />
                                                         </IconButton>
                                                         <IconButton color="rojo" aria-label="add an alarm" onClick={() => { eliminarSplit(dato) }}>
                                                             <DeleteIcon />

@@ -63,7 +63,7 @@ export default function LoginView() {
     if (docSnap.exists()) {
       let data = docSnap.data();
       dispatch(setUser(data));
-      navigate("/info")
+      navigate("/home")
     }
    
 
@@ -202,7 +202,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        HiTraffic Group v1.0.3
+        HiTraffic Group v1.0.4
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}

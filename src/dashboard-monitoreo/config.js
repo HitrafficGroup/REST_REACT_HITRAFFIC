@@ -43,7 +43,7 @@ export const items = [
     )
   },
   {
-    title: 'Informacion del Sistema',
+    title: 'Manual de Usuario',
     path: '/informacion',
     icon: (
       <SvgIcon fontSize="small">
