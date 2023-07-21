@@ -4,7 +4,10 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { SideNavMap } from '../dashboard-monitoreo/side-nav-monitoreo';
 import { TopNavMap } from '../dashboard-monitoreo/top-nav-monitoreo';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, CircleMarker, Marker } from "react-leaflet";
+import L from 'leaflet';
+import c1 from "../assets/c1.png"
+import c2 from "../assets/c2.png"
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -20,6 +23,7 @@ import { getDatabase, ref, set, onValue } from "firebase/database";
 import { db } from '../firebase/firebase-config';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
+import SemaforoCircle from '../components/SemaforoCircle';
 const Android12Switch = styled(Switch)(({ theme }) => ({
     padding: 8,
     '& .MuiSwitch-track': {
@@ -86,6 +90,7 @@ export default function MonitoreoView() {
             data_firebase.push(doc.data());
         });
         setControlers(data_firebase);
+        console.log(data_firebase)
     }
 
     const abrirModalCrear = () => {
@@ -118,29 +123,12 @@ export default function MonitoreoView() {
         }
     }
 
-    const readDataController = () => {
-        const db2 = getDatabase();
-        const starCountRef = ref(db2, '/');
-        onValue(starCountRef, (snapshot) => {
-            const data = snapshot.val();
+    // useEffect(() => {
 
-            let aux = Object.values(data)
-            let data_formated = []
-            aux.forEach(item => {
-                let temp = Object.values(item)
-                data_formated = data_formated.concat(temp)
-            }
+    //     getControllersFirebase();
+    //     // eslint-disable-next-line
+    // }, []);
 
-            )
-            setSemaforos(data_formated)
-        });
-    }
-
-    useEffect(() => {
-
-        readDataController();
-        // eslint-disable-next-line
-    }, []);
 
     return (
         <>
@@ -151,15 +139,14 @@ export default function MonitoreoView() {
                     <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=b08eb869c89646fa8accf539b81e80de" />
-                    {semaforos.map((item) => {
-                        return (
-                            <CircleMarker center={item.position} pathOptions={{ color: item.color }} radius={15}>
-                                <Popup>
-                                    <p style={{ margin: 0, fontStyle: "italic" }}><strong>Nombre: </strong>{item.nombre} <strong>Grupo: </strong>{item.grupo}</p>
-                                </Popup>
-                            </CircleMarker>
-                        )
-                    })}
+                    <SemaforoCircle position={[[-2.8752091719856305,-78.96644325835979],[-2.8750594929680537,-78.96613787779256],[-2.8750594929680537,-78.96627724754657],[-2.874379004517163,-78.96627187923539]]} id={"93feed83-16be-4619-8e20-e80104452f87"} />
+                    <SemaforoCircle position={[[-2.8770259433047123,-78.9658532677584],[-2.877401073548548,-78.96544571992743],[-2.8777062913483626,-78.96505965896708],[-2.878054549543885,-78.96453399661098]]} id={"5415737e-0d6c-4d67-8fd4-0082b0829fff"} />
+                    <SemaforoCircle position={[[-2.880572853316584,-78.96682965218348],[-2.8808405047965837,-78.96613801794554],[-2.881097668723833, -78.9654460080197],[-2.8813441173205687,-78.96476472303678]]} id={"efed3017-bdeb-4b13-99d8-cf965f11df16"} />
+                    <SemaforoCircle position={[[-2.8751236897888544, -78.96880390267657],[-2.875498726301884, -78.96840157135983],[-2.8758630473679134, -78.96781684984617],[-2.8762005800164077, -78.96734478110119]]} id={"8f68ef2c-972a-4aba-9373-ac3f3b480575"} />
+                    <Marker position={[-2.8809893651691305, -78.96616792935285]}  icon={controller}/>
+                    <Marker position={[-2.8775989285295482, -78.96553428994021]}  icon={controller}/>
+                    <Marker position={[-2.8755523029291123, -78.96642478334662]}  icon={controller}/>
+                    <Marker position={[-2.8757076751628134, -78.96773101916527]}  icon={controller}/>
                 </MapContainer>
             </div>
             <Modal isOpen={modalCrear} size='lg'>
@@ -263,3 +250,13 @@ export default function MonitoreoView() {
 
 
 }
+const controller = new L.Icon({
+    iconUrl: c1,
+    iconRetinaUrl:c1,
+    iconSize: [30, 30], // size of the icon
+    shadowSize: [30, 30], // size of the shadow
+    iconAnchor: [15, 15], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor: [-3, -76]
+
+});

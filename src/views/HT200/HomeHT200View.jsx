@@ -176,6 +176,7 @@ export default function HomeView() {
             const ref = doc(db, "controladores", controlerState.id);
             await updateDoc(ref, {
                 semaforos: aux_semaforos
+                // posicion_semaforos:
             });
 
             semaforos2.current = aux_semaforos

@@ -205,7 +205,7 @@ export default function VistaMaestraView() {
                             Control Maestro
                         </Typography>
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item  xs={12} md={3}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <Button variant="contained" onClick={readData} fullWidth color='verde'>Leer Datos</Button>
@@ -256,7 +256,7 @@ export default function VistaMaestraView() {
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item xs={9}>
+                    <Grid item xs={12} md={9}>
                         <Container maxWidth="md" >
                             <Grid container spacing={2} justifyContent="center" alignItems="center">
 
