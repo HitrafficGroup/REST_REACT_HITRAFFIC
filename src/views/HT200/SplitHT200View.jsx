@@ -268,7 +268,7 @@ export default function SplitHT200View() {
                 <Grid item  xs={12}>
                 </Grid>
                     <Grid item md={3} xs={12}>
-                        <FormControl fullWidth>
+                        <FormControl variant="standard"fullWidth>
                             <InputLabel id="demo-simple-select-label">Split Tab</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"

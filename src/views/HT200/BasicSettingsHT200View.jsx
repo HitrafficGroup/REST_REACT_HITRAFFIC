@@ -333,7 +333,7 @@ export default function BasicSettingsHT200View() {
                     </Grid>
                     <Grid item xs={12} >
                     <Typography variant="h6" gutterBottom  color="text.secondary">
-                       Configuración de nuevo plan
+                    Configuración del nuevo plan
                     </Typography>
                     </Grid>
                     <Grid item xs={12}>

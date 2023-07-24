@@ -313,7 +313,7 @@ export default function AccionesHT200View(){
                     <Grid container spacing={4}>
                       
                         <Grid item xs={12} md={12}>
-                        <FormControl fullWidth>
+                        <FormControl variant='standard' fullWidth>
                                 <InputLabel id="demo-simple-select-label">Pattern</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -336,7 +336,7 @@ export default function AccionesHT200View(){
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={12}>
-                        <FormControl fullWidth>
+                        <FormControl variant='standard' fullWidth>
                                 <InputLabel id="demo-simple-select-label">Funcion Auxiliar</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -356,7 +356,7 @@ export default function AccionesHT200View(){
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={12}>
-                        <FormControl fullWidth>
+                        <FormControl variant='standard' fullWidth>
                                 <InputLabel id="demo-simple-select-label">Funcion Especial</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -406,7 +406,7 @@ export default function AccionesHT200View(){
                 <ModalBody>
                     <Grid container spacing={4}>
                     <Grid item xs={12} md={12}>
-                        <FormControl fullWidth>
+                        <FormControl variant='standard' fullWidth>
                                 <InputLabel id="demo-simple-select-label">Accion</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -429,7 +429,7 @@ export default function AccionesHT200View(){
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={12}>
-                        <FormControl fullWidth>
+                        <FormControl variant='standard' fullWidth>
                                 <InputLabel id="demo-simple-select-label">Pattern</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -452,7 +452,7 @@ export default function AccionesHT200View(){
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={12}>
-                        <FormControl fullWidth>
+                        <FormControl variant='standard' fullWidth>
                                 <InputLabel id="demo-simple-select-label">Funcion Auxiliar</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -472,7 +472,7 @@ export default function AccionesHT200View(){
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={12}>
-                        <FormControl fullWidth>
+                        <FormControl variant='standard' fullWidth>
                                 <InputLabel id="demo-simple-select-label">Funcion Especial</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"

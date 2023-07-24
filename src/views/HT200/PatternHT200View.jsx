@@ -290,16 +290,16 @@ export default function PatternHT200View() {
             <Modal isOpen={modalConfig} >
                 <ModalHeader>
                     <div>
-                        <h1>
-                            Editar
-                        </h1>
+                        <h3>
+                            Configuracion de Patron
+                        </h3>
                     </div>
                 </ModalHeader>
                 <ModalBody>
                     <Grid container spacing={4}>
 
                         <Grid item xs={12} md={6}>
-                            <FormControl fullWidth>
+                            <FormControl  variant="standard" fullWidth>
                                 <InputLabel id="demo-simple-select-label">Split</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -308,6 +308,7 @@ export default function PatternHT200View() {
                                     label="Split"
                                     name="splitnumber"
                                     onChange={handleChange}
+                                   
                                 >
                                     <MenuItem value={1}>ciclo 1</MenuItem>
                                     <MenuItem value={2}>ciclo 2</MenuItem>
@@ -321,7 +322,7 @@ export default function PatternHT200View() {
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <FormControl fullWidth>
+                            <FormControl variant="standard" fullWidth>
                                 <InputLabel id="demo-simple-select-label">Modo de Trabajo</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -342,10 +343,10 @@ export default function PatternHT200View() {
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                        <TextField id="outlined-basic" label="Offset" variant="outlined" name="offsettime" onChange={handleChange} value={currentPattern.offsettime} type="number" />
+                        <TextField id="outlined-basic" label="Offset"  name="offsettime" onChange={handleChange} value={currentPattern.offsettime} type="number" />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                        <TextField id="outlined-basic" label="secuencia" variant="outlined" name="sequencenumber" onChange={handleChange} value={currentPattern.sequencenumber} type="number" />
+                        <TextField id="outlined-basic" label="secuencia" name="sequencenumber" onChange={handleChange} value={currentPattern.sequencenumber} type="number" />
                         </Grid>
                     </Grid>
                 </ModalBody>
@@ -362,15 +363,15 @@ export default function PatternHT200View() {
             <Modal isOpen={modalCrear} >
                 <ModalHeader>
                     <div>
-                        <h1>
+                        <h3>
                             Crear Patron
-                        </h1>
+                        </h3>
                     </div>
                 </ModalHeader>
                 <ModalBody>
                     <Grid container spacing={4}>
                     <Grid item  md={12}>
-                            <FormControl fullWidth>
+                            <FormControl  variant="standard" fullWidth>
                                 <InputLabel id="demo-simple-select-label">Pattern</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -392,7 +393,7 @@ export default function PatternHT200View() {
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <FormControl fullWidth>
+                            <FormControl  variant="standard" fullWidth>
                                 <InputLabel id="demo-simple-select-label">Split</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -414,7 +415,7 @@ export default function PatternHT200View() {
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <FormControl fullWidth>
+                            <FormControl  variant="standard"  fullWidth>
                                 <InputLabel id="demo-simple-select-label">Modo de Trabajo</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -435,10 +436,10 @@ export default function PatternHT200View() {
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                        <TextField id="outlined-basic" label="Offset" variant="outlined" name="offsettime" onChange={handleChange} value={currentPattern.offsettime} type="number" />
+                        <TextField id="outlined-basic" label="Offset"  name="offsettime" onChange={handleChange} value={currentPattern.offsettime} type="number" />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                        <TextField id="outlined-basic" label="secuencia" variant="outlined" name="sequencenumber" onChange={handleChange} value={currentPattern.sequencenumber} type="number" />
+                        <TextField id="outlined-basic" label="secuencia"  name="sequencenumber" onChange={handleChange} value={currentPattern.sequencenumber} type="number" />
                         </Grid>
                     </Grid>
                 </ModalBody>

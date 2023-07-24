@@ -175,7 +175,7 @@ export default function SecuencyHT200View() {
                     <Grid item xs={12} md={3} >
                     </Grid>
                     <Grid item xs={12} md={3} >
-                        <FormControl fullWidth >
+                        <FormControl variant="standard" fullWidth >
                             <InputLabel id="demo-simple-select-label">Secuencia</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"

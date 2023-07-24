@@ -265,7 +265,7 @@ export default function FasesHT200View() {
                             fullWidth={true}
                             onChange={handleTextField}
                             name="walk"
-                            label="walk"
+                            label="Verde peatonal"
                             type="number"
                             InputLabelProps={{
                                 shrink: true,
@@ -275,7 +275,7 @@ export default function FasesHT200View() {
                         </Grid>
                         <Grid item xs={12} md={4}>
                         <TextField
-                            label="Ped Clear"
+                            label="Destello Peatonal"
                             type="number"
                             id="outlined-controlled"
                             value={currentFase.pedestrianClear}
@@ -304,7 +304,7 @@ export default function FasesHT200View() {
                         </Grid>
                         <Grid item xs={12} md={4}>
                         <TextField
-                            label="Peatonal"
+                            label="Paso"
                             type="number"
                             id="outlined-controlled"
                             value={currentFase.passage}
@@ -365,7 +365,7 @@ export default function FasesHT200View() {
                             fullWidth={true}
                             onChange={handleTextField}
                             name="redclear"
-                            label="redclear"
+                            label="Tiempo Todo en Rojo"
                             type="number"
                             InputLabelProps={{
                                 shrink: true,
@@ -393,7 +393,7 @@ export default function FasesHT200View() {
                             fullWidth={true}
                             onChange={handleTextField}
                             name="vehicleclear"
-                            label="vehicleclear"
+                            label="Tiempo Destello Verde"
                             type="number"
                             InputLabelProps={{
                                 shrink: true,
@@ -458,7 +458,7 @@ export default function FasesHT200View() {
                             fullWidth={true}
                             onChange={handleTextField}
                             name="walk"
-                            label="Paso"
+                            label="verde peatonal"
                             type="number"
                             InputLabelProps={{
                                 shrink: true,

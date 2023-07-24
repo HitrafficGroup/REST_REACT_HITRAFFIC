@@ -190,7 +190,7 @@ export default function PlanHT200View(){
                         />
                     </Grid>
                     <Grid item md={3} xs={12} >
-                    <FormControl fullWidth>
+                    <FormControl variant='standard' fullWidth>
                             <InputLabel id="demo-simple-select-label">Plan Tab</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -198,6 +198,7 @@ export default function PlanHT200View(){
                                 value={planTab}
                                 label="split tab"
                                 onChange={handlePlan}
+                                
                             >
                                 <MenuItem value={"plan-1"}>Plan 1</MenuItem>
                                 <MenuItem value={"plan-2"}>Plan 2</MenuItem>
@@ -310,16 +311,16 @@ export default function PlanHT200View(){
             <Modal isOpen={modalConfig} >
                 <ModalHeader>
                     <div>
-                        <h1>
-                            Editar Planes
-                        </h1>
+                        <h4>
+                            Configuración de plan
+                        </h4>
                     </div>
                 </ModalHeader>
                 <ModalBody>
                     <Grid container spacing={4}>
 
                         <Grid item xs={12} md={12}>
-                            <FormControl fullWidth>
+                            <FormControl variant='standard' fullWidth>
                                 <InputLabel id="demo-simple-select-label">Modifique La Accion</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -343,7 +344,6 @@ export default function PlanHT200View(){
                         <Grid item xs={12} md={6}>
                         <TextField id="outlined-basic" 
                         label="Horas" 
-                        variant="outlined" 
                         name="hour" fullWidth   
                         InputProps={{ inputProps: { min: 0, max: 24 } }} 
                         onChange={handleChange} 
@@ -353,7 +353,6 @@ export default function PlanHT200View(){
                         <Grid item xs={12} md={6}>
                         <TextField id="outlined-basic" 
                         label="Minutos" 
-                        variant="outlined" 
                         name="minute" 
                         fullWidth 
                         InputProps={{ inputProps: { min: 0, max: 60 } }}  
@@ -376,16 +375,16 @@ export default function PlanHT200View(){
             <Modal isOpen={modalCrear} >
                 <ModalHeader>
                     <div>
-                        <h1>
-                            Crear Planes
-                        </h1>
+                        <h4>
+                            Crear Nuevo Plan
+                        </h4>
                     </div>
                 </ModalHeader>
                 <ModalBody>
                     <Grid container spacing={4}>
 
                         <Grid item xs={12} md={12}>
-                            <FormControl fullWidth>
+                            <FormControl variant='standard' fullWidth>
                                 <InputLabel id="demo-simple-select-label">Modifique La Accion</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -409,7 +408,6 @@ export default function PlanHT200View(){
                         <Grid item xs={12} md={6}>
                         <TextField id="outlined-basic" 
                         label="Horas" 
-                        variant="outlined" 
                         name="hour" fullWidth   
                         InputProps={{ inputProps: { min: 0, max: 24 } }} 
                         onChange={handleChange} 
@@ -419,7 +417,6 @@ export default function PlanHT200View(){
                         <Grid item xs={12} md={6}>
                         <TextField id="outlined-basic" 
                         label="Minutos" 
-                        variant="outlined" 
                         name="minute" 
                         fullWidth 
                         InputProps={{ inputProps: { min: 0, max: 60 } }}  
