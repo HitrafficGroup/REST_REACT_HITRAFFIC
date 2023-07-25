@@ -385,7 +385,7 @@ export default function PlanHT200View(){
 
                         <Grid item xs={12} md={12}>
                             <FormControl variant='standard' fullWidth>
-                                <InputLabel id="demo-simple-select-label">Modifique La Accion</InputLabel>
+                                <InputLabel id="demo-simple-select-label">Acción</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"

@@ -337,14 +337,14 @@ export default function ChannelHT200View(){
                 <ModalHeader>
                     <div>
                         <h1>
-                            Editar Channel - {currentChannel.numbe}
+                            Editar Grupo - {currentChannel.number}
                         </h1>
                     </div>
                 </ModalHeader>
                 <ModalBody>
                     <Grid container spacing={4}>
                     <Grid item xs={12} md={12}>
-                    <FormControl fullWidth>
+                    <FormControl variant='standard' fullWidth>
                                 <InputLabel id="demo-simple-select-label">Fase</InputLabel>
                                 <Select
                                             labelId="demo-simple-select-label"
@@ -367,7 +367,7 @@ export default function ChannelHT200View(){
                     </Grid>
                         <Grid item xs={12} md={12}>
                         <FormControl>
-                            <FormLabel id="demo-controlled-radio-buttons-group">Control Type</FormLabel>
+                            <FormLabel id="demo-controlled-radio-buttons-group">Tipo de Grupo</FormLabel>
                             <RadioGroup
                                 aria-labelledby="demo-controlled-radio-buttons-group"
                                 name="controlled-radio-buttons-group"
@@ -375,16 +375,16 @@ export default function ChannelHT200View(){
                                 onChange={handleChange}
                                 row
                             >
-                                <FormControlLabel value={2} control={<Radio />} name='type' label="Vehiculo" />
+                                <FormControlLabel value={2} control={<Radio />} name='type' label="Vehicular" />
                                 <FormControlLabel value={3} control={<Radio />} name='type' label="Peatonal" />
-                                <FormControlLabel value={4} control={<Radio />} name='type' label="Overlap" />
-                                <FormControlLabel value={1} control={<Radio />} name='type' label="Other" />
+                                <FormControlLabel value={4} control={<Radio />} name='type' label="Superposición" />
+                                <FormControlLabel value={1} control={<Radio />} name='type' label="Otro" />
                             </RadioGroup>
                         </FormControl>
                         </Grid>
                         <Grid item xs={12} md={12}>
                         <FormControl>
-                            <FormLabel id="demo-controlled-radio-buttons-group">Flash Parameter</FormLabel>
+                            <FormLabel id="demo-controlled-radio-buttons-group">Tipo de Destello</FormLabel>
                             <RadioGroup
                                 aria-labelledby="demo-controlled-radio-buttons-group"
                                 name="controlled-radio-buttons-group"
@@ -392,16 +392,16 @@ export default function ChannelHT200View(){
                                 onChange={handleChange}
                                 row
                             >
-                                <FormControlLabel value={8} control={<Radio />} name='flash' label="Alternate" />
-                                <FormControlLabel value={4} control={<Radio />} name='flash' label="Red" />
-                                <FormControlLabel value={2} control={<Radio />} name='flash' label="Yellow" />
-                                <FormControlLabel value={1} control={<Radio />} name='flash' label="Other" />
+                                <FormControlLabel value={8} control={<Radio />} name='flash' label="Alternado" />
+                                <FormControlLabel value={4} control={<Radio />} name='flash' label="Rojo" />
+                                <FormControlLabel value={2} control={<Radio />} name='flash' label="Amarillo" />
+                                <FormControlLabel value={1} control={<Radio />} name='flash' label="Otro" />
                             </RadioGroup>
                         </FormControl>
                         </Grid>
                         <Grid item xs={12} md={12}>
                         <FormControl>
-                            <FormLabel id="demo-controlled-radio-buttons-group">Dim Parameter</FormLabel>
+                            <FormLabel id="demo-controlled-radio-buttons-group">Parámetro de Atenuación</FormLabel>
                             <RadioGroup
                                 aria-labelledby="demo-controlled-radio-buttons-group"
                                 name="controlled-radio-buttons-group"
@@ -417,8 +417,8 @@ export default function ChannelHT200View(){
                         </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">Orientation</InputLabel>
+                            <FormControl variant='standard' fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Orientación</InputLabel>
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
@@ -441,8 +441,8 @@ export default function ChannelHT200View(){
                                 </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">Direction</InputLabel>
+                            <FormControl variant='standard' fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Dirección</InputLabel>
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"

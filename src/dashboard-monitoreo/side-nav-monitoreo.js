@@ -116,11 +116,11 @@ export const SideNavMap = (props) => {
               m: 0
             }}
           >
-            <Button variant="outlined" color='info' onClick={onCreate}>AGREGAR CONTROLADOR</Button>
+            {/* <Button variant="outlined" color='info' onClick={onCreate}>AGREGAR CONTROLADOR</Button>
             <Button variant="outlined" color='info'  >CONTROLADORES ACTIVOS</Button>
             <Button variant="outlined" color='info'>CONTROLADORES INACTIVOS</Button>
             <Button variant="outlined" color='info'>CONTROLADORES AGREGADOS</Button>
-            <Button variant="outlined" color='warning' onClick={onExit}>SALIR</Button>
+            <Button variant="outlined" color='warning' onClick={onExit}>SALIR</Button> */}
             {/* {items_views.map((item) => {
               const active = item.path ? (location.pathname === item.path) : false;
 

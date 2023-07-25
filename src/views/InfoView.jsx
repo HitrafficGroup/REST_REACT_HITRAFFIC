@@ -21,6 +21,9 @@ import i_ref14 from "../assets/secuencias_ring.jpg";
 import i_ref15 from "../assets/split_config.jpg";
 import i_ref16 from "../assets/patron_config.jpg";
 import i_ref17 from "../assets/accion config.jpg";
+import i_ref18 from "../assets/config_plan.jpg";
+import i_ref19 from "../assets/horarios_config.jpg";
+import i_ref20 from "../assets/configuracion_channel.jpg";
 //
 import Grid from '@mui/material/Grid';
 import SimpleBar from "simplebar-react";
@@ -53,43 +56,41 @@ export default function InfoView() {
                         <Grid item xs={12}>
                             <h3>Configuracion Individual</h3>
                             <p>
-                                la vista de configuracion individual tiene como finalidad permitir el acceso a la programacion de cada controlador,
-                                idependientemente , la vista de inicio de esta seccion nos indica todos los controladores que tenemos disponibles.
+                            La vista de configuración individual tiene como finalidad permitir el acceso a la programación de cada controlador, independientemente, la vista de inicio de esta sección nos indica todos los controladores que tenemos disponibles
                             </p>
                             <SimpleBar dir="row">
                                 <img src={individual_ref1} alt="" width={800} height={400} className="img-vistainfo" />
                             </SimpleBar>
                             <p>
-                                la tabla tiene diferentes apartados cada uno indica cierta informacion de interes acerca de los controladores:
+                            La tabla  dispone de diferentes apartados, cada uno índica cierta información de interés acerca de los controladores:
                             </p>
                             <ul>
-                                <li> <strong>Ultima Conexion:</strong> Nos avisa de la ultima vez que se accedio a las configuraciones del controlador</li>
-                                <li><strong>Nombre:</strong> Es el nombre con el cual se crea el controlador</li>
-                                <li><strong>Online:</strong> Nos indica si actualmente el controlador se encuentra accesible, si esta en rojo significa que posiblemente el controlador
-                                    este presentando algun tipo de fallo.</li>
-                                <li><strong>Ip:</strong> Cuando se registra un nuevo controlador se le asigna una ip al controlador por ende este parametro nos indica la ip del controlador</li>
-                                <li><strong>Modelo</strong> Hitraffic Sa dispone de varios modelos de controlador en este caso aqui nos indicara el moldeo actual del controlador</li>
-                                <li><strong>Canton:</strong> Es el canton donde esta ubicado el controlador          </li>
-                                <li><strong>Acciones:</strong> Existen 3 botones que nos permiten realizar diferentes acciones el primero es eliminar se puede distingir por el icono de <DeleteIcon color="rojo" />
-                                    este boton nos permite eliminar el controlador en caso de ser necesario. el siguiente icono es el de ajustes el cual tiene el siguiente icono <SettingsIcon color="gris" /> , este boton nos da acceso  a una
-                                    ventana con la posibilidad de configurar los datos del controlador tales como Nombre,Ip y Canton.
+                                <li> <strong>Última Conexión:</strong> Nos indica de la última vez que se accedió a las configuraciones del controlador.</li>
+                                <li><strong>Nombre:</strong> Es el nombre asignado al controlador.</li>
+                                <li><strong>Online:</strong> Nos indica si actualmente el controlador se encuentra accesible, si está en rojo significa que posiblemente el controlador esté presentando algún tipo de fallo.</li>
+                                <li><strong>Ip:</strong> Es la IP actual del controlador.</li>
+                                <li><strong>Modelo</strong> Hitraffic dispone de varios modelos de controlador, en este caso aquí nos indicará el modelo actual del controlador.</li>
+                                <li><strong>Canton:</strong> Es el cantón donde está ubicado el controlador.</li>
+                                <li><strong>Acciones:</strong> Existen 3 botones que nos permiten realizar diferentes acciones, el primero es eliminar, se puede distinguir por el icono de  <DeleteIcon color="rojo" />
+                                este botón nos permite eliminar el controlador en caso de ser necesario. El siguiente icono es el de ajustes el cual tiene el siguiente icono <SettingsIcon color="gris" /> este botón nos da acceso a una ventana con la posibilidad de configurar los datos del controlador tales como Nombre, IP y Cantón.
                                 </li>
                             </ul>
                         </Grid>
                         <Grid item xs={12} md={4}>
 
-                            <img src={individual_ref2} alt="" width={280} height={240} className="img-vistainfo" />
+                            <img src={individual_ref2} alt="" width={280} height={280} className="img-vistainfo" />
 
                         </Grid>
                         <Grid item xs={12} md={8}>
                             <p>
-                                Cuando se cambien los valores dentro de los campos de texto se debera hacer click en el boton guardar,
-                                esto ocasionara que se actualice la informacion de la base de datos del controlador. <strong>Nota:</strong>
-                                es sumamente importante realizar el cambio del valor de la IP solo si se ha realizado el cambio fisico de la ip
-                                del controlador, para ello debera acceder al controlador manualmente y realizar el cambio de Ip con el software original.
-                                Si no se a realizado cambios en la Ip no se deberia cambiar este parametro ya que inabilitaria la comunicacion entre la central
-                                y el controlador. El ultimo boton es el de informacion y tiene el siguiente aspecto <InfoIcon color="warning" /> , el boton de informacion nos
-                                permite visualizar datos del controlador tales como , latitud - longitud - nombre - ip - mac y canton.
+                            Cuando se cambien los valores dentro de los campos de texto se deberá hacer clic en el botón guardar, esto ocasionará que se actualice la información de la base de datos del controlador.
+                            </p>
+                            <p>
+                            <strong>Nota:</strong> es sumamente importante realizar el cambio del valor de la IP solo si se ha realizado el cambio físico de la IP del controlador, para ello deberá acceder al controlador manualmente y realizar el cambio de IP con el software original. Si no sé a realizados cambios en la IP, no se debería cambiar este parámetro, ya que inhabilitaría la comunicación entre la central y el controlador.
+                            </p>
+                            <p>
+                            El último botón es el de información y tiene el siguiente aspecto <InfoIcon color="warning" /> ,
+                            El botón de información nos permite visualizar datos del controlador tales como , latitud, longitud, nombre, IP , Mac y cantón.
                             </p>
                         </Grid>
                         <Grid item xs={12} md={12}>
@@ -97,11 +98,13 @@ export default function InfoView() {
                                 Creacion y Filtrado de Nuevos Controladores
                             </h5>
                             <p>
-                                La vista de inicio de las configuraciones individuales dispone de una seccion de filtros que nos
-                                dan la capacidad de especificar los controladores de interes de acuerdo al modelo o al canton , una vez que se
-                                selcciona el controlador o modelo objetivo se debe hacer click al boton filtrar , eso ocasionara que en la tabla solo aparezcan
-                                los controladores especificos.  Adicionalmente tambien se pueden crear nuevos controladores haciendo click en el boton de crear
-                                controlador , una vez que hace click le aparecera una ventana con un formulario para llenar.
+                            La página de inicio de las configuraciones individuales cuenta con una sección de filtros que nos permite especificar los controladores de interés
+                             según el modelo o el cantón. Una vez seleccionado el controlador o modelo objetivo, simplemente hacemos clic en el botón 'Filtrar', lo que hará
+                              que en la tabla solo aparezcan los controladores específicos que buscamos.
+                            </p>
+                            <p>
+                            Además, también es posible crear nuevos controladores haciendo clic en el botón 'Crear controlador'. Al hacerlo, se abrirá una ventana emergente
+                             con un formulario para que puedas llenar los detalles del nuevo controlador.
                             </p>
                             <SimpleBar dir="row">
                                 <img src={i_ref2} alt="" width={800} height={130} className="img-vistainfo" />
@@ -111,13 +114,10 @@ export default function InfoView() {
 
                         <Grid item xs={12} md={6}>
                             <p>
-                                Para la creación de los nuevos controladores, se deben seguir varios pasos importantes.
-                                En primer lugar, es fundamental contar con los datos del controlador,
-                                como su dirección IP y el Cantón donde se encuentra instalado.
-                                A continuación, se procede a seleccionar el modelo específico del controlador que se desea crear.
-                                Es crucial destacar que la IP del controlador debe coincidir exactamente
-                                con la configuración establecida en el mismo. De esta forma,
-                                se garantiza un correcto funcionamiento y conectividad del nuevo controlador.
+                            Para la creación de nuevos controladores, es importante seguir una serie de pasos clave. En primer lugar, asegúrate de contar con los datos necesarios del controlador, como su dirección IP y la ubicación en el Cantón donde está instalado. Luego, procede a seleccionar el modelo específico del controlador que deseas crear.
+                            </p>
+                            <p>
+                            Es fundamental destacar que la IP del controlador debe coincidir exactamente con la configuración establecida en el mismo. De esta manera, se garantizará un funcionamiento y conectividad adecuados para el nuevo controlador, asegurando así una correcta integración en el sistema. Siguiendo estos pasos, podrás crear nuevos controladores de manera efectiva y eficiente.
                             </p>
                         </Grid>
                         <Grid item xs={12} md={6}>
@@ -130,9 +130,9 @@ export default function InfoView() {
                                 durante el proceso de creación. En caso de que el controlador
                                 no esté en línea, no será posible generar el nuevo controlador.
                             </p>
-                            <h3>
+                            <h5>
                                 Configuración de Controladores
-                            </h3>
+                            </h5>
                             <p>Para acceder a las configuraciones del controlador debe hacer clic en el boton  <Button variant="contained" color="oscuro" >Programar</Button> en el controlador
                                 al cual se requiere configurar , esto provocara que se redireccione a una nueva vista donde dispondra de un menu con todas las
                                 posibles configuraciones que se pueden realizar dentro del controlador. Al inicio la aparecera una vista Informativa del controlador
@@ -179,9 +179,9 @@ export default function InfoView() {
                             <SimpleBar dir="row">
                                 <img src={i_ref7} style={{ marginBottom: 15 }} alt="" width={800} height={320} className="img-vistainfo" />
                             </SimpleBar>
-                            <h3>
+                            <h5>
                                 Uso del  Control Manual
-                            </h3>
+                            </h5>
                             <p>
                                 La funcionalidad de control manual ofrece al usuario la capacidad de enviar comandos instantáneos a los controladores para que se activen de inmediato después de recibir la orden correspondiente. Sin embargo, para asegurar un funcionamiento adecuado, es necesario establecer previamente un valor de tiempo para desactivar el modo manual. Una vez transcurrido ese tiempo, el controlador volverá automáticamente al modo automático, evitando así quedar enclavado en el modo manual y permitiendo que retome sus funciones normales.
                             </p>
@@ -191,9 +191,9 @@ export default function InfoView() {
                             <SimpleBar dir="row">
                                 <img src={i_ref8} alt="" style={{ marginBottom: 14 }} width={800} height={350} className="img-vistainfo" />
                             </SimpleBar>
-                            <h5>
+                            <h6>
                                 Funciones del Control Manual
-                            </h5>
+                            </h6>
                             <ul>
                                 <li><strong>Destello:</strong> Manda a destellar a los grupos del controlador objetivo</li>
                                 <li><strong>Todo en Rojo:</strong> Todos los grupos se ponen en Rojo</li>
@@ -202,9 +202,9 @@ export default function InfoView() {
                                 <li><strong>Mantener el Paso</strong> Se queda enclavado en una fase en específico.</li>
                                 <li><strong>Pasar a Automatico:</strong>Nos devuelve al modo de funcionamiento normal</li>
                             </ul>
-                            <h3>
+                            <h5>
                                 Configuración de Parámetros Iniciales
-                            </h3>
+                            </h5>
                             <p>
                                 la configuracion de parametros iniciales establece por defecto los tiempos maximos y minimos
                                 que se pueden ser configurados en los controladores , adicionalmente tambien nos facilita la
@@ -213,15 +213,15 @@ export default function InfoView() {
                             <SimpleBar dir="row">
                                 <img src={i_ref9} alt="" style={{ marginBottom: 14 }} width={800} height={220} className="img-vistainfo" />
                             </SimpleBar>
-                            <h3>
+                            <h5>
                                 Configuración Basica
-                            </h3>
+                            </h5>
                             <p>
                                 La Configuración Básica es una herramienta que simplifica la programación del controlador, ya que nos permite programarlo sin tener que acceder a cada una de las pestañas de configuración y modificar los valores manualmente. En esencia, esta vista genera automáticamente todas las configuraciones necesarias para lograr el resultado deseado de manera más eficiente. Así, podemos ahorrar tiempo y esfuerzo al obtener rápidamente el controlador listo para su funcionamiento óptimo.
                             </p>
-                            <h5>
+                            <h6>
                                 Configuración de un nuevo plan
-                            </h5>
+                            </h6>
                             <SimpleBar dir="row">
                                 <img src={i_ref11} alt="" style={{ marginBottom: 14 }} width={800} height={150} className="img-vistainfo" />
                             </SimpleBar>
@@ -259,9 +259,9 @@ export default function InfoView() {
                             <SimpleBar dir="row">
                                 <img src={i_ref12} alt="" style={{ marginBottom: 14 }} width={800} height={240} className="img-vistainfo" />
                             </SimpleBar>
-                            <h3>
+                            <h5>
                                 Configuración de Fases
-                            </h3>
+                            </h5>
                             <p>
                                 El propósito de las fases es activar las salidas de los grupos de acuerdo con la secuencia especificada. Puedes declarar hasta un máximo de 16 fases, según
                                 las necesidades de la intersección.Para agregar cada fase, simplemente haz clic en el botón "Agregar Fase", y automáticamente se desplegarán todas las opciones de configuración necesarias.
@@ -301,9 +301,9 @@ export default function InfoView() {
                             Las Fases creadas pueden ser editadas haciendo clic en el boton de ajustes <SettingsIcon color="gris" /> , entre los ajustes
                             que nos indicara un formulario similar al de crear para configurar las fases del controlador , en el caso
                             de que se requiera eliminar puede hacer cliic en el boton <DeleteIcon color="rojo" />
-                            <h3>
+                            <h5>
                                 Configuración de Secuencias
-                            </h3>
+                            </h5>
                             <p>las secuencias se encargan de ir ejcutando las fases secuencialmente o en parallelo , dependiendo de la configuracion que se establezca</p>
 
 
@@ -327,9 +327,9 @@ export default function InfoView() {
                             <img src={i_ref14} alt="" width={310} height={340} className="img-vistainfo" />
                         </Grid>
                         <Grid item xs={12} >
-                            <h3>
+                            <h5>
                                 Configuración de los Tiempos de Fase
-                            </h3>
+                            </h5>
                             <p>
                                 La ventana permite la configuración de hasta 20 tiempos diferentes y cada una puede contener hasta 16 fases con tiempos y parámetros asignados de funcionamiento.
                             </p>
@@ -357,9 +357,9 @@ export default function InfoView() {
                             </ol>
                         </Grid>
                         <Grid item xs={12} >
-                            <h3>
+                            <h5>
                                 Configuración de Patrón
-                            </h3>
+                            </h5>
                             <p>
                                 Nos permite la configuración del desfase, secuencia, tiempo y modo operativo,
                                 además de calcular automáticamente el ciclo de trabajo en función al numero de secuencia y tiempo ingresado.
@@ -404,12 +404,71 @@ export default function InfoView() {
                             ya se tendria configurado esta vista dentro del controlador.
                         </Grid>
                         <Grid item xs={12} >
-                            <h3>
+                            <h5>
                                 Configuración de Plan
-                            </h3>
-                          
+                            </h5>
                         </Grid>
+                        <Grid item xs={12} md={7}>
+                            <ol>
+                                <li>
+                                    Escoga la accion de interes que va ejecutar el plan.
+                                </li>
+                                <li>
+                                    Seleccione una hora y minuto de ejecucion en el formato de 24 horas.
+                                </li>
+                                <li>
+                                    Acepte los cambios.
+                                </li>
+                            </ol>
+                            <p>este plan luego se vera reflejado en la tabla de planes creados donde podra editar y eliminar a su gusto</p>
+                        </Grid>
+                        <Grid item xs={12} md={5}>
+                            <img src={i_ref18} alt="" style={{ marginBottom: 14 }} width={280} height={200} className="img-vistainfo" />
+                        </Grid>
+                        <Grid item xs={12} >
+                            <h5>
+                                Configuración de Calendario
+                            </h5>
+                            <p>En la configuracion de calendario unicamente se va a especificar los dias y meses que va a estar habilitado determinado plan
+                                ,dandonos la posibilidad de trabajar con diferentes planes de acuerdo a la ocasion.
+                            </p>
+                            <SimpleBar dir="row">
+                                <img src={i_ref19} alt="" style={{ marginBottom: 14 }} width={800} height={220} className="img-vistainfo" />
+                            </SimpleBar>
+                        </Grid>
+                        <Grid item xs={12} >
+                            <h5>
+                                Configuración de Canal
+                            </h5>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                                <img src={i_ref20} alt="" style={{ marginBottom: 14 }} width={260} height={340} className="img-vistainfo" />
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                            <p>
+                                cada grupo se encargara de controlar tanto un semaforo peatonal o un vehicular por lo tanto la configuracion de 
+                                canales nos permite la configuracion de estos eqipos de una manera mas sencilla.
+                            </p>
+                            <ol>
+                                <li>
+                                    Escoga la fase que va a controlar ese grupo.
+                                </li>
+                                <li>
+                                    Seleccione el tipo de grupo que esta configurando.
+                                </li>
+                                <li>
+                                    Asigne que tipo de destello va tener el grupo.
+                                </li>
+                                <li>
+                                    Escoga el parametro de atenuacion.
+                                </li>
+                                <li>
+                                    Escoga la orientacion y direccion del controlador.
+                                </li>
+                            </ol>
+                            </Grid>
                     </Grid>
+
                 </Container>
             </SimpleBar>
 

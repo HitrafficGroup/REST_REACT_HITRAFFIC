@@ -513,7 +513,7 @@ export default function HorariosHT200View(){
                         />
                     </Grid>
                 <Grid item xs={12} md={4} >
-                        <Button color='azulm' variant="contained" fullWidth onClick={abrirModalCrear}  >Agregar Fase</Button>
+                        <Button color='azulm' variant="contained" fullWidth onClick={abrirModalCrear}  >Agregar Horarios</Button>
                     </Grid>
                 <Grid item md={4} xs={12}>
                         <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={readData}  >Leer Datos</Button>
@@ -649,7 +649,7 @@ export default function HorariosHT200View(){
                     <Grid container spacing={4}>
 
                         <Grid item xs={12} md={12}>
-                            <FormControl fullWidth>
+                            <FormControl variant="standard" fullWidth>
                                     <InputLabel id="demo-simple-select-label">day_plan</InputLabel>
                                     <Select
                                         labelId="demo-simple-select-label"
@@ -818,8 +818,7 @@ export default function HorariosHT200View(){
                                 label="9"
                             />
                             <FormControlLabel
-                                control={
-                                <Checkbox checked={fecha.dia10} onChange={handleFecha} name="dia10"  size="small" />
+                                control={<Checkbox checked={fecha.dia10} onChange={handleFecha} name="dia10"  size="small" />
                                 }
                                 label="10"
                             />
