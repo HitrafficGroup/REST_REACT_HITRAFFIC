@@ -253,7 +253,7 @@ export default function PlanHT200View(){
                                                 align={"center"}
                                              
                                             >
-                                                Accion
+                                                Acción
                                             </TableCell>
                                             <TableCell
                                                 key={"acciones"}

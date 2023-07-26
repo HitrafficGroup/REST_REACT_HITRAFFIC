@@ -8,6 +8,7 @@ import { CardActionArea } from '@mui/material';
 import individual from '../assets/individual.jpg';
 import grupal from '../assets/grupal.jpg';
 import simulacion from '../assets/simulacion.jpg';
+import manual from "../assets/manual_fondo.jpg"
 import Grid from '@mui/material/Grid';
 import { useNavigate } from 'react-router-dom';
 export default function HomeView() {
@@ -99,7 +100,7 @@ export default function HomeView() {
                                     <CardMedia
                                         component="img"
                                         height="140"
-                                        image={simulacion}
+                                        image={manual}
                                         alt="simulacion"
                                     />
                                     <CardContent>

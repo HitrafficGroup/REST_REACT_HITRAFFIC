@@ -186,13 +186,13 @@ export default function FasesHT200View() {
                                         Fase Nro
                                         </TableCell>
                                         <TableCell  align={'center'}>
-                                        Ped walk
+                                        Verde Peatonal
                                         </TableCell>
                                         <TableCell  align={'center'}>
-                                        ped clear
+                                        Destello Peatonal
                                         </TableCell>
                                         <TableCell  align={'center'}>
-                                        Mini green
+                                        Mínimo Verde
                                         </TableCell>
                                         <TableCell  align={'left'}>
                                         Acciones

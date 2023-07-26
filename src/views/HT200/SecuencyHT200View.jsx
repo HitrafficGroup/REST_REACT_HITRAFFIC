@@ -297,7 +297,7 @@ export default function SecuencyHT200View() {
                 <ModalHeader>
                     <div>
                         <h1>
-                            Editar
+                            Editar secuencia 
                         </h1>
                     </div>
                 </ModalHeader>

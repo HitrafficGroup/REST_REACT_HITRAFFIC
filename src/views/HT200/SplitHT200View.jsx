@@ -305,7 +305,7 @@ export default function SplitHT200View() {
                                     <TableRow>
                                         <TableCell
                                                 key={"num"}
-                                                align={"left"}
+                                                align={"center"}
                                             >
                                             Fase
                                             </TableCell>
@@ -322,7 +322,7 @@ export default function SplitHT200View() {
                                                 align={"center"}
                                               
                                             >
-                                            Mode
+                                            Modo
                                             </TableCell>
                                             <TableCell
                                                 key={"grupo3"}
@@ -358,7 +358,7 @@ export default function SplitHT200View() {
                                         .map((dato,index) => {
                                             return (
                                                 <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                                                     <TableCell  align={"left"}>
+                                                     <TableCell  align={"center"}>
                                                         {dato.fase}
                                                      </TableCell>
                                                     <TableCell  align={"center"}>

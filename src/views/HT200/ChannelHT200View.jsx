@@ -220,24 +220,24 @@ export default function ChannelHT200View(){
                                             
                                             <TableCell
                                                 key={"source"}
-                                                align={"left"}
+                                                align={"center"}
                                               
                                             >
-                                                control source
+                                                Fase
                                             </TableCell>
                                             <TableCell
                                                 key={"type"}
-                                                align={"left"}
+                                                align={"center"}
                                     
                                             >
-                                                control type
+                                               Tipo
                                             </TableCell>
                                             <TableCell
                                                 key={"flash"}
-                                                align={"left"}
+                                                align={"center"}
                                              
                                             >
-                                                Flash Parameter
+                                               TIPO DE DESTELLO
                                             </TableCell>
                                             <TableCell
                                                 key={"dim"}
@@ -245,28 +245,28 @@ export default function ChannelHT200View(){
                                             
                                             
                                             >
-                                                Dim Parameter
+                                                ATENUACIÓN
                                             </TableCell>
                                             <TableCell
                                                 key={"orientation"}
                                                 align={"left"}
                                           
                                             >
-                                                Orientation
+                                                Orientación
                                             </TableCell>
                                             <TableCell
                                                 key={"direction"}
                                                 align={"left"}
                                       
                                             >
-                                                Direction
+                                                Dirección
                                             </TableCell>
                                             <TableCell
                                                 key={"countdown"}
                                                 align={"left"}
                                           
                                             >
-                                                Countdown timmer ID
+                                                Id Temporizador
                                             </TableCell>
                                             <TableCell
                                                 key={"acciones"}
@@ -282,7 +282,7 @@ export default function ChannelHT200View(){
                                         .map((row,index) => {
                                             return (
                                                 <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                                                    <TableCell  align={"center"}>
+                                                    <TableCell  align={"left"}>
                                                         {"grupo-"+row.number}
                                                     </TableCell>
                                                     <TableCell  align={"center"}>

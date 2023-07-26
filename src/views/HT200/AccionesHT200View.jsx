@@ -314,12 +314,12 @@ export default function AccionesHT200View(){
                       
                         <Grid item xs={12} md={12}>
                         <FormControl variant='standard' fullWidth>
-                                <InputLabel id="demo-simple-select-label">Pattern</InputLabel>
+                                <InputLabel id="demo-simple-select-label">Patron</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     value={currentAction.patron}
-                                    label="Pattern"
+                                    label="Patron"
                                     name="patron"
                                     onChange={handleChange}
                                 >
@@ -430,12 +430,12 @@ export default function AccionesHT200View(){
                         </Grid>
                         <Grid item xs={12} md={12}>
                         <FormControl variant='standard' fullWidth>
-                                <InputLabel id="demo-simple-select-label">Pattern</InputLabel>
+                                <InputLabel id="demo-simple-select-label">Patron</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     value={currentAction.patron}
-                                    label="Pattern"
+                                    label="Patron"
                                     name="patron"
                                     onChange={handleChange}
                                 >

@@ -199,35 +199,35 @@ export default function PatternHT200View() {
                                                 align={"center"}
                                                 style={{ minWidth: 100 }}
                                             >
-                                                Pattern
+                                                PATRÓN
                                             </TableCell>
                                             <TableCell
                                                 key={"sequencenumber"}
                                                 align={"center"}
                                                 style={{ minWidth: 100 }}
                                             >
-                                                Sequencenumber
+                                                Número de Secuencia
                                             </TableCell>
                                             <TableCell
                                                 key={"splitnumber"}
                                                 align={"center"}
                                                 style={{ minWidth: 100 }}
                                             >
-                                                Splitnumber
+                                                split
                                             </TableCell>
                                             <TableCell
                                                 key={"offsettime"}
                                                 align={"center"}
                                                 style={{ minWidth: 100 }}
                                             >
-                                                Offsettime
+                                                Desfase
                                             </TableCell>
                                          <TableCell
                                                 key={"workmode"}
                                                 align={"center"}
                                                 style={{ minWidth: 100 }}
                                             >
-                                                Workmode
+                                                Modo de Trabajo
                                             </TableCell>
                                          <TableCell
                                                 key={"Acciones"}
