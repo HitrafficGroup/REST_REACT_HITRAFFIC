@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Typography from '@mui/material/Typography';
-
 import Button from '@mui/material/Button';
-
-import { collection, query, getDocs } from "firebase/firestore";
+import { getPatternHT200, PostPatternHT200 } from "../js/apiFunctionsHT200";
+import { collection, query, getDocs, onSnapshot, updateDoc, doc,getDoc } from "firebase/firestore";
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -18,6 +17,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
+import { generatePatternFrame } from "../js/generateFrameApiHT200";
 //
 import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred';
 import OnlinePredictionIcon from '@mui/icons-material/OnlinePrediction';
@@ -27,17 +27,28 @@ import PanToolIcon from '@mui/icons-material/PanTool';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import { SideNavMaster } from "../dashboard-master/side-nav-master";
 import { TopNavMaster } from "../dashboard-master/top-nav-master";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+
 export default function VistaMaestraView() {
     const [tiempo, setTiempo] = useState(30)
     const [openNav, setOpenNav] = useState(false);
     const [checked, setChecked] = React.useState([]);
     const [left, setLeft] = useState([]);
     const [right, setRight] = useState([]);
-
-
-
+    const [controladores, setControladores] = useState([]);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [page, setPage] = useState(0);
+    const [desfase, setDesfase] = useState(0);
     const leftChecked = intersection(checked, left);
     const rightChecked = intersection(checked, right);
+
     const handleToggle = (value) => () => {
         const currentIndex = checked.indexOf(value);
         const newChecked = [...checked];
@@ -48,6 +59,14 @@ export default function VistaMaestraView() {
             newChecked.splice(currentIndex, 1);
         }
         setChecked(newChecked);
+    };
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(+event.target.value);
+        setPage(0);
     };
 
     function not(a, b) {
@@ -84,30 +103,88 @@ export default function VistaMaestraView() {
     }
 
 
-    const readData = async () => {
-        const q = query(collection(db, "controladores"));
-        let data_firebase = []
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-            data_firebase.push(doc.data())
+    const readData = () => {
+
+        const q = query(collection(db, "historial_controladores"));
+
+        onSnapshot(q, (querySnapshot) => {
+            let data_firebase = []
+            querySnapshot.forEach((doc) => {
+
+                data_firebase.push(doc.data());
+            });
+            let data_filter = data_firebase.filter(item => item.modelo === "HT-200" && item.online === true)
+            let modify_data = data_filter.map(item => {
+                let temp = {
+                    nombre: item.nombre,
+                    ip: item.ip,
+                    id: item.id,
+                    online: item.online,
+                    selected: false,
+                }
+                return temp;
+            })
+            console.log(modify_data);
+            setControladores(modify_data);
+            setLeft(modify_data);
+            setRight([])
         });
-        let data_filter = data_firebase.filter(item => item.modelo === "HT-200")
-        let modify_data = data_filter.map(item => {
-            let temp = {
-                nombre: item.nombre,
-                ip: item.ip,
-                id: item.id,
+    }
+
+    const updateFirebase = async (ip) => {
+        const ref = doc(db, "controladores", ip);
+        let aux_data = {}
+        aux_data['planificacion'] = {}
+        await updateDoc(ref, aux_data);
+    }
+    const seleccionarControlador = (__data) => {
+        let aux_controllers = JSON.parse(JSON.stringify(controladores))
+        let modify_controllers = aux_controllers.map((item) => {
+            if (item.id === __data.id) {
+                item.selected = !item.selected
             }
-            return temp;
+            return item
         })
-        console.log(modify_data)
+        setControladores(modify_controllers);
+    }
 
-        setLeft(modify_data)
-        setRight([])
+    const cargarOlaVerde = async () => {
+        let offset = parseInt(desfase)
+        let init_offset = 0
+        right.forEach(async(item)=>{
+            const ref = doc(db, "controladores", item.id);
+            const docSnap = await getDoc(ref);
+            if (docSnap.exists()) {
+                // Convert to City object
+                const controller = docSnap.data();
+                let patron = controller.pattern
+                
+                patron.forEach(item=>{
+                    item.offsettime = init_offset
+                })
+                let array_data = generatePatternFrame(patron)
+                await PostPatternHT200({trama:array_data,ip:item.ip})
+                init_offset = init_offset + offset
+                
+                // Use a City instance method
+              } else {
+                console.log("No such document!");
+              }
+              
+         
+        })
+        // let array_data = []
 
+        // array_data = generatePatternFrame(__data.trama)
+        // 
+        // //updateFirebase('pattern',data)
 
     }
 
+    const traerDatosFirebase = async () => {
+        let data_firebase = []
+        
+    }
 
     const modoManual = async (__param) => {
         let aux_p = 49
@@ -118,13 +195,16 @@ export default function VistaMaestraView() {
         let aux_1 = tiempo_modo & 0xff
         let aux_2 = (tiempo_modo >> 8) & 0xff
         let array_data = [15, 1, aux_p, __param, 0, 0, aux_1, aux_2]
-        right.forEach(async(item)=>{
+        let datos = JSON.parse(JSON.stringify(controladores))
+        let filter_data = datos.filter(item => item.selected === true);
+        filter_data.forEach(async (item) => {
             console.log(item.ip)
             await setModoManual({ trama: array_data, ip: item.ip });
         })
-        
-        
+
+
     }
+
 
     const customList = (title, items) => (
         <Card>
@@ -175,7 +255,6 @@ export default function VistaMaestraView() {
                                     inputProps={{
                                         'aria-labelledby': labelId,
                                     }}
-
                                 />
                             </ListItemIcon>
                             <div className='label-clonacion'>
@@ -193,36 +272,37 @@ export default function VistaMaestraView() {
         </Card>
     );
 
+
+    useEffect(() => {
+        readData();
+        //eslint-disable-next-line
+    }, []);
     return (
         <>
-                
-            <TopNavMaster onNavOpen={() => setOpenNav(true)}/>
-            <SideNavMaster open={openNav} onClose={() => setOpenNav(false)}/>
+
+            <TopNavMaster onNavOpen={() => setOpenNav(true)} />
+            <SideNavMaster open={openNav} onClose={() => setOpenNav(false)} />
             <Container maxWidth="lg" sx={{ paddingTop: 3 }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <Typography variant="h4" gutterBottom>
-                            Control Maestro
+                        <Typography variant="h5" gutterBottom>
+                            Control Manual de multiples controladores
                         </Typography>
                     </Grid>
-                    <Grid item  xs={12} md={3}>
+                    <Grid item xs={12} md={3}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <Button variant="contained" onClick={readData} fullWidth color='verde'>Leer Datos</Button>
-                            </Grid>
                             <Grid item xs={12} >
-
-                            <TextField
-                                                    id="outlined-number"
-                                                    label="Tiempo para finalizar modo Manual"
-                                                    type="number"
-                                                    onChange={(event)=>{setTiempo(event.target.value)}}
-                                                    value={tiempo}
-                                                    fullWidth
-                                                    InputLabelProps={{
-                                                        shrink: true,
-                                                    }}
-                                                    />
+                                <TextField
+                                    id="outlined-number"
+                                    label="Tiempo para finalizar modo Manual"
+                                    type="number"
+                                    onChange={(event) => { setTiempo(event.target.value) }}
+                                    value={tiempo}
+                                    fullWidth
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
                             </Grid>
                             <Grid item xs={12}>
                                 <Button variant="contained" onClick={() => { modoManual(48) }} fullWidth color='amarillo' startIcon={<OnlinePredictionIcon />}>
@@ -258,6 +338,106 @@ export default function VistaMaestraView() {
                     </Grid>
                     <Grid item xs={12} md={9}>
                         <Container maxWidth="md" >
+                            <Paper sx={{ width: '100%', mb: 2 }}>
+
+                                <TableContainer sx={{ maxHeight: 440 }}>
+                                    <Table stickyHeader aria-label="sticky table">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell
+                                                    key={"id"}
+                                                    align={"center"}
+                                                >
+                                                    Nombre
+                                                </TableCell>
+                                                <TableCell
+                                                    key={"hora"}
+                                                    align={"center"}
+                                                >
+                                                    IP
+                                                </TableCell>
+                                                <TableCell
+                                                    key={"acciones"}
+                                                    align={"center"}
+                                                >
+                                                    Seleccionar
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {controladores
+                                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                                .map((row, index) => {
+                                                    return (
+                                                        <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                                            <TableCell align={"center"}>
+                                                                {row.nombre}
+                                                            </TableCell>
+                                                            <TableCell align={"center"}>
+                                                                {row.ip}
+                                                            </TableCell>
+                                                            <TableCell align={"center"}>
+                                                                <Checkbox
+                                                                    onClick={() => { seleccionarControlador(row) }}
+                                                                    checked={row.selected}
+                                                                    tabIndex={-1}
+                                                                    disableRipple
+                                                                    inputProps={{
+                                                                        'aria-labelledby': 1,
+                                                                    }}
+                                                                />
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    );
+                                                })}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                                <TablePagination
+                                    rowsPerPageOptions={[10, 25, 100]}
+                                    component="div"
+                                    count={controladores.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                />
+                            </Paper>
+
+                        </Container>
+
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                        <Typography variant="h5" gutterBottom>
+                            Configuracion de ola verde manual
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                        <Grid container spacing={2}>
+
+                            <Grid item xs={12} >
+                                <TextField
+                                    id="outlined-number"
+                                    label="Desfase de Ola Verde"
+                                    type="number"
+                                    size="small"
+                                    value={desfase}
+                                    onChange={(event) => { setDesfase(event.target.value) }}
+                                    fullWidth
+                                    sx={{ marginRight: 2 }}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button fullWidth variant="outlined" sx={{ height: '100%' }} onClick={cargarOlaVerde} >CREAR OLA VERDE</Button>
+                            </Grid>
+
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} md={9}>
+                        <Container maxWidth="md" >
                             <Grid container spacing={2} justifyContent="center" alignItems="center">
 
                                 <Grid item xs={12} md={5}>{customList('Dispositivos Disponibles', left)}</Grid>
@@ -286,15 +466,11 @@ export default function VistaMaestraView() {
                                     </Grid>
                                 </Grid>
                                 <Grid item xs={12} md={5}>{customList('Dispositivos Seleccionados', right)}</Grid>
-
-
-                                <Grid item xs={12} md={12}>
-                                    <div style={{ height: 8 }}>
-                                    </div>
-                                </Grid>
                             </Grid>
                         </Container>
+
                     </Grid>
+
                 </Grid>
             </Container>
         </>
