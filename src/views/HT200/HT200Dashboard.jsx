@@ -16,7 +16,7 @@ import RegistroErroresHT200View from "./RegistroErroresHT200View";
 import ClonacionHT200View from "./ClonacionHT200View";
 import { Layout } from "../../dashboard/layout";
 import SimpleBar from 'simplebar-react';
-
+import ResumenHT200View from "./ResumenHT200View";
 export default function HT200Dashboard(){
     return (
         <>
@@ -38,6 +38,7 @@ export default function HT200Dashboard(){
                 <Route path="pruebas" element={<PruebasView />} />
                 <Route path="errores" element={<RegistroErroresHT200View />} />
                 <Route path="clonacion" element={<ClonacionHT200View />} />
+                <Route path="resumen" element={<ResumenHT200View />} />
                
             </Routes>  
             </SimpleBar>

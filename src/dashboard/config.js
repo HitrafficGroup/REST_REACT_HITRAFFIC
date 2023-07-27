@@ -4,6 +4,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import { SvgIcon } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 export const items = [
   {
     title: 'Controladores',
@@ -50,5 +51,14 @@ export const items = [
       </SvgIcon>
     )
   },
+  {
+    title: 'Resumen del Controlador',
+    path: '/controlador_HT200/resumen',
+    icon: (
+      <SvgIcon fontSize="small">
+        <AssignmentIcon />
+      </SvgIcon>
+    )
+  }
 
 ];

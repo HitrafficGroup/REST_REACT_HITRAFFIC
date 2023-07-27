@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { getPatternHT200, PostPatternHT200 } from "../js/apiFunctionsHT200";
-import { collection, query, getDocs, onSnapshot, updateDoc, doc,getDoc } from "firebase/firestore";
+import {  PostPatternHT200 } from "../js/apiFunctionsHT200";
+import { collection, query, onSnapshot, doc,getDoc } from "firebase/firestore";
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -124,19 +124,13 @@ export default function VistaMaestraView() {
                 }
                 return temp;
             })
-            console.log(modify_data);
             setControladores(modify_data);
             setLeft(modify_data);
             setRight([])
         });
     }
 
-    const updateFirebase = async (ip) => {
-        const ref = doc(db, "controladores", ip);
-        let aux_data = {}
-        aux_data['planificacion'] = {}
-        await updateDoc(ref, aux_data);
-    }
+  
     const seleccionarControlador = (__data) => {
         let aux_controllers = JSON.parse(JSON.stringify(controladores))
         let modify_controllers = aux_controllers.map((item) => {
@@ -159,13 +153,14 @@ export default function VistaMaestraView() {
                 const controller = docSnap.data();
                 let patron = controller.pattern
                 
-                patron.forEach(item=>{
+                let patron_modify = patron.map(item=>{
                     item.offsettime = init_offset
+                    return item
                 })
-                let array_data = generatePatternFrame(patron)
-                await PostPatternHT200({trama:array_data,ip:item.ip})
+                let array_data = generatePatternFrame(patron_modify)
                 init_offset = init_offset + offset
-                
+                await PostPatternHT200({trama:array_data,ip:item.ip})
+           
                 // Use a City instance method
               } else {
                 console.log("No such document!");
@@ -173,18 +168,10 @@ export default function VistaMaestraView() {
               
          
         })
-        // let array_data = []
-
-        // array_data = generatePatternFrame(__data.trama)
-        // 
-        // //updateFirebase('pattern',data)
 
     }
 
-    const traerDatosFirebase = async () => {
-        let data_firebase = []
-        
-    }
+
 
     const modoManual = async (__param) => {
         let aux_p = 49
