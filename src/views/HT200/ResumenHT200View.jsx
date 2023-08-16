@@ -69,9 +69,6 @@ export default function  ResumenHT200View(){
         });
         console.log(data_horarios)
         setHorarios(data_horarios)
-
-
-
     }
     const factor2 = 2
     const sf = 20

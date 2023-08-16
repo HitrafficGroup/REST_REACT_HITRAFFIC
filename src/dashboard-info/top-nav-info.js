@@ -97,27 +97,27 @@ export const TopNavInfo = (props) => {
                 </SvgIcon>
               </IconButton>
           
-            <Tooltip title="Search">
+            {/* <Tooltip title="Search">
               <IconButton>
                 <SvgIcon fontSize="small">
                   <MagnifyingGlassIcon />
                 </SvgIcon>
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
           </Stack>
           <Stack
             alignItems="center"
             direction="row"
             spacing={2}
           >
-            <Tooltip title="Inicio">
+            {/* <Tooltip title="Inicio">
               <IconButton>
                 <SvgIcon fontSize="small">
                   <WebIcon />
                 </SvgIcon>
               </IconButton>
-            </Tooltip>
-            <Tooltip title="Notifications">
+            </Tooltip> */}
+            {/* <Tooltip title="Notifications">
               <IconButton>
                 <Badge
                   badgeContent={4}
@@ -129,7 +129,7 @@ export const TopNavInfo = (props) => {
                   </SvgIcon>
                 </Badge>
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
             <Avatar 
             {...stringAvatar(`${userState.name} ${userState.lastname}`)} 
               onClick={accountPopover.handleOpen}

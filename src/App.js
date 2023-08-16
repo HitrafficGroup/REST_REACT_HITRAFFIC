@@ -23,7 +23,7 @@ function App() {
           <Route path="/home" element={<HomeView/>} />
           <Route path="/monitoreo" element={<MonitoreoView />} />
           <Route path="/informacion" element={<InfoView />} />
-        </Routes>
+      </Routes>
     </div>
   );
 }

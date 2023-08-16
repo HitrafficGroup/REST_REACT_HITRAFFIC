@@ -26,10 +26,10 @@ export default function HomeView() {
                     <Grid item xs={12}>
                         <div className="container-difuminado">
                             <h1  className="titulo-home">
-                                HiTraffic Centralizacion
+                               Software de Control Vehicular
                             </h1>
                             <h3  className="subtitulo-home">
-                                Sistema de Centralizacion para el monitoreo y manipulacion de controladores Remotamente
+                                Sistema de monitoreo y configuracion remota para controladores de transito .
                             </h3>
            
                         </div>

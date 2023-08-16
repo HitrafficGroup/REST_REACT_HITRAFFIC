@@ -492,7 +492,7 @@ export default function ControlersView() {
                     <Grid xs={12} md={8}>
                         <div className="card-controller-filter">
                             <div className="header-controller-filter">
-                                <p className="nombre-card">Controladores</p>
+                                <p className="nombre-card">Lista de Controladores Registrados</p>
                             </div>
                             <div className="card-body-controler">
                                 <Grid container >
