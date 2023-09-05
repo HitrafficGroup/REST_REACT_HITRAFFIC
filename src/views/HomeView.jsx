@@ -29,9 +29,8 @@ export default function HomeView() {
                                Software de Control Vehicular
                             </h1>
                             <h3  className="subtitulo-home">
-                                Sistema de monitoreo y configuracion remota para controladores de transito .
+                                sistema centralizado de monitoreo y configuración remota de controladores de tráfico.
                             </h3>
-           
                         </div>
                     </Grid>
                     <Grid item md={4} xs={12}>
@@ -45,10 +44,10 @@ export default function HomeView() {
                                     />
                                     <CardContent>
                                         <Typography gutterBottom variant="h6" component="div">
-                                        Configuración Individual de Controlador
+                                            Configuración Individual de Controlador
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                        La plataforma de centralización proporciona un acceso sencillo a las configuraciones avanzadas del controlador, a través de una interfaz de usuario amigable. Su objetivo es simplificar el proceso de configuración de cada controlador para el usuario final.
+                                            La plataforma de centralización proporciona un acceso sencillo a las configuraciones avanzadas del controlador, a través de una interfaz de usuario amigable. Su objetivo es simplificar el proceso de configuración de cada controlador para el usuario final.
                                         </Typography>
                                     </CardContent>
                                 </CardActionArea>
@@ -85,11 +84,13 @@ export default function HomeView() {
                                     />
                                     <CardContent>
                                         <Typography gutterBottom variant="h6" component="div">
-                                        Simulación de Intersección en Tiempo Real
+                                            Simulación de Intersección en Tiempo Real
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-
-                                        La funcionalidad de simulación en tiempo real brinda al usuario la capacidad de visualizar el comportamiento del controlador de un semáforo en una ubicación específica. Esto se logra a través de una animación del área donde se encuentra el semáforo.    </Typography>
+                                            La funcionalidad de simulación en tiempo real brinda al usuario la capacidad de visualizar
+                                            el comportamiento del controlador de un semáforo en una ubicación específica.
+                                            Esto se logra a través de una animación del área donde se encuentra el semáforo.
+                                        </Typography>
                                     </CardContent>
                                 </CardActionArea>
                             </Card>
