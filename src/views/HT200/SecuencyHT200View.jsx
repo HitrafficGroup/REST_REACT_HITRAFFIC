@@ -43,25 +43,31 @@ export default function SecuencyHT200View() {
     const [ring,setRing] = useState('ring1');
     const [seqTab, setSeqTab] = useState(0);
     const [seqTarget, setSeqTarget] = useState(controlerState.secuencias[0]);
+    const [disable,setDisable] = useState(true);
     const dispatch = useDispatch();
     const readData = async () => {
         let data = await getSecuencyHT200(controlerState.ip);
-        let data_formated = []
-        data.forEach(element => {
-            let aux_data = element.data
-            let dictionario = {
-                id: element.id,
-                ring1: aux_data[0].filter(item=> item.value !== 0),
-                ring2: aux_data[1].filter(item=> item.value !== 0),
-                ring3: aux_data[2].filter(item=> item.value !== 0),
-                ring4: aux_data[3].filter(item=> item.value !== 0)
-            }
-            data_formated.push(dictionario)
-        });
-        setSeqTarget(data_formated[0])
-        updateFirebase('secuencias', data_formated)
-        dispatch(updateParamsHT200({ target: 'secuencias', data: data_formated }));
-        setSecuencias(data_formated)
+        if(data === false){
+            setDisable(true)
+        }else{
+            let data_formated = []
+            data.forEach(element => {
+                let aux_data = element.data
+                let dictionario = {
+                    id: element.id,
+                    ring1: aux_data[0].filter(item=> item.value !== 0),
+                    ring2: aux_data[1].filter(item=> item.value !== 0),
+                    ring3: aux_data[2].filter(item=> item.value !== 0),
+                    ring4: aux_data[3].filter(item=> item.value !== 0)
+                }
+                data_formated.push(dictionario)
+            });
+            setSeqTarget(data_formated[0])
+            updateFirebase('secuencias', data_formated)
+            dispatch(updateParamsHT200({ target: 'secuencias', data: data_formated }));
+            setSecuencias(data_formated)
+            setDisable(false)
+        }
     }
 
     const configurarSecuencia = (__data,ring_target) => {
@@ -170,7 +176,7 @@ export default function SecuencyHT200View() {
                         <Button color='verde' variant="contained"  fullWidth onClick={readData}  >leer datos</Button>
                     </Grid>
                     <Grid item xs={12} md={3} >
-                        <Button color='oscuro' variant="contained"  fullWidth onClick={uploadData} >Cargar datos</Button>
+                        <Button color='oscuro' variant="contained"  fullWidth onClick={uploadData} disabled={disable} >Cargar datos</Button>
                     </Grid>
                     <Grid item xs={12} md={3} >
                     </Grid>

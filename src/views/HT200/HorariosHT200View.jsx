@@ -44,6 +44,7 @@ export default function HorariosHT200View(){
     const [data,setData] = useState(controlerState.horarios);
     const [currentHorario,setCurrentHorario] = useState({day_plan:""});
     const [flagCrear,setFlagCrear]=useState(false);
+    const [disable,setDisable] = useState(true);
     const dispatch = useDispatch();
     const [dia,setDia] = useState({
         lunes:false,
@@ -111,17 +112,21 @@ export default function HorariosHT200View(){
     };
     const readData = async()=>{
         let controller_data = await getHorarioHT200(controlerState.ip);
-        controller_data.forEach(element => {
-            element['mes_formated'] = formatMonth(element)
-            element['fecha_formated'] = formatearDias(element)
-            element['dia_formated'] = formatWeek(element)
-        });
-        controller_data = controller_data.filter(item=> item.number !== 0)
-        updateFirebase('horarios',controller_data);
-        dispatch(updateParamsHT200({target:'horarios',data:controller_data}));
-
-        setData(controller_data)
-        console.log(controller_data)
+        if(controller_data === false){
+            setDisable(true);
+        }else{
+            controller_data.forEach(element => {
+                element['mes_formated'] = formatMonth(element)
+                element['fecha_formated'] = formatearDias(element)
+                element['dia_formated'] = formatWeek(element)
+            });
+            controller_data = controller_data.filter(item=> item.number !== 0)
+            updateFirebase('horarios',controller_data);
+            dispatch(updateParamsHT200({target:'horarios',data:controller_data}));
+            setData(controller_data)
+            console.log(controller_data)
+            setDisable(false)
+        }
 
     }
     const updateFirebase = async (param, __data) => {
@@ -519,7 +524,7 @@ export default function HorariosHT200View(){
                         <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={readData}  >Leer Datos</Button>
                     </Grid>
                     <Grid item md={4} xs={12}>
-                        <Button variant="contained" color='oscuro' sx={{ height: '100%' }}  fullWidth onClick={uploadData}>Cargar Datos</Button>
+                        <Button variant="contained" color='oscuro' sx={{ height: '100%' }}  fullWidth onClick={uploadData} disabled={disable}>Cargar Datos</Button>
                     </Grid>
                     <Grid item md={12} xs={12}>
                     <TableContainer sx={{ maxHeight: 440 }}>

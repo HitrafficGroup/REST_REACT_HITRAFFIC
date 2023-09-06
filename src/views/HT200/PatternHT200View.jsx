@@ -13,7 +13,6 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { generatePatternFrame } from "../../js/generateFrameApiHT200";
 import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -37,6 +36,7 @@ export default function PatternHT200View() {
     const [modalConfig,setModalConfig] = useState(false);
     const [currentPattern,setCurrentPattern] = useState(controlerState.pattern[0]);
     const [modalCrear,setModalCrear] = useState(false);
+    const [disable,setDisable] = useState(true);
     const dispatch = useDispatch();
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -62,12 +62,16 @@ export default function PatternHT200View() {
 
     };
     const readData = async () => {
-        console.log(controlerState)
         let controller_data = await getPatternHT200(controlerState.ip);
-        controller_data = controller_data.filter(item=> item.number !== 0)
-        updateFirebase('pattern',controller_data)
-        dispatch(updateParamsHT200({target:'pattern',data:controller_data}));
-        setData(controller_data)
+        if(controller_data === false){
+            setDisable(true)
+        }else{
+            controller_data = controller_data.filter(item=> item.number !== 0)
+            updateFirebase('pattern',controller_data)
+            dispatch(updateParamsHT200({target:'pattern',data:controller_data}));
+            setData(controller_data)
+            setDisable(false)
+        }
 
     }
 
@@ -187,7 +191,7 @@ export default function PatternHT200View() {
                         <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={readData}>Leer Datos</Button>
                     </Grid>
                     <Grid item md={4} xs={12}>
-                        <Button variant="contained" sx={{ height: '100%' }} color='oscuro' fullWidth onClick={uploadData} >Cargar Datos</Button>
+                        <Button variant="contained" sx={{ height: '100%' }} color='oscuro' fullWidth onClick={uploadData} disabled={disable} >Cargar Datos</Button>
                     </Grid>
                     <Grid item md={12} xs={12}>
                         <TableContainer sx={{ maxHeight: 440 }}>

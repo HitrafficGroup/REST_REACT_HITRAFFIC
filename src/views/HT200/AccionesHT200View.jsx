@@ -35,7 +35,8 @@ export default function AccionesHT200View(){
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [currentAction,setCurrentAction] = useState({});
     const [data,setData]=useState(controlerState.acciones);
-    const [modalCrear,setModalCrear] = useState(false)
+    const [modalCrear,setModalCrear] = useState(false);
+    const [disable,setDisable] = useState(true);
     const dispatch = useDispatch();
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -55,11 +56,16 @@ export default function AccionesHT200View(){
 
     const readData = async () => {
         let controller_data = await getAccionHT200(controlerState.ip);
-        controller_data = controller_data.filter(item=> item.number !== 0)
-        console.log(controller_data)
-        setData(controller_data)
-        updateFirebase('acciones',controller_data)
-        dispatch(updateParamsHT200({target:'acciones',data:controller_data}));
+        if(controller_data === false){
+            setDisable(true);
+        }else{
+            controller_data = controller_data.filter(item=> item.number !== 0)
+            console.log(controller_data)
+            setData(controller_data)
+            updateFirebase('acciones',controller_data)
+            dispatch(updateParamsHT200({target:'acciones',data:controller_data}));
+            setDisable(false);
+        }
     }
 
     const modificarAccion = (__data) =>{
@@ -212,7 +218,7 @@ export default function AccionesHT200View(){
                         <Button variant="contained" color='verde2' sx={{ height: '100%' }} onClick={readData} fullWidth >Leer Datos</Button>
                     </Grid>
                     <Grid item md={4} xs={12}>
-                        <Button variant="contained" sx={{ height: '100%' }} color='oscuro' fullWidth onClick={uploadData} >Cargar Datos</Button>
+                        <Button variant="contained" sx={{ height: '100%' }} color='oscuro' fullWidth onClick={uploadData} disabled={disable} >Cargar Datos</Button>
                     </Grid>
                     <Grid item md={12} xs={12}>
                     <TableContainer sx={{ maxHeight: 440 }}>

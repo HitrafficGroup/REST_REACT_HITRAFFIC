@@ -23,10 +23,15 @@ import { getBasicInfoHT200, getDeviceInfoHT200 } from "../js/apiFunctionsHT200";
 import Swal from 'sweetalert2';
 import { collection, updateDoc, doc, onSnapshot, query, deleteDoc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
-
-import IconButton from '@mui/material/IconButton';
-import { useNavigate } from 'react-router-dom';
 //
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import CardContent from '@mui/material/CardContent';
+import Card from '@mui/material/Card';
+import { useNavigate } from 'react-router-dom';
+import Chip from '@mui/material/Chip';
+
+//icons
 import DeleteIcon from '@mui/icons-material/Delete';
 import InfoIcon from '@mui/icons-material/Info';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -534,8 +539,23 @@ export default function ControlersView() {
                             </div>
                         </div>
                     </Grid>
-
-
+                    <Grid xs={12} md={4}>
+                    <Card sx={{ minWidth: 275 }}>
+                        <CardContent>
+                            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                            Infograma
+                            </Typography>
+                            <Typography variant="body2">
+                            <Stack spacing={2} direction="row">
+                            <Chip icon={<DeleteIcon color="rojo"/>} label="Borrar Controlador" />
+                            <Chip icon={<SettingsIcon />} label="Ajustes" />
+                            <Chip icon={<InfoIcon color="anaranjado1" />} label="Información" />
+                            </Stack>
+                            </Typography>
+                        </CardContent>
+                        
+                        </Card>
+                    </Grid>
 
                     <Grid md={12}>
                         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -584,7 +604,7 @@ export default function ControlersView() {
                                                 align={"left"}
                                                 style={{ minWidth: 100 }}
                                             >
-                                                CANTÓN
+                                                Cantón
                                             </TableCell>
                                             <TableCell
                                                 key={"acciones"}

@@ -39,6 +39,7 @@ export default function PlanHT200View(){
     const [modalConfig,setModalConfig] = useState(false);
     const [modalCrear,setModalCrear] = useState(false);
     const [currentPlan,setCurrentPlan] = useState({});
+    const [disable,setDisable] = useState(true);
     const dispatch = useDispatch();
     const handlePlan = (event)=>{
         setPlanTab(event.target.value);
@@ -55,16 +56,22 @@ export default function PlanHT200View(){
         setPage(0);
     };
     const readData = async()=>{
+        setDisable(true)
         let data_controller = await getPlanHT200(controlerState.ip);
-        let modify_data = data_controller.map(item =>{
-            item.data = item.data.filter(item => item.action !== 0)
-            return item
-        })
-        console.log(modify_data)
-        setCurrentTab(modify_data[0].data)
-        setData(modify_data);
-        updateFirebase('plan',modify_data);
-        dispatch(updateParamsHT200({target:'plan',data:modify_data}));
+        if(data_controller === false){
+            setDisable(true)
+        }else{
+            let modify_data = data_controller.map(item =>{
+                item.data = item.data.filter(item => item.action !== 0)
+                return item
+            })
+            console.log(modify_data)
+            setCurrentTab(modify_data[0].data)
+            setData(modify_data);
+            updateFirebase('plan',modify_data);
+            dispatch(updateParamsHT200({target:'plan',data:modify_data}));
+            setDisable(false)
+        }
 
     }
     const updateFirebase = async (param, __data) => {
@@ -218,7 +225,7 @@ export default function PlanHT200View(){
                         <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={readData}  >Leer Datos</Button>
                     </Grid>
                     <Grid item md={3} xs={12}>
-                        <Button variant="contained" color='oscuro' sx={{ height: '100%' }}  fullWidth onClick={uploadData}>Cargar Datos</Button>
+                        <Button variant="contained" color='oscuro' sx={{ height: '100%' }}  fullWidth onClick={uploadData} disabled={disable}>Cargar Datos</Button>
                     </Grid>
               
                     <Grid item md={12} xs={12} >

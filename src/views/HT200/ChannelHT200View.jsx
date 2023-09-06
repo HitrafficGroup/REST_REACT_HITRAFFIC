@@ -40,6 +40,7 @@ export default function ChannelHT200View(){
     const [modalConfig,setModalConfig] = useState(false);
     const [data,setData] = useState(controlerState.channel);
     const [currentChannel ,setCurrentChannel] = useState({});
+    const [disable,setDisable] = useState(true);
     const dispatch = useDispatch();
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -142,10 +143,15 @@ export default function ChannelHT200View(){
 
     const readData= async()=>{
         let controller_data= await getChannelHT200(controlerState.ip);
-        updateFirebase('channel',data);
-        dispatch(updateParamsHT200({target:'channel',data:controller_data}));
-        console.log(controller_data)
-        setData(controller_data)
+        if(controller_data === false){
+            setDisable(true);
+        }else{
+            updateFirebase('channel',data);
+            dispatch(updateParamsHT200({target:'channel',data:controller_data}));
+            setData(controller_data);
+            setDisable(false);
+        }
+       
     }
     const uploadData = async()=>{
         console.log(data)
@@ -202,7 +208,7 @@ export default function ChannelHT200View(){
                         <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={readData}  >Leer Datos</Button>
                     </Grid>
                     <Grid item md={3} xs={12}>
-                        <Button variant="contained" color='oscuro' sx={{ height: '100%' }}  fullWidth onClick={uploadData}>Cargar Datos</Button>
+                        <Button variant="contained" color='oscuro' sx={{ height: '100%' }}  disabled={disable} fullWidth onClick={uploadData}>Cargar Datos</Button>
                     </Grid>
                     <Grid item xs={12} md={12}>
                     <TableContainer sx={{ maxHeight: 440 }}>

@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 // const BASE_HT200 = 'https://www.hitraffic-group.com';
 //const BASE_HT200 = 'http://127.0.0.1:8000';
 
-const BASE_HT200 = 'http://127.0.0.1:50200';
+const BASE_HT200 = 'http://127.0.0.1:4000';
 
 async function getTimeHT200(ip) {
 	var res;
@@ -87,6 +87,7 @@ async function getFasesHT200(ip) {
 			text: `${error}`,
 
 		  })
+		res = false
 	})
 	return res
 }
@@ -124,13 +125,14 @@ async function getSecuencyHT200(ip) {
 		});
 		
 	}).catch(function (error) {
-		console.log(res);
+		
 		Swal.fire({
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
 
 		  })
+		res = false
 	})
 	return res
 }
@@ -177,6 +179,7 @@ async function getSplitHT200(ip) {
 			title: 'Error de Conexión',
 			text: `${error}`,
 		  })
+		res = false;
 	})
 	return res
 }
@@ -213,7 +216,7 @@ async function getPatternHT200(ip) {
 		});
 		
 	}).catch(function (error) {
-		console.log(res);
+		res = false
 		Swal.fire({
 			icon: 'error',
 			title: 'Error de Conexión',
@@ -257,12 +260,13 @@ async function getAccionHT200(ip) {
 		});
 		
 	}).catch(function (error) {
-		console.log(res);
+		
 		Swal.fire({
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
 		  })
+		  res = false
 	})
 	return res
 }
@@ -299,13 +303,14 @@ async function getPlanHT200(ip) {
 		});
 		
 	}).catch(function (error) {
-		console.log(res);
+		
 		Swal.fire({
 			icon: 'error',
 			title: 'Error de Conexión',
 			text: `${error}`,
 
 		  })
+		res = false
 	})
 	return res
 }
@@ -340,7 +345,7 @@ async function getHorarioHT200(ip) {
 		});
 		
 	}).catch(function (error) {
-		console.log(res);
+		res = false
 		Swal.fire({
 			icon: 'error',
 			title: 'Error de Conexión',
@@ -384,7 +389,7 @@ async function getChannelHT200(ip) {
 		});
 		
 	}).catch(function (error) {
-		console.log(res);
+		res = false;
 		Swal.fire({
 			icon: 'error',
 			title: 'Error de Conexión',

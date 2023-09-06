@@ -28,12 +28,13 @@ import MenuItem from '@mui/material/MenuItem';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
 //
-
+import { setLoading } from "../../features/menu/menuSlice";
 import { IpControllerCard } from '../../components/ip-controller-card';
 import { CantonControllerCard } from '../../components/canton-controller-card';
 import { NombreControllerCard } from '../../components/nombre-controller-card';
 
-export default function FasesHT200View() {
+
+export default function FasesHT200View(props) {
     const controlerState = useSelector(state => state.controlerht200);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -41,7 +42,9 @@ export default function FasesHT200View() {
     const [modalConfig,setModalConfig] = useState(false);
     const [currentFase,setCurrentFase] = useState(currentFase_init);
     const [modalCrear,setModalCrear] = useState(false);
+    const [disable,setDisable] = useState(true);
     const dispatch = useDispatch();
+  
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -71,12 +74,20 @@ export default function FasesHT200View() {
         setModalConfig(false)
     }
     const readData=async()=>{
+        dispatch(setLoading(true))
         let controller_data = await getFasesHT200(controlerState.ip);
-        let data_filter = controller_data.filter(item=> item.number !== 0)
-        setFases(data_filter)
-        updateFirebase('fases',data_filter)
-        dispatch(updateParamsHT200({target:'fases',data:data_filter}));
-  
+        
+        if(controller_data === false){
+            setDisable(true)
+            dispatch(setLoading(false))
+        }else{
+            let data_filter = controller_data.filter(item=> item.number !== 0);
+            setFases(data_filter);
+            setDisable(false)
+            updateFirebase('fases',data_filter);
+            dispatch(updateParamsHT200({target:'fases',data:data_filter}));
+        }
+        dispatch(setLoading(false))
     }
     const abrirModalConfig =(__data)=>{
         setModalConfig(true);
@@ -174,7 +185,7 @@ export default function FasesHT200View() {
                         <Button color='verde' variant="contained"  fullWidth onClick={readData}  >leer datos</Button>
                     </Grid>
                     <Grid item xs={12} md={4} >
-                        <Button color='oscuro' variant="contained" fullWidth  onClick={uploadData} >Cargar datos</Button>
+                        <Button color='oscuro' variant="contained" fullWidth  onClick={uploadData} disabled={disable} >Cargar datos</Button>
                     </Grid>
                 
                     <Grid item xs={12} md={12}>
@@ -637,6 +648,8 @@ let currentFase_init = {
     walk:0,
     yellowchange:0,
 }
+
+
 // let fases_initial = [
 //     {
 //         phase: 1,

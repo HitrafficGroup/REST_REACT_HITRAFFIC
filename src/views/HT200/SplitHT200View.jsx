@@ -47,6 +47,7 @@ export default function SplitHT200View() {
     const [currentSplit, setCurrentSplit] = useState({ tiempo: 0 });
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
+    const [disable,setDisable] = useState(true);
     const dispatch = useDispatch();
 
     const handleChangePage = (event, newPage) => {
@@ -69,43 +70,44 @@ export default function SplitHT200View() {
 
     const readData = async () => {
         let controller_data = await getSplitHT200(controlerState.ip);
-
-        for (let i = 0; i < 8; i++) {
-            for (let j = 0; j < 16; j++) {
-
-                let target = controller_data[i].data[j].mode
-                if (target === 1) {
-                    controller_data[i].data[j].mode = "Otro"
-                } else if (target === 2) {
-                    controller_data[i].data[j].mode = "Ninguno"
-                } else if (target === 3) {
-                    controller_data[i].data[j].mode = "Minimun Vehicle Recall"
-                } else if (target === 4) {
-                    controller_data[i].data[j].mode = "Maximun Vehicle Recall"
-                } else if (target === 5) {
-                    controller_data[i].data[j].mode = "Pedestrian Recall"
-                } else if (target === 6) {
-                    controller_data[i].data[j].mode = "Maximun vehicle Pedestrian Recall"
-                }  else if (target === 7) {
-                    controller_data[i].data[j].mode = "Phase Omitted"
-                }else {
-                    controller_data[i].data[j].mode = "Ninguno"
+        if(controller_data === false){
+            setDisable(true)
+        }else{
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 16; j++) {
+                    let target = controller_data[i].data[j].mode
+                    if (target === 1) {
+                        controller_data[i].data[j].mode = "Otro"
+                    } else if (target === 2) {
+                        controller_data[i].data[j].mode = "Ninguno"
+                    } else if (target === 3) {
+                        controller_data[i].data[j].mode = "Minimun Vehicle Recall"
+                    } else if (target === 4) {
+                        controller_data[i].data[j].mode = "Maximun Vehicle Recall"
+                    } else if (target === 5) {
+                        controller_data[i].data[j].mode = "Pedestrian Recall"
+                    } else if (target === 6) {
+                        controller_data[i].data[j].mode = "Maximun vehicle Pedestrian Recall"
+                    }  else if (target === 7) {
+                        controller_data[i].data[j].mode = "Phase Omitted"
+                    }else {
+                        controller_data[i].data[j].mode = "Ninguno"
+                    }
                 }
-
             }
+
+            let modify_data = controller_data.map(item =>{
+                    item.data = item.data.filter(item => item.fase !== 0)
+                    return item
+                })
+            console.log(modify_data)
+            updateFirebase('split',modify_data)
+            dispatch(updateParamsHT200({target:'split',data:modify_data}));
+            setSplits(modify_data)
+            setCurrentTab(modify_data[0].data)
+            setSplitTab("split-1");
+            setDisable(false)
         }
-
-        let modify_data = controller_data.map(item =>{
-            item.data = item.data.filter(item => item.fase !== 0)
-            return item
-        })
-        console.log(modify_data)
-        updateFirebase('split',modify_data)
-        dispatch(updateParamsHT200({target:'split',data:modify_data}));
-        setSplits(modify_data)
-        setCurrentTab(modify_data[0].data)
-        setSplitTab("split-1");
-
     }
 
     const handleSplit = (event) => {
@@ -295,7 +297,7 @@ export default function SplitHT200View() {
                         <Button variant="contained" color='verde2' sx={{ height: '100%' }} fullWidth onClick={readData}  >Leer Datos</Button>
                     </Grid>
                     <Grid item md={3} xs={12}>
-                        <Button variant="contained" sx={{ height: '100%' }} color='oscuro' fullWidth onClick={uploadData}>Cargar Datos</Button>
+                        <Button variant="contained" disabled={disable} sx={{ height: '100%' }} color='oscuro' fullWidth onClick={uploadData}>Cargar Datos</Button>
                     </Grid>
                   
                     <Grid item md={12} xs={12}>
