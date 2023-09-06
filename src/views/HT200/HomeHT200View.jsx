@@ -341,19 +341,22 @@ export default function HomeView() {
         try {
             setDeshabilitar(true);
             const response = await getTimeHT200(controlerState.ip);
-            let data_formated = {
-                seconds: formatData(response['segundos']),
-                minutes: formatData(response['minutos']),
-                hours: formatData(response['hour']),
-                month: formatData(response['mes']),
-                date: formatData(response['dia']),
-                year: formatData(response['year']),
+            if(response !== false){
+                let data_formated = {
+                    seconds: formatData(response['segundos']),
+                    minutes: formatData(response['minutos']),
+                    hours: formatData(response['hour']),
+                    month: formatData(response['mes']),
+                    date: formatData(response['dia']),
+                    year: formatData(response['year']),
+                }
+                setTiempoController(data_formated)
+                const fechac = `${response.mes}-${response.dia}-${response.year}`
+                const dateObj = new Date(fechac)
+                const formatDate = dateObj.toLocaleString("es-EC", { dateStyle: 'full' });
+                setFechaActual(formatDate);
+            
             }
-            setTiempoController(data_formated)
-            const fechac = `${response.mes}-${response.dia}-${response.year}`
-            const dateObj = new Date(fechac)
-            const formatDate = dateObj.toLocaleString("es-EC", { dateStyle: 'full' });
-            setFechaActual(formatDate);
             setDeshabilitar(false);
             setDeshabilitar2(false);
         } catch (e) {
@@ -383,48 +386,50 @@ export default function HomeView() {
     const cargarMapa = async () => {
 
         let data = await getWorkStateHT200(controlerState.ip)
-        let splits_aux = controlerState.split.filter(item => item.id === "split-" + data.split)[0].data
-        let sequency_aux = controlerState.secuencias.filter(item => item.id === "seq-" + data.seq)[0]
-        let aux_long = 0
-        let domain_seq = []
-        for (let j = 0; j < 4; j++) {
-            let long = sequency_aux[`ring${j + 1}`].length
-            if (long > aux_long) {
-                aux_long = long
-                domain_seq = sequency_aux[`ring${j + 1}`]
+        if( data !== false){
+            let splits_aux = controlerState.split.filter(item => item.id === "split-" + data.split)[0].data
+            let sequency_aux = controlerState.secuencias.filter(item => item.id === "seq-" + data.seq)[0]
+            let aux_long = 0
+            let domain_seq = []
+            for (let j = 0; j < 4; j++) {
+                let long = sequency_aux[`ring${j + 1}`].length
+                if (long > aux_long) {
+                    aux_long = long
+                    domain_seq = sequency_aux[`ring${j + 1}`]
+                }
             }
-        }
-        let data_formated = domain_seq.map((item, index) => {
-            let duracion = splits_aux.filter(temp => temp.fase === item.value)[0].tiempo
-            let fases = [sequency_aux.ring1[index], sequency_aux.ring2[index], sequency_aux.ring3[index], sequency_aux.ring4[index]].filter(item => item !== undefined)
-            let values = fases.map(item => (item.value))
-            let aux_data = {
-                paso: index + 1,
-                fase: values,
-                duracion: duracion,
-                amarillo: 3,
-                rojo: 2,
-                verde: duracion - 5,
-                trama: generarCiclo({ rojo: 2, verde: duracion - 5, amarillo: 3 })
-            }
-
-            return aux_data
-        })
-        let table_data = data_formated.map((item, index) => {
-            let paso_data = {
-                g1: false,
-                g2: false,
-                g3: false,
-                g4: false,
-                duracion: item.duracion,
-                id: index + 1,
-            }
-            item.fase.forEach((fas) => {
-                paso_data[`g${fas}`] = true
+            let data_formated = domain_seq.map((item, index) => {
+                let duracion = splits_aux.filter(temp => temp.fase === item.value)[0].tiempo
+                let fases = [sequency_aux.ring1[index], sequency_aux.ring2[index], sequency_aux.ring3[index], sequency_aux.ring4[index]].filter(item => item !== undefined)
+                let values = fases.map(item => (item.value))
+                let aux_data = {
+                    paso: index + 1,
+                    fase: values,
+                    duracion: duracion,
+                    amarillo: 3,
+                    rojo: 2,
+                    verde: duracion - 5,
+                    trama: generarCiclo({ rojo: 2, verde: duracion - 5, amarillo: 3 })
+                }
+    
+                return aux_data
             })
-            return paso_data
-        })
-        setCurrentPasos(table_data)
+            let table_data = data_formated.map((item, index) => {
+                let paso_data = {
+                    g1: false,
+                    g2: false,
+                    g3: false,
+                    g4: false,
+                    duracion: item.duracion,
+                    id: index + 1,
+                }
+                item.fase.forEach((fas) => {
+                    paso_data[`g${fas}`] = true
+                })
+                return paso_data
+            })
+            setCurrentPasos(table_data)
+        }
 
 
     }

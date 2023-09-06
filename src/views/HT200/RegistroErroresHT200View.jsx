@@ -22,19 +22,25 @@ export default function RegistroErroresHT200View() {
     const [data, setData] = useState([{}]);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
+    const [disable,setDisable] = useState(false);
     const readData = async () => {
         let controller_data = await getRegErrores(controlerState.ip)
         console.log(controller_data)
-        let data_modify = controller_data.map(item => {
-            item.minute = formatData(item.minute)
-            item.hour = formatData(item.hour)
-            item.year = "20" + formatData(item.year)
-
-            item.day = devolverDia(item.day)
-            return item
-        })
-        let filter_data = data_modify.filter((item)=> item.month !== 0)
-        setData(filter_data)
+        if(controller_data === false){
+            setDisable(true);
+        }else{
+            let data_modify = controller_data.map(item => {
+                item.minute = formatData(item.minute)
+                item.hour = formatData(item.hour)
+                item.year = "20" + formatData(item.year)
+    
+                item.day = devolverDia(item.day)
+                return item
+            })
+            let filter_data = data_modify.filter((item)=> item.month !== 0)
+            setData(filter_data);
+            setDisable(false);
+        }
     }
     const devolverDia = (__data) => {
         if (__data === 1) {
@@ -95,7 +101,7 @@ export default function RegistroErroresHT200View() {
                 <Grid item xs={12} >
                     <Stack direction="row" spacing={2} justifyContent={"center"} marginBottom={2} >
                         <Button variant="contained"   color="success" sx={{ height: '100%' }} onClick={readData}>LEER DATOS</Button>
-                        <Button variant="contained" endIcon={<PictureAsPdfIcon/>}  color="warning" sx={{ height: '100%' }} onClick={readData}>GENERAR REPORTE</Button>
+                        <Button variant="contained" endIcon={<PictureAsPdfIcon/>}  color="warning" sx={{ height: '100%' }} disabled={disable} onClick={readData}>GENERAR REPORTE</Button>
                     </Stack >
                 </Grid>
 

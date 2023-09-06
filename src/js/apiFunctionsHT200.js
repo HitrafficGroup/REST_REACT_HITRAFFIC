@@ -16,7 +16,7 @@ async function getTimeHT200(ip) {
 		});
 		
 	}).catch(function (error) {
-		console.log(res);
+		res = false;
 		Swal.fire({
 			icon: 'error',
 			title: 'Error de Conexión',
@@ -39,7 +39,7 @@ async function getUnitHT200(ip) {
 		});
 		
 	}).catch(function (error) {
-		console.log(res);
+		res = false
 		Swal.fire({
 			icon: 'error',
 			title: 'Error de Conexión',
@@ -487,7 +487,7 @@ async function getRegErrores(ip) {
 			icon: "success",
 		});
 	}).catch(function (error) {
-		console.log(res);
+		res = false;
 		Swal.fire({
 			icon: 'error',
 			title: 'Error de Conexión',
@@ -504,7 +504,7 @@ async function getWorkStateHT200(ip) {
 		res = response.data
 
 	}).catch(function (error) {
-		console.log(res);
+		res = false
 		Swal.fire({
 			icon: 'error',
 			title: 'Error de Conexión',

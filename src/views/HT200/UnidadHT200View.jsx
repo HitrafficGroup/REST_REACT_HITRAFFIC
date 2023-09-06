@@ -35,6 +35,7 @@ export default function UnidadHT200View() {
         GoiaSync:false,
         SemaforoFlag:false
     });
+    const [disable,setDisable] = useState(true);
     const dispatch = useDispatch();
    
     const uploadData = async() =>{
@@ -67,15 +68,21 @@ export default function UnidadHT200View() {
 
     const readData=async()=>{
         let data = await getUnitHT200(controlerState.ip);
-        data["GreenConflictDetectFlag"] =  data["GreenConflictDetectFlag"] === 1 ? true:false;
-        data["RedGreenConflictDetectFlag"] =  data["RedGreenConflictDetectFlag"] === 1 ? true:false;
-        data["RedFailedDetectFlag"] =  data["RedFailedDetectFlag"] === 1 ? true:false;
-        data["AutomaticPedClear"] =  data["AutomaticPedClear"] === 2 ? true:false;
-        data["GoiaSync"] =  data["GoiaSync"] === 1 ? true:false;
-        data["SemaforoFlag"] =  data["SemaforoFlag"] === 1 ? true:false;
-        setState(data);
-        updateFirebase('unit',data)
-        dispatch(updateParamsHT200({target:'unit',data:data}))
+        if(data === false){
+            setDisable(true);
+        }else{
+            data["GreenConflictDetectFlag"] =  data["GreenConflictDetectFlag"] === 1 ? true:false;
+            data["RedGreenConflictDetectFlag"] =  data["RedGreenConflictDetectFlag"] === 1 ? true:false;
+            data["RedFailedDetectFlag"] =  data["RedFailedDetectFlag"] === 1 ? true:false;
+            data["AutomaticPedClear"] =  data["AutomaticPedClear"] === 2 ? true:false;
+            data["GoiaSync"] =  data["GoiaSync"] === 1 ? true:false;
+            data["SemaforoFlag"] =  data["SemaforoFlag"] === 1 ? true:false;
+            setState(data);
+            updateFirebase('unit',data);
+            dispatch(updateParamsHT200({target:'unit',data:data}));
+            setDisable(false)
+        }
+        
     }
     const handleSwitch = (event) => {
         setState({
@@ -132,7 +139,7 @@ export default function UnidadHT200View() {
                     <Grid item xs={12} >
                         <Stack direction="row" spacing={2} justifyContent={"center"}>
                         <Button color='verde' variant="contained"  onClick={readData} >leer datos</Button>
-                        <Button color='oscuro' variant="contained"  onClick={uploadData} >cargar datos</Button>
+                        <Button color='oscuro' variant="contained"  onClick={uploadData} disabled={disable} >cargar datos</Button>
                         </Stack>
                     </Grid>
                     <Grid item xs={12} md={3} >
