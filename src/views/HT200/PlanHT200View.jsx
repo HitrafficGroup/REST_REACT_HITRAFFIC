@@ -89,9 +89,15 @@ export default function PlanHT200View(){
     const uploadData = async() =>{
         let array_data = []
         array_data = generatePlanFrame(data)
-        await PostPlanHT200({trama:array_data,ip:controlerState.ip})
-        updateFirebase('plan',data);
-        dispatch(updateParamsHT200({target:'plan',data:data}));
+        let result = await PostPlanHT200({trama:array_data,ip:controlerState.ip})
+        if(result === true){
+            setDisable(false);
+            updateFirebase('plan',data);
+            dispatch(updateParamsHT200({target:'plan',data:data}));
+        }else{
+            setDisable(true);
+        }
+        
     }
     const aplicarCambios=()=>{
         let aux_plan = JSON.parse(JSON.stringify(currentPlan))

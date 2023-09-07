@@ -61,9 +61,15 @@ export default function UnidadHT200View() {
         ]
         
     
-        await PostUnitHT200({trama:trama,ip:controlerState.ip})
-        updateFirebase('unit',state)
-        dispatch(updateParamsHT200({target:'unit',data:state}))
+        let result = await PostUnitHT200({trama:trama,ip:controlerState.ip})
+        if(result === true){
+            setDisable(false);
+            updateFirebase('unit',state);
+            dispatch(updateParamsHT200({target:'unit',data:state}));
+        }else{
+            setDisable(true)
+        }
+       
     }
 
     const readData=async()=>{

@@ -156,9 +156,16 @@ export default function ChannelHT200View(){
     const uploadData = async()=>{
         console.log(data)
         let data_array = generateChannelFrame(data)
-        await PostChannelHT200({trama:data_array,ip:controlerState.ip})
-        updateFirebase('channel',data);
-        dispatch(updateParamsHT200({target:'channel',data:data}));
+        let result = await PostChannelHT200({trama:data_array,ip:controlerState.ip})
+        if(result === true){
+            setDisable(false);
+            updateFirebase('channel',data);
+            dispatch(updateParamsHT200({target:'channel',data:data}));
+
+        }else{
+            setDisable(true);
+        }
+       
     }
 
     const AplicarCambios =()=>{

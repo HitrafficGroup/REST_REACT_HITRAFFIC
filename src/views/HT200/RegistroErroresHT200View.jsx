@@ -22,7 +22,7 @@ export default function RegistroErroresHT200View() {
     const [data, setData] = useState([{}]);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [page, setPage] = useState(0);
-    const [disable,setDisable] = useState(false);
+    const [disable,setDisable] = useState(true);
     const readData = async () => {
         let controller_data = await getRegErrores(controlerState.ip)
         console.log(controller_data)

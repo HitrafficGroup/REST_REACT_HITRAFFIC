@@ -267,7 +267,7 @@ export default function BasicSettingsHT200View() {
             let channel_frame = generateChannelFrame(channel_aux);
             // // // cargar Datos
             console.log(split_frame)
-            await setBasicPlan({
+            let result = await setBasicPlan({
                 fases:fases_frame,
                 secuencias:seq_frame,
                 split:split_frame,
@@ -277,23 +277,27 @@ export default function BasicSettingsHT200View() {
                 channel:channel_frame,
                 ip:controlerState.ip
             })
+            if(result === true){
+             
+                await updateFirebase('planificacion',data_aux)
+                await updateFirebase('fases',fases_aux)
+                await updateFirebase('secuencias',seq_modify)
+                await updateFirebase('split',split_modify)
+                await updateFirebase('pattern',pattern_modify)
+                await updateFirebase('acciones',accion_modify)
+                await updateFirebase('plan',plan_modify)
+                await updateFirebase('channel',channel_aux)
+                dispatch(updateParamsHT200({target:'planificacion',data:data_aux}))
+                dispatch(updateParamsHT200({target:'fases',data:fases_aux}))
+                dispatch(updateParamsHT200({target:'secuencias',data:seq_modify}))
+                dispatch(updateParamsHT200({target:'split',data:split_modify}))
+                dispatch(updateParamsHT200({target:'pattern',data:pattern_modify}))
+                dispatch(updateParamsHT200({target:'acciones',data:accion_modify}))
+                dispatch(updateParamsHT200({target:'plan',data:plan_modify}))
+                dispatch(updateParamsHT200({target:'channel',data:channel_aux}))
+            }
             setFlagLoad(false)
-            await updateFirebase('planificacion',data_aux)
-            await updateFirebase('fases',fases_aux)
-            await updateFirebase('secuencias',seq_modify)
-            await updateFirebase('split',split_modify)
-            await updateFirebase('pattern',pattern_modify)
-            await updateFirebase('acciones',accion_modify)
-            await updateFirebase('plan',plan_modify)
-            await updateFirebase('channel',channel_aux)
-            dispatch(updateParamsHT200({target:'planificacion',data:data_aux}))
-            dispatch(updateParamsHT200({target:'fases',data:fases_aux}))
-            dispatch(updateParamsHT200({target:'secuencias',data:seq_modify}))
-            dispatch(updateParamsHT200({target:'split',data:split_modify}))
-            dispatch(updateParamsHT200({target:'pattern',data:pattern_modify}))
-            dispatch(updateParamsHT200({target:'acciones',data:accion_modify}))
-            dispatch(updateParamsHT200({target:'plan',data:plan_modify}))
-            dispatch(updateParamsHT200({target:'channel',data:channel_aux}))
+           
            
         }else{
             Swal.fire({

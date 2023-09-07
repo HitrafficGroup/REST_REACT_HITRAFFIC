@@ -105,10 +105,14 @@ export default function FasesHT200View(props) {
     };
     const uploadData = async() =>{
         let array_data = generatePhaseFrame(fases)
-        updateFirebase('fases',fases);
-        dispatch(updateParamsHT200({target:'fases',data:fases}));
-    
-        await PostFasesHT200({trama:array_data,ip:controlerState.ip});
+        let result = await PostFasesHT200({trama:array_data,ip:controlerState.ip});
+        if(result === false){
+            setDisable(true);
+        }else{
+            setDisable(false);
+            updateFirebase('fases',fases);
+            dispatch(updateParamsHT200({target:'fases',data:fases}));
+        }
       
     }
     const abrirModalCrear=()=>{
@@ -147,7 +151,6 @@ export default function FasesHT200View(props) {
                 let aux_fases = JSON.parse(JSON.stringify(fases))
                 aux_fases = aux_fases.filter(item=> item.number !== __data.number)
                 setFases(aux_fases)
-
             }
         })
        
@@ -267,8 +270,6 @@ export default function FasesHT200View(props) {
                 </ModalHeader>
                 <ModalBody>
                     <Grid container spacing={4}>
-                 
-                  
                         <Grid item xs={12} md={4} >
                         <TextField
                             id="outlined-controlled"

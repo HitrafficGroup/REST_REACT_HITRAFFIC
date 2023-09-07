@@ -137,9 +137,14 @@ export default function AccionesHT200View(){
         let array_data = []
         let aux_data =  JSON.parse(JSON.stringify(data))
         array_data = generateActionFrame(aux_data)
-        await PostActionHT200({trama:array_data,ip:controlerState.ip})
-        updateFirebase('acciones',aux_data)
-        dispatch(updateParamsHT200({target:'acciones',data:aux_data}));
+        let result = await PostActionHT200({trama:array_data,ip:controlerState.ip})
+        if(result === true){
+            setDisable(false);
+            updateFirebase('acciones',aux_data);
+            dispatch(updateParamsHT200({target:'acciones',data:aux_data}));
+        }else{
+            setDisable(true);
+        }
     }
     const abrirModalCrear=()=>{
         setModalCrear(true)

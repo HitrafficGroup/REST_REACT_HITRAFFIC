@@ -50,9 +50,11 @@ async function getUnitHT200(ip) {
 	return res
 }
 async function PostUnitHT200(jsonData) {
+	var res = false
 	await axios.post(`${BASE_HT200}/rest/setUnitHT200?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
+			res = true
 			Swal.fire({
 				title: "Completado!",
 				text: "Cambios Cargados Con Éxito",
@@ -61,12 +63,14 @@ async function PostUnitHT200(jsonData) {
 		})
 		.catch(function (error) {
 			console.error(error);
+			res = false
 			Swal.fire({
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
 			  })
 		});
+	return res;
 }
 
 async function getFasesHT200(ip) {
@@ -94,9 +98,10 @@ async function getFasesHT200(ip) {
 
 
 async function PostFasesHT200(jsonData) {
+	var res = false ;
 	await axios.post(`${BASE_HT200}/rest/setFasesHT200?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
-			console.log(response.data)
+			res = true
 			Swal.fire({
 				title: "Completado!",
 				text: "Cambios Cargados Con Éxito",
@@ -104,7 +109,7 @@ async function PostFasesHT200(jsonData) {
 			});
 		})
 		.catch(function (error) {
-			console.error(error);
+			res = false
 			Swal.fire({
 				icon: 'error',
 				title: 'Error de Conexión',
@@ -112,6 +117,7 @@ async function PostFasesHT200(jsonData) {
 
 			  })
 		});
+		return res;
 }
 
 async function getSecuencyHT200(ip) {
@@ -138,9 +144,11 @@ async function getSecuencyHT200(ip) {
 }
 
 async function PostSecuenciasHT200(jsonData) {
+	var res = false
 	await axios.post(`${BASE_HT200}/rest/setSecuenciasHT200?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
+			res = true
 			Swal.fire({
 				title: "Completado!",
 				text: "Cambios Cargados Con Éxito",
@@ -149,6 +157,7 @@ async function PostSecuenciasHT200(jsonData) {
 		})
 		.catch(function (error) {
 			console.error(error);
+			res = false
 			Swal.fire({
 				icon: 'error',
 				title: 'Error de Conexión',
@@ -156,6 +165,7 @@ async function PostSecuenciasHT200(jsonData) {
 
 			  })
 		});
+	return res;
 }
 
 
@@ -186,9 +196,10 @@ async function getSplitHT200(ip) {
 
 
 async function PostSplitHT200(jsonData) {
+	var res = false;
 	await axios.post(`${BASE_HT200}/rest/setSplitHT200?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
-			console.log(response.data)
+			res =true
 			Swal.fire({
 				title: "Completado!",
 				text: "Cambios Cargados Con Éxito",
@@ -197,12 +208,14 @@ async function PostSplitHT200(jsonData) {
 		})
 		.catch(function (error) {
 			console.error(error);
+			res = false
 			Swal.fire({
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
 			  })
 		});
+		return res;
 }
 
 async function getPatternHT200(ip) {
@@ -228,9 +241,11 @@ async function getPatternHT200(ip) {
 
 
 async function PostPatternHT200(jsonData) {
+	var res = false
 	await axios.post(`${BASE_HT200}/rest/setPatternHT200?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
+			res = true
 			Swal.fire({
 				title: "Completado!",
 				text: "Cambios Cargados Con Éxito",
@@ -238,6 +253,7 @@ async function PostPatternHT200(jsonData) {
 			});
 		})
 		.catch(function (error) {
+			res = false
 			console.error(error);
 			Swal.fire({
 				icon: 'error',
@@ -245,6 +261,7 @@ async function PostPatternHT200(jsonData) {
 				text: `${error}`,
 			  })
 		});
+	return res;
 }
 
 
@@ -272,9 +289,11 @@ async function getAccionHT200(ip) {
 }
 
 async function PostActionHT200(jsonData) {
+	var res = false;
 	await axios.post(`${BASE_HT200}/rest/setActionHT200?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
+			res = true;
 			Swal.fire({
 				title: "Completado!",
 				text: "Cambios Cargados Con Éxito",
@@ -283,12 +302,14 @@ async function PostActionHT200(jsonData) {
 		})
 		.catch(function (error) {
 			console.error(error);
+			res = false
 			Swal.fire({
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
 			  })
 		});
+	return res;
 }
 
 
@@ -315,9 +336,11 @@ async function getPlanHT200(ip) {
 	return res
 }
 async function PostPlanHT200(jsonData) {
+	var result = false;
 	await axios.post(`${BASE_HT200}/rest/setPlanHT200?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
+			result =  true
 			Swal.fire({
 				title: "Completado!",
 				text: "Cambios Cargados Con Éxito",
@@ -326,12 +349,14 @@ async function PostPlanHT200(jsonData) {
 		})
 		.catch(function (error) {
 			console.error(error);
+			result = false
 			Swal.fire({
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
 			  })
 		});
+	return result
 }
 
 async function getHorarioHT200(ip) {
@@ -358,9 +383,11 @@ async function getHorarioHT200(ip) {
 
 
 async function PostHorariosHT200(jsonData) {
+	var res = false;
 	await axios.post(`${BASE_HT200}/rest/setHorariosHT200?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
-			console.log(response.data)
+			console.log(response.data);
+			res = true
 			Swal.fire({
 				title: "Completado!",
 				text: "Cambios Cargados Con Éxito",
@@ -369,6 +396,7 @@ async function PostHorariosHT200(jsonData) {
 		})
 		.catch(function (error) {
 			console.error(error);
+			res = false
 			Swal.fire({
 				icon: 'error',
 				title: 'Error de Conexión',
@@ -376,6 +404,7 @@ async function PostHorariosHT200(jsonData) {
 
 			  })
 		});
+	return res;
 }
 
 async function getChannelHT200(ip) {
@@ -400,8 +429,10 @@ async function getChannelHT200(ip) {
 	return res
 }
 async function PostChannelHT200(jsonData) {
+	var res = false;
 	await axios.post(`${BASE_HT200}/rest/setChannelHT200?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
+			res = true;
 			console.log(response.data)
 			Swal.fire({
 				title: "Completado!",
@@ -411,12 +442,14 @@ async function PostChannelHT200(jsonData) {
 		})
 		.catch(function (error) {
 			console.error(error);
+			res = false;
 			Swal.fire({
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
 			  })
 		});
+	return res;
 }
 
 async function PostTimeHT200(jsonData) {
@@ -441,9 +474,11 @@ async function PostTimeHT200(jsonData) {
 
 
 async function setBasicPlan(jsonData) {
+	var res = false;
 	await axios.post(`${BASE_HT200}/rest/setBasicPlan?ip=${jsonData['ip']}`,jsonData)
 		.then(response => {
 			console.log(response.data)
+			res = true;
 			Swal.fire({
 				title: "Completado!",
 				text: "Cambios Cargados Con Éxito",
@@ -452,12 +487,14 @@ async function setBasicPlan(jsonData) {
 		})
 		.catch(function (error) {
 			console.error(error);
+			res = false
 			Swal.fire({
 				icon: 'error',
 				title: 'Error de Conexión',
 				text: `${error}`,
 			  })
 		});
+	return res;
 }
 
 

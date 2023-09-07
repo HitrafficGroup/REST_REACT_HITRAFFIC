@@ -173,7 +173,7 @@ export default function SplitHT200View() {
     const uploadData = async() =>{
       
         let aux_splits = JSON.parse(JSON.stringify(splits))
-       
+        
         let data = aux_splits.map((item) => {
             if(item.id === splitTab){
                 return {data:  JSON.parse(JSON.stringify(currentTab)),id:splitTab}
@@ -184,9 +184,15 @@ export default function SplitHT200View() {
 
        
         let array_data = generateSplitFrame(data)
-        await PostSplitHT200({trama:array_data,ip:controlerState.ip})
-        updateFirebase('split',aux_splits)
-        dispatch(updateParamsHT200({target:'split',data:aux_splits}));
+        let result = await PostSplitHT200({trama:array_data,ip:controlerState.ip})
+        if(result === true){
+            setDisable(false)
+            updateFirebase('split',aux_splits)
+            dispatch(updateParamsHT200({target:'split',data:aux_splits}));
+        }else{
+            setDisable(true)
+        }
+       
     }
     const abrirModalCrear =()=>{
         setCurrentSplit({fase:1,tiempo:10,mode:"Ninguno",coord:4})

@@ -140,9 +140,15 @@ export default function SecuencyHT200View() {
       
         let aux_secuencias = JSON.parse(JSON.stringify(secuencias))
         let data_formated = generateSeqFrame(aux_secuencias)
-        await PostSecuenciasHT200({ trama: data_formated, ip: controlerState.ip })
-        updateFirebase('secuencias', aux_secuencias)
-        dispatch(updateParamsHT200({ target: 'secuencias', data: aux_secuencias }));
+        let result = await PostSecuenciasHT200({ trama: data_formated, ip: controlerState.ip })
+        if(result === false){
+            setDisable(true);
+        }else{
+            setDisable(false);
+            updateFirebase('secuencias', aux_secuencias);
+            dispatch(updateParamsHT200({ target: 'secuencias', data: aux_secuencias }));
+        }
+
 
     }
     const handleTab = (event) => {

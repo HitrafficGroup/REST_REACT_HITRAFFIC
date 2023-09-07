@@ -246,9 +246,14 @@ export default function HorariosHT200View(){
             }
         }
         console.log(array_data)
-        await PostHorariosHT200({trama:array_data,ip:controlerState.ip})
-        updateFirebase('horarios',aux_data);
-        dispatch(updateParamsHT200({target:'horarios',data:aux_data}));
+        let result = await PostHorariosHT200({trama:array_data,ip:controlerState.ip})
+        if(result === true){
+            setDisable(false)
+            updateFirebase('horarios',aux_data);
+            dispatch(updateParamsHT200({target:'horarios',data:aux_data}));
+        }else{
+            setDisable(true)
+        }
 
     }
   
